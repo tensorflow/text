@@ -38,6 +38,7 @@ REGISTER_OP("UnicodeScriptTokenizeWithOffsets")
     .Output("output_offset_limits: int64")
     .Output("output_outer_splits: Tsplits")
     .Attr("Tsplits: {int32, int64} = DT_INT64")
+    .Attr("keep_whitespace: bool = false")
     .SetShapeFn([](InferenceContext* c) {
       shape_inference::ShapeHandle unused;
       TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 1, &unused));

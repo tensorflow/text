@@ -35,6 +35,10 @@ from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 class UnicodeScriptTokenizer(TokenizerWithOffsets):
   """Tokenizes a tensor of UTF-8 strings on Unicode script boundaries."""
 
+  def __init__(self, keep_whitespace=False):
+    super(UnicodeScriptTokenizer, self).__init__()
+    self._keep_whitespace = keep_whitespace
+
   def tokenize(self, input):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.
 
@@ -85,15 +89,15 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
           # If the flat_values of our ragged tensor is multi-dimensional, we can
           # process it separately and our output will have the same nested
           # splits as our input.
-          (tokens, starts,
-           limits) = self.tokenize_with_offsets(input_tensor.flat_values)
+          (tokens, starts, limits) = self.tokenize_with_offsets(
+              input_tensor.flat_values)
           return (input_tensor.with_flat_values(tokens),
                   input_tensor.with_flat_values(starts),
                   input_tensor.with_flat_values(limits))
         else:
           # Recursively process the values of the ragged tensor.
-          (tokens, starts,
-           limits) = self.tokenize_with_offsets(input_tensor.values)
+          (tokens, starts, limits) = self.tokenize_with_offsets(
+              input_tensor.values)
           return (input_tensor.with_values(tokens),
                   input_tensor.with_values(starts),
                   input_tensor.with_values(limits))
@@ -154,7 +158,8 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
      output_offset_limits, output_outer_splits) = (
          gen_unicode_script_tokenizer.unicode_script_tokenize_with_offsets(
              input_values=codepoints_tensor.flat_values,
-             input_splits=codepoints_tensor.row_splits))
+             input_splits=codepoints_tensor.row_splits,
+             keep_whitespace=self._keep_whitespace))
     codepoint_tokens = RaggedTensor.from_nested_row_splits(
         flat_values=output_values,
         nested_row_splits=[output_outer_splits, output_values_inner_splits])
