@@ -1,0 +1,187 @@
+# coding=utf-8
+# Copyright 2019 TF.Text Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Tests for sentence_breaking_ops."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from absl.testing import parameterized
+import tensorflow as tf
+from tensorflow.python.framework import test_util
+from tensorflow.python.ops.ragged import ragged_map_ops
+from tensorflow.python.ops.ragged import ragged_tensor
+from tensorflow.python.ops.ragged import ragged_test_util
+from tensorflow_text.python.ops import sentence_breaking_ops
+
+
+@test_util.run_all_in_graph_and_eager_modes
+class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
+                       parameterized.TestCase):
+
+  def getTokenWord(self, text, token_starts, token_ends):
+    def _FindSubstr(input_tensor):
+      text, token_start, token_length = input_tensor
+      return tf.strings.substr(text, token_start, token_length)
+
+    token_lengths = token_ends - token_starts
+    token_word = ragged_map_ops.map_fn(
+        _FindSubstr, (text, token_starts, token_lengths),
+        dtype=ragged_tensor.RaggedTensorType(dtype=tf.string, ragged_rank=1),
+        infer_shape=False)
+    return token_word
+
+  def getTokenOffsets(self, token_words):
+    result_start = []
+    result_end = []
+    for sentence in token_words:
+      sentence_string = ""
+      sentence_start = []
+      sentence_end = []
+      for word in sentence:
+        sentence_start.append(len(sentence_string))
+        sentence_string = sentence_string.join([word, " "])
+        sentence_end.append(len(sentence_string))
+      result_start.append(sentence_start)
+      result_end.append(sentence_end)
+    return (
+        tf.constant(result_start, dtype=tf.int64),
+        tf.constant(result_end, dtype=tf.int64))
+
+  @parameterized.parameters([
+      # Test acronyms
+      dict(
+          text=[["Welcome to the U.S. don't be surprised."]],
+          token_starts=[[0, 8, 11, 15, 20, 26, 29, 38]],
+          token_ends=[[7, 10, 14, 19, 25, 28, 38, 39]],
+          token_properties=[[0, 0, 0, 256, 0, 0, 0, 0]],
+          expected_fragment_start=[[0, 4]],
+          expected_fragment_end=[[4, 8]],
+          expected_fragment_properties=[[1, 1]],
+          expected_terminal_punc=[[3, 7]],
+      ),
+      # Test batch containing acronyms
+      dict(
+          text=[["Welcome to the U.S. don't be surprised."], ["I.B.M. yo"]],
+          token_starts=[[0, 8, 11, 15, 20, 26, 29, 38], [0, 7]],
+          token_ends=[[7, 10, 14, 19, 25, 28, 38, 39], [6, 9]],
+          token_properties=[[0, 0, 0, 256, 0, 0, 0, 0], [0, 0]],
+          expected_fragment_start=[[0, 4], [0]],
+          expected_fragment_end=[[4, 8], [2]],
+          expected_fragment_properties=[[1, 1], [0]],
+          expected_terminal_punc=[[3, 7], [-1]],
+      ),
+      # Test for semicolons
+      dict(
+          text=[["Welcome to the US; don't be surprised."]],
+          token_starts=[[0, 8, 11, 15, 17, 19, 25, 28, 37]],
+          token_ends=[[8, 10, 14, 19, 18, 24, 27, 37, 38]],
+          token_properties=[[0, 0, 0, 0, 0, 0, 0, 0, 0]],
+          expected_fragment_start=[[0]],
+          expected_fragment_end=[[9]],
+          expected_fragment_properties=[[1]],
+          expected_terminal_punc=[[8]],
+      ),
+  ])
+  def testSentenceFragmentOp(
+      self, text, token_starts, token_ends, token_properties,
+      expected_fragment_start, expected_fragment_end,
+      expected_fragment_properties, expected_terminal_punc):
+    text = tf.constant(text)
+    token_starts = tf.ragged.constant(token_starts, dtype=tf.int64)
+    token_ends = tf.ragged.constant(token_ends, dtype=tf.int64)
+    token_properties = tf.ragged.constant(token_properties, dtype=tf.int64)
+    token_word = self.getTokenWord(text, token_starts, token_ends)
+
+    fragments = sentence_breaking_ops.sentence_fragments(
+        token_word, token_starts, token_ends, token_properties)
+
+    fragment_starts, fragment_ends, fragment_properties, terminal_punc = (
+        fragments)
+    self.assertRaggedEqual(expected_fragment_start, fragment_starts)
+    self.assertRaggedEqual(expected_fragment_end, fragment_ends)
+    self.assertRaggedEqual(expected_fragment_properties,
+                           fragment_properties)
+    self.assertRaggedEqual(expected_terminal_punc, terminal_punc)
+
+  @parameterized.parameters([
+      # Test acronyms
+      dict(
+          token_word=[
+              ["Welcome", "to", "the", "U.S.", "!", "Harry"],
+              ["Wu", "Tang", "Clan", ";", "ain't", "nothing"],
+          ],
+          token_properties=[[0, 0, 0, 256, 0, 0],
+                            [0, 0, 0, 0, 0, 0]],
+          expected_fragment_start=[[0, 5], [0]],
+          expected_fragment_end=[[5, 6], [6]],
+          expected_fragment_properties=[[3, 0], [0]],
+          expected_terminal_punc=[[3, -1], [-1]],
+      ),
+  ])
+  def testDenseInputs(
+      self, token_word, token_properties,
+      expected_fragment_start, expected_fragment_end,
+      expected_fragment_properties, expected_terminal_punc):
+    token_starts, token_ends = self.getTokenOffsets(token_word)
+    token_properties = tf.constant(token_properties, dtype=tf.int64)
+    token_word = tf.constant(token_word, dtype=tf.string)
+
+    fragments = sentence_breaking_ops.sentence_fragments(
+        token_word, token_starts, token_ends, token_properties)
+
+    fragment_starts, fragment_ends, fragment_properties, terminal_punc = (
+        fragments)
+    self.assertRaggedEqual(expected_fragment_start, fragment_starts)
+    self.assertRaggedEqual(expected_fragment_end, fragment_ends)
+    self.assertRaggedEqual(expected_fragment_properties,
+                           fragment_properties)
+    self.assertRaggedEqual(expected_terminal_punc, terminal_punc)
+
+  @parameterized.parameters([
+      # Too many ragged ranks
+      dict(
+          token_word=[
+              ["Welcome", "to", "the", "U.S.", "don't", "be", "surprised"],
+          ],
+          token_starts=[[1, 2, 3]],
+          token_ends=[[[7, 10, 14, 19, 25, 28, 38, 39]]],
+          token_properties=[[0, 0, 0, 256, 0, 0, 0, 0]],
+      ),
+      # Too many ranks in a dense Tensor.
+      dict(
+          token_word=[
+              [[["Welcome", "to", "the", "U.S.", "don't", "be", "surprised"]]],
+          ],
+          token_starts=[[1, 2, 3]],
+          token_ends=[[7, 10, 14, 19, 25, 28, 38, 39]],
+          token_properties=[[0, 0, 0, 256, 0, 0, 0, 0]],
+          is_ragged=False,
+      ),
+  ])
+  def testBadInputShapes(
+      self, token_word, token_starts, token_ends, token_properties,
+      is_ragged=True):
+    constant = tf.ragged.constant if is_ragged else tf.constant
+    token_starts = constant(token_starts, dtype=tf.int64)
+    token_ends = constant(token_ends, dtype=tf.int64)
+    token_properties = tf.ragged.constant(token_properties, dtype=tf.int64)
+
+    with self.assertRaises(tf.errors.InvalidArgumentError):
+      result = sentence_breaking_ops.sentence_fragments(
+          token_word, token_starts, token_ends, token_properties)
+      _ = self.evaluate(result)
+
+if __name__ == "__main__":
+  tf.test.main()
