@@ -20,7 +20,6 @@
 #include "third_party/tensorflow/core/framework/op_kernel.h"
 #include "third_party/tensorflow/core/framework/tensor_types.h"
 #include "third_party/tensorflow/core/framework/types.h"
-#include "third_party/tensorflow/core/kernels/string_util.h"
 #include "third_party/tensorflow_text/core/kernels/sentence_breaking_utils.h"
 #include "third_party/tensorflow_text/core/kernels/sentence_fragmenter.h"
 
