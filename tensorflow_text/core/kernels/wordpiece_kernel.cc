@@ -23,7 +23,6 @@
 #include "third_party/tensorflow/core/framework/resource_mgr.h"
 #include "third_party/tensorflow/core/framework/tensor.h"
 #include "third_party/tensorflow/core/framework/tensor_shape.h"
-#include "third_party/tensorflow/core/kernels/lookup_util.h"
 #include "third_party/tensorflow/core/lib/core/status.h"
 #include "third_party/tensorflow/core/lib/core/threadpool.h"
 #include "third_party/tensorflow/core/lib/io/path.h"
@@ -66,6 +65,46 @@ string GetUnknownToken(OpKernelConstruction* ctx) {
   return unknown_token;
 }
 
+Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
+                      string* container, string* table_handle) {
+  {
+    mutex* mu;
+    TF_RETURN_IF_ERROR(ctx->input_ref_mutex(input_name, &mu));
+    mutex_lock l(*mu);
+    Tensor tensor;
+    TF_RETURN_IF_ERROR(ctx->mutable_input(input_name, &tensor, true));
+    if (tensor.NumElements() != 2) {
+      return errors::InvalidArgument(
+          "Lookup table handle must be scalar, but had shape: ",
+          tensor.shape().DebugString());
+    }
+    auto h = tensor.flat<string>();
+    *container = h(0);
+    *table_handle = h(1);
+  }
+  return Status::OK();
+}
+
+// Gets the LookupTable stored in the ctx->resource_manager() with key
+// passed by attribute with name input_name, returns null if the table
+// doesn't exist.
+Status GetLookupTable(const string& input_name, OpKernelContext* ctx,
+                      lookup::LookupInterface** table) {
+  string container;
+  string table_handle;
+  DataType handle_dtype;
+  TF_RETURN_IF_ERROR(ctx->input_dtype(input_name, &handle_dtype));
+  if (handle_dtype == DT_RESOURCE) {
+    ResourceHandle handle;
+    TF_RETURN_IF_ERROR(HandleFromInput(ctx, input_name, &handle));
+    return LookupResource(ctx, handle, table);
+  } else {
+    TF_RETURN_IF_ERROR(
+        GetTableHandle(input_name, ctx, &container, &table_handle));
+    return ctx->resource_manager()->Lookup(container, table_handle, table);
+  }
+}
+
 }  // namespace
 
 class WordpieceTokenizeWithOffsetsOp : public OpKernel {
@@ -83,8 +122,9 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
     const auto& values_vec = input_values->flat<string>();
 
     lookup::LookupInterface* lookup_table;
-    OP_REQUIRES_OK(
-        ctx, lookup::GetLookupTable("vocab_lookup_table", ctx, &lookup_table));
+    // MKH: subject to change....
+    OP_REQUIRES_OK(ctx,
+                   GetLookupTable("vocab_lookup_table", ctx, &lookup_table));
     LookupTableVocab vocab_map(lookup_table, ctx);
 
     std::vector<string> subwords;
