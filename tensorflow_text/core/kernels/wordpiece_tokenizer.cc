@@ -61,9 +61,13 @@ Status WordpieceTokenize(const string& token, const int64 max_bytes_per_token,
   if (token.size() > max_bytes_per_token) {
     if (use_unknown_token) {
       subwords->emplace_back(unknown_token);
+      end_offset->push_back(unknown_token.size());
     } else {
       subwords->emplace_back(token);
+      end_offset->push_back(token.size());
     }
+    begin_offset->push_back(0);
+    *num_word_pieces = 1;
     return Status::OK();
   }
 

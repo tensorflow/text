@@ -259,6 +259,17 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
           ],
           vocab=_MIXED_LANG_VOCAB,
       ),
+      # Test token whose size is > max_bytes_per_word
+      dict(
+          tokens=[["don't", "treadness"]],
+          expected_subwords=[[["don", "##'", "##t"], ["[UNK]"]]],
+          vocab=_ENGLISH_VOCAB,
+          max_bytes_per_word=5,
+          # Explicitly specify the offsets here because the current way of
+          # testing offsets would require '[UNK]' to be part of tokens.
+          expected_start=[[[0, 3, 4], [0]]],
+          expected_limit=[[[3, 4, 5], [5]]],
+      ),
   ])
   def testWordPieceOpAndVerifyOffsets(self,
                                       tokens,
@@ -268,12 +279,14 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                                       expected_limit=None,
                                       use_unknown_token=True,
                                       unknown_token="[UNK]",
-                                      token_out_type=tf.string):
+                                      token_out_type=tf.string,
+                                      max_bytes_per_word=100):
     tokens = tf.ragged.constant(tokens)
     vocab_table = _CreateTable(vocab)
     self.evaluate(vocab_table.initializer)
     tokenizer = WordpieceTokenizer(
-        vocab_table, unknown_token=unknown_token, token_out_type=token_out_type)
+        vocab_table, unknown_token=unknown_token, token_out_type=token_out_type,
+        max_bytes_per_word=max_bytes_per_word)
     subwords, begin, end = tokenizer.tokenize_with_offsets(tokens)
     self.assertRaggedEqual(subwords, expected_subwords)
 
@@ -282,8 +295,15 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
     # - Then compare the extracted tokens and original tokens.
     tokens, begin, end = (self.evaluate((tokens, begin, end)))
 
-    extracted_tokens = _GetTokensFromWordpieceOffsets(tokens, begin, end)
-    self.assertRaggedEqual(extracted_tokens, tokens)
+    # If expected start/limit offsets were provided, check them explicitly.
+    # Otherwise test the offsets by extracting subwords using token offsets
+    # from the original 'tokens' input.
+    if expected_start is None or expected_limit is None:
+      extracted_tokens = _GetTokensFromWordpieceOffsets(tokens, begin, end)
+      self.assertRaggedEqual(extracted_tokens, tokens)
+    else:
+      self.assertRaggedEqual(begin, expected_start)
+      self.assertRaggedEqual(end, expected_limit)
 
   @parameterized.parameters([
       dict(
