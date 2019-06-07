@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "third_party/tensorflow_text/core/kernels/wordpiece_tokenizer.h"
+#include "tensorflow_text/core/kernels/wordpiece_tokenizer.h"
 
-#include "third_party/absl/strings/str_cat.h"
-#include "third_party/absl/strings/string_view.h"
-#include "third_party/absl/strings/string_view_utils.h"
-#include "third_party/icu/include/unicode/schriter.h"
-#include "third_party/icu/include/unicode/unistr.h"
-#include "third_party/icu/include/unicode/utf8.h"
-#include "third_party/tensorflow/core/framework/tensor_shape.h"
-#include "third_party/tensorflow/core/lib/core/errors.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
+#include "absl/strings/string_view_utils.h"
+#include "icu4c/source/common/unicode/schriter.h"
+#include "icu4c/source/common/unicode/unistr.h"
+#include "icu4c/source/common/unicode/utf8.h"
+#include "tensorflow/core/framework/tensor_shape.h"
+#include "tensorflow/core/lib/core/errors.h"
 
 namespace tensorflow {
 namespace text {

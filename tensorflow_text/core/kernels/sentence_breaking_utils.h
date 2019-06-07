@@ -16,11 +16,11 @@
 #define TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_BREAKING_UTILS_H_
 
 #include <string>
-#include "third_party/absl/strings/string_view.h"
-#include "third_party/icu/include/unicode/ucnv.h"
-#include "third_party/icu/include/unicode/ucnv_err.h"
-#include "third_party/icu/include/unicode/utypes.h"
-#include "third_party/tensorflow/core/lib/core/status.h"
+#include "absl/strings/string_view.h"
+#include "icu4c/source/common/unicode/ucnv.h"
+#include "icu4c/source/common/unicode/ucnv_err.h"
+#include "icu4c/source/common/unicode/utypes.h"
+#include "tensorflow/core/lib/core/status.h"
 
 namespace tensorflow {
 namespace text {

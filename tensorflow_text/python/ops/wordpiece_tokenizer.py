@@ -25,7 +25,9 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
-from tensorflow_text import gen_wordpiece_tokenizer
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_wordpiece_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_wordpiece_tokenizer.so'))
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
 

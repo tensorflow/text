@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "third_party/tensorflow_text/core/kernels/sentence_breaking_utils.h"
+#include "tensorflow_text/core/kernels/sentence_breaking_utils.h"
 
 #include <string>
 
-#include "third_party/absl/strings/str_cat.h"
-#include "third_party/absl/strings/string_view.h"
-#include "third_party/icu/include/unicode/uchar.h"
-#include "third_party/icu/include/unicode/utypes.h"
-#include "third_party/tensorflow/core/lib/core/errors.h"
-#include "third_party/tensorflow/core/lib/core/status.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
+#include "icu4c/source/common/unicode/uchar.h"
+#include "icu4c/source/common/unicode/utypes.h"
+#include "tensorflow/core/lib/core/errors.h"
+#include "tensorflow/core/lib/core/status.h"
 
 using ::tensorflow::Status;
 

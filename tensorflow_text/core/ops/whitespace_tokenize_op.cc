@@ -15,9 +15,9 @@
 #include <string>
 #include <vector>
 
-#include "third_party/tensorflow/core/framework/common_shape_fns.h"
-#include "third_party/tensorflow/core/framework/op.h"
-#include "third_party/tensorflow/core/framework/shape_inference.h"
+#include "tensorflow/core/framework/common_shape_fns.h"
+#include "tensorflow/core/framework/op.h"
+#include "tensorflow/core/framework/shape_inference.h"
 
 namespace tensorflow {
 

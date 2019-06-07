@@ -13,10 +13,10 @@
 // limitations under the License.
 
 #include <gmock/gmock.h>
-#include "third_party/tensorflow/core/framework/fake_input.h"
-#include "third_party/tensorflow/core/framework/node_def_builder.h"
-#include "third_party/tensorflow/core/kernels/ops_testutil.h"
-#include "third_party/tensorflow_text/core/kernels/text_kernels_test_util.h"
+#include "tensorflow/core/framework/fake_input.h"
+#include "tensorflow/core/framework/node_def_builder.h"
+#include "tensorflow/core/kernels/ops_testutil.h"
+#include "tensorflow_text/core/kernels/text_kernels_test_util.h"
 
 namespace tensorflow {
 

@@ -32,8 +32,8 @@
 #include <string>
 #include <vector>
 
-#include "third_party/tensorflow/core/lib/core/status.h"
-#include "third_party/tensorflow_text/core/kernels/sentence_breaking_utils.h"
+#include "tensorflow/core/lib/core/status.h"
+#include "tensorflow_text/core/kernels/sentence_breaking_utils.h"
 
 namespace tensorflow {
 namespace text {

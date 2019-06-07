@@ -15,11 +15,11 @@
 #include <string>
 #include <locale>
 
-#include "third_party/absl/strings/str_cat.h"
-#include "third_party/icu/include/unicode/errorcode.h"
-#include "third_party/icu/include/unicode/normalizer2.h"
-#include "third_party/icu/include/unicode/utypes.h"
-#include "third_party/tensorflow/core/framework/op_kernel.h"
+#include "absl/strings/str_cat.h"
+#include "icu4c/source/common/unicode/errorcode.h"
+#include "icu4c/source/common/unicode/normalizer2.h"
+#include "icu4c/source/common/unicode/utypes.h"
+#include "tensorflow/core/framework/op_kernel.h"
 
 namespace tensorflow {
 namespace text {

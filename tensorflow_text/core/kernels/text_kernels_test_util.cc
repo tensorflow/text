@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "third_party/tensorflow_text/core/kernels/text_kernels_test_util.h"
+#include "tensorflow_text/core/kernels/text_kernels_test_util.h"
 
 using ::testing::MakeMatcher;
 using ::testing::Matcher;

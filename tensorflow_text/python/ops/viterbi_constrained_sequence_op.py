@@ -30,7 +30,9 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops.ragged import ragged_tensor
 
-from tensorflow_text import gen_constrained_sequence_op
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_constrained_sequence_op = load_library.load_op_library(resource_loader.get_path_to_datafile('_constrained_sequence_op.so'))
 
 
 def viterbi_constrained_sequence(scores,

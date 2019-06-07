@@ -14,14 +14,14 @@
 
 #include <vector>
 
-#include "third_party/absl/strings/str_cat.h"
-#include "third_party/icu/include/unicode/uchar.h"
-#include "third_party/icu/include/unicode/ucnv_err.h"
-#include "third_party/tensorflow/core/framework/op_kernel.h"
-#include "third_party/tensorflow/core/framework/tensor_types.h"
-#include "third_party/tensorflow/core/framework/types.h"
-#include "third_party/tensorflow_text/core/kernels/sentence_breaking_utils.h"
-#include "third_party/tensorflow_text/core/kernels/sentence_fragmenter.h"
+#include "absl/strings/str_cat.h"
+#include "icu4c/source/common/unicode/uchar.h"
+#include "icu4c/source/common/unicode/ucnv_err.h"
+#include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/tensor_types.h"
+#include "tensorflow/core/framework/types.h"
+#include "tensorflow_text/core/kernels/sentence_breaking_utils.h"
+#include "tensorflow_text/core/kernels/sentence_fragmenter.h"
 
 using ::tensorflow::errors::InvalidArgument;
 
