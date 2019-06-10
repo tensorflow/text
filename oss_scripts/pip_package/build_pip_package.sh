@@ -23,7 +23,7 @@ main() {
   fi
   mkdir -p ${output_dir}
   output_dir=$(readlink -f "${output_dir}")
-  echo "=== destination directory: ${output_dir}"
+  echo "=== Destination directory: ${output_dir}"
 
   if [[ ! -d "bazel-bin/tensorflow_text" ]]; then
     die "Could not find bazel-bin. Did you run from the root of the build tree?"
