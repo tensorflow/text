@@ -15,7 +15,8 @@
 
 """Break sentence ops."""
 
-import tensorflow as tf
+from tensorflow.python.ops.ragged import ragged_tensor
+
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_sentence_breaking_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_sentence_breaking_ops.so'))
@@ -90,14 +91,14 @@ def sentence_fragments(token_word,
       include the terminal punctuation). index of the terminal punctuation
       token.
   """
-  if not isinstance(token_starts, tf.RaggedTensor):
-    token_starts = tf.RaggedTensor.from_tensor(token_starts)
-  if not isinstance(token_ends, tf.RaggedTensor):
-    token_ends = tf.RaggedTensor.from_tensor(token_ends)
-  if not isinstance(token_word, tf.RaggedTensor):
-    token_word = tf.RaggedTensor.from_tensor(token_word)
-  if not isinstance(token_properties, tf.RaggedTensor):
-    token_properties = tf.RaggedTensor.from_tensor(token_properties)
+  if not isinstance(token_starts, ragged_tensor.RaggedTensor):
+    token_starts = ragged_tensor.RaggedTensor.from_tensor(token_starts)
+  if not isinstance(token_ends, ragged_tensor.RaggedTensor):
+    token_ends = ragged_tensor.RaggedTensor.from_tensor(token_ends)
+  if not isinstance(token_word, ragged_tensor.RaggedTensor):
+    token_word = ragged_tensor.RaggedTensor.from_tensor(token_word)
+  if not isinstance(token_properties, ragged_tensor.RaggedTensor):
+    token_properties = ragged_tensor.RaggedTensor.from_tensor(token_properties)
 
   fragment = gen_sentence_breaking_ops.sentence_fragments(
       errors=errors,
@@ -111,5 +112,5 @@ def sentence_fragments(token_word,
       token_properties=token_properties.flat_values)
   start, end, properties, terminal_punc_token, row_lengths = fragment
   return tuple(
-      tf.RaggedTensor.from_row_lengths(value, row_lengths)
+      ragged_tensor.RaggedTensor.from_row_lengths(value, row_lengths)
       for value in [start, end, properties, terminal_punc_token])

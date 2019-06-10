@@ -23,7 +23,6 @@
 #include "tensorflow/core/kernels/ops_testutil.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/lib/core/status_test_util.h"
-#include "tensorflow/core/platform/google/integral_types.h"
 #include "tensorflow_text/core/kernels/text_kernels_test_util.h"
 
 namespace tensorflow {

@@ -19,7 +19,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
@@ -29,10 +28,12 @@ from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_string_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
+from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
+
+# pylint: disable=g-bad-import-order
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_whitespace_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_whitespace_tokenizer.so'))
-from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
 
 class WhitespaceTokenizer(TokenizerWithOffsets):

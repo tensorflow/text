@@ -16,7 +16,6 @@
 
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
-#include "absl/strings/string_view_utils.h"
 #include "icu4c/source/common/unicode/schriter.h"
 #include "icu4c/source/common/unicode/unistr.h"
 #include "icu4c/source/common/unicode/utf8.h"
@@ -93,7 +92,8 @@ Status WordpieceTokenize(const string& token, const int64 max_bytes_per_token,
       if (byte_offset_start > 0) {
         lookup_value = absl::StrCat(suffix_indicator, substr);
       } else {
-        absl::CopyToString(substr, &lookup_value);
+        // absl::CopyToString
+        lookup_value.assign(substr.begin(), substr.end());
       }
 
       bool found_in_vocab;

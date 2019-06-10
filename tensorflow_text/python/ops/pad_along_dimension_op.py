@@ -21,9 +21,9 @@ Pads the beginning and end of a given dimension.
 from __future__ import absolute_import
 from __future__ import print_function
 
-import tensorflow as tf
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors
+from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_tensor
@@ -72,12 +72,12 @@ def pad_along_dimension(data, axis=-1, left_pad=None, right_pad=None,
   if left_pad is None and right_pad is None:
     return data
 
-  with tf.name_scope(name, "PadAlongDimension", [data]):
+  with ops.name_scope(name, "PadAlongDimension", [data]):
     if data.shape.ndims is not None and (axis < -data.shape.ndims or
                                          axis >= data.shape.ndims):
       raise errors.InvalidArgumentError(
           None, None, "axis must be between -k <= axis <= -1 OR 0 <= axis < k")
-    if isinstance(data, tf.RaggedTensor):
+    if isinstance(data, ragged_tensor.RaggedTensor):
       axis = _get_positive_axis(axis, data.shape.ndims)
 
     if left_pad is not None:
@@ -91,8 +91,8 @@ def pad_along_dimension(data, axis=-1, left_pad=None, right_pad=None,
     right_padding = _padding_for_dimension(data, axis, right_pad)
 
     pieces = [left_padding, data, right_padding]
-    if isinstance(data, tf.RaggedTensor):
-      return tf.concat([p for p in pieces if p is not None], axis)
+    if isinstance(data, ragged_tensor.RaggedTensor):
+      return array_ops.concat([p for p in pieces if p is not None], axis)
     else:
       return array_ops.concat([p for p in pieces if p is not None], axis)
 
@@ -133,7 +133,7 @@ def _padding_for_dimension(data, axis, pad_value):
   # Verify shape compatibility.
   pad_value.shape[1:].assert_is_compatible_with(data.shape[axis:][1:])
 
-  if not isinstance(data, tf.RaggedTensor):
+  if not isinstance(data, ragged_tensor.RaggedTensor):
     data_shape = array_ops.shape(data)
     pad_shape = array_ops.shape(pad_value)
     outer_dimensions = data_shape[:axis]
@@ -152,7 +152,7 @@ def _padding_for_dimension(data, axis, pad_value):
     return pad_value
 
   elif axis == 1:
-    if isinstance(pad_value, tf.RaggedTensor):
+    if isinstance(pad_value, ragged_tensor.RaggedTensor):
       pad_rank = array_ops.rank(pad_value.flat_values) + pad_value.ragged_rank
       pad_nrows = pad_value.nrows()
     else:
@@ -166,11 +166,12 @@ def _padding_for_dimension(data, axis, pad_value):
         [[math_ops.cast(data_nrows, dtypes.int32)],
          array_ops.ones([pad_rank - 1], dtypes.int32)],
         axis=0)
-    result_values = tf.tile(pad_value, pad_repeats)
-    return tf.RaggedTensor.from_row_splits(
-        result_values, math_ops.range(0, data_nrows + 1) * pad_nrows)
+    result_values = array_ops.tile(pad_value, pad_repeats)
+    return ragged_tensor.RaggedTensor.from_row_splits(
+        result_values,
+        math_ops.range(0, data_nrows + 1) * pad_nrows)
 
   else:  # Recurse if axis>1.
-    return tf.RaggedTensor.from_row_splits(
+    return ragged_tensor.RaggedTensor.from_row_splits(
         _padding_for_dimension(data.values, axis - 1, pad_value),
         data.row_splits)

@@ -20,7 +20,8 @@ from __future__ import division
 from __future__ import print_function
 
 import sys
-import tensorflow as tf
+
+from tensorflow.python.ops import string_ops
 
 
 def _unichr(codepoint):
@@ -55,9 +56,10 @@ def coerce_to_structurally_valid_utf8(input,
   Returns:
     A tensor of type string with the same shape as the input.
   """
-  return tf.strings.unicode_transcode(input,
-                                      input_encoding='UTF-8',
-                                      output_encoding='UTF-8',
-                                      errors='replace',
-                                      replacement_char=ord(replacement_char),
-                                      name=name)
+  return string_ops.unicode_transcode(
+      input,
+      input_encoding='UTF-8',
+      output_encoding='UTF-8',
+      errors='replace',
+      replacement_char=ord(replacement_char),
+      name=name)

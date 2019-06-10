@@ -20,33 +20,30 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-# Dependency imports
-
-import tensorflow_text as text
-
 from tensorflow.python.platform import test
+from tensorflow_text.python.ops import string_ops
 
 
 class CoerceToUtf8Test(test.TestCase):
 
   def testCoercetoStructurallyValidOnValidInput(self):
     with self.test_session():
-      utf8 = text.coerce_to_structurally_valid_utf8(["abc"])
+      utf8 = string_ops.coerce_to_structurally_valid_utf8(["abc"])
     self.assertAllEqual(utf8, ["abc"])
 
   def testCoercetoStructurallyValidOnValidInputWithDefault(self):
     with self.test_session():
-      utf8 = text.coerce_to_structurally_valid_utf8(["abc"], "?")
+      utf8 = string_ops.coerce_to_structurally_valid_utf8(["abc"], "?")
     self.assertAllEqual(utf8, ["abc"])
 
   def testCoercetoStructurallyValidOnInvalidInput(self):
     with self.test_session():
-      utf8 = text.coerce_to_structurally_valid_utf8([b"abc\xfd"])
+      utf8 = string_ops.coerce_to_structurally_valid_utf8([b"abc\xfd"])
     self.assertAllEqual(utf8, ["abc�"])
 
   def testCoercetoStructurallyValidOnInvalidInputWithDefault(self):
     with self.test_session():
-      utf8 = text.coerce_to_structurally_valid_utf8([b"abc\xfd"], "?")
+      utf8 = string_ops.coerce_to_structurally_valid_utf8([b"abc\xfd"], "?")
     self.assertAllEqual(utf8, ["abc?"])
 
 

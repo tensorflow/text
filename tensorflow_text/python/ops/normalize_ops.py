@@ -22,6 +22,7 @@ from __future__ import print_function
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops.ragged import ragged_tensor
+
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_normalize_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_normalize_ops.so'))

@@ -17,7 +17,6 @@
 #include <string>
 #include <vector>
 
-#include "absl/base/integral_types.h"
 #include "tensorflow/core/framework/lookup_interface.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/resource_mgr.h"

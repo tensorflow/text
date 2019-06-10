@@ -20,12 +20,15 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
-import tensorflow as tf  # tf
-import tensorflow_text as text
 
+from tensorflow.python.framework import constant_op
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
+from tensorflow_text.python.ops import sliding_window_op
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -35,8 +38,8 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
   # TODO(b/122967006): Update this to include *all* docstring examples.
   def testDocStringExamples(self):
     # Sliding window (width=3) across a sequence of tokens
-    data = tf.constant(['one', 'two', 'three', 'four', 'five', 'six'])
-    output = text.sliding_window(data=data, width=3, axis=0)
+    data = constant_op.constant(['one', 'two', 'three', 'four', 'five', 'six'])
+    output = sliding_window_op.sliding_window(data=data, width=3, axis=0)
     self.assertRaggedEqual(output,
                            [['one', 'two', 'three'], ['two', 'three', 'four'],
                             ['three', 'four', 'five'], ['four', 'five', 'six']])
@@ -45,10 +48,10 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
 
     # Sliding window (width=2) across the inner dimension of a ragged matrix
     # containing a batch of token sequences
-    data = tf.ragged.constant([['Up', 'high', 'in', 'the', 'air'],
-                               ['Down', 'under', 'water'],
-                               ['Away', 'to', 'outer', 'space']])
-    output = text.sliding_window(data, width=2, axis=-1)
+    data = ragged_factory_ops.constant([['Up', 'high', 'in', 'the', 'air'],
+                                        ['Down', 'under', 'water'],
+                                        ['Away', 'to', 'outer', 'space']])
+    output = sliding_window_op.sliding_window(data, width=2, axis=-1)
     self.assertRaggedEqual(output, [
         [['Up', 'high'], ['high', 'in'], ['in', 'the'], ['the', 'air']],
         [['Down', 'under'], ['under', 'water']],
@@ -60,10 +63,11 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
 
     # Sliding window across the second dimension of a 3-D tensor containing
     # batches of sequences of embedding vectors:
-    data = tf.constant([[[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1], [5, 5, 1]],
-                        [[1, 1, 2], [2, 2, 2], [3, 3, 2], [4, 4, 2], [5, 5,
-                                                                      2]]])
-    output = text.sliding_window(data=data, width=2, axis=1)
+    data = constant_op.constant([[[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1],
+                                  [5, 5, 1]],
+                                 [[1, 1, 2], [2, 2, 2], [3, 3, 2], [4, 4, 2],
+                                  [5, 5, 2]]])
+    output = sliding_window_op.sliding_window(data=data, width=2, axis=1)
     self.assertRaggedEqual(output,
                            [[[[1, 1, 1], [2, 2, 1]], [[2, 2, 1], [3, 3, 1]],
                              [[3, 3, 1], [4, 4, 1]], [[4, 4, 1], [5, 5, 1]]],
@@ -73,7 +77,7 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
                      'Shape: (2, 5, 3) -> (2, 4, 2, 3)')
 
   def _test_sliding_window_op(self, expected_result, data, width, axis):
-    result = text.sliding_window(data, width, axis)
+    result = sliding_window_op.sliding_window(data, width, axis)
     self.assertAllEqual(expected_result, result)
 
   def test_sliding_window_for_one_dimensional_data(self):
@@ -87,11 +91,11 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
 
     result_shape: [3, 3]
     """
-    data = tf.constant([1, 2, 3, 4, 5])
+    data = constant_op.constant([1, 2, 3, 4, 5])
     width = 3
     axis = -1
 
-    expected_result = tf.constant([[1, 2, 3], [2, 3, 4], [3, 4, 5]])
+    expected_result = constant_op.constant([[1, 2, 3], [2, 3, 4], [3, 4, 5]])
     self._test_sliding_window_op(expected_result, data, width, axis)
 
   def test_sliding_window_for_data_with_outer_dimensions(self):
@@ -102,14 +106,16 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
 
     result_shape: [4, 2, 3]
     """
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1], [5, 5, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1],
+                                 [5, 5, 1]])
 
     width = 2
     axis = -2
 
-    expected_result = tf.constant(
-        [[[1, 1, 1], [2, 2, 1]], [[2, 2, 1], [3, 3, 1]], [[3, 3, 1], [4, 4, 1]],
-         [[4, 4, 1], [5, 5, 1]]])
+    expected_result = constant_op.constant([[[1, 1, 1], [2, 2, 1]],
+                                            [[2, 2, 1], [3, 3, 1]],
+                                            [[3, 3, 1], [4, 4, 1]],
+                                            [[4, 4, 1], [5, 5, 1]]])
     self._test_sliding_window_op(expected_result, data, width, axis)
 
   def test_sliding_window_for_data_with_zero_axis(self):
@@ -119,14 +125,16 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
 
     result_shape: [4, 2, 3]
     """
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1], [5, 5, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1],
+                                 [5, 5, 1]])
 
     width = 2
     axis = 0
 
-    expected_result = tf.constant(
-        [[[1, 1, 1], [2, 2, 1]], [[2, 2, 1], [3, 3, 1]], [[3, 3, 1], [4, 4, 1]],
-         [[4, 4, 1], [5, 5, 1]]])
+    expected_result = constant_op.constant([[[1, 1, 1], [2, 2, 1]],
+                                            [[2, 2, 1], [3, 3, 1]],
+                                            [[3, 3, 1], [4, 4, 1]],
+                                            [[4, 4, 1], [5, 5, 1]]])
     self._test_sliding_window_op(expected_result, data, width, axis)
 
   def test_sliding_window_for_multi_dimensional_data(self):
@@ -140,12 +148,12 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
 
     result_shape: [2, 3, 2, 3]
     """
-    data = tf.constant([[[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4]],
-                        [[5, 5, 5], [6, 6, 6], [7, 7, 7], [8, 8, 8]]])
+    data = constant_op.constant([[[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4]],
+                                 [[5, 5, 5], [6, 6, 6], [7, 7, 7], [8, 8, 8]]])
     width = 2
     axis = -2
 
-    expected_result = tf.constant(
+    expected_result = constant_op.constant(
         [[[[1, 1, 1], [2, 2, 2]], [[2, 2, 2], [3, 3, 3]], [[3, 3, 3], [4, 4,
                                                                        4]]],
          [[[5, 5, 5], [6, 6, 6]], [[6, 6, 6], [7, 7, 7]],
@@ -153,31 +161,31 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
     self._test_sliding_window_op(expected_result, data, width, axis)
 
   def test_sliding_window_op_invalid_width(self):
-    data = tf.constant([1, 2, 3, 4, 5])
+    data = constant_op.constant([1, 2, 3, 4, 5])
     axis = -1
     error_message = 'width must be an integer greater than 0'
 
-    with self.assertRaisesRegexp(tf.errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
       self._test_sliding_window_op(data, data, 0, axis)
-    with self.assertRaisesRegexp(tf.errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
       self._test_sliding_window_op(data, data, -1, axis)
 
   def test_sliding_window_op_invalid_axis(self):
-    data = tf.constant([1, 2, 3, 4, 5])
+    data = constant_op.constant([1, 2, 3, 4, 5])
     width = 3
     error_message = 'axis must be between -k <= axis <= -1 OR 0 <= axis < k'
 
-    with self.assertRaisesRegexp(tf.errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
       self._test_sliding_window_op(data, data, width, -2)
-    with self.assertRaisesRegexp(tf.errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
       self._test_sliding_window_op(data, data, width, 1)
 
   def test_sliding_window_op_invalid_data_types(self):
-    data = tf.constant([1, 2, 3, 4, 5])
+    data = constant_op.constant([1, 2, 3, 4, 5])
     width = 3
-    bad_width = tf.constant([width])
+    bad_width = constant_op.constant([width])
     axis = -1
-    bad_axis = tf.constant([axis])
+    bad_axis = constant_op.constant([axis])
 
     with self.assertRaisesRegexp(TypeError, 'width must be an int'):
       self._test_sliding_window_op(data, data, bad_width, axis)
@@ -186,51 +194,54 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_docstring_example_1d_tensor(self):
     """Test the 1D example in the sliding_window docstring."""
-    data = tf.constant(['one', 'two', 'three', 'four', 'five'])
+    data = constant_op.constant(['one', 'two', 'three', 'four', 'five'])
     width = 3
     axis = -1
 
-    expected_result = tf.constant(
+    expected_result = constant_op.constant(
         [['one', 'two', 'three'], ['two', 'three', 'four'],
          ['three', 'four', 'five']])  # pyformat: disable
     self._test_sliding_window_op(expected_result, data, width, axis)
 
   def test_docstring_example_inner_dimension_tensor(self):
     """Test the inner-dimension example in the sliding_window docstring."""
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1], [5, 5, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1],
+                                 [5, 5, 1]])
     width = 2
     axis = -1
 
-    expected_result = tf.constant([[[1, 1], [1, 1]], [[2, 2], [2, 1]],
-                                   [[3, 3], [3, 1]], [[4, 4], [4, 1]],
-                                   [[5, 5], [5, 1]]])  # pyformat: disable
+    expected_result = constant_op.constant([[[1, 1], [1, 1]], [[2, 2], [2, 1]],
+                                            [[3, 3], [3, 1]], [[4, 4], [4, 1]],
+                                            [[5, 5], [5, 1]]])
     self._test_sliding_window_op(expected_result, data, width, axis)
 
   def test_docstring_example_multi_dimension_tensor(self):
     """Test the multi-dimension example in the sliding_window docstring."""
-    data = tf.constant([[[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1], [5, 5, 1]],
-                        [[1, 1, 2], [2, 2, 2], [3, 3, 2], [4, 4, 2],
-                         [5, 5, 2]]])  # pyformat: disable
+    data = constant_op.constant([[[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1],
+                                  [5, 5, 1]],
+                                 [[1, 1, 2], [2, 2, 2], [3, 3, 2], [4, 4, 2],
+                                  [5, 5, 2]]])
     width = 2
     axis = -2
 
-    expected_result = tf.constant([[[[1, 1, 1], [2, 2, 1]],
-                                    [[2, 2, 1], [3, 3, 1]],
-                                    [[3, 3, 1], [4, 4, 1]],
-                                    [[4, 4, 1], [5, 5, 1]]],
-                                   [[[1, 1, 2], [2, 2, 2]],
-                                    [[2, 2, 2], [3, 3, 2]],
-                                    [[3, 3, 2], [4, 4, 2]],
-                                    [[4, 4, 2], [5, 5, 2]]]])
+    expected_result = constant_op.constant([[[[1, 1, 1], [2, 2, 1]],
+                                             [[2, 2, 1], [3, 3, 1]],
+                                             [[3, 3, 1], [4, 4, 1]],
+                                             [[4, 4, 1], [5, 5, 1]]],
+                                            [[[1, 1, 2], [2, 2, 2]],
+                                             [[2, 2, 2], [3, 3, 2]],
+                                             [[3, 3, 2], [4, 4, 2]],
+                                             [[4, 4, 2], [5, 5, 2]]]])
     self._test_sliding_window_op(expected_result, data, width, axis)
 
   def test_with_unknown_shape_tensor(self):
     """Vaalidate that the op still works with a tensor of unknown shape."""
-    data = tf.placeholder_with_default(tf.constant([1, 2, 3, 4, 5]), shape=None)
+    data = array_ops.placeholder_with_default(
+        constant_op.constant([1, 2, 3, 4, 5]), shape=None)
     width = 3
     axis = -1
 
-    expected_result = tf.constant([[1, 2, 3], [2, 3, 4], [3, 4, 5]])
+    expected_result = constant_op.constant([[1, 2, 3], [2, 3, 4], [3, 4, 5]])
     self._test_sliding_window_op(expected_result, data, width, axis)
 
   @parameterized.parameters([
@@ -332,8 +343,8 @@ class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
                        expected,
                        axis=-1,
                        ragged_rank=None):
-    data = tf.ragged.constant(data, ragged_rank=ragged_rank)
-    result = text.sliding_window(data, width, axis)
+    data = ragged_factory_ops.constant(data, ragged_rank=ragged_rank)
+    result = sliding_window_op.sliding_window(data, width, axis)
     self.assertRaggedEqual(result, expected)
 
 

@@ -9,7 +9,7 @@ welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CO
 ## Introduction
 
 TensorFlow Text provides a collection of text related classes and ops ready to
-use with TensorFlow. The library can perform the preprocessing regularly
+use with TensorFlow 2.0. The library can perform the preprocessing regularly
 required by text-based models, and includes other features useful for sequence
 modeling not provided by core TensorFlow.
 
@@ -247,4 +247,12 @@ print(bigrams.to_list())
 
 ```sh
 [['Everything not', 'not saved', 'saved will', 'will be', 'be lost.'], []]
+```
+
+## Installation
+
+### Install using PIP
+
+```bash
+pip install -U tensorflow-text
 ```

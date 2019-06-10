@@ -20,12 +20,12 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-import tensorflow as tf
-import tensorflow_text as tftext
 
 from tensorflow.python.framework import test_util
+from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
+from tensorflow_text.python.ops import greedy_constrained_sequence_op as greedy_op
 
 
 # TODO(b/122968457): Refactor this test logic.
@@ -128,7 +128,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.greedy_constrained_sequence(
+    single_sequence_op = greedy_op.greedy_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -168,7 +168,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.greedy_constrained_sequence(
+    multiple_sequence_op = greedy_op.greedy_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -207,7 +207,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.greedy_constrained_sequence(
+    single_sequence_op = greedy_op.greedy_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -246,7 +246,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.greedy_constrained_sequence(
+    multiple_sequence_op = greedy_op.greedy_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -287,7 +287,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.greedy_constrained_sequence(
+    single_sequence_op = greedy_op.greedy_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -328,7 +328,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.greedy_constrained_sequence(
+    multiple_sequence_op = greedy_op.greedy_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -367,7 +367,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.greedy_constrained_sequence(
+    single_sequence_op = greedy_op.greedy_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -406,7 +406,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.greedy_constrained_sequence(
+    multiple_sequence_op = greedy_op.greedy_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -444,7 +444,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.greedy_constrained_sequence(
+    single_sequence_op = greedy_op.greedy_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -482,7 +482,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.greedy_constrained_sequence(
+    multiple_sequence_op = greedy_op.greedy_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -515,7 +515,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.greedy_constrained_sequence(
+    single_sequence_op = greedy_op.greedy_constrained_sequence(
         single_input, [2],
         transition_weights=transition_weights,
         use_log_space=use_log_space,
@@ -547,7 +547,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.greedy_constrained_sequence(
+    multiple_sequence_op = greedy_op.greedy_constrained_sequence(
         multiple_input, [2, 2, 2],
         transition_weights=transition_weights,
         use_log_space=use_log_space,
@@ -585,7 +585,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.greedy_constrained_sequence(
+    multiple_sequence_op = greedy_op.greedy_constrained_sequence(
         multiple_input,
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -602,7 +602,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
                         [13.0, 12.0, 11.0, 10.0]])
     input_2 = np.array([[10.0, 12.0, 6.0, 4.0], [13.0, 12.0, 11.0, 10.0]])
     # TODO(momernick): Extend RT support to lists-of-ndarrays.
-    scores = tf.ragged.constant([input_1.tolist(), input_2.tolist()])
+    scores = ragged_factory_ops.constant([input_1.tolist(), input_2.tolist()])
     # pyformat: disable
     # pylint: disable=bad-whitespace
     # pylint: disable=bad-continuation
@@ -631,10 +631,10 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         allowed_transitions,
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
-    expected_sequence = tf.ragged.constant([sequence_1, sequence_2])
+    expected_sequence = ragged_factory_ops.constant([sequence_1, sequence_2])
 
     # Test a ragged batch.
-    ragged_op = tftext.greedy_constrained_sequence(
+    ragged_op = greedy_op.greedy_constrained_sequence(
         scores,
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,

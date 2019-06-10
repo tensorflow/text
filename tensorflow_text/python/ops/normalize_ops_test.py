@@ -20,12 +20,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import tensorflow as tf  # tf
-import tensorflow_text as text
-
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_test_util
+from tensorflow.python.platform import test
+from tensorflow_text.python.ops import normalize_ops
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -38,7 +38,7 @@ class NormalizeOpsTest(ragged_test_util.RaggedTensorTestCase):
     expected = [
         " text to lowercase! ",
     ]
-    self.assertAllEqual(expected, text.case_fold_utf8(txt))
+    self.assertAllEqual(expected, normalize_ops.case_fold_utf8(txt))
 
   def test_lowercase_text(self):
     txt = [
@@ -57,13 +57,13 @@ class NormalizeOpsTest(ragged_test_util.RaggedTensorTestCase):
         "folded: ssσ",
         ""
     ]
-    self.assertAllEqual(expected, text.case_fold_utf8(txt))
+    self.assertAllEqual(expected, normalize_ops.case_fold_utf8(txt))
 
   def test_lowercase_one_string_ragged(self):
     txt = ragged_factory_ops.constant([[" TExt ", "to", " loWERcase! "],
                                        [" TExt to loWERcase! "]])
     expected = [[" text ", "to", " lowercase! "], [" text to lowercase! "]]
-    self.assertRaggedEqual(expected, text.case_fold_utf8(txt))
+    self.assertRaggedEqual(expected, normalize_ops.case_fold_utf8(txt))
 
   def test_lowercase_empty_string(self):
     txt = [
@@ -72,7 +72,7 @@ class NormalizeOpsTest(ragged_test_util.RaggedTensorTestCase):
     expected = [
         "",
     ]
-    self.assertAllEqual(expected, text.case_fold_utf8(txt))
+    self.assertAllEqual(expected, normalize_ops.case_fold_utf8(txt))
 
   def test_normalize_nfkc(self):
     txt = [
@@ -81,8 +81,8 @@ class NormalizeOpsTest(ragged_test_util.RaggedTensorTestCase):
     expected = [
         u"ṩ".encode("utf-8"),
     ]
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "NFKC"))
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "nfkc"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "NFKC"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "nfkc"))
 
   def test_normalize_nfkc_batch(self):
     txt = [
@@ -93,15 +93,15 @@ class NormalizeOpsTest(ragged_test_util.RaggedTensorTestCase):
         u"ṩ".encode("utf-8"),
         "fi",
     ]
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "NFKC"))
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "nfkc"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "NFKC"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "nfkc"))
 
   def test_normalize_nfkc_ragged(self):
     txt = ragged_factory_ops.constant([[[u"\u1e9b\u0323 \ufb01"], []],
                                        [[u"\u1e9b\u0323", u"\ufb01"]]])
     expected = [[[u"ṩ fi".encode("utf-8")], []], [[u"ṩ".encode("utf-8"), "fi"]]]
-    self.assertRaggedEqual(expected, text.normalize_utf8(txt, "NFKC"))
-    self.assertRaggedEqual(expected, text.normalize_utf8(txt, "nfkc"))
+    self.assertRaggedEqual(expected, normalize_ops.normalize_utf8(txt, "NFKC"))
+    self.assertRaggedEqual(expected, normalize_ops.normalize_utf8(txt, "nfkc"))
 
   def test_normalize_nfc(self):
     txt = [
@@ -110,16 +110,16 @@ class NormalizeOpsTest(ragged_test_util.RaggedTensorTestCase):
     expected = [
         u"\u1e9b\u0323".encode("utf-8"),
     ]
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "NFC"))
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "nfc"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "NFC"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "nfc"))
 
   def test_normalize_nfd(self):
     txt = [u"\u1e9b\u0323"]
     expected = [
         u"\u017f\u0323\u0307".encode("utf-8"),
     ]
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "NFD"))
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "nfd"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "NFD"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "nfd"))
 
   def test_normalize_nfkd(self):
     txt = [
@@ -128,14 +128,15 @@ class NormalizeOpsTest(ragged_test_util.RaggedTensorTestCase):
     expected = [
         u"\u0073\u0323\u0307".encode("utf-8"),
     ]
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "NFKD"))
-    self.assertAllEqual(expected, text.normalize_utf8(txt, "nfkd"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "NFKD"))
+    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "nfkd"))
 
   def test_unknown_normalization_form(self):
-    with self.assertRaises(tf.errors.InvalidArgumentError):
-      bomb = text.normalize_utf8(["cant readme", "wont read me"], "cantfindme")
+    with self.assertRaises(errors.InvalidArgumentError):
+      bomb = normalize_ops.normalize_utf8(["cant readme", "wont read me"],
+                                          "cantfindme")
       self.evaluate(bomb)
 
 
 if __name__ == "__main__":
-  tf.test.main()
+  test.main()

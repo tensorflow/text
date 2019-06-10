@@ -28,10 +28,12 @@ from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_string_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
+from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
+
+# pylint: disable=g-bad-import-order
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_unicode_script_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_unicode_script_tokenizer.so'))
-from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
 
 class UnicodeScriptTokenizer(TokenizerWithOffsets):

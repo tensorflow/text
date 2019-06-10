@@ -20,9 +20,9 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
-import tensorflow as tf  # tf
 
 from tensorflow.python.framework import test_util
+from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import pointer_ops
@@ -302,10 +302,14 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                         contained_by=False,
                         partial_overlap=False,
                         ragged_rank=None):
-    source_start = tf.ragged.constant(source_start, ragged_rank=ragged_rank)
-    source_limit = tf.ragged.constant(source_limit, ragged_rank=ragged_rank)
-    target_start = tf.ragged.constant(target_start, ragged_rank=ragged_rank)
-    target_limit = tf.ragged.constant(target_limit, ragged_rank=ragged_rank)
+    source_start = ragged_factory_ops.constant(
+        source_start, ragged_rank=ragged_rank)
+    source_limit = ragged_factory_ops.constant(
+        source_limit, ragged_rank=ragged_rank)
+    target_start = ragged_factory_ops.constant(
+        target_start, ragged_rank=ragged_rank)
+    target_limit = ragged_factory_ops.constant(
+        target_limit, ragged_rank=ragged_rank)
     multivalent_result = False
     alignment = pointer_ops.span_alignment(
         source_start, source_limit, target_start, target_limit, contains,
@@ -506,10 +510,14 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                              contained_by=False,
                              partial_overlap=False,
                              ragged_rank=None):
-    source_start = tf.ragged.constant(source_start, ragged_rank=ragged_rank)
-    source_limit = tf.ragged.constant(source_limit, ragged_rank=ragged_rank)
-    target_start = tf.ragged.constant(target_start, ragged_rank=ragged_rank)
-    target_limit = tf.ragged.constant(target_limit, ragged_rank=ragged_rank)
+    source_start = ragged_factory_ops.constant(
+        source_start, ragged_rank=ragged_rank)
+    source_limit = ragged_factory_ops.constant(
+        source_limit, ragged_rank=ragged_rank)
+    target_start = ragged_factory_ops.constant(
+        target_start, ragged_rank=ragged_rank)
+    target_limit = ragged_factory_ops.constant(
+        target_limit, ragged_rank=ragged_rank)
     multivalent_result = True
     alignment = pointer_ops.span_alignment(
         source_start, source_limit, target_start, target_limit, contains,

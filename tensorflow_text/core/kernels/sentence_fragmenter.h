@@ -183,7 +183,7 @@ class SentenceFragmenter {
   const Document *document_ = nullptr;  // not owned
   UnicodeUtil *util_ = nullptr;         // not owned
 
-  DISALLOW_COPY_AND_ASSIGN(SentenceFragmenter);
+  // TODO(thuang513): DISALLOW_COPY_AND_ASSIGN(SentenceFragmenter);
 };
 
 }  // namespace text
