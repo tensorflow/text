@@ -177,6 +177,32 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(starts, expected_offset_starts)
     self.assertRaggedEqual(limits, expected_offset_limits)
 
+  def testKeepWhitespace(self):
+    test_value = constant_op.constant([
+        '\'Black Panther,\' \t ‘A Star Is Born‘ among AFI Awards honorees',
+        ' .Ok.   Go  '])
+    expected_tokens = [
+        ['\'', 'Black', ' ', 'Panther', ',\'', ' \t ', '‘', 'A', ' ',
+         'Star', ' ', 'Is', ' ', 'Born', '‘', ' ', 'among', ' ', 'AFI', ' ',
+         'Awards', ' ', 'honorees'],
+        [' ', '.', 'Ok', '.', '   ', 'Go', '  ']]
+    expected_offset_starts = [
+        [0, 1, 6, 7, 14, 16, 19, 22, 23, 24, 28, 29, 31, 32, 36, 39, 40,
+         45, 46, 49, 50, 56, 57],
+        [0, 1, 2, 4, 5, 8, 10]]
+    expected_offset_limits = [
+        [1, 6, 7, 14, 16, 19, 22, 23, 24, 28, 29, 31, 32, 36, 39, 40,
+         45, 46, 49, 50, 56, 57, 65],
+        [1, 2, 4, 5, 8, 10, 12]]
+    self.tokenizer = UnicodeScriptTokenizer(keep_whitespace=True)
+    tokens = self.tokenizer.tokenize(test_value)
+    self.assertRaggedEqual(tokens, expected_tokens)
+    (tokens, starts, limits) = (
+        self.tokenizer.tokenize_with_offsets(test_value))
+    self.assertRaggedEqual(tokens, expected_tokens)
+    self.assertRaggedEqual(starts, expected_offset_starts)
+    self.assertRaggedEqual(limits, expected_offset_limits)
+
   def testOnlySpaces(self):
     test_value = constant_op.constant([' ', '     '])
     expected_tokens = [[], []]

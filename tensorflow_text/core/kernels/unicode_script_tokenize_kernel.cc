@@ -40,7 +40,9 @@ template <typename SPLITS_TYPE>
 class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
  public:
   explicit UnicodeScriptTokenizeWithOffsetsOp(OpKernelConstruction* ctx)
-      : OpKernel(ctx) {}
+      : OpKernel(ctx) {
+    OP_REQUIRES_OK(ctx, ctx->GetAttr("keep_whitespace", &keep_whitespace_));
+  }
 
   /**
    * Breaks a series of codepoints into individual groups based on the script
@@ -92,10 +94,12 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
       bool token_has_start_set = false;
       int32 curr_skipped_spaces = 0;  // Used when computing the end of a token
       const int curr_word_start_idx = input_splits_flat(splits_idx);
+      bool was_space = false;
       for (int values_idx = curr_word_start_idx;
            values_idx < input_splits_flat(splits_idx + 1); values_idx++) {
-        UScriptCode script =
-            uscript_getScript(input_values_flat(values_idx), status);
+        const int32 input_value = input_values_flat(values_idx);
+        const bool is_space = u_isUWhiteSpace(input_value);
+        UScriptCode script = uscript_getScript(input_value, status);
         // Split these failures out as if they are a different code and ignore
         // the error.
         if (status.isFailure()) {
@@ -104,7 +108,8 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
         }
         // Split out a new token if the unicode script changes from the
         // previous token.
-        if (script != prev_script) {
+        if (script != prev_script ||
+            (keep_whitespace_ && is_space != was_space)) {
           if (token_has_start_set) {
             output_offset_limits.push_back(values_idx - curr_word_start_idx -
                                            curr_skipped_spaces);
@@ -114,7 +119,7 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
         }
         // Only copy characters other than whitespace. Because of this, also do
         // not start new tokens until a character other than a space is reached.
-        if (!u_isUWhiteSpace(input_values_flat(values_idx))) {
+        if (!is_space || keep_whitespace_) {
           if (!token_has_start_set) {
             // Set token start offset relative to current string.
             output_offset_starts.push_back(values_idx - curr_word_start_idx);
@@ -122,11 +127,16 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
             output_values_inner_splits.push_back(output_values.size());
             token_has_start_set = true;
           }
-          output_values.push_back(input_values_flat(values_idx));
-          curr_skipped_spaces = 0;
-        } else {
-          ++curr_skipped_spaces;
+          output_values.push_back(input_value);
         }
+        if (!keep_whitespace_) {
+          if (is_space) {
+            curr_skipped_spaces++;
+          } else {
+            curr_skipped_spaces = 0;
+          }
+        }
+        was_space = is_space;
       }
       // Looping through the codepoints for current tokens complete. Now set the
       // last limit of out last token (if we found a start earlier).
@@ -161,6 +171,8 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
   }
 
  private:
+  bool keep_whitespace_;
+
   TF_DISALLOW_COPY_AND_ASSIGN(UnicodeScriptTokenizeWithOffsetsOp);
 };
 
