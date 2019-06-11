@@ -30,7 +30,7 @@ tf.enable_eager_execution()
 
 ## Unicode
 
-Most ops expect that the strings are in UTF-8. If your using a different
+Most ops expect that the strings are in UTF-8. If you're using a different
 encoding, you can use the core tensorflow transcode op to transcode into UTF-8.
 You can also use the same op to coerce your string to structurally valid UTF-8
 if your input could be invalid.
