@@ -33,13 +33,13 @@ class CaseFoldUTF8Op : public tensorflow::OpKernel {
   void Compute(tensorflow::OpKernelContext* context) override {
     const tensorflow::Tensor* input_tensor;
     OP_REQUIRES_OK(context, context->input("input", &input_tensor));
-    const auto& input_vec = input_tensor->flat<string>();
+    const auto& input_vec = input_tensor->flat<tstring>();
 
     // TODO(gregbillock): support forwarding
     tensorflow::Tensor* output_tensor;
     OP_REQUIRES_OK(context, context->allocate_output(0, input_tensor->shape(),
                                                      &output_tensor));
-    auto output_vec = output_tensor->flat<string>();
+    auto output_vec = output_tensor->flat<tstring>();
 
     icu::ErrorCode icu_error;
     const icu::Normalizer2* nfkc_cf = icu::Normalizer2::getNFKCCasefoldInstance(
@@ -83,12 +83,12 @@ class NormalizeUTF8Op : public tensorflow::OpKernel {
   void Compute(tensorflow::OpKernelContext* context) override {
     const tensorflow::Tensor* input_tensor;
     OP_REQUIRES_OK(context, context->input("input", &input_tensor));
-    const auto& input_vec = input_tensor->flat<string>();
+    const auto& input_vec = input_tensor->flat<tstring>();
 
     tensorflow::Tensor* output_tensor;
     OP_REQUIRES_OK(context, context->allocate_output(0, input_tensor->shape(),
                                                      &output_tensor));
-    auto output_vec = output_tensor->flat<string>();
+    auto output_vec = output_tensor->flat<tstring>();
 
     icu::ErrorCode icu_error;
     const icu::Normalizer2* normalizer = nullptr;
