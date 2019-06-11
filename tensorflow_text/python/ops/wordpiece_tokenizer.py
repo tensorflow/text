@@ -66,7 +66,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
     self._suffix_indicator = suffix_indicator
     self._max_bytes_per_word = max_bytes_per_word
     self._token_out_type = token_out_type
-    self._unknown_token = unknown_token if unknown_token else ''
+    self._unknown_token = unknown_token if unknown_token else '[UNK]'
     self._use_unknown_token = True if unknown_token else False
 
   def tokenize(self, input):  # pylint: disable=redefined-builtin

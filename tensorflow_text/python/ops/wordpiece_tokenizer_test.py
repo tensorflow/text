@@ -133,6 +133,15 @@ _RUSSIAN_VOCAB = [
     _Utf8(u"##иха"),
 ]
 
+_DEATH_VOCAB = [
+    _Utf8(u"क"),
+    _Utf8(u"##र"),
+    _Utf8(u"##े"),
+    _Utf8(u"##ं"),
+    "##*",
+    _Utf8(u"##👇"),
+]
+
 
 def _GetTokensFromWordpieceOffsets(tokens, begin_indices, end_indices):
   tokens = tokens.to_list()
@@ -186,7 +195,6 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                               ["[UNK]"]]],
           vocab=_ENGLISH_VOCAB,
       ),
-
       # Basic case w/o unknown token
       dict(
           tokens=[["don't", "tread", "cantfindme", "treadcantfindme"]],
@@ -275,6 +283,21 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
           expected_start=[[[0, 3, 4], [0]]],
           expected_limit=[[[3, 4, 5], [5]]],
       ),
+      # Test the token of death usecase.
+      dict(
+          tokens=[[_Utf8(u"करें*👇👇")]],
+          token_out_type=dtypes.string,
+          expected_subwords=[[[
+              _Utf8(u"क"),
+              _Utf8(u"##र"),
+              _Utf8(u"##े"),
+              _Utf8(u"##ं"), "##*",
+              _Utf8(u"##👇"),
+              _Utf8(u"##👇")
+          ]]],
+          vocab=_DEATH_VOCAB,
+          max_bytes_per_word=40,
+      ),
   ])
   def testWordPieceOpAndVerifyOffsets(self,
                                       tokens,
@@ -290,8 +313,11 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
     vocab_table = _CreateTable(vocab)
     self.evaluate(vocab_table.initializer)
     tokenizer = WordpieceTokenizer(
-        vocab_table, unknown_token=unknown_token, token_out_type=token_out_type,
-        max_bytes_per_word=max_bytes_per_word)
+        vocab_table,
+        unknown_token=unknown_token,
+        token_out_type=token_out_type,
+        max_bytes_per_word=max_bytes_per_word,
+    )
     subwords, begin, end = tokenizer.tokenize_with_offsets(tokens)
     self.assertRaggedEqual(subwords, expected_subwords)
 
