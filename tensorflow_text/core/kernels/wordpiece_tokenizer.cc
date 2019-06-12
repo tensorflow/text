@@ -17,7 +17,6 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
-#include "absl/strings/string_view_utils.h"
 #include "icu4c/source/common/unicode/schriter.h"
 #include "icu4c/source/common/unicode/unistr.h"
 #include "icu4c/source/common/unicode/utf8.h"
@@ -63,7 +62,8 @@ Status Lookup(int byte_start, int byte_end, const string& token,
   if (byte_start > 0) {
     lookup_value = absl::StrCat(suffix_indicator, substr);
   } else {
-    absl::CopyToString(substr, &lookup_value);
+    // absl::CopyToString
+    lookup_value.assign(substr.begin(), substr.end());
   }
   return vocab_map->Contains(lookup_value, in_vocab);
 }
