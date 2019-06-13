@@ -77,7 +77,7 @@ Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
           "Lookup table handle must be scalar, but had shape: ",
           tensor.shape().DebugString());
     }
-    auto h = tensor.flat<string>();
+    auto h = tensor.flat<tstring>();
     *container = h(0);
     *table_handle = h(1);
   }
@@ -140,7 +140,7 @@ LookupStatus LookupTableVocab::Contains(const absl::string_view key,
     return LookupStatus("Bad 'value' param.");
   }
   Tensor keys(DT_STRING, TensorShape({1}));
-  keys.flat<string>()(0) = std::string(key.data(), key.length());
+  keys.flat<tstring>()(0) = std::string(key.data(), key.length());
   Tensor values(DT_INT64, TensorShape({1}));
   auto status = table_->Find(ctx_, keys, &values, default_value_);
   if (!status.ok()) return LookupStatus(status.error_message());
@@ -167,7 +167,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
   void Compute(OpKernelContext* ctx) override {
     const Tensor* input_values;
     OP_REQUIRES_OK(ctx, ctx->input("input_values", &input_values));
-    const auto& values_vec = input_values->flat<string>();
+    const auto& values_vec = input_values->flat<tstring>();
 
     lookup::LookupInterface* lookup_table;
     OP_REQUIRES_OK(ctx,
@@ -203,7 +203,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
     OP_REQUIRES_OK(ctx, ctx->allocate_output("output_values",
                                              TensorShape(output_subwords_shape),
                                              &output_values));
-    auto output_values_vec = output_values->vec<string>();
+    auto output_values_vec = output_values->vec<tstring>();
 
     Tensor* output_row_lengths;
     OP_REQUIRES_OK(ctx,
