@@ -9,7 +9,7 @@ welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CO
 ## Introduction
 
 TensorFlow Text provides a collection of text related classes and ops ready to
-use with TensorFlow. The library can perform the preprocessing regularly
+use with TensorFlow 2.0. The library can perform the preprocessing regularly
 required by text-based models, and includes other features useful for sequence
 modeling not provided by core TensorFlow.
 
@@ -30,7 +30,7 @@ tf.enable_eager_execution()
 
 ## Unicode
 
-Most ops expect that the strings are in UTF-8. If your using a different
+Most ops expect that the strings are in UTF-8. If you're using a different
 encoding, you can use the core tensorflow transcode op to transcode into UTF-8.
 You can also use the same op to coerce your string to structurally valid UTF-8
 if your input could be invalid.
@@ -247,4 +247,12 @@ print(bigrams.to_list())
 
 ```sh
 [['Everything not', 'not saved', 'saved will', 'will be', 'be lost.'], []]
+```
+
+## Installation
+
+### Install using PIP
+
+```bash
+pip install -U tensorflow-text
 ```

@@ -21,8 +21,9 @@ Returns a sliding window of data with a specified width.
 from __future__ import absolute_import
 from __future__ import print_function
 
-import tensorflow as tf
 from tensorflow.python.framework import errors
+from tensorflow.python.framework import ops
+from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 
 
@@ -127,7 +128,7 @@ def sliding_window(data, width, axis=-1, name=None):
     Shape: (2, 5, 3) -> (2, 4, 2, 3)
     ```
   """
-  with tf.name_scope(name, "SlidingWindow", [data, axis]):
+  with ops.name_scope(name, "SlidingWindow", [data, axis]):
     data = ragged_tensor.convert_to_tensor_or_ragged_tensor(data, name="data")
 
     if not isinstance(axis, int):
@@ -156,4 +157,4 @@ def sliding_window(data, width, axis=-1, name=None):
 
     # Stack the slices.
     stack_axis = axis + 1 if axis >= 0 else axis
-    return tf.stack(slices, stack_axis)
+    return array_ops.stack(slices, stack_axis)

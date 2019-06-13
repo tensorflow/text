@@ -30,12 +30,13 @@ from tensorflow.python.platform import test
 from tensorflow_text.python.ops import pointer_ops
 
 
-def _MakeTestTensor(shape, prefix='v'):
+def _MakeTestTensor(shape, prefix=b'v'):
   """Constructs a string tensor with the specified shape, for testing."""
   if not shape:
     return prefix
   return [
-      _MakeTestTensor(shape[1:], '%s%s' % (prefix, i)) for i in range(shape[0])
+      _MakeTestTensor(shape[1:], b'%s%s' % (prefix, ('%s' % i).encode('ascii')))
+      for i in range(shape[0])
   ]
 
 
@@ -46,14 +47,14 @@ class GatherWithDefaultOpTest(test_util.TensorFlowTestCase,
   def testDocStringExample(self):
     gathered = pointer_ops.gather_with_default(['a', 'b', 'c', 'd'],
                                                [2, 0, -1, 2, -1], '_')
-    self.assertAllEqual(gathered, ['c', 'a', '_', 'c', '_'])
+    self.assertAllEqual(gathered, [b'c', b'a', b'_', b'c', b'_'])
 
   @parameterized.parameters(
-      (_MakeTestTensor([8]), -1, '_'),
-      (_MakeTestTensor([8]), 0, '_'),
-      (_MakeTestTensor([8]), 1, '_'),
-      (_MakeTestTensor([8]), 6, '_'),
-      (_MakeTestTensor([8]), 7, '_'),
+      (_MakeTestTensor([8]), -1, b'_'),
+      (_MakeTestTensor([8]), 0, b'_'),
+      (_MakeTestTensor([8]), 1, b'_'),
+      (_MakeTestTensor([8]), 6, b'_'),
+      (_MakeTestTensor([8]), 7, b'_'),
   )
   def testScalarIndicesWith1DParams(self, params, indices, default):
     indices_t = constant_op.constant(indices, dtype=dtypes.int32)
@@ -68,10 +69,10 @@ class GatherWithDefaultOpTest(test_util.TensorFlowTestCase,
       self.assertAllEqual(gathered, array_ops.gather(params_t, indices_t))
 
   @parameterized.parameters(
-      (_MakeTestTensor([3, 2]), -1, ['_', '_']),
-      (_MakeTestTensor([3, 2]), 0, ['_', '_']),
-      (_MakeTestTensor([3, 2]), 1, ['_', '_']),
-      (_MakeTestTensor([3, 2]), 2, ['_', '_']),
+      (_MakeTestTensor([3, 2]), -1, [b'_', b'_']),
+      (_MakeTestTensor([3, 2]), 0, [b'_', b'_']),
+      (_MakeTestTensor([3, 2]), 1, [b'_', b'_']),
+      (_MakeTestTensor([3, 2]), 2, [b'_', b'_']),
   )
   def testScalarIndicesWith2DParams(self, params, indices, default):
     indices_t = constant_op.constant(indices, dtype=dtypes.int32)
@@ -148,9 +149,9 @@ class GatherWithDefaultOpTest(test_util.TensorFlowTestCase,
               ['c0', 'c1', 'c2', 'c3', 'c4']]  # pyformat: disable
     indices = [2, 0, -1, 4, -1]
     gathered = pointer_ops.gather_with_default(params, indices, '__', axis=1)
-    expected = [['a2', 'a0', '__', 'a4', '__'],
-                ['b2', 'b0', '__', 'b4', '__'],
-                ['c2', 'c0', '__', 'c4', '__']]  # pyformat: disable
+    expected = [[b'a2', b'a0', b'__', b'a4', b'__'],
+                [b'b2', b'b0', b'__', b'b4', b'__'],
+                [b'c2', b'c0', b'__', b'c4', b'__']]  # pyformat: disable
     self.assertAllEqual(gathered, expected)
 
   def testNegativeAxis(self):
@@ -163,33 +164,39 @@ class GatherWithDefaultOpTest(test_util.TensorFlowTestCase,
         params_1d, indices, '__', axis=0)
     gathered1b = pointer_ops.gather_with_default(
         params_1d, indices, '__', axis=-1)
-    expected1 = ['v2', 'v0', '__', 'v1', '__']
+    expected1 = [b'v2', b'v0', b'__', b'v1', b'__']
 
     gathered2a = pointer_ops.gather_with_default(
         params_2d, indices, ['__', '__', '__'], axis=0)
     gathered2b = pointer_ops.gather_with_default(
         params_2d, indices, ['__', '__', '__'], axis=-2)
-    expected2 = [['v20', 'v21', 'v22'],
-                 ['v00', 'v01', 'v02'],
-                 ['__', '__', '__'],
-                 ['v10', 'v11', 'v12'],
-                 ['__', '__', '__']]  # pyformat: disable
+    expected2 = [[b'v20', b'v21', b'v22'],
+                 [b'v00', b'v01', b'v02'],
+                 [b'__', b'__', b'__'],
+                 [b'v10', b'v11', b'v12'],
+                 [b'__', b'__', b'__']]  # pyformat: disable
 
     gathered3a = pointer_ops.gather_with_default(
         params_2d, indices, '__', axis=1)
     gathered3b = pointer_ops.gather_with_default(
         params_2d, indices, '__', axis=-1)
-    expected3 = [['v02', 'v00', '__', 'v01', '__'],
-                 ['v12', 'v10', '__', 'v11', '__'],
-                 ['v22', 'v20', '__', 'v21', '__']]  # pyformat: disable
+    expected3 = [[b'v02', b'v00', b'__', b'v01', b'__'],
+                 [b'v12', b'v10', b'__', b'v11', b'__'],
+                 [b'v22', b'v20', b'__', b'v21', b'__']]  # pyformat: disable
 
     gathered4a = pointer_ops.gather_with_default(
         params_3d, indices, '__', axis=2)
     gathered4b = pointer_ops.gather_with_default(
         params_3d, indices, '__', axis=-1)
-    expected4 = [[
-        ['v%s%s2' % (i, j), 'v%s%s0' % (i, j), '__', 'v%s%s1' % (i, j), '__']
-        for j in range(3)] for i in range(3)]  # pyformat: disable
+    expected4 = [[[b'v002', b'v000', b'__', b'v001', b'__'],
+                  [b'v012', b'v010', b'__', b'v011', b'__'],
+                  [b'v022', b'v020', b'__', b'v021', b'__']],
+                 [[b'v102', b'v100', b'__', b'v101', b'__'],
+                  [b'v112', b'v110', b'__', b'v111', b'__'],
+                  [b'v122', b'v120', b'__', b'v121', b'__']],
+                 [[b'v202', b'v200', b'__', b'v201', b'__'],
+                  [b'v212', b'v210', b'__', b'v211', b'__'],
+                  [b'v222', b'v220', b'__', b'v221', b'__']]]
 
     self.assertAllEqual(gathered1a, expected1)
     self.assertAllEqual(gathered1b, expected1)

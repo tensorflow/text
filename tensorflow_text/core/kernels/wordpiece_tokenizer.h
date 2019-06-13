@@ -16,8 +16,8 @@
 #define TENSORFLOW_TEXT_CORE_KERNELS_WORDPIECE_TOKENIZER_H_
 
 #include <map>
-#include "third_party/tensorflow/core/framework/lookup_interface.h"
-#include "third_party/tensorflow/core/lib/core/status.h"
+#include "tensorflow/core/framework/lookup_interface.h"
+#include "tensorflow/core/lib/core/status.h"
 
 namespace tensorflow {
 namespace text {

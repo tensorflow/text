@@ -17,14 +17,13 @@
 
 from __future__ import absolute_import
 from __future__ import division
-from __future__ import google_type_annotations
 from __future__ import print_function
 
 import abc
-from tensorflow.python.module.module import Module
 
 
-class Tokenizer(Module):
+# TODO(broken): Have this extend Module when it becomes public
+class Tokenizer():
   """Base class (abstract class) for all tokenizers."""
 
   __metaclass__ = abc.ABCMeta

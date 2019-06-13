@@ -20,13 +20,13 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-import tensorflow as tf
-import tensorflow_text as tftext
 
 from tensorflow.python.framework import test_util
+from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
 from tensorflow_text.python.numpy import viterbi_decode
+from tensorflow_text.python.ops import viterbi_constrained_sequence_op as sequence_op
 
 
 # TODO(b/122968457): Refactor this test logic.
@@ -64,7 +64,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.viterbi_constrained_sequence(
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -105,7 +105,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.viterbi_constrained_sequence(
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -143,7 +143,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.viterbi_constrained_sequence(
+    single_sequence_op = sequence_op.viterbi_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -181,7 +181,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.viterbi_constrained_sequence(
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -222,7 +222,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.viterbi_constrained_sequence(
+    single_sequence_op = sequence_op.viterbi_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -242,7 +242,8 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
                                    [ 3.0, -3.0,  4.0, -4.0, 0.0],
                                    [ 5.0,  1.0, 10.0,  1.0, 1.0],
                                    [-7.0,  7.0, -8.0,  8.0, 0.0],
-                                   [ 0.0,  1.0,  2.0,  3.0, 0.0]], dtype=np.float32)
+                                   [ 0.0,  1.0,  2.0,  3.0, 0.0]],
+                                  dtype=np.float32)
 
     allowed_transitions = np.array([[True,  True,  True,  True,  True],
                                     [True,  True,  True,  True,  True],
@@ -262,7 +263,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.viterbi_constrained_sequence(
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -300,7 +301,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.viterbi_constrained_sequence(
+    single_sequence_op = sequence_op.viterbi_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -338,7 +339,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.viterbi_constrained_sequence(
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -376,7 +377,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.viterbi_constrained_sequence(
+    single_sequence_op = sequence_op.viterbi_constrained_sequence(
         single_input, [2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -414,7 +415,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.viterbi_constrained_sequence(
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input, [2, 2, 2],
         allowed_transitions=allowed_transitions,
         transition_weights=transition_weights,
@@ -447,7 +448,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
     # Test a single-item batch.
     single_input = np.array([scores], dtype=np.float32)
-    single_sequence_op = tftext.viterbi_constrained_sequence(
+    single_sequence_op = sequence_op.viterbi_constrained_sequence(
         single_input, [2],
         transition_weights=transition_weights,
         use_log_space=use_log_space,
@@ -479,7 +480,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.viterbi_constrained_sequence(
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input, [2, 2, 2],
         transition_weights=transition_weights,
         use_log_space=use_log_space,
@@ -512,7 +513,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores, scores, scores], dtype=np.float32)
 
-    multiple_sequence_op = tftext.viterbi_constrained_sequence(
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input,
         transition_weights=transition_weights,
         use_log_space=use_log_space,
@@ -546,7 +547,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
     # Test a multi-item batch.
     multiple_input = np.array([scores], dtype=np.float32)
 
-    single_sequence_op = tftext.viterbi_constrained_sequence(
+    single_sequence_op = sequence_op.viterbi_constrained_sequence(
         multiple_input,
         transition_weights=transition_weights,
         use_log_space=use_log_space,
@@ -561,7 +562,7 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
                         [13.0, 12.0, 11.0, 10.0]])
     input_2 = np.array([[10.0, 12.0, 6.0, 4.0], [13.0, 12.0, 11.0, 10.0]])
     # TODO(b/122968457): Extend RT support to lists-of-ndarrays.
-    scores = tf.ragged.constant([input_1.tolist(), input_2.tolist()])
+    scores = ragged_factory_ops.constant([input_1.tolist(), input_2.tolist()])
     # pyformat: disable
     # pylint: disable=bad-whitespace
     # pylint: disable=bad-continuation
@@ -583,10 +584,10 @@ class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         transition_weights,
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
-    expected_sequence = tf.ragged.constant([sequence_1, sequence_2])
+    expected_sequence = ragged_factory_ops.constant([sequence_1, sequence_2])
 
     # Test a ragged batch
-    single_sequence_op = tftext.viterbi_constrained_sequence(
+    single_sequence_op = sequence_op.viterbi_constrained_sequence(
         scores,
         transition_weights=transition_weights,
         use_log_space=use_log_space,

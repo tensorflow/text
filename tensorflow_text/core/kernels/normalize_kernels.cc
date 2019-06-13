@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
 #include <locale>
+#include <string>
 
-#include "third_party/absl/strings/str_cat.h"
-#include "third_party/icu/include/unicode/errorcode.h"
-#include "third_party/icu/include/unicode/normalizer2.h"
-#include "third_party/icu/include/unicode/utypes.h"
-#include "third_party/tensorflow/core/framework/op_kernel.h"
+#include "absl/strings/ascii.h"
+#include "absl/strings/str_cat.h"
+#include "icu4c/source/common/unicode/errorcode.h"
+#include "icu4c/source/common/unicode/normalizer2.h"
+#include "icu4c/source/common/unicode/utypes.h"
+#include "tensorflow/core/framework/op_kernel.h"
 
 namespace tensorflow {
 namespace text {
@@ -43,9 +44,9 @@ class CaseFoldUTF8Op : public tensorflow::OpKernel {
     icu::ErrorCode icu_error;
     const icu::Normalizer2* nfkc_cf = icu::Normalizer2::getNFKCCasefoldInstance(
         icu_error);
-    OP_REQUIRES(
-        context, icu_error.isSuccess(),
-        errors::Internal("Could not retrieve ICU NFKC_CaseFold normalizer"));
+    OP_REQUIRES(context, icu_error.isSuccess(), errors::Internal(
+        absl::StrCat(icu_error.errorName(),
+                     ": Could not retrieve ICU NFKC_CaseFold normalizer")));
 
     for (int64 i = 0; i < input_vec.size(); ++i) {
       string output_text;
@@ -93,20 +94,24 @@ class NormalizeUTF8Op : public tensorflow::OpKernel {
     const icu::Normalizer2* normalizer = nullptr;
     if (normalization_form_ == "NFKC") {
       normalizer = icu::Normalizer2::getNFKCInstance(icu_error);
-      OP_REQUIRES(context, icu_error.isSuccess(),
-                  errors::Internal("Could not retrieve ICU NFKC normalizer"));
+      OP_REQUIRES(context, icu_error.isSuccess(), errors::Internal(
+          absl::StrCat(icu_error.errorName(),
+                       ": Could not retrieve ICU NFKC normalizer")));
     } else if (normalization_form_ == "NFC") {
       normalizer = icu::Normalizer2::getNFCInstance(icu_error);
-      OP_REQUIRES(context, icu_error.isSuccess(),
-                  errors::Internal("Could not retrieve ICU NFC normalizer"));
+      OP_REQUIRES(context, icu_error.isSuccess(), errors::Internal(
+          absl::StrCat(icu_error.errorName(),
+                       ": Could not retrieve ICU NFC normalizer")));
     } else if (normalization_form_ == "NFD") {
       normalizer = icu::Normalizer2::getNFDInstance(icu_error);
-      OP_REQUIRES(context, icu_error.isSuccess(),
-                  errors::Internal("Could not retrieve ICU NFD normalizer"));
+      OP_REQUIRES(context, icu_error.isSuccess(), errors::Internal(
+          absl::StrCat(icu_error.errorName(),
+                       ": Could not retrieve ICU NFD normalizer")));
     } else if (normalization_form_ == "NFKD") {
       normalizer = icu::Normalizer2::getNFKDInstance(icu_error);
-      OP_REQUIRES(context, icu_error.isSuccess(),
-                  errors::Internal("Could not retrieve ICU NFKD normalizer"));
+      OP_REQUIRES(context, icu_error.isSuccess(), errors::Internal(
+          absl::StrCat(icu_error.errorName(),
+                       ": Could not retrieve ICU NFKd normalizer")));
     } else {
       OP_REQUIRES(
           context, false,
@@ -119,7 +124,8 @@ class NormalizeUTF8Op : public tensorflow::OpKernel {
       icu::StringByteSink<string> byte_sink(&output_text);
       normalizer->normalizeUTF8(0, input_vec(i), byte_sink, nullptr, icu_error);
       OP_REQUIRES(context, !U_FAILURE(icu_error), errors::Internal(
-          "Could not normalize input string: " + input_vec(i)));
+          absl::StrCat(icu_error.errorName(),
+                       ": Could not normalize input string: ", input_vec(i))));
       output_vec(i) = output_text;
     }
   }

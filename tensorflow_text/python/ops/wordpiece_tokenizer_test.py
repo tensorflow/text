@@ -19,9 +19,15 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 from absl.testing import parameterized
-import tensorflow as tf
+from tensorflow.python.framework import dtypes
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import lookup_ops
+from tensorflow.python.ops import math_ops
+from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_test_util
+from tensorflow.python.platform import test
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
 
 
@@ -30,13 +36,14 @@ def _Utf8(char):
 
 
 def _CreateTable(vocab, num_oov=1):
-  init = tf.lookup.KeyValueTensorInitializer(
+  init = lookup_ops.KeyValueTensorInitializer(
       vocab,
-      tf.range(tf.size(vocab, out_type=tf.int64), dtype=tf.int64),
-      key_dtype=tf.string,
-      value_dtype=tf.int64)
-  return tf.lookup.StaticVocabularyTable(
-      init, num_oov, lookup_key_dtype=tf.string)
+      math_ops.range(
+          array_ops.size(vocab, out_type=dtypes.int64), dtype=dtypes.int64),
+      key_dtype=dtypes.string,
+      value_dtype=dtypes.int64)
+  return lookup_ops.StaticVocabularyTableV1(
+      init, num_oov, lookup_key_dtype=dtypes.string)
 
 
 _ENGLISH_VOCAB = [
@@ -126,6 +133,15 @@ _RUSSIAN_VOCAB = [
     _Utf8(u"##иха"),
 ]
 
+_DEATH_VOCAB = [
+    _Utf8(u"क"),
+    _Utf8(u"##र"),
+    _Utf8(u"##े"),
+    _Utf8(u"##ं"),
+    "##*",
+    _Utf8(u"##👇"),
+]
+
 
 def _GetTokensFromWordpieceOffsets(tokens, begin_indices, end_indices):
   tokens = tokens.to_list()
@@ -179,7 +195,6 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                               ["[UNK]"]]],
           vocab=_ENGLISH_VOCAB,
       ),
-
       # Basic case w/o unknown token
       dict(
           tokens=[["don't", "tread", "cantfindme", "treadcantfindme"]],
@@ -191,7 +206,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
       # Basic case w/ int id lookup
       dict(
           tokens=[["don't", "tread", "cantfindme", "treadcantfindme"]],
-          token_out_type=tf.int64,
+          token_out_type=dtypes.int64,
           expected_subwords=[[[0, 1, 2], [3], [21], [21]]],
           vocab=_ENGLISH_VOCAB,
       ),
@@ -249,12 +264,10 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
               ["don't", "treadness"],
           ],
           expected_subwords=[
-              [[_Utf8(u"貿")], [_Utf8(u"易")], [_Utf8(u"戰")],
-               [_Utf8(u"最")], [_Utf8(u"大")], [_Utf8(u"受")],
-               [_Utf8(u"益")], [_Utf8(u"者")]],
-              [[_Utf8(u"越")], [_Utf8(u"南")], [_Utf8(u"總")],
-               [_Utf8(u"理")], [_Utf8(u"阮")], [_Utf8(u"春")],
-               [_Utf8(u"福")]],
+              [[_Utf8(u"貿")], [_Utf8(u"易")], [_Utf8(u"戰")], [_Utf8(u"最")],
+               [_Utf8(u"大")], [_Utf8(u"受")], [_Utf8(u"益")], [_Utf8(u"者")]],
+              [[_Utf8(u"越")], [_Utf8(u"南")], [_Utf8(u"總")], [_Utf8(u"理")],
+               [_Utf8(u"阮")], [_Utf8(u"春")], [_Utf8(u"福")]],
               [["don", "##'", "##t"], ["tread", "##ness"]],
           ],
           vocab=_MIXED_LANG_VOCAB,
@@ -270,6 +283,21 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
           expected_start=[[[0, 3, 4], [0]]],
           expected_limit=[[[3, 4, 5], [5]]],
       ),
+      # Test the token of death usecase.
+      dict(
+          tokens=[[_Utf8(u"करें*👇👇")]],
+          token_out_type=dtypes.string,
+          expected_subwords=[[[
+              _Utf8(u"क"),
+              _Utf8(u"##र"),
+              _Utf8(u"##े"),
+              _Utf8(u"##ं"), "##*",
+              _Utf8(u"##👇"),
+              _Utf8(u"##👇")
+          ]]],
+          vocab=_DEATH_VOCAB,
+          max_bytes_per_word=40,
+      ),
   ])
   def testWordPieceOpAndVerifyOffsets(self,
                                       tokens,
@@ -279,14 +307,17 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                                       expected_limit=None,
                                       use_unknown_token=True,
                                       unknown_token="[UNK]",
-                                      token_out_type=tf.string,
+                                      token_out_type=dtypes.string,
                                       max_bytes_per_word=100):
-    tokens = tf.ragged.constant(tokens)
+    tokens = ragged_factory_ops.constant(tokens)
     vocab_table = _CreateTable(vocab)
     self.evaluate(vocab_table.initializer)
     tokenizer = WordpieceTokenizer(
-        vocab_table, unknown_token=unknown_token, token_out_type=token_out_type,
-        max_bytes_per_word=max_bytes_per_word)
+        vocab_table,
+        unknown_token=unknown_token,
+        token_out_type=token_out_type,
+        max_bytes_per_word=max_bytes_per_word,
+    )
     subwords, begin, end = tokenizer.tokenize_with_offsets(tokens)
     self.assertRaggedEqual(subwords, expected_subwords)
 
@@ -323,9 +354,9 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                                             expected_start=None,
                                             expected_limit=None,
                                             use_unknown_token=True,
-                                            token_out_type=tf.string):
-    for row_splits_dtype in (tf.int32, tf.int64):
-      ragged_tokens = tf.ragged.constant(
+                                            token_out_type=dtypes.string):
+    for row_splits_dtype in (dtypes.int32, dtypes.int64):
+      ragged_tokens = ragged_factory_ops.constant(
           tokens, row_splits_dtype=row_splits_dtype)
       vocab_table = _CreateTable(vocab)
       self.evaluate(vocab_table.initializer)
@@ -335,7 +366,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def testWordPieceOpWithIdReturned(self):
     """Let the table determine how to do a lookup on unknown tokens."""
-    tokens = tf.ragged.constant(
+    tokens = ragged_factory_ops.constant(
         [["don't", "tread", "cantfindme", "treadcantfindme"]])
     vocab_table = _CreateTable(
         _ENGLISH_VOCAB,
@@ -343,7 +374,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
     )
     self.evaluate(vocab_table.initializer)
     tokenizer = WordpieceTokenizer(
-        vocab_table, unknown_token=None, token_out_type=tf.int64)
+        vocab_table, unknown_token=None, token_out_type=dtypes.int64)
     subwords, _, _ = tokenizer.tokenize_with_offsets(tokens)
 
     self.assertRaggedEqual(subwords, [[[0, 1, 2], [3], [96], [46]]])
@@ -399,7 +430,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
           vocab=_ENGLISH_VOCAB,
       ),
       dict(
-          tokens=tf.ragged.constant_value(
+          tokens=ragged_factory_ops.constant_value(
               [[["don't"], ["treadness"], ["whatchamacallit?"]]],
               ragged_rank=1),
           expected_subwords=[[[["don", "##'", "##t"]], [["tread", "##ness"]],
@@ -414,7 +445,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                   expected_start=None,
                   expected_limit=None,
                   use_unknown_token=True,
-                  token_out_type=tf.string):
+                  token_out_type=dtypes.string):
     vocab_table = _CreateTable(vocab)
     self.evaluate(vocab_table.initializer)
     tokenizer = WordpieceTokenizer(vocab_table, token_out_type=token_out_type)
@@ -423,4 +454,4 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
 
 
 if __name__ == "__main__":
-  tf.test.main()
+  test.main()

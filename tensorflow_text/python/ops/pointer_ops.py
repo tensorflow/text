@@ -20,7 +20,6 @@ from __future__ import division
 from __future__ import print_function
 
 import functools
-import tensorflow as tf
 
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
@@ -221,12 +220,12 @@ def span_overlaps(source_start,
         [t.shape.ndims for t in span_tensors if t.shape.ndims is not None])
     assert len(ndims) <= 1  # because of assert_same_rank statements above.
 
-    if all(not isinstance(t, tf.RaggedTensor) for t in span_tensors):
+    if all(not isinstance(t, ragged_tensor.RaggedTensor) for t in span_tensors):
       return _span_overlaps(source_start, source_limit, target_start,
                             target_limit, contains, contained_by,
                             partial_overlap)
 
-    elif all(isinstance(t, tf.RaggedTensor) for t in span_tensors):
+    elif all(isinstance(t, ragged_tensor.RaggedTensor) for t in span_tensors):
       if not ndims:
         raise ValueError('For ragged inputs, the shape.ndims of at least one '
                          'span tensor must be statically known.')
@@ -245,7 +244,7 @@ def span_overlaps(source_start,
             for t in span_tensors[1:]
         ]
         with ops.control_dependencies(shape_checks):
-          return tf.RaggedTensor.from_row_splits(
+          return ragged_tensor.RaggedTensor.from_row_splits(
               span_overlaps(source_start.values, source_limit.values,
                             target_start.values, target_limit.values, contains,
                             contained_by, partial_overlap), row_splits)
@@ -357,10 +356,10 @@ def _broadcast_ragged_targets_for_overlap(target_start, target_limit,
   """
   source_batch_ids = segment_id_ops.row_splits_to_segment_ids(source_splits)
 
-  target_start = tf.RaggedTensor.from_value_rowids(
+  target_start = ragged_tensor.RaggedTensor.from_value_rowids(
       ragged_gather_ops.gather(target_start, source_batch_ids),
       source_batch_ids)
-  target_limit = tf.RaggedTensor.from_value_rowids(
+  target_limit = ragged_tensor.RaggedTensor.from_value_rowids(
       ragged_gather_ops.gather(target_limit, source_batch_ids),
       source_batch_ids)
   return (target_start, target_limit)
@@ -401,10 +400,10 @@ def _broadcast_ragged_sources_for_overlap(source_start, source_limit,
   # Indices for gathering source indices.
   source_indices = segment_id_ops.row_splits_to_segment_ids(inner_splits)
 
-  source_start = tf.RaggedTensor.from_nested_row_splits(
+  source_start = ragged_tensor.RaggedTensor.from_nested_row_splits(
       array_ops.gather(source_start.values, source_indices),
       [source_splits, inner_splits])
-  source_limit = tf.RaggedTensor.from_nested_row_splits(
+  source_limit = ragged_tensor.RaggedTensor.from_nested_row_splits(
       array_ops.gather(source_limit.values, source_indices),
       [source_splits, inner_splits])
 
@@ -562,30 +561,30 @@ def _multivalent_span_alignment(overlaps):
 
   # If there are multiple batch dimensions, then flatten them and recurse.
   if overlaps_ndims > 3:
-    if not isinstance(overlaps, tf.RaggedTensor):
-      overlaps = tf.RaggedTensor.from_tensor(
+    if not isinstance(overlaps, ragged_tensor.RaggedTensor):
+      overlaps = ragged_tensor.RaggedTensor.from_tensor(
           overlaps, ragged_rank=overlaps.shape.ndims - 3)
     return overlaps.with_values(_multivalent_span_alignment(overlaps.values))
 
   elif overlaps_ndims == 2:  # no batch dimension
-    assert not isinstance(overlaps, tf.RaggedTensor)
+    assert not isinstance(overlaps, ragged_tensor.RaggedTensor)
     overlap_positions = array_ops.where(overlaps)
-    return tf.RaggedTensor.from_value_rowids(
+    return ragged_tensor.RaggedTensor.from_value_rowids(
         values=overlap_positions[:, 1],
         value_rowids=overlap_positions[:, 0],
         nrows=array_ops.shape(overlaps, out_type=dtypes.int64)[0])
 
   else:  # batch dimension
-    if not isinstance(overlaps, tf.RaggedTensor):
-      overlaps = tf.RaggedTensor.from_tensor(overlaps, ragged_rank=1)
+    if not isinstance(overlaps, ragged_tensor.RaggedTensor):
+      overlaps = ragged_tensor.RaggedTensor.from_tensor(overlaps, ragged_rank=1)
     overlap_positions = ragged_where_op.where(overlaps.values)
-    if isinstance(overlaps.values, tf.RaggedTensor):
+    if isinstance(overlaps.values, ragged_tensor.RaggedTensor):
       overlaps_values_nrows = overlaps.values.nrows()
     else:
       overlaps_values_nrows = array_ops.shape(overlaps.values,
                                               out_type=dtypes.int64)[0]
     return overlaps.with_values(
-        tf.RaggedTensor.from_value_rowids(
+        ragged_tensor.RaggedTensor.from_value_rowids(
             values=overlap_positions[:, 1],
             value_rowids=overlap_positions[:, 0],
             nrows=overlaps_values_nrows))

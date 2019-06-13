@@ -25,8 +25,12 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
-from tensorflow_text import gen_wordpiece_tokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
+
+# pylint: disable=g-bad-import-order
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_wordpiece_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_wordpiece_tokenizer.so'))
 
 
 class WordpieceTokenizer(TokenizerWithOffsets):
@@ -62,7 +66,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
     self._suffix_indicator = suffix_indicator
     self._max_bytes_per_word = max_bytes_per_word
     self._token_out_type = token_out_type
-    self._unknown_token = unknown_token if unknown_token else ''
+    self._unknown_token = unknown_token if unknown_token else '[UNK]'
     self._use_unknown_token = True if unknown_token else False
 
   def tokenize(self, input):  # pylint: disable=redefined-builtin

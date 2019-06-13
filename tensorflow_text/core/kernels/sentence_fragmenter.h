@@ -32,8 +32,8 @@
 #include <string>
 #include <vector>
 
-#include "third_party/tensorflow/core/lib/core/status.h"
-#include "third_party/tensorflow_text/core/kernels/sentence_breaking_utils.h"
+#include "tensorflow/core/lib/core/status.h"
+#include "tensorflow_text/core/kernels/sentence_breaking_utils.h"
 
 namespace tensorflow {
 namespace text {
@@ -183,7 +183,7 @@ class SentenceFragmenter {
   const Document *document_ = nullptr;  // not owned
   UnicodeUtil *util_ = nullptr;         // not owned
 
-  DISALLOW_COPY_AND_ASSIGN(SentenceFragmenter);
+  // TODO(thuang513): DISALLOW_COPY_AND_ASSIGN(SentenceFragmenter);
 };
 
 }  // namespace text

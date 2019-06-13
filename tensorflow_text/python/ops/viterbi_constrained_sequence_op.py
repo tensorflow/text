@@ -25,12 +25,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import tensorflow as tf
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
+from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 
-from tensorflow_text import gen_constrained_sequence_op
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_constrained_sequence_op = load_library.load_op_library(resource_loader.get_path_to_datafile('_constrained_sequence_op.so'))
 
 
 def viterbi_constrained_sequence(scores,
@@ -139,7 +141,7 @@ def viterbi_constrained_sequence(scores,
     score_data = ragged_tensor.convert_to_tensor_or_ragged_tensor(
         scores, name="score_data")
 
-    if isinstance(score_data, tf.RaggedTensor):
+    if isinstance(score_data, ragged_tensor.RaggedTensor):
       # TODO(momernick): Extend the generated op to support ragged tensors.
       dense_scores = score_data.to_tensor(default_value=0)
       sequence_lengths = score_data.row_lengths(axis=1)
@@ -149,10 +151,10 @@ def viterbi_constrained_sequence(scores,
       if sequence_length is not None:
         sequence_lengths = ops.convert_to_tensor(sequence_length)
       else:
-        batch_size = tf.shape(dense_scores)[0]
-        dense_length = tf.shape(dense_scores)[-2]
-        sequence_lengths = tf.ones([batch_size],
-                                   dtype=dtypes.int32) * dense_length
+        batch_size = array_ops.shape(dense_scores)[0]
+        dense_length = array_ops.shape(dense_scores)[-2]
+        sequence_lengths = array_ops.ones([batch_size],
+                                          dtype=dtypes.int32) * dense_length
 
     transition_weights = ops.convert_to_tensor(transition_weights)
     allowed_transitions = ops.convert_to_tensor(
@@ -167,5 +169,5 @@ def viterbi_constrained_sequence(scores,
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
 
-    return tf.RaggedTensor.from_row_splits(values=output,
-                                           row_splits=output_splits)
+    return ragged_tensor.RaggedTensor.from_row_splits(
+        values=output, row_splits=output_splits)

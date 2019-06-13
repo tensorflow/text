@@ -21,8 +21,12 @@ from __future__ import print_function
 
 import enum
 
-import tensorflow as tf
 from tensorflow.python.framework import errors
+from tensorflow.python.framework import ops
+from tensorflow.python.ops import math_ops
+from tensorflow.python.ops import string_ops
+from tensorflow.python.ops.ragged import ragged_functional_ops
+from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow_text.python.ops.sliding_window_op import sliding_window
 
 
@@ -82,7 +86,7 @@ def ngrams(data,
       or if `reduction_type` is STRING_JOIN and `axis` is not -1.
   """
 
-  with tf.name_scope(name, "NGrams", [data, width]):
+  with ops.name_scope(name, "NGrams", [data, width]):
     if reduction_type is None:
       raise errors.InvalidArgumentError(None, None,
                                         "reduction_type must be specified.")
@@ -107,16 +111,16 @@ def ngrams(data,
     # Ragged reduction ops work on both Tensor and RaggedTensor, so we can
     # use them here regardless of the type of tensor in 'windowed_data'.
     if reduction_type is Reduction.SUM:
-      return tf.reduce_sum(windowed_data, reduction_axis)
+      return math_ops.reduce_sum(windowed_data, reduction_axis)
     elif reduction_type is Reduction.MEAN:
-      return tf.reduce_mean(windowed_data, reduction_axis)
+      return math_ops.reduce_mean(windowed_data, reduction_axis)
     elif reduction_type is Reduction.STRING_JOIN:
-      if isinstance(data, tf.RaggedTensor):
-        return tf.ragged.map_flat_values(
-            tf.reduce_join,
+      if isinstance(data, ragged_tensor.RaggedTensor):
+        return ragged_functional_ops.map_flat_values(
+            string_ops.reduce_join,
             windowed_data,
             axis=axis,
             separator=string_separator)
       else:
-        return tf.reduce_join(
+        return string_ops.reduce_join(
             windowed_data, axis=axis, separator=string_separator)

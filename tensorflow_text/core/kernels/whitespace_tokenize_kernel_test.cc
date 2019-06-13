@@ -16,15 +16,14 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "third_party/tensorflow/core/framework/fake_input.h"
-#include "third_party/tensorflow/core/framework/node_def_builder.h"
-#include "third_party/tensorflow/core/framework/tensor.h"
-#include "third_party/tensorflow/core/framework/tensor_shape.h"
-#include "third_party/tensorflow/core/kernels/ops_testutil.h"
-#include "third_party/tensorflow/core/lib/core/status.h"
-#include "third_party/tensorflow/core/lib/core/status_test_util.h"
-#include "third_party/tensorflow/core/platform/google/integral_types.h"
-#include "third_party/tensorflow_text/core/kernels/text_kernels_test_util.h"
+#include "tensorflow/core/framework/fake_input.h"
+#include "tensorflow/core/framework/node_def_builder.h"
+#include "tensorflow/core/framework/tensor.h"
+#include "tensorflow/core/framework/tensor_shape.h"
+#include "tensorflow/core/kernels/ops_testutil.h"
+#include "tensorflow/core/lib/core/status.h"
+#include "tensorflow/core/lib/core/status_test_util.h"
+#include "tensorflow_text/core/kernels/text_kernels_test_util.h"
 
 namespace tensorflow {
 namespace text {

@@ -14,15 +14,23 @@
 # limitations under the License.
 
 """Tests for sentence_breaking_ops."""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
 from absl.testing import parameterized
-import tensorflow as tf
+
+from tensorflow.python.framework import constant_op
+from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
+from tensorflow.python.ops import string_ops
+from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_map_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged import ragged_test_util
+from tensorflow.python.platform import test
 from tensorflow_text.python.ops import sentence_breaking_ops
 
 
@@ -33,12 +41,13 @@ class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
   def getTokenWord(self, text, token_starts, token_ends):
     def _FindSubstr(input_tensor):
       text, token_start, token_length = input_tensor
-      return tf.strings.substr(text, token_start, token_length)
+      return string_ops.substr(text, token_start, token_length)
 
     token_lengths = token_ends - token_starts
     token_word = ragged_map_ops.map_fn(
         _FindSubstr, (text, token_starts, token_lengths),
-        dtype=ragged_tensor.RaggedTensorType(dtype=tf.string, ragged_rank=1),
+        dtype=ragged_tensor.RaggedTensorType(
+            dtype=dtypes.string, ragged_rank=1),
         infer_shape=False)
     return token_word
 
@@ -55,9 +64,8 @@ class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
         sentence_end.append(len(sentence_string))
       result_start.append(sentence_start)
       result_end.append(sentence_end)
-    return (
-        tf.constant(result_start, dtype=tf.int64),
-        tf.constant(result_end, dtype=tf.int64))
+    return (constant_op.constant(result_start, dtype=dtypes.int64),
+            constant_op.constant(result_end, dtype=dtypes.int64))
 
   @parameterized.parameters([
       # Test acronyms
@@ -98,10 +106,11 @@ class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
       self, text, token_starts, token_ends, token_properties,
       expected_fragment_start, expected_fragment_end,
       expected_fragment_properties, expected_terminal_punc):
-    text = tf.constant(text)
-    token_starts = tf.ragged.constant(token_starts, dtype=tf.int64)
-    token_ends = tf.ragged.constant(token_ends, dtype=tf.int64)
-    token_properties = tf.ragged.constant(token_properties, dtype=tf.int64)
+    text = constant_op.constant(text)
+    token_starts = ragged_factory_ops.constant(token_starts, dtype=dtypes.int64)
+    token_ends = ragged_factory_ops.constant(token_ends, dtype=dtypes.int64)
+    token_properties = ragged_factory_ops.constant(
+        token_properties, dtype=dtypes.int64)
     token_word = self.getTokenWord(text, token_starts, token_ends)
 
     fragments = sentence_breaking_ops.sentence_fragments(
@@ -135,8 +144,9 @@ class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
       expected_fragment_start, expected_fragment_end,
       expected_fragment_properties, expected_terminal_punc):
     token_starts, token_ends = self.getTokenOffsets(token_word)
-    token_properties = tf.constant(token_properties, dtype=tf.int64)
-    token_word = tf.constant(token_word, dtype=tf.string)
+    token_properties = constant_op.constant(
+        token_properties, dtype=dtypes.int64)
+    token_word = constant_op.constant(token_word, dtype=dtypes.string)
 
     fragments = sentence_breaking_ops.sentence_fragments(
         token_word, token_starts, token_ends, token_properties)
@@ -173,15 +183,16 @@ class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
   def testBadInputShapes(
       self, token_word, token_starts, token_ends, token_properties,
       is_ragged=True):
-    constant = tf.ragged.constant if is_ragged else tf.constant
-    token_starts = constant(token_starts, dtype=tf.int64)
-    token_ends = constant(token_ends, dtype=tf.int64)
-    token_properties = tf.ragged.constant(token_properties, dtype=tf.int64)
+    constant = ragged_factory_ops.constant if is_ragged else constant_op.constant
+    token_starts = constant(token_starts, dtype=dtypes.int64)
+    token_ends = constant(token_ends, dtype=dtypes.int64)
+    token_properties = ragged_factory_ops.constant(
+        token_properties, dtype=dtypes.int64)
 
-    with self.assertRaises(tf.errors.InvalidArgumentError):
+    with self.assertRaises(errors.InvalidArgumentError):
       result = sentence_breaking_ops.sentence_fragments(
           token_word, token_starts, token_ends, token_properties)
       _ = self.evaluate(result)
 
 if __name__ == "__main__":
-  tf.test.main()
+  test.main()

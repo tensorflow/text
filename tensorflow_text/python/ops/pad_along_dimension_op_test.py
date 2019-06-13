@@ -20,11 +20,14 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
-import tensorflow as tf  # tf
-import tensorflow_text as text
 
 from tensorflow.python.eager import context
+from tensorflow.python.framework import constant_op
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops.ragged import ragged_factory_ops
+from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import pad_along_dimension_op
@@ -36,14 +39,14 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_pads_along_positive_inner_dimension(self):
     """Test padding along the inner dimension with a positive axis integer."""
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
     axis = 1
     left_pad_value = [0]
     right_pad_value = [9]
-    expected_result = tf.constant([[0, 1, 1, 1, 9], [0, 2, 2, 1, 9],
-                                   [0, 3, 3, 1, 9]])
+    expected_result = constant_op.constant([[0, 1, 1, 1, 9], [0, 2, 2, 1, 9],
+                                            [0, 3, 3, 1, 9]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data,
         axis=axis,
         left_pad=left_pad_value,
@@ -53,14 +56,14 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_pads_along_positive_outer_dimension(self):
     """Test padding along the outer dimension with a positive axis integer."""
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
     axis = 0
     left_pad_value = [[0, 0, 0]]
     right_pad_value = [[9, 9, 9]]
-    expected_result = tf.constant([[0, 0, 0], [1, 1, 1], [2, 2, 1], [3, 3, 1],
-                                   [9, 9, 9]])
+    expected_result = constant_op.constant([[0, 0, 0], [1, 1, 1], [2, 2, 1],
+                                            [3, 3, 1], [9, 9, 9]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data,
         axis=axis,
         left_pad=left_pad_value,
@@ -70,14 +73,14 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_pads_along_negative_inner_dimension(self):
     """Test padding along the inner dimension with a negative axis integer."""
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
     axis = -1
     left_pad_value = [0]
     right_pad_value = [9]
-    expected_result = tf.constant([[0, 1, 1, 1, 9], [0, 2, 2, 1, 9],
-                                   [0, 3, 3, 1, 9]])
+    expected_result = constant_op.constant([[0, 1, 1, 1, 9], [0, 2, 2, 1, 9],
+                                            [0, 3, 3, 1, 9]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data,
         axis=axis,
         left_pad=left_pad_value,
@@ -87,14 +90,14 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_pads_along_negative_outer_dimension(self):
     """Test padding along the outer dimension with a negative axis integer."""
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
     axis = -2
     left_pad_value = [[0, 0, 0]]
     right_pad_value = [[9, 9, 9]]
-    expected_result = tf.constant([[0, 0, 0], [1, 1, 1], [2, 2, 1], [3, 3, 1],
-                                   [9, 9, 9]])
+    expected_result = constant_op.constant([[0, 0, 0], [1, 1, 1], [2, 2, 1],
+                                            [3, 3, 1], [9, 9, 9]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data,
         axis=axis,
         left_pad=left_pad_value,
@@ -104,38 +107,40 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_no_left_padding(self):
     """Test that not specifying a left pad means no left padding."""
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
     axis = 1
     right_pad_value = [9]
-    expected_result = tf.constant([[1, 1, 1, 9], [2, 2, 1, 9], [3, 3, 1, 9]])
+    expected_result = constant_op.constant([[1, 1, 1, 9], [2, 2, 1, 9],
+                                            [3, 3, 1, 9]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data, axis=axis, right_pad=right_pad_value)
 
     self.assertAllEqual(expected_result, padded_result)
 
   def test_no_right_padding(self):
     """Test that not specifying a right pad means no right padding."""
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
     axis = 1
     left_pad_value = [0]
-    expected_result = tf.constant([[0, 1, 1, 1], [0, 2, 2, 1], [0, 3, 3, 1]])
+    expected_result = constant_op.constant([[0, 1, 1, 1], [0, 2, 2, 1],
+                                            [0, 3, 3, 1]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data, axis=axis, left_pad=left_pad_value)
 
     self.assertAllEqual(expected_result, padded_result)
 
   def test_string_padding(self):
     """Test padding using string values."""
-    data = tf.constant([['1', '1', '1'], ['2', '2', '2']])
+    data = constant_op.constant([['1', '1', '1'], ['2', '2', '2']])
     axis = 1
     left_pad_value = ['0']
     right_pad_value = ['9']
-    expected_result = tf.constant([['0', '1', '1', '1', '9'],
-                                   ['0', '2', '2', '2', '9']])
+    expected_result = constant_op.constant([['0', '1', '1', '1', '9'],
+                                            ['0', '2', '2', '2', '9']])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data,
         axis=axis,
         left_pad=left_pad_value,
@@ -145,26 +150,26 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_string_partial_no_padding(self):
     """Test padding using string values but without one padding value."""
-    data = tf.constant([['1', '1', '1'], ['2', '2', '2']])
+    data = constant_op.constant([['1', '1', '1'], ['2', '2', '2']])
     axis = 1
     left_pad_value = ['0', '0']
-    expected_result = tf.constant([['0', '0', '1', '1', '1'],
-                                   ['0', '0', '2', '2', '2']])
+    expected_result = constant_op.constant([['0', '0', '1', '1', '1'],
+                                            ['0', '0', '2', '2', '2']])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data, axis=axis, left_pad=left_pad_value)
 
     self.assertAllEqual(expected_result, padded_result)
 
   def test_float_padding(self):
     """Test padding using float values."""
-    data = tf.constant([[1.0, 1.0, 1.0]])
+    data = constant_op.constant([[1.0, 1.0, 1.0]])
     axis = 1
     left_pad_value = [-3.5]
     right_pad_value = [3.5]
-    expected_result = tf.constant([[-3.5, 1.0, 1.0, 1.0, 3.5]])
+    expected_result = constant_op.constant([[-3.5, 1.0, 1.0, 1.0, 3.5]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data,
         axis=axis,
         left_pad=left_pad_value,
@@ -174,27 +179,27 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_float_partial_no_padding(self):
     """Test padding using float values."""
-    data = tf.constant([[1.0, 1.0, 1.0]])
+    data = constant_op.constant([[1.0, 1.0, 1.0]])
     axis = 1
     right_pad_value = [3.5, 3.5, 3.5]
-    expected_result = tf.constant([[1.0, 1.0, 1.0, 3.5, 3.5, 3.5]])
+    expected_result = constant_op.constant([[1.0, 1.0, 1.0, 3.5, 3.5, 3.5]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data, axis=axis, right_pad=right_pad_value)
 
     self.assertAllEqual(expected_result, padded_result)
 
   def test_padding_tensor_of_unknown_shape(self):
     """Test padding a tensor whose shape is not known at graph building time."""
-    data = tf.placeholder_with_default(
-        tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]]), shape=None)
+    data = array_ops.placeholder_with_default(
+        constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]]), shape=None)
     axis = 1
     left_pad_value = [0]
     right_pad_value = [9]
-    expected_result = tf.constant([[0, 1, 1, 1, 9], [0, 2, 2, 1, 9],
-                                   [0, 3, 3, 1, 9]])
+    expected_result = constant_op.constant([[0, 1, 1, 1, 9], [0, 2, 2, 1, 9],
+                                            [0, 3, 3, 1, 9]])
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data,
         axis=axis,
         left_pad=left_pad_value,
@@ -204,24 +209,24 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def test_no_padding(self):
     """Test padding using string values."""
-    data = tf.constant([['1', '1', '1'], ['2', '2', '2']])
+    data = constant_op.constant([['1', '1', '1'], ['2', '2', '2']])
     axis = 1
     expected_result = data
 
-    padded_result = text.pad_along_dimension(
+    padded_result = pad_along_dimension_op.pad_along_dimension(
         data=data, axis=axis, left_pad=None, right_pad=None)
 
     self.assertAllEqual(expected_result, padded_result)
 
   def test_invalid_axis(self):
-    data = tf.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
+    data = constant_op.constant([[1, 1, 1], [2, 2, 1], [3, 3, 1]])
     axis = -4
     left_pad_value = [0, 0]
     right_pad_value = [9, 9, 9]
 
     error_msg = 'axis must be between -k <= axis <= -1 OR 0 <= axis < k'
-    with self.assertRaisesRegexp(tf.errors.InvalidArgumentError, error_msg):
-      _ = text.pad_along_dimension(
+    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_msg):
+      _ = pad_along_dimension_op.pad_along_dimension(
           data=data,
           axis=axis,
           left_pad=left_pad_value,
@@ -229,9 +234,9 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
 
     error_msg = 'axis must be an int'
     with self.assertRaisesRegexp(TypeError, error_msg):
-      _ = text.pad_along_dimension(
+      _ = pad_along_dimension_op.pad_along_dimension(
           data=data,
-          axis=tf.constant(0),
+          axis=constant_op.constant(0),
           left_pad=left_pad_value,
           right_pad=right_pad_value)
 
@@ -423,23 +428,24 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
     left_pad = self._convert_ragged(left_pad, data.ragged_rank - positive_axis)
     right_pad = self._convert_ragged(right_pad,
                                      data.ragged_rank - positive_axis)
-    padded = text.pad_along_dimension(data, axis, left_pad, right_pad)
+    padded = pad_along_dimension_op.pad_along_dimension(data, axis, left_pad,
+                                                        right_pad)
 
     self.assertRaggedEqual(padded, expected)
 
   def testRaggedPadDimensionErrors(self):
-    ragged_data = tf.ragged.constant([[1, 2], [3, 4]])
+    ragged_data = ragged_factory_ops.constant([[1, 2], [3, 4]])
     self.assertRaisesRegexp(
-        tf.errors.InvalidArgumentError,
+        errors.InvalidArgumentError,
         'axis must be between -k <= axis <= -1 OR 0 <= axis < k',
-        text.pad_along_dimension,
+        pad_along_dimension_op.pad_along_dimension,
         ragged_data,
         left_pad=[0],
         axis=2)
     self.assertRaisesRegexp(
         ValueError,
         r'Shapes .* are incompatible',
-        text.pad_along_dimension,
+        pad_along_dimension_op.pad_along_dimension,
         ragged_data,
         axis=1,
         left_pad=ragged_data)
@@ -447,9 +453,9 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
       self.assertRaisesRegexp(
           ValueError, 'axis may not be negative if data is ragged '
           'and data.ndims is not statically known.',
-          text.pad_along_dimension,
-          tf.RaggedTensor.from_tensor(
-              tf.placeholder_with_default([[1, 2], [3, 4]], shape=None)),
+          pad_along_dimension_op.pad_along_dimension,
+          ragged_tensor.RaggedTensor.from_tensor(
+              array_ops.placeholder_with_default([[1, 2], [3, 4]], shape=None)),
           left_pad=[0],
           axis=-1)
 
@@ -563,9 +569,9 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
     if value is None:
       return None
     if ragged_rank is None or ragged_rank > 0:
-      return tf.ragged.constant(value, ragged_rank=ragged_rank)
+      return ragged_factory_ops.constant(value, ragged_rank=ragged_rank)
     else:
-      return tf.constant(value)
+      return constant_op.constant(value)
 
 
 if __name__ == '__main__':

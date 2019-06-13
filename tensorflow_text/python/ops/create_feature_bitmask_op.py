@@ -22,21 +22,27 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import tensorflow as tf
+from tensorflow.python.framework import constant_op
+from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import errors
+from tensorflow.python.framework import ops
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import check_ops
+from tensorflow.python.ops import math_ops
 
 # The maximum number of bits that can be encoded by create_feature_bitmask
 # in each datatype.
 _max_bits = {
-    tf.uint8: 8,
-    tf.int8: 7,
-    tf.uint16: 16,
-    tf.int16: 15,
-    tf.int32: 31,
-    tf.int64: 63,
+    dtypes.uint8: 8,
+    dtypes.int8: 7,
+    dtypes.uint16: 16,
+    dtypes.int16: 15,
+    dtypes.int32: 31,
+    dtypes.int64: 63,
 }
 
 
-def create_feature_bitmask(tensor, dtype=tf.int32, name=None):
+def create_feature_bitmask(tensor, dtype=dtypes.int32, name=None):
   """Packs the innermost dimension of a boolean tensor into integer values.
 
   `result[i1...iN]` is the integer formed by interpreting the booleans
@@ -74,23 +80,23 @@ def create_feature_bitmask(tensor, dtype=tf.int32, name=None):
     [0b10, 0b01, 0b11]
     ```
   """
-  with tf.name_scope(name, 'CreateFeatureBitmask', [tensor]):
+  with ops.name_scope(name, 'CreateFeatureBitmask', [tensor]):
     if (isinstance(tensor, (list, tuple)) and tensor and
-        isinstance(tensor[0], tf.Tensor)):
-      raise tf.errors.InvalidArgumentError(
+        isinstance(tensor[0], ops.Tensor)):
+      raise errors.InvalidArgumentError(
           None, None,
           'CreateFeatureBitmask does not support lists of tensors. Consider '
           'using tf.stack(list,-1) to create a single tensor before invoking '
           'this op.')
 
-    tensor = tf.convert_to_tensor(tensor, tf.bool, 'tensor')
+    tensor = ops.convert_to_tensor(tensor, dtypes.bool, 'tensor')
 
     if dtype not in _max_bits.keys():
-      raise tf.errors.InvalidArgumentError(
-          None, None, 'dtype must be one of: [%s], was %s' % (sorted(_max_bits),
-                                                              dtype.name))
+      raise errors.InvalidArgumentError(
+          None, None, 'dtype must be one of: [%s], was %s' %
+          (sorted(_max_bits.items(), key=lambda kv: kv[1]), dtype.name))
 
-    integer_data = tf.cast(tensor, dtype=dtype)
+    integer_data = math_ops.cast(tensor, dtype=dtype)
     shape = tensor.shape
     if shape.ndims is not None and shape.dims[-1].value is not None:
       num_bits = shape.dims[-1].value
@@ -102,14 +108,14 @@ def create_feature_bitmask(tensor, dtype=tf.int32, name=None):
             'data.shape[-1] is too large for %s (was %d, cannot exceed %d); '
             'consider switching condense_boolean_tensor to a larger '
             'dtype.' % (dtype.name, num_bits, _max_bits[dtype]))
-      bit_masks = tf.constant([2**pos for pos in range(num_bits - 1, -1, -1)],
-                              dtype)
+      bit_masks = constant_op.constant(
+          [2**pos for pos in range(num_bits - 1, -1, -1)], dtype)
     else:
-      bit_masks = tf.constant(
+      bit_masks = constant_op.constant(
           [2**pos for pos in range(_max_bits[dtype] - 1, -1, -1)], dtype)
-      num_bits = tf.shape(tensor)[-1]
-      with tf.control_dependencies([
-          tf.assert_less_equal(
+      num_bits = array_ops.shape(tensor)[-1]
+      with ops.control_dependencies([
+          check_ops.assert_less_equal(
               num_bits,
               _max_bits[dtype],
               message='data.shape[-1] is too large for %s (cannot exceed %s)' %
@@ -117,4 +123,4 @@ def create_feature_bitmask(tensor, dtype=tf.int32, name=None):
       ]):
         # The second slice ("[:num_bits]") is a no-op unless num_bits==0.
         bit_masks = bit_masks[-num_bits:][:num_bits]
-    return tf.reduce_sum(integer_data * bit_masks, axis=-1)
+    return math_ops.reduce_sum(integer_data * bit_masks, axis=-1)

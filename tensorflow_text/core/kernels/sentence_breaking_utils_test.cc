@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "third_party/tensorflow_text/core/kernels/sentence_breaking_utils.h"
+#include "tensorflow_text/core/kernels/sentence_breaking_utils.h"
 
 #include <memory>
 #include <string>
@@ -20,14 +20,14 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "third_party/icu/include/unicode/uchar.h"
-#include "third_party/icu/include/unicode/ucnv.h"
-#include "third_party/icu/include/unicode/ucnv_err.h"
-#include "third_party/icu/include/unicode/umachine.h"
-#include "third_party/icu/include/unicode/uniset.h"
-#include "third_party/icu/include/unicode/unistr.h"
-#include "third_party/icu/include/unicode/uset.h"
-#include "third_party/icu/include/unicode/utypes.h"
+#include "icu4c/source/common/unicode/uchar.h"
+#include "icu4c/source/common/unicode/ucnv.h"
+#include "icu4c/source/common/unicode/ucnv_err.h"
+#include "icu4c/source/common/unicode/umachine.h"
+#include "icu4c/source/common/unicode/uniset.h"
+#include "icu4c/source/common/unicode/unistr.h"
+#include "icu4c/source/common/unicode/uset.h"
+#include "icu4c/source/common/unicode/utypes.h"
 
 namespace tensorflow {
 namespace text {

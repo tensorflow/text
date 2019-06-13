@@ -20,13 +20,14 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
-import tensorflow as tf  # tf
 
 from tensorflow.python.eager import context
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops.ragged import ragged_factory_ops
+from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import pointer_ops
@@ -327,10 +328,14 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                  for s in range(len(source_limit[b]))]
                 for b in range(self.BATCH_SIZE)]
 
-    source_start = tf.ragged.constant(source_start, ragged_rank=ragged_rank)
-    source_limit = tf.ragged.constant(source_limit, ragged_rank=ragged_rank)
-    target_start = tf.ragged.constant(target_start, ragged_rank=ragged_rank)
-    target_limit = tf.ragged.constant(target_limit, ragged_rank=ragged_rank)
+    source_start = ragged_factory_ops.constant(
+        source_start, ragged_rank=ragged_rank)
+    source_limit = ragged_factory_ops.constant(
+        source_limit, ragged_rank=ragged_rank)
+    target_start = ragged_factory_ops.constant(
+        target_start, ragged_rank=ragged_rank)
+    target_limit = ragged_factory_ops.constant(
+        target_limit, ragged_rank=ragged_rank)
     overlaps = pointer_ops.span_overlaps(source_start, source_limit,
                                          target_start, target_limit, contains,
                                          contained_by, partial_overlap)
@@ -375,10 +380,14 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                  for b2 in range(len(source_limit[b1]))]
                 for b1 in range(2)]
 
-    source_start = tf.ragged.constant(source_start, ragged_rank=ragged_rank)
-    source_limit = tf.ragged.constant(source_limit, ragged_rank=ragged_rank)
-    target_start = tf.ragged.constant(target_start, ragged_rank=ragged_rank)
-    target_limit = tf.ragged.constant(target_limit, ragged_rank=ragged_rank)
+    source_start = ragged_factory_ops.constant(
+        source_start, ragged_rank=ragged_rank)
+    source_limit = ragged_factory_ops.constant(
+        source_limit, ragged_rank=ragged_rank)
+    target_start = ragged_factory_ops.constant(
+        target_start, ragged_rank=ragged_rank)
+    target_limit = ragged_factory_ops.constant(
+        target_limit, ragged_rank=ragged_rank)
     overlaps = pointer_ops.span_overlaps(source_start, source_limit,
                                          target_start, target_limit, contains,
                                          contained_by, partial_overlap)
@@ -410,18 +419,18 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
       with self.assertRaisesRegexp(
           ValueError, 'For ragged inputs, the shape.ndims of at least one '
           'span tensor must be statically known.'):
-        x = tf.RaggedTensor.from_row_splits(
+        x = ragged_tensor.RaggedTensor.from_row_splits(
             array_ops.placeholder(dtypes.int32), [0, 3, 8])
         pointer_ops.span_overlaps(x, x, x, x)
     with self.assertRaisesRegexp(
         ValueError, 'Span tensors must all have the same ragged_rank'):
       a = [[10, 20, 30], [40, 50, 60]]
-      pointer_ops.span_overlaps(a, a, a, tf.ragged.constant(a))
+      pointer_ops.span_overlaps(a, a, a, ragged_factory_ops.constant(a))
     with self.assertRaisesRegexp(
         errors.InvalidArgumentError,
         'Mismatched ragged shapes for batch dimensions'):
-      rt1 = tf.ragged.constant([[[1, 2], [3]], [[4, 5]]])
-      rt2 = tf.ragged.constant([[[1, 2], [3]], [[4, 5], [6]]])
+      rt1 = ragged_factory_ops.constant([[[1, 2], [3]], [[4, 5]]])
+      rt2 = ragged_factory_ops.constant([[[1, 2], [3]], [[4, 5], [6]]])
       pointer_ops.span_overlaps(rt1, rt1, rt2, rt2)
 
 

@@ -28,14 +28,23 @@ from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_string_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
-from tensorflow_text import gen_unicode_script_tokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
+
+# pylint: disable=g-bad-import-order
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_unicode_script_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_unicode_script_tokenizer.so'))
 
 
 class UnicodeScriptTokenizer(TokenizerWithOffsets):
   """Tokenizes a tensor of UTF-8 strings on Unicode script boundaries."""
 
   def __init__(self, keep_whitespace=False):
+    """Initializes a new instance.
+
+    Args:
+      keep_whitespace: bool. Whether to emit whitespace tokens
+    """
     super(UnicodeScriptTokenizer, self).__init__()
     self._keep_whitespace = keep_whitespace
 
@@ -47,7 +56,8 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
     Components for Unicode (ICU) UScriptCode values. See:
     http://icu-project.org/apiref/icu4c/uscript_8h.html
 
-    ICU defined whitespace characters are dropped.
+    ICU defined whitespace characters are dropped, unless the keep_whitespace
+    option was specified at construction time.
 
     Args:
       input: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
@@ -67,7 +77,8 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
     Components for Unicode (ICU) UScriptCode values. See:
     http://icu-project.org/apiref/icu4c/uscript_8h.html
 
-    ICU defined whitespace characters are dropped.
+    ICU defined whitespace characters are dropped, unless the keep_whitespace
+    option was specified at construction time.
 
     Args:
       input: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.

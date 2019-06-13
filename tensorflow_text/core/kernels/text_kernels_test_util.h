@@ -22,9 +22,9 @@
 #define TENSORFLOW_TEXT_CORE_KERNELS_TEXT_KERNELS_TEST_UTIL_H_
 
 #include <gmock/gmock.h>
-#include "third_party/tensorflow/core/framework/tensor.h"
-#include "third_party/tensorflow/core/framework/tensor_shape.h"
-#include "third_party/tensorflow/core/framework/tensor_testutil.h"
+#include "tensorflow/core/framework/tensor.h"
+#include "tensorflow/core/framework/tensor_shape.h"
+#include "tensorflow/core/framework/tensor_testutil.h"
 
 namespace tensorflow {
 namespace text_kernels_test_util {
