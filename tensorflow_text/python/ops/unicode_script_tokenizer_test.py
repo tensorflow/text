@@ -45,8 +45,8 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
         self.tokenizer.tokenize('I love Flume!')
 
   def testVectorSingleValue(self):
-    test_value = constant_op.constant(['I love Flume!'])
-    expected_tokens = [['I', 'love', 'Flume', '!']]
+    test_value = constant_op.constant([b'I love Flume!'])
+    expected_tokens = [[b'I', b'love', b'Flume', b'!']]
     expected_offset_starts = [[0, 2, 7, 12]]
     expected_offset_limits = [[1, 6, 12, 13]]
     tokens = self.tokenizer.tokenize(test_value)
@@ -58,8 +58,8 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testVector(self):
-    test_value = constant_op.constant(['I love Flume!', 'Good day'])
-    expected_tokens = [['I', 'love', 'Flume', '!'], ['Good', 'day']]
+    test_value = constant_op.constant([b'I love Flume!', b'Good day'])
+    expected_tokens = [[b'I', b'love', b'Flume', b'!'], [b'Good', b'day']]
     expected_offset_starts = [[0, 2, 7, 12], [0, 5]]
     expected_offset_limits = [[1, 6, 12, 13], [4, 8]]
     tokens = self.tokenizer.tokenize(test_value)
@@ -71,10 +71,11 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testMatrix(self):
-    test_value = constant_op.constant(
-        [['I love Flume!', 'Good day'], ['I don\'t want', 'no scrubs']])
-    expected_tokens = [[['I', 'love', 'Flume', '!'], ['Good', 'day']],
-                       [['I', 'don', '\'', 't', 'want'], ['no', 'scrubs']]]
+    test_value = constant_op.constant([[b'I love Flume!', b'Good day'],
+                                       [b'I don\'t want', b'no scrubs']])
+    expected_tokens = [[[b'I', b'love', b'Flume', b'!'], [b'Good', b'day']],
+                       [[b'I', b'don', b'\'', b't', b'want'],
+                        [b'no', b'scrubs']]]
     expected_offset_starts = [[[0, 2, 7, 12], [0, 5]],
                               [[0, 2, 5, 6, 8], [0, 3]]]
     expected_offset_limits = [[[1, 6, 12, 13], [4, 8]],
@@ -88,10 +89,11 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testMatrixRagged(self):
-    test_value = ragged_factory_ops.constant(
-        [['I love Flume!'], ['I don\'t want', 'no scrubs']])
-    expected_tokens = [[['I', 'love', 'Flume', '!']],
-                       [['I', 'don', '\'', 't', 'want'], ['no', 'scrubs']]]
+    test_value = ragged_factory_ops.constant([[b'I love Flume!'],
+                                              [b'I don\'t want', b'no scrubs']])
+    expected_tokens = [[[b'I', b'love', b'Flume', b'!']],
+                       [[b'I', b'don', b'\'', b't', b'want'],
+                        [b'no', b'scrubs']]]
     expected_offset_starts = [[[0, 2, 7, 12]],
                               [[0, 2, 5, 6, 8], [0, 3]]]
     expected_offset_limits = [[[1, 6, 12, 13]],
@@ -105,13 +107,15 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def test3DimMatrix(self):
-    test_value = constant_op.constant(
-        [[['I love Flume!', 'Good day'], ['I don\'t want', 'no scrubs']],
-         [['I love Zhu!', 'Good night'], ['A scrub is', 'a guy']]])
-    expected_tokens = [[[['I', 'love', 'Flume', '!'], ['Good', 'day']],
-                        [['I', 'don', '\'', 't', 'want'], ['no', 'scrubs']]],
-                       [[['I', 'love', 'Zhu', '!'], ['Good', 'night']],
-                        [['A', 'scrub', 'is'], ['a', 'guy']]]]
+    test_value = constant_op.constant([[[b'I love Flume!', b'Good day'],
+                                        [b'I don\'t want', b'no scrubs']],
+                                       [[b'I love Zhu!', b'Good night'],
+                                        [b'A scrub is', b'a guy']]])
+    expected_tokens = [[[[b'I', b'love', b'Flume', b'!'], [b'Good', b'day']],
+                        [[b'I', b'don', b'\'', b't', b'want'],
+                         [b'no', b'scrubs']]],
+                       [[[b'I', b'love', b'Zhu', b'!'], [b'Good', b'night']],
+                        [[b'A', b'scrub', b'is'], [b'a', b'guy']]]]
     expected_offset_starts = [[[[0, 2, 7, 12], [0, 5]],
                                [[0, 2, 5, 6, 8], [0, 3]]],
                               [[[0, 2, 7, 10], [0, 5]],
@@ -129,12 +133,15 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def test3DimMatrixRagged(self):
-    test_value = ragged_factory_ops.constant(
-        [[['I love Flume!'], ['I don\'t want', 'no scrubs']],
-         [['I love Zhu!', 'Good night']]])
-    expected_tokens = [[[['I', 'love', 'Flume', '!']],
-                        [['I', 'don', '\'', 't', 'want'], ['no', 'scrubs']]],
-                       [[['I', 'love', 'Zhu', '!'], ['Good', 'night']]]]
+    test_value = ragged_factory_ops.constant([[[b'I love Flume!'],
+                                               [b'I don\'t want',
+                                                b'no scrubs']],
+                                              [[b'I love Zhu!',
+                                                b'Good night']]])
+    expected_tokens = [[[[b'I', b'love', b'Flume', b'!']],
+                        [[b'I', b'don', b'\'', b't', b'want'],
+                         [b'no', b'scrubs']]],
+                       [[[b'I', b'love', b'Zhu', b'!'], [b'Good', b'night']]]]
     expected_offset_starts = [[[[0, 2, 7, 12]],
                                [[0, 2, 5, 6, 8], [0, 3]]],
                               [[[0, 2, 7, 10], [0, 5]]]]
@@ -152,8 +159,8 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
   def testInternationalization(self):
     test_value = constant_op.constant([u"J'adore la灯".encode('utf8'),
                                        u'¡Escríbeme!'.encode('utf8')])
-    expected_tokens = [['J', "'", 'adore', 'la', u'灯'.encode('utf8')],
-                       [u'¡'.encode('utf8'), u'Escríbeme'.encode('utf8'), '!']]
+    expected_tokens = [[b'J', b"'", b'adore', b'la', u'灯'.encode('utf8')],
+                       [u'¡'.encode('utf8'), u'Escríbeme'.encode('utf8'), b'!']]
     expected_offset_starts = [[0, 1, 2, 8, 10], [0, 2, 12]]
     expected_offset_limits = [[1, 2, 7, 10, 13], [2, 12, 13]]
     tokens = self.tokenizer.tokenize(test_value)
@@ -165,8 +172,8 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testSpaceBoundaries(self):
-    test_value = constant_op.constant([' Hook em! ', ' .Ok.   Go  '])
-    expected_tokens = [['Hook', 'em', '!'], ['.', 'Ok', '.', 'Go']]
+    test_value = constant_op.constant([b' Hook em! ', b' .Ok.   Go  '])
+    expected_tokens = [[b'Hook', b'em', b'!'], [b'.', b'Ok', b'.', b'Go']]
     expected_offset_starts = [[1, 6, 8], [1, 2, 4, 8]]
     expected_offset_limits = [[5, 8, 9], [2, 4, 5, 10]]
     tokens = self.tokenizer.tokenize(test_value)
@@ -179,13 +186,14 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
 
   def testKeepWhitespace(self):
     test_value = constant_op.constant([
-        '\'Black Panther,\' \t ‘A Star Is Born‘ among AFI Awards honorees',
-        ' .Ok.   Go  '])
-    expected_tokens = [
-        ['\'', 'Black', ' ', 'Panther', ',\'', ' \t ', '‘', 'A', ' ',
-         'Star', ' ', 'Is', ' ', 'Born', '‘', ' ', 'among', ' ', 'AFI', ' ',
-         'Awards', ' ', 'honorees'],
-        [' ', '.', 'Ok', '.', '   ', 'Go', '  ']]
+        b'\'Black Panther,\' \t \xe2\x80\x98A Star Is Born\xe2\x80\x98 among AFI Awards honorees',
+        b' .Ok.   Go  '
+    ])
+    expected_tokens = [[
+        b'\'', b'Black', b' ', b'Panther', b',\'', b' \t ', b'\xe2\x80\x98',
+        b'A', b' ', b'Star', b' ', b'Is', b' ', b'Born', b'\xe2\x80\x98', b' ',
+        b'among', b' ', b'AFI', b' ', b'Awards', b' ', b'honorees'
+    ], [b' ', b'.', b'Ok', b'.', b'   ', b'Go', b'  ']]
     expected_offset_starts = [
         [0, 1, 6, 7, 14, 16, 19, 22, 23, 24, 28, 29, 31, 32, 36, 39, 40,
          45, 46, 49, 50, 56, 57],
@@ -204,7 +212,7 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testOnlySpaces(self):
-    test_value = constant_op.constant([' ', '     '])
+    test_value = constant_op.constant([b' ', b'     '])
     expected_tokens = [[], []]
     expected_offset_starts = [[], []]
     expected_offset_limits = [[], []]
@@ -217,8 +225,8 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testWhitespaceCharacters(self):
-    test_value = constant_op.constant(['things:\tcarpet\rdesk\nlamp'])
-    expected_tokens = [['things', ':', 'carpet', 'desk', 'lamp']]
+    test_value = constant_op.constant([b'things:\tcarpet\rdesk\nlamp'])
+    expected_tokens = [[b'things', b':', b'carpet', b'desk', b'lamp']]
     expected_offset_starts = [[0, 6, 8, 15, 20]]
     expected_offset_limits = [[6, 7, 14, 19, 24]]
     tokens = self.tokenizer.tokenize(test_value)
@@ -230,7 +238,7 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testEmptyStringSingle(self):
-    test_value = constant_op.constant([''])
+    test_value = constant_op.constant([b''])
     expected_tokens = [[]]
     expected_offset_starts = [[]]
     expected_offset_limits = [[]]
@@ -243,8 +251,10 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testEmptyString(self):
-    test_value = constant_op.constant(['', 'I love Flume!', '', 'O hai', ''])
-    expected_tokens = [[], ['I', 'love', 'Flume', '!'], [], ['O', 'hai'], []]
+    test_value = constant_op.constant(
+        [b'', b'I love Flume!', b'', b'O hai', b''])
+    expected_tokens = [[], [b'I', b'love', b'Flume', b'!'], [], [b'O', b'hai'],
+                       []]
     expected_offset_starts = [[], [0, 2, 7, 12], [], [0, 2], []]
     expected_offset_limits = [[], [1, 6, 12, 13], [], [1, 5], []]
     tokens = self.tokenizer.tokenize(test_value)
@@ -257,15 +267,12 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
 
   def testEmptyDimensions(self):
     test_value = ragged_factory_ops.constant(
-        [[['I love Flume!', 'Good day. . .'],
-          []],
-         [],
-         [['I love Zhu!', 'Good night'], ['A scrub is', 'a guy']]])
-    expected_tokens = [[[['I', 'love', 'Flume', '!'], ['Good', 'day', '...']],
-                        []],
-                       [],
-                       [[['I', 'love', 'Zhu', '!'], ['Good', 'night']],
-                        [['A', 'scrub', 'is'], ['a', 'guy']]]]
+        [[[b'I love Flume!', b'Good day. . .'], []], [],
+         [[b'I love Zhu!', b'Good night'], [b'A scrub is', b'a guy']]])
+    expected_tokens = [[[[b'I', b'love', b'Flume', b'!'],
+                         [b'Good', b'day', b'...']], []], [],
+                       [[[b'I', b'love', b'Zhu', b'!'], [b'Good', b'night']],
+                        [[b'A', b'scrub', b'is'], [b'a', b'guy']]]]
     expected_offset_starts = [[[[0, 2, 7, 12], [0, 5, 8]],
                                []],
                               [],

@@ -82,7 +82,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         axis=-1,
         reduction_type=ngrams_op.Reduction.STRING_JOIN,
         string_separator="|")
-    expected_values = [["a|b", "b|c"], ["dd|ee", "ee|ff"]]
+    expected_values = [[b"a|b", b"b|c"], [b"dd|ee", b"ee|ff"]]
 
     self.assertRaggedEqual(expected_values, op)
 
@@ -94,7 +94,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         axis=-1,  # The -1 axis is the zero axis here.
         reduction_type=ngrams_op.Reduction.STRING_JOIN,
         string_separator="|")
-    expected_values = ["a|b", "b|c"]
+    expected_values = [b"a|b", b"b|c"]
 
     self.assertRaggedEqual(expected_values, op)
 
@@ -106,7 +106,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         axis=-1,
         reduction_type=ngrams_op.Reduction.STRING_JOIN,
         string_separator="|")
-    expected_values = [["a|b", "b|c"], ["dd|ee"]]
+    expected_values = [[b"a|b", b"b|c"], [b"dd|ee"]]
 
     self.assertRaggedEqual(expected_values, op)
 

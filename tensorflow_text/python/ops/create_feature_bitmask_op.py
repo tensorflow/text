@@ -94,7 +94,7 @@ def create_feature_bitmask(tensor, dtype=dtypes.int32, name=None):
     if dtype not in _max_bits.keys():
       raise errors.InvalidArgumentError(
           None, None, 'dtype must be one of: [%s], was %s' %
-          (sorted(_max_bits), dtype.name))
+          (sorted(_max_bits.items(), key=lambda kv: kv[1]), dtype.name))
 
     integer_data = math_ops.cast(tensor, dtype=dtype)
     shape = tensor.shape

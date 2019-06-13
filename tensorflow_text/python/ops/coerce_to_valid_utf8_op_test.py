@@ -29,22 +29,22 @@ class CoerceToUtf8Test(test.TestCase):
   def testCoercetoStructurallyValidOnValidInput(self):
     with self.test_session():
       utf8 = string_ops.coerce_to_structurally_valid_utf8(["abc"])
-    self.assertAllEqual(utf8, ["abc"])
+    self.assertAllEqual(utf8, [b"abc"])
 
   def testCoercetoStructurallyValidOnValidInputWithDefault(self):
     with self.test_session():
       utf8 = string_ops.coerce_to_structurally_valid_utf8(["abc"], "?")
-    self.assertAllEqual(utf8, ["abc"])
+    self.assertAllEqual(utf8, [b"abc"])
 
   def testCoercetoStructurallyValidOnInvalidInput(self):
     with self.test_session():
       utf8 = string_ops.coerce_to_structurally_valid_utf8([b"abc\xfd"])
-    self.assertAllEqual(utf8, ["abc�"])
+    self.assertAllEqual(utf8, [b"abc\xef\xbf\xbd"])
 
   def testCoercetoStructurallyValidOnInvalidInputWithDefault(self):
     with self.test_session():
       utf8 = string_ops.coerce_to_structurally_valid_utf8([b"abc\xfd"], "?")
-    self.assertAllEqual(utf8, ["abc?"])
+    self.assertAllEqual(utf8, [b"abc?"])
 
 
 if __name__ == "__main__":
