@@ -39,7 +39,7 @@ Status LookupTableVocab::Contains(const string& key, bool* value) {
     return errors::InvalidArgument("Bad 'value' param.");
   }
   Tensor keys(DT_STRING, TensorShape({1}));
-  keys.flat<string>()(0) = key;
+  keys.flat<tstring>()(0) = key;
   Tensor values(DT_INT64, TensorShape({1}));
   TF_RETURN_IF_ERROR(table_->Find(ctx_, keys, &values, default_value_));
 
