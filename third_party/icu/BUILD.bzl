@@ -1,3 +1,5 @@
+"""Builds ICU library."""
+
 package(
     default_visibility = ["//visibility:public"],
 )

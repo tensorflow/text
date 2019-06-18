@@ -116,6 +116,7 @@ cc_binary(
     ],
     linkshared = 1,
     deps = [
+        "//third_party/icu/data:icu_normalization_data",
         "@com_google_absl//absl/strings",
         "@icu//:common",
         "@icu//:headers",

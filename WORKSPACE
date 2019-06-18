@@ -29,6 +29,18 @@ http_archive(
 )
 
 http_archive(
+    name = "icu",
+    strip_prefix = "icu-release-64-2",
+    sha256 = "dfc62618aa4bd3ca14a3df548cd65fe393155edd213e49c39f3a30ccd618fc27",
+    urls = [
+        "https://github.com/unicode-org/icu/archive/release-64-2.zip",
+    ],
+    build_file = "//third_party/icu:BUILD.bzl",
+    patches = ["//third_party/icu:udata.patch"],
+    patch_args = ["-p1"],
+)
+
+http_archive(
     name = "io_bazel_rules_closure",
     sha256 = "e0a111000aeed2051f29fcc7a3f83be3ad8c6c93c186e64beb1ad313f0c7f9f9",
     strip_prefix = "rules_closure-cf1e44edb908e9616030cc83d085989b8e6cd6df",
@@ -36,7 +48,6 @@ http_archive(
         "http://mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/cf1e44edb908e9616030cc83d085989b8e6cd6df.tar.gz",
         "https://github.com/bazelbuild/rules_closure/archive/cf1e44edb908e9616030cc83d085989b8e6cd6df.tar.gz",  # 2019-04-04
     ],
-
 )
 
 http_archive(
@@ -55,7 +66,3 @@ tf_workspace(tf_repo_name="@org_tensorflow")
 load("//third_party/tensorflow:tf_configure.bzl", "tf_configure")
 
 tf_configure(name = "local_config_tf")
-
-load("//tensorflow_text:workspace.bzl", "initialize_third_party_archives")
-
-initialize_third_party_archives()
