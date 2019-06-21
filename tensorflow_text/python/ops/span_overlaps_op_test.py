@@ -72,14 +72,15 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                   [9, 15, 8, 15]]  # pyformat: disable
 
   # Spans encoded using 1D tensors
-  BATCH_ITEM = [
-      dict(
-          source_start=SOURCE_START[i],  # <int>[s]
-          source_limit=SOURCE_LIMIT[i],  # <int>[s]
-          target_start=TARGET_START[i],  # <int>[t]
-          target_limit=TARGET_LIMIT[i],  # <int>[t]
-      ) for i in range(BATCH_SIZE)
-  ]
+  BATCH_ITEM = []
+  for i in range(BATCH_SIZE):
+    BATCH_ITEM.append(
+        dict(
+            source_start=SOURCE_START[i],  # <int>[s]
+            source_limit=SOURCE_LIMIT[i],  # <int>[s]
+            target_start=TARGET_START[i],  # <int>[t]
+            target_limit=TARGET_LIMIT[i],  # <int>[t]
+        ))
 
   # Spans encoded using 2D ragged tensors
   RAGGED_BATCH_2D = dict(
@@ -224,6 +225,7 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
     # Assemble expected value.  (Writing out the complete expected result
     # matrix takes up a lot of space, so instead we just list the positions
     # in the matrix that should be True.)
+    # pylint: disable=g-complex-comprehension
     expected = [[(s, t) in expected_overlap_pairs
                  for t in range(len(target_limit))]
                 for s in range(len(source_limit))]
@@ -323,6 +325,7 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                          partial_overlap=False,
                          ragged_rank=None):
     # Assemble expected value.
+    # pylint: disable=g-complex-comprehension
     expected = [[[(b, s, t) in expected_overlap_pairs
                   for t in range(len(target_limit[b]))]
                  for s in range(len(source_limit[b]))]
@@ -374,6 +377,7 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                          partial_overlap=False,
                          ragged_rank=None):
     # Assemble expected value.
+    # pylint: disable=g-complex-comprehension
     expected = [[[[(b1, b2, s, t) in expected_overlap_pairs
                    for t in range(len(target_limit[b1][b2]))]
                   for s in range(len(source_limit[b1][b2]))]

@@ -67,14 +67,15 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                   [9, 15, 8, 15]]  # pyformat: disable
 
   # Spans encoded using 1D tensors
-  BATCH_ITEM = [
-      dict(
-          source_start=SOURCE_START[i],  # <int>[s]
-          source_limit=SOURCE_LIMIT[i],  # <int>[s]
-          target_start=TARGET_START[i],  # <int>[t]
-          target_limit=TARGET_LIMIT[i],  # <int>[t]
-      ) for i in range(BATCH_SIZE)
-  ]
+  BATCH_ITEM = []
+  for i in range(BATCH_SIZE):
+    BATCH_ITEM.append(
+        dict(
+            source_start=SOURCE_START[i],  # <int>[s]
+            source_limit=SOURCE_LIMIT[i],  # <int>[s]
+            target_start=TARGET_START[i],  # <int>[t]
+            target_limit=TARGET_LIMIT[i],  # <int>[t]
+        ))
 
   # Spans encoded using 2D ragged tensors
   RAGGED_BATCH_2D = dict(

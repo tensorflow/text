@@ -36,10 +36,10 @@ def _Utf8(char):
 
 
 def _CreateTable(vocab, num_oov=1):
+  size = array_ops.size(vocab, out_type=dtypes.int64)
   init = lookup_ops.KeyValueTensorInitializer(
       vocab,
-      math_ops.range(
-          array_ops.size(vocab, out_type=dtypes.int64), dtype=dtypes.int64),
+      math_ops.range(size, dtype=dtypes.int64),
       key_dtype=dtypes.string,
       value_dtype=dtypes.int64)
   return lookup_ops.StaticVocabularyTableV1(
@@ -47,27 +47,27 @@ def _CreateTable(vocab, num_oov=1):
 
 
 _ENGLISH_VOCAB = [
-    "don",
-    "##'",
-    "##t",
-    "tread",
-    "##ness",
-    "hel",
-    "##lo",
-    "there",
-    "my",
-    "na",
-    "##me",
-    "is",
-    "ter",
-    "##ry",
-    "what",
-    "##cha",
-    "##ma",
-    "##call",
-    "##it?",
-    "you",
-    "said",
+    b"don",
+    b"##'",
+    b"##t",
+    b"tread",
+    b"##ness",
+    b"hel",
+    b"##lo",
+    b"there",
+    b"my",
+    b"na",
+    b"##me",
+    b"is",
+    b"ter",
+    b"##ry",
+    b"what",
+    b"##cha",
+    b"##ma",
+    b"##call",
+    b"##it?",
+    b"you",
+    b"said",
 ]
 
 _CHINESE_VOCAB = [
@@ -89,27 +89,27 @@ _CHINESE_VOCAB = [
 ]
 
 _MIXED_LANG_VOCAB = [
-    "don",
-    "##'",
-    "##t",
-    "tread",
-    "##ness",
-    "hel",
-    "##lo",
-    "there",
-    "my",
-    "na",
-    "##me",
-    "is",
-    "ter",
-    "##ry",
-    "what",
-    "##cha",
-    "##ma",
-    "##call",
-    "##it?",
-    "you",
-    "said",
+    b"don",
+    b"##'",
+    b"##t",
+    b"tread",
+    b"##ness",
+    b"hel",
+    b"##lo",
+    b"there",
+    b"my",
+    b"na",
+    b"##me",
+    b"is",
+    b"ter",
+    b"##ry",
+    b"what",
+    b"##cha",
+    b"##ma",
+    b"##call",
+    b"##it?",
+    b"you",
+    b"said",
     _Utf8(u"貿"),
     _Utf8(u"易"),
     _Utf8(u"戰"),
@@ -138,7 +138,7 @@ _DEATH_VOCAB = [
     _Utf8(u"##र"),
     _Utf8(u"##े"),
     _Utf8(u"##ं"),
-    "##*",
+    b"##*",
     _Utf8(u"##👇"),
 ]
 
@@ -148,13 +148,13 @@ def _GetTokensFromWordpieceOffsets(tokens, begin_indices, end_indices):
   begin_indices = begin_indices.to_list()
   end_indices = end_indices.to_list()
   result = []
-  for docs_idx in xrange(len(tokens)):
+  for docs_idx in range(0, len(tokens)):
     tokens_in_doc = []
-    for tokens_idx in xrange(len(tokens[docs_idx])):
+    for tokens_idx in range(0, len(tokens[docs_idx])):
       token = bytes(tokens[docs_idx][tokens_idx])
       begin_offsets = begin_indices[docs_idx][tokens_idx]
       end_offsets = end_indices[docs_idx][tokens_idx]
-      tokens_in_doc.append("".join(
+      tokens_in_doc.append(b"".join(
           [token[begin:end] for begin, end in zip(begin_offsets, end_offsets)]))
     result.append(tokens_in_doc)
   return result
@@ -175,37 +175,37 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
           vocab=_RUSSIAN_VOCAB,
       ),
       dict(
-          tokens=[["don't", "treadness"]],
-          expected_subwords=[[["don", "##'", "##t"], ["tread", "##ness"]]],
+          tokens=[[b"don't", b"treadness"]],
+          expected_subwords=[[[b"don", b"##'", b"##t"], [b"tread", b"##ness"]]],
           vocab=_ENGLISH_VOCAB,
       ),
       dict(
-          tokens=[["hello", "there", "my", "name", "is", "terry"],
-                  ["whatchamacallit?", "you", "said"]],
-          expected_subwords=[[["hel", "##lo"], ["there"], ["my"],
-                              ["na", "##me"], ["is"], ["ter", "##ry"]],
-                             [["what", "##cha", "##ma", "##call", "##it?"],
-                              ["you"], ["said"]]],
+          tokens=[[b"hello", b"there", b"my", b"name", b"is", b"terry"],
+                  [b"whatchamacallit?", b"you", b"said"]],
+          expected_subwords=[[[b"hel", b"##lo"], [b"there"], [b"my"],
+                              [b"na", b"##me"], [b"is"], [b"ter", b"##ry"]],
+                             [[b"what", b"##cha", b"##ma", b"##call", b"##it?"],
+                              [b"you"], [b"said"]]],
           vocab=_ENGLISH_VOCAB,
       ),
       # Basic case w/ unknown token
       dict(
-          tokens=[["don't", "tread", "cantfindme", "treadcantfindme"]],
-          expected_subwords=[[["don", "##'", "##t"], ["tread"], ["[UNK]"],
-                              ["[UNK]"]]],
+          tokens=[[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]],
+          expected_subwords=[[[b"don", b"##'", b"##t"], [b"tread"], [b"[UNK]"],
+                              [b"[UNK]"]]],
           vocab=_ENGLISH_VOCAB,
       ),
       # Basic case w/o unknown token
       dict(
-          tokens=[["don't", "tread", "cantfindme", "treadcantfindme"]],
-          expected_subwords=[[["don", "##'", "##t"], ["tread"], ["cantfindme"],
-                              ["treadcantfindme"]]],
+          tokens=[[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]],
+          expected_subwords=[[[b"don", b"##'", b"##t"], [b"tread"],
+                              [b"cantfindme"], [b"treadcantfindme"]]],
           unknown_token=None,
           vocab=_ENGLISH_VOCAB,
       ),
       # Basic case w/ int id lookup
       dict(
-          tokens=[["don't", "tread", "cantfindme", "treadcantfindme"]],
+          tokens=[[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]],
           token_out_type=dtypes.int64,
           expected_subwords=[[[0, 1, 2], [3], [21], [21]]],
           vocab=_ENGLISH_VOCAB,
@@ -261,21 +261,23 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                   _Utf8(u"春"),
                   _Utf8(u"福")
               ],
-              ["don't", "treadness"],
+              [b"don't", b"treadness"],
           ],
           expected_subwords=[
-              [[_Utf8(u"貿")], [_Utf8(u"易")], [_Utf8(u"戰")], [_Utf8(u"最")],
-               [_Utf8(u"大")], [_Utf8(u"受")], [_Utf8(u"益")], [_Utf8(u"者")]],
-              [[_Utf8(u"越")], [_Utf8(u"南")], [_Utf8(u"總")], [_Utf8(u"理")],
-               [_Utf8(u"阮")], [_Utf8(u"春")], [_Utf8(u"福")]],
-              [["don", "##'", "##t"], ["tread", "##ness"]],
+              [[_Utf8(u"貿")], [_Utf8(u"易")], [_Utf8(u"戰")],
+               [_Utf8(u"最")], [_Utf8(u"大")], [_Utf8(u"受")],
+               [_Utf8(u"益")], [_Utf8(u"者")]],
+              [[_Utf8(u"越")], [_Utf8(u"南")], [_Utf8(u"總")],
+               [_Utf8(u"理")], [_Utf8(u"阮")], [_Utf8(u"春")],
+               [_Utf8(u"福")]],
+              [[b"don", b"##'", b"##t"], [b"tread", b"##ness"]],
           ],
           vocab=_MIXED_LANG_VOCAB,
       ),
       # Test token whose size is > max_bytes_per_word
       dict(
-          tokens=[["don't", "treadness"]],
-          expected_subwords=[[["don", "##'", "##t"], ["[UNK]"]]],
+          tokens=[[b"don't", b"treadness"]],
+          expected_subwords=[[[b"don", b"##'", b"##t"], [b"[UNK]"]]],
           vocab=_ENGLISH_VOCAB,
           max_bytes_per_word=5,
           # Explicitly specify the offsets here because the current way of
@@ -291,7 +293,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
               _Utf8(u"क"),
               _Utf8(u"##र"),
               _Utf8(u"##े"),
-              _Utf8(u"##ं"), "##*",
+              _Utf8(u"##ं"), b"##*",
               _Utf8(u"##👇"),
               _Utf8(u"##👇")
           ]]],
@@ -338,12 +340,13 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
 
   @parameterized.parameters([
       dict(
-          tokens=[[["don't"], ["treadness"],
-                   ["whatchamacallit?", "you", "hello"]], [["treadness"]]],
-          expected_subwords=[[[["don", "##'", "##t"]], [["tread", "##ness"]],
-                              [["what", "##cha", "##ma", "##call", "##it?"],
-                               ["you"], ["hel", "##lo"]]],
-                             [[["tread", "##ness"]]]],
+          tokens=[[[b"don't"], [b"treadness"],
+                   [b"whatchamacallit?", b"you", b"hello"]], [[b"treadness"]]],
+          expected_subwords=[
+              [[[b"don", b"##'", b"##t"]], [[b"tread", b"##ness"]],
+               [[b"what", b"##cha", b"##ma", b"##call", b"##it?"], [b"you"],
+                [b"hel", b"##lo"]]], [[[b"tread", b"##ness"]]]
+          ],
           vocab=_ENGLISH_VOCAB,
       ),
   ])
@@ -367,7 +370,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
   def testWordPieceOpWithIdReturned(self):
     """Let the table determine how to do a lookup on unknown tokens."""
     tokens = ragged_factory_ops.constant(
-        [["don't", "tread", "cantfindme", "treadcantfindme"]])
+        [[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]])
     vocab_table = _CreateTable(
         _ENGLISH_VOCAB,
         100  # OOV values
@@ -381,25 +384,30 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
 
   @parameterized.parameters([
       dict(
-          tokens=[["don't", "treadness", "whatchamacallit?"]],
-          expected_subwords=[[["don", "##'", "##t"], ["tread", "##ness"],
-                              ["what", "##cha", "##ma", "##call", "##it?"]]],
+          tokens=[[b"don't", b"treadness", b"whatchamacallit?"]],
+          expected_subwords=[[[b"don", b"##'", b"##t"], [b"tread", b"##ness"],
+                              [b"what", b"##cha", b"##ma", b"##call",
+                               b"##it?"]]],
           vocab=_ENGLISH_VOCAB,
       ),
       dict(
-          tokens=[[["don't"], ["treadness"], ["whatchamacallit?"]]],
-          expected_subwords=[[[["don", "##'", "##t"]], [["tread", "##ness"]],
-                              [["what", "##cha", "##ma", "##call", "##it?"]]]],
+          tokens=[[[b"don't"], [b"treadness"], [b"whatchamacallit?"]]],
+          expected_subwords=[
+              [[[b"don", b"##'", b"##t"]], [[b"tread", b"##ness"]],
+               [[b"what", b"##cha", b"##ma", b"##call", b"##it?"]]]
+          ],
           vocab=_ENGLISH_VOCAB,
       ),
       dict(
-          tokens=[[["don't", _Utf8(u"貿")], ["treadness",
-                                            _Utf8(u"大")],
-                   ["whatchamacallit?", _Utf8(u"福")]]],
-          expected_subwords=[[[["don", "##'", "##t"], [_Utf8(u"貿")]],
-                              [["tread", "##ness"], [_Utf8(u"大")]],
-                              [["what", "##cha", "##ma", "##call", "##it?"],
-                               [_Utf8(u"福")]]]],
+          tokens=[[[b"don't", _Utf8(u"貿")],
+                   [b"treadness", _Utf8(u"大")],
+                   [b"whatchamacallit?", _Utf8(u"福")]]],
+          expected_subwords=[[[[b"don", b"##'", b"##t"], [_Utf8(u"貿")]],
+                              [[b"tread", b"##ness"], [_Utf8(u"大")]],
+                              [[
+                                  b"what", b"##cha", b"##ma", b"##call",
+                                  b"##it?"
+                              ], [_Utf8(u"福")]]]],
           vocab=_MIXED_LANG_VOCAB,
       ),
       # Vector input
@@ -424,17 +432,20 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
       ),
       # 3D input with 1 ragged dimension.
       dict(
-          tokens=[["don't", "treadness", "whatchamacallit?"]],
-          expected_subwords=[[["don", "##'", "##t"], ["tread", "##ness"],
-                              ["what", "##cha", "##ma", "##call", "##it?"]]],
+          tokens=[[b"don't", b"treadness", b"whatchamacallit?"]],
+          expected_subwords=[[[b"don", b"##'", b"##t"], [b"tread", b"##ness"],
+                              [b"what", b"##cha", b"##ma", b"##call",
+                               b"##it?"]]],
           vocab=_ENGLISH_VOCAB,
       ),
       dict(
           tokens=ragged_factory_ops.constant_value(
-              [[["don't"], ["treadness"], ["whatchamacallit?"]]],
+              [[[b"don't"], [b"treadness"], [b"whatchamacallit?"]]],
               ragged_rank=1),
-          expected_subwords=[[[["don", "##'", "##t"]], [["tread", "##ness"]],
-                              [["what", "##cha", "##ma", "##call", "##it?"]]]],
+          expected_subwords=[
+              [[[b"don", b"##'", b"##t"]], [[b"tread", b"##ness"]],
+               [[b"what", b"##cha", b"##ma", b"##call", b"##it?"]]]
+          ],
           vocab=_ENGLISH_VOCAB,
       ),
   ])
