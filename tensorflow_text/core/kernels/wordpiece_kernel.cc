@@ -104,6 +104,55 @@ Status GetLookupTable(const string& input_name, OpKernelContext* ctx,
   }
 }
 
+class LookupTableVocab : public WordpieceVocab {
+ public:
+  LookupTableVocab(lookup::LookupInterface* table, OpKernelContext* ctx);
+
+  virtual LookupStatus Contains(const absl::string_view& key,
+                                bool* value) const;
+
+ private:
+  // not owned
+  mutable lookup::LookupInterface* table_;
+  OpKernelContext* ctx_;
+  Tensor default_value_;
+};
+
+Status ToStatus(const LookupStatus& status) {
+  if (status.success) {
+    return Status::OK();
+  }
+
+  return errors::InvalidArgument(status.error_msg);
+}
+
+constexpr int64 kOutOfVocabValue = -1;
+
+LookupTableVocab::LookupTableVocab(lookup::LookupInterface* table,
+                                   OpKernelContext* ctx)
+    : table_(table), ctx_(ctx), default_value_(DT_INT64, TensorShape({1})) {
+  default_value_.flat<int64>()(0) = kOutOfVocabValue;
+}
+
+LookupStatus LookupTableVocab::Contains(const absl::string_view& key,
+                                        bool* value) const {
+  if (value == nullptr) {
+    return LookupStatus("Bad 'value' param.");
+  }
+  Tensor keys(DT_STRING, TensorShape({1}));
+  keys.flat<string>()(0) = std::string(key.data(), key.length());
+  Tensor values(DT_INT64, TensorShape({1}));
+  auto status = table_->Find(ctx_, keys, &values, default_value_);
+  if (!status.ok()) return LookupStatus(status.error_message());
+
+  if (static_cast<int64>(values.flat<int64>()(0)) != kOutOfVocabValue) {
+    *value = true;
+    return LookupStatus::OK();
+  }
+  *value = false;
+  return LookupStatus::OK();
+}
+
 }  // namespace
 
 class WordpieceTokenizeWithOffsetsOp : public OpKernel {
@@ -121,7 +170,6 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
     const auto& values_vec = input_values->flat<string>();
 
     lookup::LookupInterface* lookup_table;
-    // MKH: subject to change....
     OP_REQUIRES_OK(ctx,
                    GetLookupTable("vocab_lookup_table", ctx, &lookup_table));
     LookupTableVocab vocab_map(lookup_table, ctx);
@@ -136,10 +184,10 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
       // Tokenize into subwords and record the offset locations.
       int num_wordpieces = 0;
       OP_REQUIRES_OK(
-          ctx, WordpieceTokenize(values_vec(i), max_bytes_per_word_,
-                                 suffix_indicator_, use_unknown_token_,
-                                 unknown_token_, &vocab_map, &subwords,
-                                 &begin_offset, &end_offset, &num_wordpieces));
+          ctx, ToStatus(WordpieceTokenize(
+                   values_vec(i), max_bytes_per_word_, suffix_indicator_,
+                   use_unknown_token_, unknown_token_, &vocab_map, &subwords,
+                   &begin_offset, &end_offset, &num_wordpieces)));
 
       // Record the row splits.
       row_lengths.push_back(num_wordpieces);

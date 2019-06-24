@@ -15,39 +15,36 @@
 #ifndef TENSORFLOW_TEXT_CORE_KERNELS_WORDPIECE_TOKENIZER_H_
 #define TENSORFLOW_TEXT_CORE_KERNELS_WORDPIECE_TOKENIZER_H_
 
-#include <map>
-#include "tensorflow/core/framework/lookup_interface.h"
-#include "tensorflow/core/lib/core/status.h"
+#include <string>
+#include <vector>
+
+#include "absl/strings/string_view.h"
 
 namespace tensorflow {
 namespace text {
 
+struct LookupStatus {
+  LookupStatus() : error_msg(""), success(true) {}
+  LookupStatus(const string& msg) : error_msg(msg), success(false) {}
+  std::string error_msg;
+  bool success;
+
+  static LookupStatus OK() { return LookupStatus(); }
+};
+
 class WordpieceVocab {
  public:
   virtual ~WordpieceVocab() {}
-  virtual Status Contains(const string& key, bool* value) = 0;
+  virtual LookupStatus Contains(const absl::string_view& key,
+                                bool* value) const = 0;
 };
 
-class LookupTableVocab : public WordpieceVocab {
- public:
-  LookupTableVocab(lookup::LookupInterface* table, OpKernelContext* ctx);
-
-  virtual Status Contains(const string& key, bool* value);
-
- private:
-  // not owned
-  lookup::LookupInterface* table_;
-  OpKernelContext* ctx_;
-  Tensor default_value_;
-};
-
-Status WordpieceTokenize(const string& token, const int64 max_bytes_per_token,
-                         const string& suffix_indicator, bool use_unknown_token,
-                         const string& unknown_token,
-                         LookupTableVocab* vocab_map,
-                         std::vector<string>* subwords,
-                         std::vector<int>* begin_offset,
-                         std::vector<int>* end_offset, int* num_word_pieces);
+LookupStatus WordpieceTokenize(
+    const absl::string_view& token, const int max_bytes_per_token,
+    const string& suffix_indicator, bool use_unknown_token,
+    const string& unknown_token, const WordpieceVocab* vocab_map,
+    std::vector<std::string>* subwords, std::vector<int>* begin_offset,
+    std::vector<int>* end_offset, int* num_word_pieces);
 
 }  // namespace text
 }  // namespace tensorflow

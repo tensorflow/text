@@ -20,42 +20,16 @@
 #include "icu4c/source/common/unicode/schriter.h"
 #include "icu4c/source/common/unicode/unistr.h"
 #include "icu4c/source/common/unicode/utf8.h"
-#include "tensorflow/core/framework/tensor_shape.h"
-#include "tensorflow/core/lib/core/errors.h"
 
 namespace tensorflow {
 namespace text {
 
-constexpr int64 kOutOfVocabValue = -1;
-
-LookupTableVocab::LookupTableVocab(lookup::LookupInterface* table,
-                                   OpKernelContext* ctx)
-    : table_(table), ctx_(ctx), default_value_(DT_INT64, TensorShape({1})) {
-  default_value_.flat<int64>()(0) = kOutOfVocabValue;
-}
-
-Status LookupTableVocab::Contains(const string& key, bool* value) {
-  if (value == nullptr) {
-    return errors::InvalidArgument("Bad 'value' param.");
-  }
-  Tensor keys(DT_STRING, TensorShape({1}));
-  keys.flat<string>()(0) = key;
-  Tensor values(DT_INT64, TensorShape({1}));
-  TF_RETURN_IF_ERROR(table_->Find(ctx_, keys, &values, default_value_));
-
-  if (static_cast<int64>(values.flat<int64>()(0)) != kOutOfVocabValue) {
-    *value = true;
-    return Status::OK();
-  }
-  *value = false;
-  return Status::OK();
-}
-
 namespace {
 
-Status Lookup(int byte_start, int byte_end, const string& token,
-              const string& suffix_indicator, LookupTableVocab* vocab_map,
-              bool* in_vocab) {
+LookupStatus Lookup(int byte_start, int byte_end,
+                    const absl::string_view& token,
+                    const string& suffix_indicator,
+                    const WordpieceVocab* vocab_map, bool* in_vocab) {
   int byte_len = byte_end - byte_start;
   absl::string_view substr(token.data() + byte_start, byte_len);
   string lookup_value;
@@ -72,10 +46,11 @@ Status Lookup(int byte_start, int byte_end, const string& token,
 // 1) is a proper UTF8 sequence
 // 2) is in the vocab
 // If no match is found, found_match is set to false.
-Status LongestMatchStartingAt(int byte_start, const string& token,
-                              const string& suffix_indicator,
-                              LookupTableVocab* vocab_map, int* byte_end,
-                              bool* found_match) {
+LookupStatus LongestMatchStartingAt(int byte_start,
+                                    const absl::string_view& token,
+                                    const string& suffix_indicator,
+                                    const WordpieceVocab* vocab_map,
+                                    int* byte_end, bool* found_match) {
   const char* token_bytes = token.data();
   const int token_len = token.length();
   std::vector<int32_t> byte_ends;
@@ -87,71 +62,72 @@ Status LongestMatchStartingAt(int byte_start, const string& token,
   int n = byte_ends.size();
   for (int i = n - 1; i >= 0; i--) {
     bool in_vocab;
-    TF_RETURN_IF_ERROR(Lookup(byte_start, byte_ends[i], token, suffix_indicator,
-                              vocab_map, &in_vocab));
+    auto status = Lookup(byte_start, byte_ends[i], token, suffix_indicator,
+                         vocab_map, &in_vocab);
+    if (!status.success) return status;
     if (in_vocab) {
       *byte_end = byte_ends[i];
       *found_match = true;
-      return Status::OK();
+      return LookupStatus::OK();
     }
   }
   *found_match = false;
-  return Status::OK();
+  return LookupStatus::OK();
 }
 
 // Sets the outputs 'begin_offset', 'end_offset' and 'num_word_pieces' when no
 // token is found.
-Status NoTokenFound(const string& token, bool use_unknown_token,
-                    const string& unknown_token, std::vector<string>* subwords,
-                    std::vector<int>* begin_offset,
-                    std::vector<int>* end_offset, int* num_word_pieces) {
+LookupStatus NoTokenFound(const absl::string_view& token,
+                          bool use_unknown_token, const string& unknown_token,
+                          std::vector<std::string>* subwords,
+                          std::vector<int>* begin_offset,
+                          std::vector<int>* end_offset, int* num_word_pieces) {
   begin_offset->push_back(0);
   if (use_unknown_token) {
     subwords->push_back(unknown_token);
     end_offset->push_back(token.length());
   } else {
-    subwords->push_back(token);
+    subwords->emplace_back(token.data(), token.length());
     end_offset->push_back(token.length());
   }
   ++(*num_word_pieces);
 
-  return Status::OK();
+  return LookupStatus::OK();
 }
 
 // When a subword is found, this helper function will add the outputs to
 // 'subwords', 'begin_offset' and 'end_offset'.
-void AddWord(const string& token, int byte_start, int byte_end,
-             const string& suffix_indicator, std::vector<string>* subwords,
+void AddWord(const absl::string_view& token, int byte_start, int byte_end,
+             const string& suffix_indicator, std::vector<std::string>* subwords,
              std::vector<int>* begin_offset, std::vector<int>* end_offset) {
   begin_offset->push_back(byte_start);
   int len = byte_end - byte_start;
   if (byte_start > 0) {
     // Prepend suffix_indicator if the token is within a word.
-    subwords->push_back(
-        ::absl::StrCat(suffix_indicator, token.substr(byte_start, len)));
+    subwords->push_back(::absl::StrCat(
+        suffix_indicator, absl::string_view(token.data() + byte_start, len)));
   } else {
-    subwords->push_back(token.substr(byte_start, len));
+    subwords->emplace_back(token.data(), len);
   }
   end_offset->push_back(byte_end);
 }
 
-Status TokenizeL2RGreedy(const string& token, const int64 max_bytes_per_token,
-                         const string& suffix_indicator, bool use_unknown_token,
-                         const string& unknown_token,
-                         LookupTableVocab* vocab_map,
-                         std::vector<string>* subwords,
-                         std::vector<int>* begin_offset,
-                         std::vector<int>* end_offset, int* num_word_pieces) {
-  std::vector<string> candidate_subwords;
+LookupStatus TokenizeL2RGreedy(
+    const absl::string_view& token, const int64 max_bytes_per_token,
+    const string& suffix_indicator, bool use_unknown_token,
+    const string& unknown_token, const WordpieceVocab* vocab_map,
+    std::vector<std::string>* subwords, std::vector<int>* begin_offset,
+    std::vector<int>* end_offset, int* num_word_pieces) {
+  std::vector<std::string> candidate_subwords;
   std::vector<int> candidate_begin_offsets;
   std::vector<int> candidate_end_offsets;
   const int token_len = token.length();
   for (int byte_start = 0; byte_start < token_len;) {
     int byte_end;
     bool found_subword;
-    TF_RETURN_IF_ERROR(LongestMatchStartingAt(byte_start, token,
-                                              suffix_indicator, vocab_map,
-                                              &byte_end, &found_subword));
+    auto status = LongestMatchStartingAt(byte_start, token, suffix_indicator,
+                                         vocab_map, &byte_end, &found_subword);
+    if (!status.success) return status;
     if (found_subword) {
       AddWord(token, byte_start, byte_end, suffix_indicator,
               &candidate_subwords, &candidate_begin_offsets,
@@ -170,18 +146,17 @@ Status TokenizeL2RGreedy(const string& token, const int64 max_bytes_per_token,
   end_offset->insert(end_offset->end(), candidate_end_offsets.begin(),
                      candidate_end_offsets.end());
   *num_word_pieces += candidate_subwords.size();
-  return Status::OK();
+  return LookupStatus::OK();
 }
 
 }  // namespace
 
-Status WordpieceTokenize(const string& token, const int64 max_bytes_per_token,
-                         const string& suffix_indicator, bool use_unknown_token,
-                         const string& unknown_token,
-                         LookupTableVocab* vocab_map,
-                         std::vector<string>* subwords,
-                         std::vector<int>* begin_offset,
-                         std::vector<int>* end_offset, int* num_word_pieces) {
+LookupStatus WordpieceTokenize(
+    const absl::string_view& token, const int max_bytes_per_token,
+    const string& suffix_indicator, bool use_unknown_token,
+    const string& unknown_token, const WordpieceVocab* vocab_map,
+    std::vector<std::string>* subwords, std::vector<int>* begin_offset,
+    std::vector<int>* end_offset, int* num_word_pieces) {
   int token_len = token.size();
   if (token_len > max_bytes_per_token) {
     begin_offset->push_back(0);
@@ -193,7 +168,7 @@ Status WordpieceTokenize(const string& token, const int64 max_bytes_per_token,
       subwords->emplace_back(token);
       end_offset->push_back(token.size());
     }
-    return Status::OK();
+    return LookupStatus::OK();
   }
   return TokenizeL2RGreedy(token, max_bytes_per_token, suffix_indicator,
                            use_unknown_token, unknown_token, vocab_map,
