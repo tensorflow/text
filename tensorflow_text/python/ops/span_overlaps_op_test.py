@@ -28,13 +28,12 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_tensor
-from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import pointer_ops
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
+class SpanOverlapsOpTest(test_util.TensorFlowTestCase,
                          parameterized.TestCase):
   maxDiff = 5000  # Display diffs even if they're long.  pylint: disable=invalid-name
 
@@ -233,7 +232,7 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
     overlaps = pointer_ops.span_overlaps(source_start, source_limit,
                                          target_start, target_limit, contains,
                                          contained_by, partial_overlap)
-    self.assertRaggedEqual(overlaps, expected)
+    self.assertAllEqual(overlaps, expected)
 
   @parameterized.parameters([
       #=========================================================================
@@ -342,7 +341,7 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
     overlaps = pointer_ops.span_overlaps(source_start, source_limit,
                                          target_start, target_limit, contains,
                                          contained_by, partial_overlap)
-    self.assertRaggedEqual(overlaps, expected)
+    self.assertAllEqual(overlaps, expected)
 
   @parameterized.parameters([
       #=========================================================================
@@ -395,7 +394,7 @@ class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
     overlaps = pointer_ops.span_overlaps(source_start, source_limit,
                                          target_start, target_limit, contains,
                                          contained_by, partial_overlap)
-    self.assertRaggedEqual(overlaps, expected)
+    self.assertAllEqual(overlaps, expected)
 
   def testErrors(self):
     t = [10, 20, 30, 40, 50]

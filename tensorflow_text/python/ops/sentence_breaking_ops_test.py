@@ -29,13 +29,12 @@ from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_map_ops
 from tensorflow.python.ops.ragged import ragged_tensor
-from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import sentence_breaking_ops
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
+class Breaka3TestCases(test_util.TensorFlowTestCase,
                        parameterized.TestCase):
 
   def getTokenWord(self, text, token_starts, token_ends):
@@ -118,11 +117,10 @@ class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
 
     fragment_starts, fragment_ends, fragment_properties, terminal_punc = (
         fragments)
-    self.assertRaggedEqual(expected_fragment_start, fragment_starts)
-    self.assertRaggedEqual(expected_fragment_end, fragment_ends)
-    self.assertRaggedEqual(expected_fragment_properties,
-                           fragment_properties)
-    self.assertRaggedEqual(expected_terminal_punc, terminal_punc)
+    self.assertAllEqual(expected_fragment_start, fragment_starts)
+    self.assertAllEqual(expected_fragment_end, fragment_ends)
+    self.assertAllEqual(expected_fragment_properties, fragment_properties)
+    self.assertAllEqual(expected_terminal_punc, terminal_punc)
 
   @parameterized.parameters([
       # Test acronyms
@@ -153,11 +151,10 @@ class Breaka3TestCases(ragged_test_util.RaggedTensorTestCase,
 
     fragment_starts, fragment_ends, fragment_properties, terminal_punc = (
         fragments)
-    self.assertRaggedEqual(expected_fragment_start, fragment_starts)
-    self.assertRaggedEqual(expected_fragment_end, fragment_ends)
-    self.assertRaggedEqual(expected_fragment_properties,
-                           fragment_properties)
-    self.assertRaggedEqual(expected_terminal_punc, terminal_punc)
+    self.assertAllEqual(expected_fragment_start, fragment_starts)
+    self.assertAllEqual(expected_fragment_end, fragment_ends)
+    self.assertAllEqual(expected_fragment_properties, fragment_properties)
+    self.assertAllEqual(expected_terminal_punc, terminal_punc)
 
   @parameterized.parameters([
       # Too many ragged ranks

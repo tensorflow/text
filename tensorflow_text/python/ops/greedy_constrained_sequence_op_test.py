@@ -23,14 +23,13 @@ import numpy as np
 
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
-from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import greedy_constrained_sequence_op as greedy_op
 
 
 # TODO(b/122968457): Refactor this test logic.
 @test_util.run_all_in_graph_and_eager_modes
-class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
+class GreedyConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
 
   def _last_max(self, array):
     """Helper function that matches the maximum behaviour in the C++ op."""
@@ -135,7 +134,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertRaggedEqual(single_result, [sequence])
+    self.assertAllEqual(single_result, [sequence])
 
   def test_sequence_in_exp_space_with_start_end_states_multi_batch_item(self):
     use_log_space = False
@@ -175,8 +174,8 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertRaggedEqual(multiple_sequence_result,
-                           [sequence, sequence, sequence])
+    self.assertAllEqual(multiple_sequence_result,
+                        [sequence, sequence, sequence])
 
   def test_sequence_in_exp_space_without_start_end_states_single_batch_item(
       self):
@@ -214,7 +213,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertRaggedEqual(single_result, [sequence])
+    self.assertAllEqual(single_result, [sequence])
 
   def test_sequence_in_exp_space_without_start_end_states_multi_batch_item(
       self):
@@ -253,8 +252,8 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertRaggedEqual(multiple_sequence_result,
-                           [sequence, sequence, sequence])
+    self.assertAllEqual(multiple_sequence_result,
+                        [sequence, sequence, sequence])
 
   def test_sequence_in_log_space_with_start_end_states_single_batch_item(self):
     use_log_space = True
@@ -294,7 +293,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertRaggedEqual(single_result, [sequence])
+    self.assertAllEqual(single_result, [sequence])
 
   def test_sequence_in_log_space_with_start_end_states_multi_batch_item(self):
     use_log_space = True
@@ -335,8 +334,8 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertRaggedEqual(multiple_sequence_result,
-                           [sequence, sequence, sequence])
+    self.assertAllEqual(multiple_sequence_result,
+                        [sequence, sequence, sequence])
 
   def test_sequence_in_log_space_without_start_end_states_single_batch_item(
       self):
@@ -374,7 +373,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertRaggedEqual(single_result, [sequence])
+    self.assertAllEqual(single_result, [sequence])
 
   def test_sequence_in_log_space_without_start_end_states_multi_batch_item(
       self):
@@ -413,8 +412,8 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertRaggedEqual(multiple_sequence_result,
-                           [sequence, sequence, sequence])
+    self.assertAllEqual(multiple_sequence_result,
+                        [sequence, sequence, sequence])
 
   def test_sequence_with_none_weights_single_batch_item(self):
     use_log_space = True
@@ -451,7 +450,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertRaggedEqual(single_result, [sequence])
+    self.assertAllEqual(single_result, [sequence])
 
   def test_sequence_with_none_weights_multi_batch_item(self):
     use_log_space = True
@@ -489,8 +488,8 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertRaggedEqual(multiple_sequence_result,
-                           [sequence, sequence, sequence])
+    self.assertAllEqual(multiple_sequence_result,
+                        [sequence, sequence, sequence])
 
   def test_sequence_with_none_permissions_single_batch_item(self):
     use_log_space = True
@@ -521,7 +520,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertRaggedEqual(single_result, [sequence])
+    self.assertAllEqual(single_result, [sequence])
 
   def test_sequence_with_none_permissions_multi_input(self):
     use_log_space = True
@@ -553,8 +552,8 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertRaggedEqual(multiple_sequence_result,
-                           [sequence, sequence, sequence])
+    self.assertAllEqual(multiple_sequence_result,
+                        [sequence, sequence, sequence])
 
   def test_sequence_with_implicit_sequence_lengths(self):
     use_log_space = True
@@ -592,8 +591,8 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertRaggedEqual(multiple_sequence_result,
-                           [sequence, sequence, sequence])
+    self.assertAllEqual(multiple_sequence_result,
+                        [sequence, sequence, sequence])
 
   def test_ragged_inputs(self):
     use_log_space = True
@@ -641,7 +640,7 @@ class GreedyConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     ragged_result = self.evaluate(ragged_op)
-    self.assertRaggedEqual(ragged_result, expected_sequence)
+    self.assertAllEqual(ragged_result, expected_sequence)
 
 
 if __name__ == "__main__":

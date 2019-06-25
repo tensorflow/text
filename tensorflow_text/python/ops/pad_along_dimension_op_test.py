@@ -28,13 +28,12 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_tensor
-from tensorflow.python.ops.ragged import ragged_test_util
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import pad_along_dimension_op
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
+class PadAlongDimensionOpTest(test_util.TensorFlowTestCase,
                               parameterized.TestCase):
 
   def test_pads_along_positive_inner_dimension(self):
@@ -431,7 +430,7 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
     padded = pad_along_dimension_op.pad_along_dimension(data, axis, left_pad,
                                                         right_pad)
 
-    self.assertRaggedEqual(padded, expected)
+    self.assertAllEqual(padded, expected)
 
   def testRaggedPadDimensionErrors(self):
     ragged_data = ragged_factory_ops.constant([[1, 2], [3, 4]])
@@ -562,7 +561,7 @@ class PadAlongDimensionOpTest(ragged_test_util.RaggedTensorTestCase,
     pad_value = self._convert_ragged(pad_value, data.ragged_rank - axis)
     pad = pad_along_dimension_op._padding_for_dimension(data, axis, pad_value)
 
-    self.assertRaggedEqual(pad, expected)
+    self.assertAllEqual(pad, expected)
     self.assertEqual(data.shape.ndims, pad.shape.ndims)
 
   def _convert_ragged(self, value, ragged_rank):
