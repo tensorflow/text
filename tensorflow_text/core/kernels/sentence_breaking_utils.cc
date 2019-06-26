@@ -34,6 +34,10 @@ Status UnicodeUtil::GetOneUChar(const absl::string_view& input,
   UErrorCode status = U_ZERO_ERROR;
   const char* source = input.data();
   const char* limit = input.data() + input.length();
+  if (!converter_) {
+    return tensorflow::errors::Internal(
+        absl::StrCat("Converter has not been initialized!"));
+  }
   *result = ucnv_getNextUChar(converter_, &source, limit, &status);
 
   if (U_FAILURE(status)) {

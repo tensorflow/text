@@ -30,22 +30,22 @@ void SetFragmentProperty(SentenceFragment::Property property,
 }
 
 // Returns true iff a token has any of the given properties.
-bool TokenHasProperty(uint32 properties, const Document::Token &token) {
-  return token.text_properties & properties;
+bool TokenHasProperty(uint32 properties, const Token &token) {
+  return token.text_properties() & properties;
 }
 
 // Returns true iff a token has the ACRONYM text property and token.word()
 // ends with a period.
-bool IsPeriodSeparatedAcronym(const Document::Token &token) {
-  return TokenHasProperty(Document::Token::ACRONYM, token) &&
-         (!token.word.empty() && token.word.back() == '.');
+bool IsPeriodSeparatedAcronym(const Token &token) {
+  return TokenHasProperty(Token::ACRONYM, token) &&
+         (!token.word().empty() && token.word().back() == '.');
 }
 
 // Returns true iff the token can appear after a space in a sentence-terminal
 // token sequence.
-Status SpaceAllowedBeforeToken(const UnicodeUtil *util,
-                               const Document::Token &token, bool *result) {
-  const string &word = token.word;
+Status SpaceAllowedBeforeToken(const UnicodeUtil *util, const Token &token,
+                               bool *result) {
+  const string &word = token.word();
   bool is_ellipsis = false;
   TF_RETURN_IF_ERROR(util->IsEllipsis(word, &is_ellipsis));
 
@@ -55,7 +55,7 @@ Status SpaceAllowedBeforeToken(const UnicodeUtil *util,
   bool is_close_paren = false;
   TF_RETURN_IF_ERROR(util->IsCloseParen(word, &is_close_paren));
 
-  *result = (TokenHasProperty(Document::Token::EMOTICON, token) ||
+  *result = (TokenHasProperty(Token::EMOTICON, token) ||
              (is_ellipsis || is_terminal_punc || is_close_paren));
   return Status::OK();
 }
@@ -79,8 +79,8 @@ class SentenceFragmenter::FragmentBoundaryMatch {
   // true for success, or false if there was no valid transition.
   Status Advance(const UnicodeUtil *util, const Document &document, int index,
                  bool *result) {
-    const Document::Token &token = document.tokens[index];
-    const string &word = token.word;
+    const Token &token = document.tokens()[index];
+    const string &word = token.word();
     bool no_transition = false;
 
     bool is_terminal_punc = false;
@@ -96,7 +96,7 @@ class SentenceFragmenter::FragmentBoundaryMatch {
       case INITIAL_STATE:
         if (is_terminal_punc || is_ellipsis ||
             IsPeriodSeparatedAcronym(token) ||
-            TokenHasProperty(Document::Token::EMOTICON, token)) {
+            TokenHasProperty(Token::EMOTICON, token)) {
           first_terminal_punc_index_ = index;
           state_ = COLLECTING_TERMINAL_PUNC;
         }
@@ -104,7 +104,7 @@ class SentenceFragmenter::FragmentBoundaryMatch {
       case COLLECTING_TERMINAL_PUNC:
 
         if (is_terminal_punc || is_ellipsis ||
-            TokenHasProperty(Document::Token::EMOTICON, token)) {
+            TokenHasProperty(Token::EMOTICON, token)) {
           // Stay in COLLECTING_TERMINAL_PUNC state.
         } else if (is_close_punc) {
           first_close_punc_index_ = index;
@@ -115,7 +115,7 @@ class SentenceFragmenter::FragmentBoundaryMatch {
         break;
       case COLLECTING_CLOSE_PUNC:
         if (is_close_punc || is_ellipsis ||
-            TokenHasProperty(Document::Token::EMOTICON, token)) {
+            TokenHasProperty(Token::EMOTICON, token)) {
           // Stay in COLLECTING_CLOSE_PUNC state. We effectively ignore
           // emoticons and ellipses and continue to accept closing punctuation
           // after them.
@@ -179,7 +179,7 @@ class SentenceFragmenter::FragmentBoundaryMatch {
 Status SentenceFragmenter::FindFragments(
     std::vector<SentenceFragment> *result) {
   // Partition tokens into sentence fragments.
-  for (int i_start = 0; i_start < document_->tokens.size();) {
+  for (int i_start = 0; i_start < document_->tokens().size();) {
     SentenceFragment fragment;
 
     // Match regexp for fragment boundary.
@@ -220,10 +220,10 @@ Status SentenceFragmenter::FindNextFragmentBoundary(
   FragmentBoundaryMatch current_match;
   FragmentBoundaryMatch previous_match;
 
-  for (int i = i_start; i < document_->tokens.size(); ++i) {
-    const auto &token = document_->tokens[i];
+  for (int i = i_start; i < document_->tokens().size(); ++i) {
+    const auto &token = document_->tokens()[i];
     if (current_match.GotTerminalPunc() && i > i_start &&
-        token.break_level >= Document::Token::SPACE_BREAK) {
+        token.break_level() >= Token::SPACE_BREAK) {
       // Got terminal punctuation and a space delimiter, so match is valid.
       bool space_allowed_before_token = false;
       TF_RETURN_IF_ERROR(
@@ -279,9 +279,9 @@ Status SentenceFragmenter::FindNextFragmentBoundary(
 Status SentenceFragmenter::UpdateLatestOpenParenForFragment(int i_start,
                                                             int i_end) {
   for (int i = i_end; i > i_start; --i) {
-    const auto &token = document_->tokens[i - 1];
+    const auto &token = document_->tokens()[i - 1];
     bool is_open_paren = false;
-    TF_RETURN_IF_ERROR(util_->IsOpenParen(token.word, &is_open_paren));
+    TF_RETURN_IF_ERROR(util_->IsOpenParen(token.word(), &is_open_paren));
     if (is_open_paren) {
       // Make the approximation that this open paren is sentence-initial iff it
       // is fragment-initial.
@@ -354,10 +354,10 @@ Status SentenceFragmenter::GetAdjustedFirstTerminalPuncIndex(
   int i2 = match.first_close_punc_index();
 
   for (int i = i2; i > i1; --i) {
-    const auto &token = document_->tokens[i - 1];
+    const auto &token = document_->tokens()[i - 1];
     bool is_ellipsis = false;
-    TF_RETURN_IF_ERROR(util_->IsEllipsis(token.word, &is_ellipsis));
-    if (is_ellipsis || TokenHasProperty(Document::Token::EMOTICON, token)) {
+    TF_RETURN_IF_ERROR(util_->IsEllipsis(token.word(), &is_ellipsis));
+    if (is_ellipsis || TokenHasProperty(Token::EMOTICON, token)) {
       if (i == i2) {
         // Ellipsis is last terminal punctuation mark. No adjustment.
         *result = i1;
@@ -398,13 +398,13 @@ Status SentenceFragmenter::HasUnattachableTerminalPunc(
 
   // Iterate over the second and later punctuation marks.
   for (int i = i1 + 1; i < i2; ++i) {
-    const auto &token = document_->tokens[i];
+    const auto &token = document_->tokens()[i];
     bool is_punctuation = false;
-    TF_RETURN_IF_ERROR(util_->IsPunctuationWord(token.word, &is_punctuation));
+    TF_RETURN_IF_ERROR(util_->IsPunctuationWord(token.word(), &is_punctuation));
     bool is_ellipsis = false;
-    TF_RETURN_IF_ERROR(util_->IsEllipsis(token.word, &is_ellipsis));
+    TF_RETURN_IF_ERROR(util_->IsEllipsis(token.word(), &is_ellipsis));
     if (is_punctuation && !is_ellipsis &&
-        !TokenHasProperty(Document::Token::EMOTICON, token)) {
+        !TokenHasProperty(Token::EMOTICON, token)) {
       // Found an unattachable, unambiguous terminal punctuation mark.
       *result = true;
       return Status::OK();
@@ -427,9 +427,9 @@ Status SentenceFragmenter::HasCloseParen(const FragmentBoundaryMatch &match,
   int i2 = match.limit_index();
 
   for (int i = i1; i < i2; ++i) {
-    const auto &token = document_->tokens[i];
+    const auto &token = document_->tokens()[i];
     bool is_close_paren = false;
-    TF_RETURN_IF_ERROR(util_->IsCloseParen(token.word, &is_close_paren));
+    TF_RETURN_IF_ERROR(util_->IsCloseParen(token.word(), &is_close_paren));
     if (is_close_paren) {
       *result = true;
       return Status::OK();

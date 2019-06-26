@@ -38,80 +38,112 @@
 namespace tensorflow {
 namespace text {
 
-struct Document {
-  struct Token {
-    std::string word;
-    uint32 start;
-    uint32 end;
-    enum BreakLevel {
-      NO_BREAK = 0,         // No separation between tokens.
-      SPACE_BREAK = 1,      // Tokens separated by space.
-      LINE_BREAK = 2,       // Tokens separated by line break.
-      SENTENCE_BREAK = 3,   // Tokens separated by sentence break.
-      PARAGRAPH_BREAK = 4,  // Tokens separated by paragraph break.
-      SECTION_BREAK = 10,   // Tokens separated by section break.
-      CHAPTER_BREAK = 20,   // Tokens separated by chapter break.
-    };
-
-    BreakLevel break_level;
-
-    // Bitmask for properties of the token text.
-    enum TextProperty {
-      // Token is ill-formed if:
-      //
-      // All tokens in a paragraph are marked as ill-formed if it has too few
-      // non-punctuation tokens in a paragraph (currently, a heading must have
-      // at least 2 tokens, and a non-heading must have at least 8).
-      //
-      // All tokens in a paragraph are marked as ill-formed if it lacks terminal
-      // sentence ending punctuation(e.g.: . ! ? …) or an emoticon (e.g.: ':)',
-      // ':D').
-      // Exception: If a paragraph ends in an introductory punctuation
-      // character (','':' ';'), we say that it is an introductory paragraph.
-      // If it is followed by a "simple" HTML list (one whose list items have
-      // no substructure, such as embedded tables), then we keep both the
-      // introductory paragraph and the entire list. If not, we keep the
-      // introductory paragraph if it is followed by a well-formed paragraph.
-      //
-      // All tokens in a paragraph are marked as ill-formed if it contains the
-      // copyright sign (C in a circle) as this usually indicates a copyright
-      // notice, and is therefore effectively boilerplate.
-      ILL_FORMED = 0x01,
-
-      // Indicates that the token is a part of the page title (<title> tag) or
-      // a heading (<hN> tag).
-      TITLE = 0x40,
-      HEADING = 0x02,
-
-      // Text style. Determined from HTML tags only (<b>, etc), not from CSS.
-      BOLD = 0x04,
-      ITALIC = 0x08,
-      UNDERLINED = 0x10,
-
-      // Indicates that the token is a part of a list. Currently set only for
-      // "simple" HTML lists (have no embedded paragraph boundaries) that are
-      // preceded by an introductory paragraph (ends in colon or a few other
-      // characters).
-      LIST = 0x20,
-
-      // Token is an emoticon.
-      EMOTICON = 0x80,
-
-      // Token was identified by Lexer as an acronym.  Lexer identifies period-,
-      // hyphen-, and space-separated acronyms: "U.S.", "U-S", and "U S".
-      // Lexer normalizes all three to "US", but the token.word field
-      // normalizes only space-separated acronyms.
-      ACRONYM = 0x100,
-
-      // Indicates that the token (or part of the token) is a covered by at
-      // least one hyperlink. More information of the hyperlink is stored in the
-      // first token covered by the hyperlink.
-      HYPERLINK = 0x200,
-    };
-
-    TextProperty text_properties;
+class Token {
+ public:
+  enum BreakLevel {
+    NO_BREAK = 0,         // No separation between tokens.
+    SPACE_BREAK = 1,      // Tokens separated by space.
+    LINE_BREAK = 2,       // Tokens separated by line break.
+    SENTENCE_BREAK = 3,   // Tokens separated by sentence break.
+    PARAGRAPH_BREAK = 4,  // Tokens separated by paragraph break.
+    SECTION_BREAK = 10,   // Tokens separated by section break.
+    CHAPTER_BREAK = 20,   // Tokens separated by chapter break.
   };
-  std::vector<Token> tokens;
+
+  // Bitmask for properties of the token text.
+  enum TextProperty {
+    NONE = 0x00,
+
+    // Token is ill-formed if:
+    //
+    // All tokens in a paragraph are marked as ill-formed if it has too few
+    // non-punctuation tokens in a paragraph (currently, a heading must have
+    // at least 2 tokens, and a non-heading must have at least 8).
+    //
+    // All tokens in a paragraph are marked as ill-formed if it lacks terminal
+    // sentence ending punctuation(e.g.: . ! ? …) or an emoticon (e.g.: ':)',
+    // ':D').
+    // Exception: If a paragraph ends in an introductory punctuation
+    // character (','':' ';'), we say that it is an introductory paragraph.
+    // If it is followed by a "simple" HTML list (one whose list items have
+    // no substructure, such as embedded tables), then we keep both the
+    // introductory paragraph and the entire list. If not, we keep the
+    // introductory paragraph if it is followed by a well-formed paragraph.
+    //
+    // All tokens in a paragraph are marked as ill-formed if it contains the
+    // copyright sign (C in a circle) as this usually indicates a copyright
+    // notice, and is therefore effectively boilerplate.
+    ILL_FORMED = 0x01,
+
+    // Indicates that the token is a part of the page title (<title> tag) or
+    // a heading (<hN> tag).
+    TITLE = 0x40,
+    HEADING = 0x02,
+
+    // Text style. Determined from HTML tags only (<b>, etc), not from CSS.
+    BOLD = 0x04,
+    ITALIC = 0x08,
+    UNDERLINED = 0x10,
+
+    // Indicates that the token is a part of a list. Currently set only for
+    // "simple" HTML lists (have no embedded paragraph boundaries) that are
+    // preceded by an introductory paragraph (ends in colon or a few other
+    // characters).
+    LIST = 0x20,
+
+    // Token is an emoticon.
+    EMOTICON = 0x80,
+
+    // Token was identified by Lexer as an acronym.  Lexer identifies period-,
+    // hyphen-, and space-separated acronyms: "U.S.", "U-S", and "U S".
+    // Lexer normalizes all three to "US", but the token.word field
+    // normalizes only space-separated acronyms.
+    ACRONYM = 0x100,
+
+    // Indicates that the token (or part of the token) is a covered by at
+    // least one hyperlink. More information of the hyperlink is stored in the
+    // first token covered by the hyperlink.
+    HYPERLINK = 0x200,
+  };
+
+  Token(const string &word, uint32 start, uint32 end, BreakLevel break_level,
+        TextProperty text_properties)
+      : word_(word),
+        start_(start),
+        end_(end),
+        break_level_(break_level),
+        text_properties_(text_properties) {}
+
+  const string &word() const { return word_; }
+  const uint32 start() const { return start_; }
+  const uint32 end() const { return end_; }
+  const BreakLevel break_level() const { return break_level_; }
+  const TextProperty text_properties() const { return text_properties_; }
+
+ private:
+  const string &word_;
+  uint32 start_;
+  uint32 end_;
+  BreakLevel break_level_;
+  TextProperty text_properties_;
+};
+
+class Document {
+ public:
+  // Does NOT take ownership of 'tokens'.
+  Document(std::vector<Token> *tokens) : tokens_(tokens) {}
+
+  void AddToken(const string &word, uint32 start, uint32 end,
+                Token::BreakLevel break_level,
+                Token::TextProperty text_properties) {
+    tokens_->emplace_back(word, start, end, break_level, text_properties);
+  }
+
+  const std::vector<Token> &tokens() const { return *tokens_; }
+
+ private:
+  // not owned
+  std::vector<Token> *tokens_;
 };
 
 struct SentenceFragment {

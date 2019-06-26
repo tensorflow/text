@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
 #include <vector>
 
 #include "absl/strings/str_cat.h"
@@ -164,7 +165,7 @@ class SentenceFragmentsOp : public OpKernel {
 
     static thread_local std::unique_ptr<WrappedConverter> input_encoder;
     if (!input_encoder) {
-      input_encoder.reset(new WrappedConverter());
+      input_encoder = absl::make_unique<WrappedConverter>();
     }
     input_encoder->init(input_encoding_);
     OP_REQUIRES(
@@ -194,16 +195,13 @@ class SentenceFragmentsOp : public OpKernel {
     int num_fragments = 0;
     std::vector<std::vector<SentenceFragment>> fragments;
     for (int i = 0; i < row_lengths.size(); ++i) {
-      Document doc;
+      std::vector<Token> tokens;
+      Document doc(&tokens);
       for (int j = 0; j < row_lengths(i); ++j) {
-        Document::Token t;
-        t.word = token_word(token_index);
-        t.start = token_start(token_index);
-        t.break_level = Document::Token::SPACE_BREAK;
-        t.end = token_end(token_index);
-        t.text_properties = static_cast<Document::Token::TextProperty>(
-            token_properties(token_index));
-        doc.tokens.push_back(t);
+        doc.AddToken(
+            token_word(token_index), token_start(token_index),
+            token_end(token_index), Token::SPACE_BREAK,
+            static_cast<Token::TextProperty>(token_properties(token_index)));
         ++token_index;
       }
 
