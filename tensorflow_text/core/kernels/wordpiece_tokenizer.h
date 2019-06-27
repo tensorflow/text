@@ -35,7 +35,7 @@ struct LookupStatus {
 class WordpieceVocab {
  public:
   virtual ~WordpieceVocab() {}
-  virtual LookupStatus Contains(const absl::string_view& key,
+  virtual LookupStatus Contains(const absl::string_view key,
                                 bool* value) const = 0;
 };
 

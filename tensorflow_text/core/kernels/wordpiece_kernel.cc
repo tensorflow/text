@@ -108,7 +108,7 @@ class LookupTableVocab : public WordpieceVocab {
  public:
   LookupTableVocab(lookup::LookupInterface* table, OpKernelContext* ctx);
 
-  virtual LookupStatus Contains(const absl::string_view& key,
+  virtual LookupStatus Contains(const absl::string_view key,
                                 bool* value) const;
 
  private:
@@ -134,7 +134,7 @@ LookupTableVocab::LookupTableVocab(lookup::LookupInterface* table,
   default_value_.flat<int64>()(0) = kOutOfVocabValue;
 }
 
-LookupStatus LookupTableVocab::Contains(const absl::string_view& key,
+LookupStatus LookupTableVocab::Contains(const absl::string_view key,
                                         bool* value) const {
   if (value == nullptr) {
     return LookupStatus("Bad 'value' param.");
