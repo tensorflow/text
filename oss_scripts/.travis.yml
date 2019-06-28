@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.7"
+  - "3.6"
+env:
+  matrix:
+    - TF_VERSION="2.0.0b0"
+install:
+  - pip install -q "tensorflow==$TF_VERSION"
+script:
+  - ./oss-scripts/run_tests.sh
+git:
+  depth: 10
+  quiet: true

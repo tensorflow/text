@@ -470,14 +470,3 @@ py_library(
     name = "wordshape_ops",
     srcs = ["python/ops/wordshape_ops.py"],
 )
-
-py_test(
-    name = "wordshape_ops_test",
-    size = "small",
-    srcs = ["python/ops/wordshape_ops_test.py"],
-    python_version = "PY2",
-    srcs_version = "PY2AND3",
-    deps = [
-        ":wordshape_ops",
-    ],
-)
