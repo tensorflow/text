@@ -8,7 +8,7 @@ env:
 install:
   - pip install -q "tensorflow==$TF_VERSION"
 script:
-  - ./oss-scripts/run_tests.sh
+  - ./oss_scripts/run_tests.sh
 git:
   depth: 10
   quiet: true
