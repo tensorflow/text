@@ -4,11 +4,11 @@ python:
   - "3.6"
 env:
   matrix:
-    - TF_VERSION="2.0.0b0"
+    - TF_VERSION="2.0.0b1"
 install:
   - pip install -q "tensorflow==$TF_VERSION"
 script:
-  - ./oss-scripts/run_tests.sh
+  - ./oss_scripts/run_tests.sh
 git:
   depth: 10
   quiet: true
