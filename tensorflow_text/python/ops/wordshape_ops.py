@@ -34,7 +34,6 @@ from __future__ import print_function
 import re
 import enum
 
-from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import string_ops
 
@@ -368,9 +367,8 @@ def wordshape(input_tensor, pattern, name=None):
     return string_ops.regex_full_match(input_tensor, pattern.value, name)
   elif (isinstance(pattern, (list, tuple)) and
         all(isinstance(s, WordShape) for s in pattern)):
-    with ops.name_scope(name, "Wordshape", input_tensor):
-      return array_ops.stack([wordshape(input_tensor, s) for s in pattern],
-                             axis=-1)
+    return array_ops.stack([wordshape(input_tensor, s) for s in pattern],
+                           axis=-1)
   else:
     raise TypeError(
         "Expected 'pattern' to be a single WordShape or a list of WordShapes.")
