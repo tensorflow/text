@@ -18,8 +18,8 @@ text.ngrams(
 )
 ```
 
-Defined in
-[`python/ops/ngrams_op.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
@@ -40,14 +40,16 @@ created using the sliding_window op.
 *   <b>`reduction_type`</b>: A member of the Reduction enum. Should be a
     constant. Currently supports:
 
-    *   `Reduction.SUM`: Add values in the window.
-    *   `Reduction.MEAN`: Average values in the window.
-    *   `Reduction.STRING_JOIN`: Join strings in the window. Note that axis must
-        be -1 here.
+    *   <a href="../text/Reduction.md#SUM"><code>Reduction.SUM</code></a>: Add
+        values in the window.
+    *   <a href="../text/Reduction.md#MEAN"><code>Reduction.MEAN</code></a>:
+        Average values in the window.
+    *   <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>:
+        Join strings in the window. Note that axis must be -1 here.
 
 *   <b>`string_separator`</b>: The separator string used for
-    `Reduction.STRING_JOIN`. Ignored otherwise. Must be a string constant, not a
-    Tensor.
+    <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>.
+    Ignored otherwise. Must be a string constant, not a Tensor.
 
 *   <b>`name`</b>: The op name.
 

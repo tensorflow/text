@@ -34,11 +34,7 @@ gen_wordpiece_tokenizer = load_library.load_op_library(resource_loader.get_path_
 
 
 class WordpieceTokenizer(TokenizerWithOffsets):
-  """Creates a wordpiece tokenizer.
-
-    It tokenizes utf-8 encoded tokens into subword pieces based off of a vocab.
-
-  """
+  """Tokenizes a tensor of UTF-8 string tokens into subword pieces."""
 
   def __init__(self,
                vocab_lookup_table,
@@ -70,7 +66,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
     self._use_unknown_token = True if unknown_token else False
 
   def tokenize(self, input):  # pylint: disable=redefined-builtin
-    """"Splits tokens further into wordpiece tokens.
+    """Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
     ### Example:
     ```python
@@ -84,15 +80,15 @@ class WordpieceTokenizer(TokenizerWithOffsets):
       input: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 
     Returns:
-      A `RaggedTensor`s `tokens` where `tokens[i1...iN, j]` is the string
-            contents, or ID in the vocab_lookup_table representing that string,
-            of the `j`th token in `input[i1...iN]`
+      A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string
+      contents (or ID in the vocab_lookup_table representing that string)
+      of the `jth` token in `input[i1...iN]`
     """
     subword, _, _ = self.tokenize_with_offsets(input)
     return subword
 
   def tokenize_with_offsets(self, input):  # pylint: disable=redefined-builtin
-    """Tokenizes utf-8 encoded tokens into subword pieces based off of a vocab.
+    """Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
     ### Example:
 
@@ -112,14 +108,15 @@ class WordpieceTokenizer(TokenizerWithOffsets):
       input: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 
     Returns:
-      A tuple of `RaggedTensor`s `tokens`, `start_offsets`, and `limit_offsets`
-      where:
-        * `tokens[i1...iN, j]` is the string contents, or ID in the
-          vocab_lookup_table representing that string, of the `j`th token in
-          `input[i1...iN]`
-        * `start_offsets[i1...iN, j]` is the byte offset for the start of the
-          `j`th token in `input[i1...iN]`
-        * `limit_offsets[i1...iN, j]` is the byte offset for the end of the
+      A tuple `(tokens, start_offsets, limit_offsets)` where:
+
+        * `tokens[i1...iN, j]` is a `RaggedTensor` of the string contents (or ID
+          in the vocab_lookup_table representing that string) of the `jth` token
+          in `input[i1...iN]`.
+        * `start_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets
+          for the start of the `jth` token in `input[i1...iN]`.
+        * `limit_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets
+          for the end of the `jth` token in `input[i`...iN]`.
     """
     name = None
     if not isinstance(self._vocab_lookup_table, lookup_ops.LookupInterface):

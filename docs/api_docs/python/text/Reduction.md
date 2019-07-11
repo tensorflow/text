@@ -10,24 +10,24 @@
 
 ## Class `Reduction`
 
-Type of reduction to be done by the ngram op.
+Type of reduction to be done by the n-gram op.
 
-Defined in
-[`python/ops/ngrams_op.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
 The supported reductions are as follows:
 
-* `Reduction.SUM`: Add values in the window.
-* `Reduction.MEAN`: Average values in the window.
-* `Reduction.STRING_JOIN`: Join strings in the window.
+*   <a href="../text/Reduction.md#SUM"><code>Reduction.SUM</code></a>: Add
+    values in the window.
+*   <a href="../text/Reduction.md#MEAN"><code>Reduction.MEAN</code></a>: Average
+    values in the window.
+*   <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>:
+    Join strings in the window.
 
 ## Class Members
 
-<h3 id="MEAN"><code>MEAN</code></h3>
-
-<h3 id="STRING_JOIN"><code>STRING_JOIN</code></h3>
-
-<h3 id="SUM"><code>SUM</code></h3>
-
+*   `MEAN` <a id="MEAN"></a>
+*   `STRING_JOIN` <a id="STRING_JOIN"></a>
+*   `SUM` <a id="SUM"></a>

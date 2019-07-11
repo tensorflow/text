@@ -15,15 +15,15 @@ text.coerce_to_structurally_valid_utf8(
 )
 ```
 
-Defined in
-[`python/ops/string_ops.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/string_ops.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/string_ops.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
-Any bytes which cause the input string to be invalid UTF-8 are substituted
-with the provided replacement character codepoint (default 65533). Use a
-single byte replacement character codepoint to preserve alignment to the
-source input string.
+Any bytes which cause the input string to be invalid UTF-8 are substituted with
+the provided replacement character codepoint (default 65533). If you plan on
+overriding the default, use a single byte replacement character codepoint to
+preserve alignment to the source input string.
 
 #### Args:
 

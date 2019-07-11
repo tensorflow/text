@@ -38,9 +38,9 @@ def coerce_to_structurally_valid_utf8(input,
   """Coerce UTF-8 input strings to structurally valid UTF-8.
 
   Any bytes which cause the input string to be invalid UTF-8 are substituted
-  with the provided replacement character codepoint (default 65533). Use a
-  single byte replacement character codepoint to preserve alignment to the
-  source input string.
+  with the provided replacement character codepoint (default 65533). If you plan
+  on overriding the default, use a single byte replacement character codepoint
+  to preserve alignment to the source input string.
 
   Args:
     input: UTF-8 string tensor to coerce to valid UTF-8.

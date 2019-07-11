@@ -42,15 +42,15 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
   def tokenize(self, input):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings on whitespaces.
 
-    The strings are split when a ICU defined whitespace character is. These
+    The strings are split on ICU defined whitespace characters. These
     whitespace characters are dropped.
 
     Args:
       input: A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
 
     Returns:
-      A RaggedTensor of tokenized text. The returned shape is the shape of the
-        input tensor with an added ragged dimension for tokens of each string.
+      A `RaggedTensor` of tokenized text. The returned shape is the shape of the
+      input tensor with an added ragged dimension for tokens of each string.
     """
     (tokens, _, _) = self.tokenize_with_offsets(input)
     return tokens
@@ -58,15 +58,15 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
   def tokenize_with_offsets(self, input):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings on whitespaces.
 
-    The strings are split when a ICU defined whitespace character is. These
+    The strings are split on ICU defined whitespace characters. These
     whitespace characters are dropped.
 
     Args:
       input: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 
     Returns:
-      A tuple of `RaggedTensor`s `tokens`, `start_offsets`, and `limit_offsets`
-      where:
+      A tuple `(tokens, start_offsets, limit_offsets)` where:
+
         * `tokens`: A `RaggedTensor` of tokenized text.
         * `start_offsets`: A `RaggedTensor` of the tokens' starting byte offset.
         * `limit_offsets`: A `RaggedTensor` of the tokens' ending byte offset.

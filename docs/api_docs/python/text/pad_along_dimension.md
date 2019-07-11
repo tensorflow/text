@@ -17,8 +17,8 @@ text.pad_along_dimension(
 )
 ```
 
-Defined in
-[`python/ops/pad_along_dimension_op.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pad_along_dimension_op.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pad_along_dimension_op.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
@@ -47,7 +47,7 @@ result[i1...iaxis, -R:] = right_pad
 *   <b>`right_pad`</b>: `<dtype>[R, I1...IM]` An `M+1` dimensional tensor that
     should be appended to each row along dimension `axis`; or `None` if no
     padding should be added to the right side.
-*   <b>`name`</b>: The name of this op.
+*   <b>`name`</b>: The name of this op (optional).
 
 #### Returns:
 

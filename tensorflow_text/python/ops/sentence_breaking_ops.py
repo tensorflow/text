@@ -47,25 +47,28 @@ def sentence_fragments(token_word,
       containing a bitmask.
 
       The values of the bitmask are:
-        0x01 (ILL_FORMED) - Text is ill-formed according to TextExtractor;
+
+      *   0x01 (ILL_FORMED) - Text is ill-formed according to TextExtractor;
           typically applies to all tokens of a paragraph that is too short or
           lacks terminal punctuation.  0x40 (TITLE)
-        0x02 (HEADING)
-        0x04 (BOLD)
-        0x10 (UNDERLINED)
-        0x20 (LIST)
-        0x80 (EMOTICON)
-        0x100 (ACRONYM) - Token was identified by Lexer as an acronym.  Lexer
+      *   0x02 (HEADING)
+      *   0x04 (BOLD)
+      *   0x10 (UNDERLINED)
+      *   0x20 (LIST)
+      *   0x80 (EMOTICON)
+      *   0x100 (ACRONYM) - Token was identified by Lexer as an acronym.  Lexer
           identifies period-, hyphen-, and space-separated acronyms: "U.S.",
           "U-S", and "U S". Lexer normalizes all three to "US", but the  token
           word field normalizes only space-separated acronyms.
-       0x200 (HYPERLINK) - Indicates that the token (or part of the token) is a
-          covered by at least one hyperlink. More information of the hyperlink
+      *   0x200 (HYPERLINK) - Indicates that the token (or part of the token) is
+          a covered by at least one hyperlink. More information of the hyperlink
           is stored in the first token covered by the hyperlink.
+
     input_encoding: String name for the unicode encoding that should be used to
       decode each string.
     errors: Specifies the response when an input string can't be converted
       using the indicated encoding. One of:
+
       * `'strict'`: Raise an exception for any illegal substrings.
       * `'replace'`: Replace illegal substrings with `replacement_char`.
       * `'ignore'`: Skip illegal substrings.
@@ -79,11 +82,12 @@ def sentence_fragments(token_word,
     and `terminal_punc_token`.
 
     `fragment_properties` is an int32 bitmask whose values may contain:
-       1 = fragment ends with terminal punctuation
-       2 = fragment ends with multiple terminal punctuations (e.g.
+
+      *  1 = fragment ends with terminal punctuation
+      *  2 = fragment ends with multiple terminal punctuations (e.g.
          "She said what?!")
-       3 = Has close parenthesis (e.g. "Mushrooms (they're fungi).")
-       4 = Has sentential close parenthesis (e.g. "(Mushrooms are fungi!)"
+      *  3 = Has close parenthesis (e.g. "Mushrooms (they're fungi).")
+      *  4 = Has sentential close parenthesis (e.g. "(Mushrooms are fungi!)")
 
      `terminal_punc_token` is a RaggedTensor containing the index of terminal
       punctuation token immediately following the last word in the fragment

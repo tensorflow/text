@@ -5,7 +5,7 @@
 
 # text.case_fold_utf8
 
-Applies case folding to every UTF8 string in the input.
+Applies case folding to every UTF-8 string in the input.
 
 ``` python
 text.case_fold_utf8(
@@ -14,8 +14,8 @@ text.case_fold_utf8(
 )
 ```
 
-Defined in
-[`python/ops/normalize_ops.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
@@ -35,9 +35,8 @@ tf.Tensor(['The   quick-brown' 'cat jumped over' 'the lazy dog  !!  '],
 
 #### Args:
 
-*   <b>`input`</b>: A `Tensor` or `RaggedTensor` of type string. (Must be
-    UTF-8.)
-*   <b>`name`</b>: The name for this op (optional)
+*   <b>`input`</b>: A `Tensor` or `RaggedTensor` of UTF-8 encoded strings.
+*   <b>`name`</b>: The name for this op (optional).
 
 #### Returns:
 

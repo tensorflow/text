@@ -43,7 +43,8 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
     """Initializes a new instance.
 
     Args:
-      keep_whitespace: bool. Whether to emit whitespace tokens
+      keep_whitespace: A boolean that specifices whether to emit whitespace
+          tokens (default `False`).
     """
     super(UnicodeScriptTokenizer, self).__init__()
     self._keep_whitespace = keep_whitespace
@@ -56,15 +57,15 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
     Components for Unicode (ICU) UScriptCode values. See:
     http://icu-project.org/apiref/icu4c/uscript_8h.html
 
-    ICU defined whitespace characters are dropped, unless the keep_whitespace
+    ICU defined whitespace characters are dropped, unless the `keep_whitespace`
     option was specified at construction time.
 
     Args:
       input: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 
     Returns:
-      A RaggedTensor of tokenized text. The returned shape is the shape of the
-        input tensor with an added ragged dimension for tokens of each string.
+      A `RaggedTensor` of tokenized text. The returned shape is the shape of the
+      input tensor with an added ragged dimension for tokens of each string.
     """
     (tokens, _, _) = self.tokenize_with_offsets(input)
     return tokens
@@ -84,8 +85,8 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
       input: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 
     Returns:
-      A tuple of `RaggedTensor`s `tokens`, `start_offsets`, and `limit_offsets`
-      where:
+      A tuple `(tokens, start_offsets, limit_offsets)` where:
+
         * `tokens`: A `RaggedTensor` of tokenized text.
         * `start_offsets`: A `RaggedTensor` of the tokens' starting byte offset.
         * `limit_offsets`: A `RaggedTensor` of the tokens' ending byte offset.

@@ -15,17 +15,16 @@ text.wordshape(
 )
 ```
 
-Defined in
-[`python/ops/wordshape_ops.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordshape_ops.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordshape_ops.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
 #### Args:
 
-* <b>`input_tensor`</b>: string `Tensor` with any shape.
-* <b>`pattern`</b>: A `~tftext.WordShape` or a list of WordShapes.
-* <b>`name`</b>: A name for the operation (optional).
-
+*   <b>`input_tensor`</b>: string `Tensor` with any shape.
+*   <b>`pattern`</b>: A `tftext.WordShape` or a list of WordShapes.
+*   <b>`name`</b>: A name for the operation (optional).
 
 #### Returns:
 

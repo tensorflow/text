@@ -31,7 +31,7 @@ from tensorflow_text.python.ops.sliding_window_op import sliding_window
 
 
 class Reduction(enum.Enum):
-  """Type of reduction to be done by the ngram op.
+  """Type of reduction to be done by the n-gram op.
 
   The supported reductions are as follows:
 

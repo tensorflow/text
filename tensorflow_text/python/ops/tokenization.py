@@ -23,44 +23,46 @@ import abc
 
 
 # TODO(broken): Have this extend Module when it becomes public
-class Tokenizer():
-  """Base class (abstract class) for all tokenizers."""
+class Tokenizer(object):
+  """Base class for tokenizer implementations."""
 
   __metaclass__ = abc.ABCMeta
 
   @abc.abstractmethod
   def tokenize(self, input):  # pylint: disable=redefined-builtin
-    """Abstract function for tokenization.
+    """Tokenizes the input tensor.
 
     Args:
-      input: An N-dimensional UTF-8 string (or optionally integer) Tensor or
-        RaggedTensor.
+      input: An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+        `RaggedTensor`.
 
     Returns:
-      An N+1-dimensional UTF-8 string or integer Tensor or RaggedTensor.
+      An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
     """
-    pass
+    raise NotImplementedError("Abstract method")
 
 
 class TokenizerWithOffsets(Tokenizer):
-  """Base class (abstract class) for all tokenizers that return offsets."""
+  """Base class for tokenizer implementations that return offsets."""
 
   @abc.abstractmethod
   def tokenize_with_offsets(self, input):  # pylint: disable=redefined-builtin
-    """Abstract function for tokenization with offsets.
+    """Tokenizes the input tensor and returns the result with offsets.
 
     Args:
-      input: An N-dimensional UTF-8 string (or optionally integer) Tensor or
-        RaggedTensor.
+      input: An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+        `RaggedTensor`.
 
     Returns:
-      A tuple (tokens, start_offsets, limit_offsets):
-        * tokens is an N+1-dimensional UTF-8 string or integer Tensor or
-            RaggedTensor.
-        * start_offsets is an N+1-dimensional integer Tensor containing the
-            starting indices of each token (byte indices for input strings).
-        * limit_offsets is an N+1-dimensional integer Tensor containing the
-            exclusive ending indices of each token (byte indices for input
-            strings).
+      A tuple `(tokens, start_offsets, limit_offsets)` where:
+
+        * `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
+            `RaggedTensor`.
+        * `start_offsets` is an N+1-dimensional integer `Tensor` or
+            `RaggedTensor` containing the starting indices of each token (byte
+            indices for input strings).
+        * `limit_offsets` is an N+1-dimensional integer `Tensor` or
+            `RaggedTensor` containing the exclusive ending indices of each token
+            (byte indices for input strings).
     """
-    pass
+    raise NotImplementedError("Abstract method")

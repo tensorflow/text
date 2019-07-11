@@ -19,34 +19,33 @@ text.viterbi_constrained_sequence(
 )
 ```
 
-Defined in
-[`python/ops/viterbi_constrained_sequence_op.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/viterbi_constrained_sequence_op.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/viterbi_constrained_sequence_op.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
-Constrains a set of predictions based on a set of legal transitions
-and/or a set of transition weights, returning the legal sequence that
-maximizes the product of the state scores and the transition weights
-according to the Viterbi algorithm. If use_log_space is True, the Viterbi
-calculation will be performed in log space (with sums); if it is False,
-the Viterbi calculation will be performed in exp space (with normalized
-products).
+Constrains a set of predictions based on a set of legal transitions and/or a set
+of transition weights, returning the legal sequence that maximizes the product
+of the state scores and the transition weights according to the Viterbi
+algorithm. If `use_log_space` is True, the Viterbi calculation will be performed
+in log space (with sums); if it is False, the Viterbi calculation will be
+performed in exp space (with normalized products).
 
-This op also takes a parameter 'use_start_and_end_states', which when true
-will add an implicit start and end state to each sequence. These implicit
-states allow the user to specify additional weights and permitted transitions
-to start and end a sequence (so, for instance, if you wanted to forbid your
-output from ending in a certain set of states you could do so).
+This op also takes a parameter `use_start_and_end_states`, which when true will
+add an implicit start and end state to each sequence. These implicit states
+allow the user to specify additional weights and permitted transitions to start
+and end a sequence (so, for instance, if you wanted to forbid your output from
+ending in a certain set of states you could do so).
 
-Inputs to this op can take one of three forms: a single Tensorflow tensor
-of scores with no sequence lengths, a Tensorflow tensor of scores along
-with a Tensorflow tensor of sequence lengths, or a RaggedTensor. If only the
-scores tensor is passed, this op will assume that the sequence lengths are
-equal to the size of the tensor (and so use all the data provided). If a
-scores tensor and sequence_lengths tensor is provided, the op will only
-use the data in the scores tensor as specified by the sequence_lengths tensor.
-Finally, if a RaggedTensor is provided, the sequence_lengths will be ignored
-and the variable length sequences in the RaggedTensor will be used.
+Inputs to this op can take one of three forms: a single TensorFlow tensor of
+scores with no sequence lengths, a TensorFlow tensor of scores along with a
+TensorFlow tensor of sequence lengths, or a RaggedTensor. If only the scores
+tensor is passed, this op will assume that the sequence lengths are equal to the
+size of the tensor (and so use all the data provided). If a scores tensor and
+sequence_lengths tensor is provided, the op will only use the data in the scores
+tensor as specified by the sequence_lengths tensor. Finally, if a RaggedTensor
+is provided, the sequence_lengths will be ignored and the variable length
+sequences in the RaggedTensor will be used.
 
 #### Args:
 

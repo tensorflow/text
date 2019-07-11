@@ -57,7 +57,7 @@ def sliding_window(data, width, axis=-1, name=None):
     axis: An integer constant specifying the axis along which sliding window
       is computed. Negative axis values from `-K` to `-1` are supported.
 
-    name: The name for this op (optional)
+    name: The name for this op (optional).
 
   Returns:
     A `K+1` dimensional tensor with the same dtype as `data`, where:

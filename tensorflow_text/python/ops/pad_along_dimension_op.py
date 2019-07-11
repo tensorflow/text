@@ -57,7 +57,7 @@ def pad_along_dimension(data, axis=-1, left_pad=None, right_pad=None,
     right_pad: `<dtype>[R, I1...IM]` An `M+1` dimensional tensor that should be
       appended to each row along dimension `axis`; or `None` if no padding
       should be added to the right side.
-    name: The name of this op.
+    name: The name of this op (optional).
 
   Returns:
     `<dtype>[O1...ON, L + A + R, I1...IM]`

@@ -7,20 +7,22 @@
 
 Various tensorflow ops related to text-processing.
 
-Defined in [`__init__.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/__init__.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/__init__.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
 
 ## Classes
 
-[`class Reduction`](./text/Reduction.md): Type of reduction to be done by the ngram op.
+[`class Reduction`](./text/Reduction.md): Type of reduction to be done by the
+n-gram op.
 
-[`class Tokenizer`](./text/Tokenizer.md): Base class (abstract class) for all
-tokenizers.
+[`class Tokenizer`](./text/Tokenizer.md): Base class for tokenizer
+implementations.
 
-[`class TokenizerWithOffsets`](./text/TokenizerWithOffsets.md): Base class
-(abstract class) for all tokenizers that return offsets.
+[`class TokenizerWithOffsets`](./text/TokenizerWithOffsets.md): Base class for
+tokenizer implementations that return offsets.
 
 [`class UnicodeScriptTokenizer`](./text/UnicodeScriptTokenizer.md): Tokenizes a
 tensor of UTF-8 strings on Unicode script boundaries.
@@ -28,15 +30,16 @@ tensor of UTF-8 strings on Unicode script boundaries.
 [`class WhitespaceTokenizer`](./text/WhitespaceTokenizer.md): Tokenizes a tensor
 of UTF-8 strings on whitespaces.
 
-[`class WordShape`](./text/WordShape.md): Values for the 'pattern' arg of the WordShape op.
+[`class WordShape`](./text/WordShape.md): Values for the 'pattern' arg of the
+wordshape op.
 
-[`class WordpieceTokenizer`](./text/WordpieceTokenizer.md): Creates a wordpiece
-tokenizer.
+[`class WordpieceTokenizer`](./text/WordpieceTokenizer.md): Tokenizes a tensor
+of UTF-8 string tokens into subword pieces.
 
 ## Functions
 
 [`case_fold_utf8(...)`](./text/case_fold_utf8.md): Applies case folding to every
-UTF8 string in the input.
+UTF-8 string in the input.
 
 [`coerce_to_structurally_valid_utf8(...)`](./text/coerce_to_structurally_valid_utf8.md): Coerce UTF-8 input strings to structurally valid UTF-8.
 
@@ -46,7 +49,8 @@ UTF8 string in the input.
 
 [`ngrams(...)`](./text/ngrams.md): Create a tensor of n-grams based on the input data `data`.
 
-[`normalize_utf8(...)`](./text/normalize_utf8.md): Normalizes each UTF8 string in the input tensor using the specified rule.
+[`normalize_utf8(...)`](./text/normalize_utf8.md): Normalizes each UTF-8 string
+in the input tensor using the specified rule.
 
 [`pad_along_dimension(...)`](./text/pad_along_dimension.md): Add padding to the beginning and end of data in a specific dimension.
 

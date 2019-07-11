@@ -16,8 +16,8 @@ text.sliding_window(
 )
 ```
 
-Defined in
-[`python/ops/sliding_window_op.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sliding_window_op.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sliding_window_op.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
@@ -49,7 +49,7 @@ this op.
 *   <b>`axis`</b>: An integer constant specifying the axis along which sliding
     window is computed. Negative axis values from `-K` to `-1` are supported.
 
-*   <b>`name`</b>: The name for this op (optional)
+*   <b>`name`</b>: The name for this op (optional).
 
 #### Returns:
 

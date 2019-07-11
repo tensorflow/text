@@ -30,7 +30,7 @@ gen_normalize_ops = load_library.load_op_library(resource_loader.get_path_to_dat
 
 # pylint: disable=redefined-builtin
 def case_fold_utf8(input, name=None):
-  """Applies case folding to every UTF8 string in the input.
+  """Applies case folding to every UTF-8 string in the input.
 
   The input is a `Tensor` or `RaggedTensor` of any shape, and the resulting
   output has the same shape as the input. Note that NFKC normalization is
@@ -47,8 +47,8 @@ def case_fold_utf8(input, name=None):
   ```
 
   Args:
-    input: A `Tensor` or `RaggedTensor` of type string. (Must be UTF-8.)
-    name: The name for this op (optional)
+    input: A `Tensor` or `RaggedTensor` of UTF-8 encoded strings.
+    name: The name for this op (optional).
 
   Returns:
     A `Tensor` or `RaggedTensor` of type string, with case-folded contents.
@@ -65,7 +65,7 @@ def case_fold_utf8(input, name=None):
 
 # pylint: disable=redefined-builtin)
 def normalize_utf8(input, normalization_form="NFKC", name=None):
-  """Normalizes each UTF8 string in the input tensor using the specified rule.
+  """Normalizes each UTF-8 string in the input tensor using the specified rule.
 
   See http://unicode.org/reports/tr15/
 
@@ -73,7 +73,7 @@ def normalize_utf8(input, normalization_form="NFKC", name=None):
     input: A `Tensor` or `RaggedTensor` of type string. (Must be UTF-8.)
     normalization_form: One of the following string values ('NFC', 'NFKC',
       'NFD', 'NFKD'). Default is 'NFKC'.
-    name: The name for this op (optional)
+    name: The name for this op (optional).
 
   Returns:
     A `Tensor` or `RaggedTensor` of type string, with normalized contents.

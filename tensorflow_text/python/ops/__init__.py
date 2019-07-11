@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Various tensorflow ops related to text-processing."""
+"""Various TensorFlow ops related to text-processing."""
 
 from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_bitmask
 from tensorflow_text.python.ops.greedy_constrained_sequence_op import greedy_constrained_sequence

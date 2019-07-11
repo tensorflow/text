@@ -5,7 +5,7 @@
 
 # text.normalize_utf8
 
-Normalizes each UTF8 string in the input tensor using the specified rule.
+Normalizes each UTF-8 string in the input tensor using the specified rule.
 
 ``` python
 text.normalize_utf8(
@@ -15,8 +15,8 @@ text.normalize_utf8(
 )
 ```
 
-Defined in
-[`python/ops/normalize_ops.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 
@@ -28,7 +28,7 @@ See http://unicode.org/reports/tr15/
     UTF-8.)
 *   <b>`normalization_form`</b>: One of the following string values ('NFC',
     'NFKC', 'NFD', 'NFKD'). Default is 'NFKC'.
-*   <b>`name`</b>: The name for this op (optional)
+*   <b>`name`</b>: The name for this op (optional).
 
 #### Returns:
 

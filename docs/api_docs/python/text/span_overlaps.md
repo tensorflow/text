@@ -20,8 +20,8 @@ text.span_overlaps(
 )
 ```
 
-Defined in
-[`python/ops/pointer_ops.py`](https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py).
+<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py>View
+source</a>
 
 <!-- Placeholder for "Used in" -->
 

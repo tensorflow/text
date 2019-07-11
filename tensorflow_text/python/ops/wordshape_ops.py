@@ -99,7 +99,7 @@ def _ends_with_close_quote_regex():
 
 
 class WordShape(enum.Enum):
-  """Values for the 'pattern' arg of the WordShape op.
+  """Values for the 'pattern' arg of the wordshape op.
 
      The supported wordshape identifiers are:
      %(identifier_list)s
@@ -147,8 +147,8 @@ _wordshape_doc = {
           The input contains at least one unicode dash character.
 
           Note that this is similar to HAS_ANY_HYPHEN, but uses the Pd (Dash)
-          unicode property. (This property will not match to soft-hyphens and
-          katakana middle dot characters.)
+          unicode property. This property will not match to soft-hyphens and
+          katakana middle dot characters.
           """,
     WordShape.HAS_NO_DIGITS:
         """
@@ -212,8 +212,8 @@ _wordshape_doc = {
           """,
     WordShape.ENDS_WITH_ELLIPSIS:
         """
-          The input ends with an ellipsis: i.e., with three or more
-          periods, or with a unicode ellipsis character.""",
+          The input ends with an ellipsis (i.e. with three or more
+          periods or a unicode ellipsis character).""",
     WordShape.IS_EMOTICON:
         """
           The input is a single emoticon.
@@ -227,7 +227,8 @@ _wordshape_doc = {
           The input contains an emoji character.
 
           See http://www.unicode.org/Public/emoji/1.0//emoji-data.txt.
-          Emojis are in unicode ranges `2600-26FF`, `1F300-1F6FF`, `1F900-1F9FF`
+          Emojis are in unicode ranges `2600-26FF`, `1F300-1F6FF`, and
+          `1F900-1F9FF`.
           """,
     WordShape.IS_ACRONYM_WITH_PERIODS:
         """
@@ -252,8 +253,8 @@ _wordshape_doc = {
           """,
     WordShape.HAS_TITLE_CASE:
         """
-          The input has title case.  I.e., the first character is upper case
-          or title case, and the remaining characters are lowercase.
+          The input has title case (i.e. the first character is upper or title
+          case, and the remaining characters are lowercase).
           """,
     WordShape.HAS_NO_QUOTES:
         """
@@ -353,7 +354,7 @@ def wordshape(input_tensor, pattern, name=None):
 
   Args:
     input_tensor: string `Tensor` with any shape.
-    pattern: A `~tftext.WordShape` or a list of WordShapes.
+    pattern: A `tftext.WordShape` or a list of WordShapes.
     name: A name for the operation (optional).
 
   Returns:
