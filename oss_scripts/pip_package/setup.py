@@ -32,7 +32,7 @@ from setuptools.command.install import install
 from setuptools.dist import Distribution
 
 project_name = 'tensorflow-text'
-project_version = '1.0.0-beta0'
+project_version = '1.0.0-beta1'
 
 
 class BinaryDistribution(Distribution):
@@ -46,7 +46,7 @@ class BinaryDistribution(Distribution):
 
 
 class InstallPlatlib(install):
-  """This is needed to set hte library to platlib compliant."""
+  """This is needed to set the library to platlib compliant."""
 
   def finalize_options(self):
     """For more info; see http://github.com/google/or-tools/issues/616 ."""
@@ -73,9 +73,12 @@ setup(
     cmdclass={'install': InstallPlatlib},
     distclass=BinaryDistribution,
     install_requires=[
-        'tensorflow==2.0.0b0',
+        'tensorflow==2.0',
     ],
     extras_require={
+        'tensorflow_gpu': [
+            'tensorflow-gpu==2.0',
+        ],
         'tests': [
             'absl-py',
             'pytest',
