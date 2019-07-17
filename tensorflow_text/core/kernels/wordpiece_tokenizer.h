@@ -25,7 +25,7 @@ namespace text {
 
 struct LookupStatus {
   LookupStatus() : error_msg(""), success(true) {}
-  LookupStatus(const string& msg) : error_msg(msg), success(false) {}
+  LookupStatus(const std::string& msg) : error_msg(msg), success(false) {}
   std::string error_msg;
   bool success;
 
@@ -41,8 +41,8 @@ class WordpieceVocab {
 
 LookupStatus WordpieceTokenize(
     const absl::string_view& token, const int max_bytes_per_token,
-    const string& suffix_indicator, bool use_unknown_token,
-    const string& unknown_token, const WordpieceVocab* vocab_map,
+    const std::string& suffix_indicator, bool use_unknown_token,
+    const std::string& unknown_token, const WordpieceVocab* vocab_map,
     std::vector<std::string>* subwords, std::vector<int>* begin_offset,
     std::vector<int>* end_offset, int* num_word_pieces);
 
