@@ -17,6 +17,12 @@
 
 namespace tensorflow {
 
+using shape_inference::DimensionHandle;
+using shape_inference::InferenceContext;
+using shape_inference::ShapeHandle;
+
+Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c);
+
 REGISTER_OP("WordpieceTokenizeWithOffsets")
     .Input("input_values: string")
     .Input("vocab_lookup_table: resource")
@@ -28,6 +34,7 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     .Output("output_row_lengths: int64")
     .Output("start_values: int64")
     .Output("limit_values: int64")
+    .SetShapeFn(WordpieceTokenizeWithOffsetsShapeFn)
     .Doc(R"doc(
   Tokenizes tokens into sub-word pieces based off of a vocabulary.
 
@@ -58,5 +65,19 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     `subword_offset_limit`: <int64>[num_batch, (num_tokens),
       (num_subword_pieces)] is the word piece token's ending byte offset.
 )doc");
+
+Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c) {
+  ShapeHandle input_values = c->input(0);
+  ShapeHandle vocab_lookup_table = c->input(1);
+  TF_RETURN_IF_ERROR(c->WithRank(input_values, 1, &input_values));
+  TF_RETURN_IF_ERROR(c->WithRank(vocab_lookup_table, 0, &vocab_lookup_table));
+  DimensionHandle num_input_values = c->Dim(input_values, 0);
+  c->set_output(0, c->UnknownShapeOfRank(1));  // output_values
+  c->set_output(1, c->Vector(num_input_values));  // row_lengths
+  c->set_output(2, c->UnknownShapeOfRank(1));  // start_values
+  c->set_output(3, c->UnknownShapeOfRank(1));  // limit_values
+  return Status::OK();
+}
+
 
 }  // namespace tensorflow
