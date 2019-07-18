@@ -153,7 +153,7 @@ def sliding_window(data, width, axis=-1, name=None):
         idx = [slice(None)] * axis + [slice(start, stop)]
       else:
         idx = [Ellipsis, slice(start, stop)] + [slice(None)] * (-axis - 1)
-      slices.append(data[idx])
+      slices.append(data[tuple(idx)])
 
     # Stack the slices.
     stack_axis = axis + 1 if axis >= 0 else axis
