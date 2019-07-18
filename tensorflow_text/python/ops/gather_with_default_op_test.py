@@ -225,7 +225,8 @@ class GatherWithDefaultOpTest(test_util.TensorFlowTestCase,
 
   def testBadDefaultDtype(self):
     with self.assertRaisesRegexp(
-        TypeError, 'Expected int32.*|Cannot convert provided value'):
+        TypeError,
+        'Expected int32.*|Cannot convert .+ to EagerTensor of dtype int32'):
       pointer_ops.gather_with_default(
           params=[0, 1, 2, 3], indices=[0], default='a')
 
