@@ -47,8 +47,8 @@ class Reduction(enum.Enum):
 
 def ngrams(data,
            width,
+           reduction_type,
            axis=-1,
-           reduction_type=None,
            string_separator=" ",
            name=None):
   """Create a tensor of n-grams based on the input data `data`.
@@ -63,9 +63,6 @@ def ngrams(data,
     data: The data to reduce.
     width: The width of the ngram window. If there is not sufficient data to
       fill out the ngram window, the resulting ngram will be empty.
-    axis: The axis to create ngrams along. Note that for string join reductions,
-      only axis '-1' is supported; for other reductions, any positive or
-      negative axis can be used. Should be a constant.
     reduction_type: A member of the Reduction enum. Should be a constant.
       Currently supports:
 
@@ -74,6 +71,9 @@ def ngrams(data,
       * `Reduction.STRING_JOIN`: Join strings in the window.
         Note that axis must be -1 here.
 
+    axis: The axis to create ngrams along. Note that for string join reductions,
+      only axis '-1' is supported; for other reductions, any positive or
+      negative axis can be used. Should be a constant.
     string_separator: The separator string used for `Reduction.STRING_JOIN`.
       Ignored otherwise. Must be a string constant, not a Tensor.
     name: The op name.
@@ -87,10 +87,6 @@ def ngrams(data,
   """
 
   with ops.name_scope(name, "NGrams", [data, width]):
-    if reduction_type is None:
-      raise errors.InvalidArgumentError(None, None,
-                                        "reduction_type must be specified.")
-
     if not isinstance(reduction_type, Reduction):
       raise errors.InvalidArgumentError(None, None,
                                         "reduction_type must be a Reduction.")
