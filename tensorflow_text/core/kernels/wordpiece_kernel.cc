@@ -162,7 +162,19 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
         suffix_indicator_(GetWordSplitChar(ctx)),
         max_bytes_per_word_(GetMaxCharsPerWord(ctx)),
         use_unknown_token_(GetShouldUseUnknownToken(ctx)),
-        unknown_token_(GetUnknownToken(ctx)) {}
+        unknown_token_(GetUnknownToken(ctx)) {
+    string output_row_partition_type;
+    OP_REQUIRES_OK(ctx, ctx->GetAttr("output_row_partition_type",
+                                     &output_row_partition_type));
+    if (output_row_partition_type == "row_lengths") {
+      row_partition_type_ = ROW_LENGTHS;
+    } else if (output_row_partition_type == "row_splits") {
+      row_partition_type_ = ROW_SPLITS;
+    } else {
+      OP_REQUIRES(ctx, false, errors::Internal(
+          "Unexpected value for output_row_partition_type"));
+    }
+  }
 
   void Compute(OpKernelContext* ctx) override {
     const Tensor* input_values;
@@ -177,7 +189,11 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
     std::vector<string> subwords;
     std::vector<int> begin_offset;
     std::vector<int> end_offset;
-    std::vector<int> row_lengths;
+    std::vector<int> row_partition;
+
+    if (row_partition_type_ == ROW_SPLITS) {
+      row_partition.push_back(0);
+    }
 
     // Iterate through all the values and wordpiece tokenize them.
     for (int i = 0; i < values_vec.size(); ++i) {
@@ -190,14 +206,21 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
                    &begin_offset, &end_offset, &num_wordpieces)));
 
       // Record the row splits.
-      row_lengths.push_back(num_wordpieces);
+      switch (row_partition_type_) {
+        case ROW_LENGTHS:
+          row_partition.push_back(num_wordpieces);
+          break;
+        case ROW_SPLITS:
+          row_partition.push_back(num_wordpieces + row_partition.back());
+          break;
+      }
     }
 
     std::vector<int64> output_subwords_shape;
     output_subwords_shape.push_back(subwords.size());
 
-    std::vector<int64> output_row_lengths_shape;
-    output_row_lengths_shape.push_back(row_lengths.size());
+    std::vector<int64> output_row_partition_shape;
+    output_row_partition_shape.push_back(row_partition.size());
 
     Tensor* output_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("output_values",
@@ -205,12 +228,12 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
                                              &output_values));
     auto output_values_vec = output_values->vec<string>();
 
-    Tensor* output_row_lengths;
+    Tensor* output_row_partition;
     OP_REQUIRES_OK(ctx,
                    ctx->allocate_output("output_row_lengths",
-                                        TensorShape(output_row_lengths_shape),
-                                        &output_row_lengths));
-    auto output_row_lengths_vec = output_row_lengths->vec<int64>();
+                                        TensorShape(output_row_partition_shape),
+                                        &output_row_partition));
+    auto output_row_partition_vec = output_row_partition->vec<int64>();
 
     Tensor* start_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("start_values",
@@ -228,8 +251,8 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
       output_values_vec(i) = subwords[i];
     }
 
-    for (int i = 0; i < row_lengths.size(); ++i) {
-      output_row_lengths_vec(i) = row_lengths[i];
+    for (int i = 0; i < row_partition.size(); ++i) {
+      output_row_partition_vec(i) = row_partition[i];
     }
 
     for (int i = 0; i < begin_offset.size(); ++i) {
@@ -242,10 +265,13 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
   }
 
  private:
+  enum RowPartitionType { ROW_LENGTHS, ROW_SPLITS };
+
   const string suffix_indicator_;
   const int max_bytes_per_word_;
   const bool use_unknown_token_;
   const string unknown_token_;
+  RowPartitionType row_partition_type_;
 
   TF_DISALLOW_COPY_AND_ASSIGN(WordpieceTokenizeWithOffsetsOp);
 };

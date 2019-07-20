@@ -30,6 +30,8 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     .Attr("max_bytes_per_word: int")
     .Attr("use_unknown_token: bool")
     .Attr("unknown_token: string")
+    .Attr("output_row_partition_type: {'row_lengths', 'row_splits'}"
+          " = 'row_lengths'")
     .Output("output_values: string")
     .Output("output_row_lengths: int64")
     .Output("start_values: int64")
@@ -41,39 +43,64 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
   `wordpiece_tokenize_with_offsets` returns the relative offsets.
 
   ### Example:
-  tokens = ['don', '\'t', 'treadness']
-  wordpiece, start, end = wordpiece_tokenize_with_offset(tokens)
-  wordpiece = [['don', '\'', 't'], ['tread', '##ness']]
+
+  ```python
+  >>> tokens = ['don', '\'t', 'treadness']
+  >>> wordpiece, row_lengths, start, end = wordpiece_tokenize_with_offset(
+  ...     tokens, vocab, '##', 100, False, '')
+  >>> RaggedTensor.from_row_lengths(wordpiece, row_lengths)
+  [['don', '\'', 't'], ['tread', '##ness']]
+  >>> RaggedTensor.from_row_lengths(start, row_lengths)
   start = [[[0, 3, 4], [0, 5]]]
+  >>> RaggedTensor.from_row_lengths(end, row_lengths)
   end = [[[3, 4, 5], [5, 10]]]
+  ```
+
   Args:
-    tokens: <string>[num_batch, (num_tokens)] a `RaggedTensor` of UTF-8 token
-      strings
-    vocab_lookup_table: A lookup table implementing the LookupInterface
-    word_split_char: Character used to define prefixes in the vocab.
-    return_ids: A bool indicating whether the op returns int64 ids or tokenized
-      subword strings.
+    input_values: 1D Tensor of strings to tokenize with.
+    vocab_lookup_table: Resource tensor for a lookup table implementing the
+        LookupInterface.
+    suffix_indicator: Characters prepended to a wordpiece to
+      indicate that it is a suffix to another subword.
+    max_bytes_per_word: Max size of input token.
+    use_unknown_token: Whether unknown_token should be used.
+    unknown_token: The value to use when an unknown token is found.
+    output_row_partition_type: Indicates what row-partitioning tensor should
+      be returned by the op.  If this is set to 'row_splits', then the 
+      `output_row_lengths` output will contain row-splits instead of
+      row-lengths.
 
   Returns:
-    A tuple of `RaggedTensor`s `subword`, `subword_offset_starts`,
-    `subword_offset_limit` where:
-
-    `subword`: <string>[num_batch, (num_tokens), (num_subword_pieces)] is the
-      wordpiece token string encoded in UTF-8.
-    `subword_offset_starts`: <int64>[num_batch, (num_tokens),
-      (num_subword_pieces)] is the word piece token's starting byte offset.
-    `subword_offset_limit`: <int64>[num_batch, (num_tokens),
-      (num_subword_pieces)] is the word piece token's ending byte offset.
+    * output_values: 1D tensor containing the wordpieces for all input strings.
+      A 2D RaggedTensor can be constructed from this and output_row_lengths.
+    * output_row_lengths: 1D int tensor indicating the number of wordpieces
+      corresponding with each input string.  If output_row_partition_type is
+      row_splits, then this will contain row split offsets instead.
+    * start_values: 1D tensor containing the inclusive start byte offset for
+      each wordpiece in all input strings.  Corresponds 1:1 with output_values.
+      A 2D RaggedTensor can be constructed from this and output_row_lengths.
+    * limit_values: 1D tensor containing the exclusive end byte offset for
+      each wordpiece in all input strings.  Corresponds 1:1 with output_values.
+      A 2D RaggedTensor can be constructed from this and output_row_lengths.
 )doc");
 
 Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c) {
   ShapeHandle input_values = c->input(0);
   ShapeHandle vocab_lookup_table = c->input(1);
+  string output_row_partition_type;
   TF_RETURN_IF_ERROR(c->WithRank(input_values, 1, &input_values));
   TF_RETURN_IF_ERROR(c->WithRank(vocab_lookup_table, 0, &vocab_lookup_table));
+  TF_RETURN_IF_ERROR(c->GetAttr("output_row_partition_type",
+                                &output_row_partition_type));
   DimensionHandle num_input_values = c->Dim(input_values, 0);
   c->set_output(0, c->UnknownShapeOfRank(1));  // output_values
-  c->set_output(1, c->Vector(num_input_values));  // row_lengths
+  if (output_row_partition_type == "row_lengths") {
+    c->set_output(1, c->Vector(num_input_values));  // row_lengths
+  } else {
+    DimensionHandle num_splits;
+    TF_RETURN_IF_ERROR(c->Add(num_input_values, 1, &num_splits));
+    c->set_output(1, c->Vector(num_splits));  // row_splits
+  }
   c->set_output(2, c->UnknownShapeOfRank(1));  // start_values
   c->set_output(3, c->UnknownShapeOfRank(1));  // limit_values
   return Status::OK();
