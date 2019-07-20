@@ -29,16 +29,25 @@ TEST(WordpieceTokenizeWithOffsetsOpTest, ShapeFn) {
   // WordpieceTokenizeWithOffsets(input_values, vocab_lookup_table) ->
   //     [output_values, output_row_lengths, start_values, limit_values]
   ShapeInferenceTestOp op("WordpieceTokenizeWithOffsets");
+  auto &attr = *op.node_def.mutable_attr();
 
+  attr["output_row_partition_type"].set_s("row_lengths");
   INFER_OK(op, "?;?", "[?];[?];[?];[?]");
   INFER_OK(op, "[?];?", "[?];[d0_0];[?];[?]");
   INFER_OK(op, "[?];[]", "[?];[d0_0];[?];[?]");
   INFER_OK(op, "[5];?", "[?];[d0_0];[?];[?]");
   INFER_OK(op, "[5];[]", "[?];[d0_0];[?];[?]");
-
   INFER_ERROR("Shape must be rank 1 but is rank 0", op, "[];?");
   INFER_ERROR("Shape must be rank 1 but is rank 2", op, "[1,2];?");
   INFER_ERROR("Shape must be rank 0 but is rank 1", op, "?;[1]");
+
+  attr["output_row_partition_type"].set_s("row_splits");
+  INFER_OK(op, "?;?", "[?];[?];[?];[?]");
+  INFER_OK(op, "[?];?", "[?];[?];[?];[?]");
+  INFER_OK(op, "[?];[]", "[?];[?];[?];[?]");
+  INFER_OK(op, "[5];?", "[?];[6];[?];[?]");
+  INFER_OK(op, "[5];[]", "[?];[6];[?];[?]");
 }
+
 }  // namespace
 }  // namespace tensorflow
