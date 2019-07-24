@@ -46,7 +46,6 @@ cc_library(
     ]),
     copts = [
         "-DU_COMMON_IMPLEMENTATION",
-        "-DU_HAVE_STD_ATOMICS",
     ] + select({
         ":android": [
             "-fdata-sections",
