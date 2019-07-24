@@ -25,6 +25,7 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import normalize_ops
+from tensorflow_text.python.ops import ragged_test_util
 
 
 def _Utf8(char):
@@ -32,7 +33,7 @@ def _Utf8(char):
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class NormalizeOpsTest(test_util.TensorFlowTestCase):
+class NormalizeOpsTest(ragged_test_util.RaggedTensorTestCase):
 
   def test_lowercase_one_string(self):
     txt = [
@@ -67,7 +68,7 @@ class NormalizeOpsTest(test_util.TensorFlowTestCase):
     txt = ragged_factory_ops.constant([[" TExt ", "to", " loWERcase! "],
                                        [" TExt to loWERcase! "]])
     expected = [[b" text ", b"to", b" lowercase! "], [b" text to lowercase! "]]
-    self.assertAllEqual(expected, normalize_ops.case_fold_utf8(txt))
+    self.assertRaggedEqual(expected, normalize_ops.case_fold_utf8(txt))
 
   def test_lowercase_empty_string(self):
     txt = [
@@ -105,8 +106,8 @@ class NormalizeOpsTest(test_util.TensorFlowTestCase):
                                        [[u"\u1e9b\u0323", u"\ufb01"]]])
     expected = [[[u"ṩ fi".encode("utf-8")], []],
                 [[u"ṩ".encode("utf-8"), b"fi"]]]
-    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "NFKC"))
-    self.assertAllEqual(expected, normalize_ops.normalize_utf8(txt, "nfkc"))
+    self.assertRaggedEqual(expected, normalize_ops.normalize_utf8(txt, "NFKC"))
+    self.assertRaggedEqual(expected, normalize_ops.normalize_utf8(txt, "nfkc"))
 
   def test_normalize_nfc(self):
     txt = [

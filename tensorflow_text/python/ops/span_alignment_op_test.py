@@ -25,10 +25,11 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import pointer_ops
+from tensorflow_text.python.ops import ragged_test_util
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class SpanOverlapsOpTest(test_util.TensorFlowTestCase,
+class SpanOverlapsOpTest(ragged_test_util.RaggedTensorTestCase,
                          parameterized.TestCase):
   maxDiff = 5000  # Display diffs even if they're long.  pylint: disable=invalid-name
 
@@ -314,7 +315,7 @@ class SpanOverlapsOpTest(test_util.TensorFlowTestCase,
     alignment = pointer_ops.span_alignment(
         source_start, source_limit, target_start, target_limit, contains,
         contained_by, partial_overlap, multivalent_result)
-    self.assertAllEqual(alignment, expected)
+    self.assertRaggedEqual(alignment, expected)
 
   @parameterized.parameters([
       #=========================================================================
@@ -522,7 +523,7 @@ class SpanOverlapsOpTest(test_util.TensorFlowTestCase,
     alignment = pointer_ops.span_alignment(
         source_start, source_limit, target_start, target_limit, contains,
         contained_by, partial_overlap, multivalent_result)
-    self.assertAllEqual(alignment, expected)
+    self.assertRaggedEqual(alignment, expected)
 
 
 if __name__ == '__main__':
