@@ -149,7 +149,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
                 tokens.with_flat_values(limits))
 
       # Tokenize the tokens into subwords
-      values, row_splits, starts, limits = (
+      values, row_lengths, starts, limits = (
           gen_wordpiece_tokenizer.wordpiece_tokenize_with_offsets(
               input_values=tokens,
               vocab_lookup_table=self._vocab_lookup_table.resource_handle,
@@ -157,7 +157,6 @@ class WordpieceTokenizer(TokenizerWithOffsets):
               use_unknown_token=self._use_unknown_token,
               max_bytes_per_word=self._max_bytes_per_word,
               unknown_token=self._unknown_token,
-              output_row_partition_type='row_splits',
           ))
 
       # If ids are desired, look them up in the vocab table. Otherwise just
@@ -165,9 +164,8 @@ class WordpieceTokenizer(TokenizerWithOffsets):
       if self._token_out_type == dtypes.int64:
         values = self._vocab_lookup_table.lookup(values)
 
-      wordpieces = RaggedTensor.from_row_splits(values, row_splits,
-                                                validate=False)
-      starts = RaggedTensor.from_row_splits(starts, row_splits, validate=False)
-      limits = RaggedTensor.from_row_splits(limits, row_splits, validate=False)
+      wordpieces = RaggedTensor.from_row_lengths(values, row_lengths)
+      starts = RaggedTensor.from_row_lengths(starts, row_lengths)
+      limits = RaggedTensor.from_row_lengths(limits, row_lengths)
 
       return wordpieces, starts, limits
