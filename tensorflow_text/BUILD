@@ -82,6 +82,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":greedy_constrained_sequence_op",
+        ":ragged_test_util",
     ],
 )
 
@@ -101,6 +102,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":ngrams_op",
+        ":ragged_test_util",
     ],
 )
 
@@ -145,6 +147,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":normalize_ops",
+        ":ragged_test_util",
     ],
 )
 
@@ -161,6 +164,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":pad_along_dimension_op",
+        ":ragged_test_util",
     ],
 )
 
@@ -184,6 +188,7 @@ py_test(
     python_version = "PY2",
     deps = [
         ":pointer_ops",
+        ":ragged_test_util",
     ],
 )
 
@@ -193,6 +198,15 @@ py_test(
     python_version = "PY2",
     deps = [
         ":pointer_ops",
+        ":ragged_test_util",
+    ],
+)
+
+py_library(
+    name = "ragged_test_util",
+    srcs = ["python/ops/ragged_test_util.py"],
+    srcs_version = "PY2AND3",
+    deps = [
     ],
 )
 
@@ -266,6 +280,7 @@ py_test(
     python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":sentence_breaking_ops",
     ],
 )
@@ -282,6 +297,7 @@ py_test(
     python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":sliding_window_op",
     ],
 )
@@ -339,6 +355,7 @@ py_test(
     python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":unicode_script_tokenizer",
     ],
 )
@@ -358,6 +375,7 @@ py_test(
     python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
     ],
@@ -462,6 +480,7 @@ py_test(
     python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":wordpiece_tokenizer",
     ],
 )
