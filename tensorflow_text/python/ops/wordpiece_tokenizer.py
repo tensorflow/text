@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from tensorflow.python.compat import compat
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
@@ -148,8 +149,15 @@ class WordpieceTokenizer(TokenizerWithOffsets):
                 tokens.with_flat_values(starts),
                 tokens.with_flat_values(limits))
 
+      if compat.forward_compatible(2019, 8, 25):
+        kwargs = dict(output_row_partition_type='row_splits')
+        from_row_partition = RaggedTensor.from_row_splits
+      else:
+        kwargs = {}
+        from_row_partition = RaggedTensor.from_row_lengths
+
       # Tokenize the tokens into subwords
-      values, row_lengths, starts, limits = (
+      values, row_splits, starts, limits = (
           gen_wordpiece_tokenizer.wordpiece_tokenize_with_offsets(
               input_values=tokens,
               vocab_lookup_table=self._vocab_lookup_table.resource_handle,
@@ -157,15 +165,15 @@ class WordpieceTokenizer(TokenizerWithOffsets):
               use_unknown_token=self._use_unknown_token,
               max_bytes_per_word=self._max_bytes_per_word,
               unknown_token=self._unknown_token,
-          ))
+              **kwargs))
 
       # If ids are desired, look them up in the vocab table. Otherwise just
       # return the string values.
       if self._token_out_type == dtypes.int64:
         values = self._vocab_lookup_table.lookup(values)
 
-      wordpieces = RaggedTensor.from_row_lengths(values, row_lengths)
-      starts = RaggedTensor.from_row_lengths(starts, row_lengths)
-      limits = RaggedTensor.from_row_lengths(limits, row_lengths)
+      wordpieces = from_row_partition(values, row_splits, validate=False)
+      starts = from_row_partition(starts, row_splits, validate=False)
+      limits = from_row_partition(limits, row_splits, validate=False)
 
       return wordpieces, starts, limits
