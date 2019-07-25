@@ -21,7 +21,7 @@ install_bazel() {
 
 install_python_packages() {
   # TensorFlow pulls in other deps, like numpy, absl, and six, transitively.
-  pip install tensorflow=2.0.0b0
+  pip install tensorflow=1.14.0
 
   # Upgrade numpy to the latest to address issues that happen when testing with
   # Python 3 (https://github.com/tensorflow/tensorflow/issues/16488).

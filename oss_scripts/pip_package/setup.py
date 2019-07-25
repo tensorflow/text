@@ -77,7 +77,7 @@ setup(
     ],
     extras_require={
         'tensorflow_gpu': [
-            'tensorflow-gpu==1.14, <1.15',
+            'tensorflow-gpu>=1.14, <1.15',
         ],
         'tests': [
             'absl-py',
