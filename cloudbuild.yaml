@@ -1,0 +1,3 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['run', '-v', '/workspace:/workspace', 'tensorflow/tensorflow:custom-op', '/workspace/oss_scripts/run_tests.sh']

@@ -44,6 +44,10 @@ cc_binary(
     linkshared = 1,
     deps = [
         "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
         "@icu//:common",
         "@local_config_tf//:libtensorflow_framework",
         "@local_config_tf//:tf_header_lib",
@@ -119,7 +123,11 @@ cc_binary(
     linkshared = 1,
     deps = [
         "//third_party/icu/data:icu_normalization_data",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:inlined_vector",
         "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
         "@icu//:common",
         "@icu//:headers",
         "@local_config_tf//:libtensorflow_framework",
@@ -232,7 +240,11 @@ cc_binary(
     deps = [
         ":sentence_breaking_utils",
         ":sentence_fragmenter",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:inlined_vector",
         "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
         "@icu//:common",
         "@local_config_tf//:libtensorflow_framework",
         "@local_config_tf//:tf_header_lib",
@@ -435,6 +447,7 @@ py_test(
     main = "python/ops/whitespace_tokenizer_test.py",
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":whitespace_tokenizer",
     ],
 )
@@ -454,7 +467,10 @@ cc_binary(
     linkshared = 1,
     deps = [
         "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:inlined_vector",
         "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
         "@icu//:common",
         "@local_config_tf//:libtensorflow_framework",
         "@local_config_tf//:tf_header_lib",
