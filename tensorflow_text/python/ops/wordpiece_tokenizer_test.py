@@ -21,6 +21,7 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
+from tensorflow.python.compat import compat
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
@@ -144,7 +145,6 @@ _DEATH_VOCAB = [
 
 
 def _GetTokensFromWordpieceOffsets(tokens, begin_indices, end_indices):
-  tokens = tokens.to_list()
   begin_indices = begin_indices.to_list()
   end_indices = end_indices.to_list()
   result = []
@@ -162,6 +162,11 @@ def _GetTokensFromWordpieceOffsets(tokens, begin_indices, end_indices):
 
 class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                       parameterized.TestCase):
+  _FORWARD_COMPATIBILITY_HORIZONS = [
+      (2019, 7, 1),
+      (2019, 10, 10),
+      (2525, 1, 1),  # future behavior
+  ]
 
   @parameterized.parameters([
       # Basic case
@@ -311,32 +316,34 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                                       unknown_token="[UNK]",
                                       token_out_type=dtypes.string,
                                       max_bytes_per_word=100):
-    tokens = ragged_factory_ops.constant(tokens)
-    vocab_table = _CreateTable(vocab)
-    self.evaluate(vocab_table.initializer)
-    tokenizer = WordpieceTokenizer(
-        vocab_table,
-        unknown_token=unknown_token,
-        token_out_type=token_out_type,
-        max_bytes_per_word=max_bytes_per_word,
-    )
-    subwords, begin, end = tokenizer.tokenize_with_offsets(tokens)
-    self.assertRaggedEqual(subwords, expected_subwords)
+    for horizon in self._FORWARD_COMPATIBILITY_HORIZONS:
+      with compat.forward_compatibility_horizon(*horizon):
+        tokens_t = ragged_factory_ops.constant(tokens)
+        vocab_table = _CreateTable(vocab)
+        self.evaluate(vocab_table.initializer)
+        tokenizer = WordpieceTokenizer(
+            vocab_table,
+            unknown_token=unknown_token,
+            token_out_type=token_out_type,
+            max_bytes_per_word=max_bytes_per_word,
+        )
+        subwords_t, begin_t, end_t = tokenizer.tokenize_with_offsets(tokens_t)
+        self.assertRaggedEqual(subwords_t, expected_subwords)
 
-    # Verify the indices by performing the following:
-    # - Extract the subwords and join them together to form the original tokens.
-    # - Then compare the extracted tokens and original tokens.
-    tokens, begin, end = (self.evaluate((tokens, begin, end)))
+        # Verify the indices by performing the following:
+        # - Extract subwords and join them together to form the original tokens.
+        # - Then compare the extracted tokens and original tokens.
+        begin, end = (self.evaluate((begin_t, end_t)))
 
-    # If expected start/limit offsets were provided, check them explicitly.
-    # Otherwise test the offsets by extracting subwords using token offsets
-    # from the original 'tokens' input.
-    if expected_start is None or expected_limit is None:
-      extracted_tokens = _GetTokensFromWordpieceOffsets(tokens, begin, end)
-      self.assertRaggedEqual(extracted_tokens, tokens)
-    else:
-      self.assertRaggedEqual(begin, expected_start)
-      self.assertRaggedEqual(end, expected_limit)
+        # If expected start/limit offsets were provided, check them explicitly.
+        # Otherwise test the offsets by extracting subwords using token offsets
+        # from the original 'tokens' input.
+        if expected_start is None or expected_limit is None:
+          extracted_tokens = _GetTokensFromWordpieceOffsets(tokens, begin, end)
+          self.assertRaggedEqual(extracted_tokens, tokens)
+        else:
+          self.assertRaggedEqual(begin, expected_start)
+          self.assertRaggedEqual(end, expected_limit)
 
   @parameterized.parameters([
       dict(
