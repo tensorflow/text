@@ -34,4 +34,4 @@ TF_LFLAGS2=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.g
 
 write_action_env_to_bazelrc "TF_HEADER_DIR" ${TF_CFLAGS:2}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${TF_LFLAGS:2}
-write_action_env_to_bazelrc "TF_SHARED_LIBRARY" ${TF_LFLAGS:3}
+write_action_env_to_bazelrc "TF_SHARED_LIBRARY" ${TF_LFLAGS2:3}
