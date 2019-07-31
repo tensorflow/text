@@ -17,9 +17,11 @@ if [ $# -lt 2 ]; then
 fi
 TF_TEXT_VERSION=$1
 TF_VERSION=$2  # eg. '2.0.0-beta1'
+UPLOAD_TO_PYPI=$3  # 'upload' iff we should upload wheels to pypi
 
 # Initial setup
 cd
+mkdir wheels
 yum install -y java-1.8.0-openjdk-devel wget which findutils binutils gcc tar gzip zip unzip java java-devel git clang zlib-devel gcc-c++
 wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
 yum install -y devtoolset-2-gcc devtoolset-2-gcc-c++ devtoolset-2-binutils
@@ -69,20 +71,22 @@ do
   cd tensorflow_text/
   ./oss_scripts/configure.sh
 
-  # Make certain we link to the appropriate shared object file
-  TMP=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
-  cd ${TMP:2}
-  TMP=$(ls libtensorflow_framework.so*)
-  if [[ $TMP != 'libtensorflow_framework.so.1' ]]; then
-    ln -s $TMP libtensorflow_framework.so.1
-  fi
-  cd -
-
   # Create the tf.Text wheel
   bazel build oss_scripts/pip_package:build_pip_package
-  ./bazel-bin/oss_scripts/pip_package/build_pip_package .
+  ./bazel-bin/oss_scripts/pip_package/build_pip_package $HOME/wheels
 
-  # Upload to pypi
-  pip install -U twine
-  #twine upload *.whl
+  deactivate
 done
+
+cd
+PYTHON_VERSION='cp36-cp36m'
+PYTHON_BIN=/opt/python/${PYTHON_VERSION}/bin/python
+$PYTHON_BIN -m pip install -U auditwheel==1.8.0 twine
+$PYTHON_BIN -m pip install -U wheel==0.31.1
+cd wheels
+find . -type f -print | sed -e 's/^/auditwheel repair /' | sh
+
+if [ "$UPLOAD_TO_PYPI" = upload ]; then
+  cd wheelhouse
+  twine upload *.whl
+fi
