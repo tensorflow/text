@@ -31,6 +31,42 @@ py_library(
     ],
 )
 
+cc_library(
+    name = "tensorflow_text_ops",
+    alwayslink = 1,
+    srcs = ["main.cc"], # todo: Figure out how to remove this workaround without bazel complaining about no new artifacts
+    deps = [
+        ":constrained_sequence_op",
+        ":normalize_ops_cc",
+        ":sentence_breaking_ops_cc",
+        ":unicode_script_tokenizer_cc",
+        ":whitespace_tokenizer_cc",
+        ":wordpiece_tokenizer_cc",
+    ],
+)
+
+cc_library(
+    name = "constrained_sequence_op",
+    srcs = [
+        "core/kernels/constrained_sequence_kernel.cc",
+        "core/ops/constrained_sequence_op.cc",
+    ],
+    copts = [
+        "-pthread",
+        "-std=c++11",
+    ],
+    alwayslink = 1,
+    deps = [
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
+        "@icu//:common",
+        "@org_tensorflow//tensorflow/core:framework",
+    ],
+)
+
 cc_binary(
     name = "python/ops/_constrained_sequence_op.so",
     srcs = [
@@ -107,6 +143,30 @@ py_test(
     deps = [
         ":ngrams_op",
         ":ragged_test_util",
+    ],
+)
+
+cc_library(
+    name = "normalize_ops_cc",
+    srcs = [
+        "core/kernels/normalize_kernels.cc",
+        "core/ops/normalize_ops.cc",
+    ],
+    copts = [
+        "-pthread",
+        "-std=c++11",
+    ],
+    alwayslink = 1,
+    deps = [
+        "//third_party/icu/data:icu_normalization_data",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
+        "@icu//:common",
+        "@icu//:headers",
+        "@org_tensorflow//tensorflow/core:framework",
     ],
 )
 
@@ -226,6 +286,30 @@ py_library(
     srcs_version = "PY2AND3",
 )
 
+cc_library(
+    name = "sentence_breaking_ops_cc",
+    srcs = [
+        "core/kernels/sentence_breaking_kernels.cc",
+        "core/ops/sentence_breaking_ops.cc",
+    ],
+    copts = [
+        "-pthread",
+        "-std=c++11",
+    ],
+    alwayslink = 1,
+    deps = [
+        ":sentence_breaking_utils_cc",
+        ":sentence_fragmenter_cc",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
+        "@icu//:common",
+        "@org_tensorflow//tensorflow/core:framework",
+    ],
+)
+
 cc_binary(
     name = "python/ops/_sentence_breaking_ops.so",
     srcs = [
@@ -248,6 +332,27 @@ cc_binary(
         "@icu//:common",
         "@local_config_tf//:libtensorflow_framework",
         "@local_config_tf//:tf_header_lib",
+    ],
+)
+
+cc_library(
+    name = "sentence_breaking_utils_cc",
+    srcs = ["core/kernels/sentence_breaking_utils.cc"],
+    hdrs = ["core/kernels/sentence_breaking_utils.h"],
+    deps = [
+        "@com_google_absl//absl/strings",
+        "@icu//:common",
+        "@org_tensorflow//tensorflow/core:framework",
+    ],
+)
+
+cc_library(
+    name = "sentence_fragmenter_cc",
+    srcs = ["core/kernels/sentence_fragmenter.cc"],
+    hdrs = ["core/kernels/sentence_fragmenter.h"],
+    deps = [
+        ":sentence_breaking_utils_cc",
+        "@org_tensorflow//tensorflow/core:framework",
     ],
 )
 
@@ -330,6 +435,23 @@ py_test(
     ],
 )
 
+cc_library(
+    name = "unicode_script_tokenizer_cc",
+    srcs = [
+        "core/kernels/unicode_script_tokenize_kernel.cc",
+        "core/ops/unicode_script_tokenize_op.cc",
+    ],
+    copts = [
+        "-pthread",
+        "-std=c++11",
+    ],
+    alwayslink = 1,
+    deps = [
+        "@icu//:common",
+        "@org_tensorflow//tensorflow/core:framework",
+    ],
+)
+
 cc_binary(
     name = "python/ops/_unicode_script_tokenizer.so",
     srcs = [
@@ -409,6 +531,23 @@ py_test(
     ],
 )
 
+cc_library(
+    name = "whitespace_tokenizer_cc",
+    srcs = [
+        "core/kernels/whitespace_tokenize_kernel.cc",
+        "core/ops/whitespace_tokenize_op.cc",
+    ],
+    copts = [
+        "-pthread",
+        "-std=c++11",
+    ],
+    alwayslink = 1,
+    deps = [
+        "@icu//:common",
+        "@org_tensorflow//tensorflow/core:framework",
+    ],
+)
+
 cc_binary(
     name = "python/ops/_whitespace_tokenizer.so",
     srcs = [
@@ -449,6 +588,30 @@ py_test(
     deps = [
         ":ragged_test_util",
         ":whitespace_tokenizer",
+    ],
+)
+
+cc_library(
+    name = "wordpiece_tokenizer_cc",
+    srcs = [
+        "core/kernels/wordpiece_kernel.cc",
+        "core/kernels/wordpiece_tokenizer.cc",
+        "core/kernels/wordpiece_tokenizer.h",
+        "core/ops/wordpiece_op.cc",
+    ],
+    copts = [
+        "-pthread",
+        "-std=c++11",
+    ],
+    alwayslink = 1,
+    deps = [
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
+        "@icu//:common",
+        "@org_tensorflow//tensorflow/core:framework",
     ],
 )
 
