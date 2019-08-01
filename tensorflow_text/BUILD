@@ -429,7 +429,6 @@ py_test(
     main = "python/ops/whitespace_tokenizer_test.py",
     srcs_version = "PY2AND3",
     deps = [
-        ":ragged_test_util",
         ":whitespace_tokenizer",
     ],
 )
