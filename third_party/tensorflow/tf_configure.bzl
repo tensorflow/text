@@ -6,6 +6,7 @@ See: http://github.com/tensorflow/custom-op
 
 _TF_HEADER_DIR = "TF_HEADER_DIR"
 _TF_SHARED_LIBRARY_DIR = "TF_SHARED_LIBRARY_DIR"
+_TF_SHARED_LIBRARY = "TF_SHARED_LIBRARY"
 
 def _tpl(repository_ctx, tpl, substitutions = {}, out = None):
     if not out:
@@ -186,14 +187,15 @@ def _tf_pip_impl(repository_ctx):
     )
 
     tf_shared_library_dir = repository_ctx.os.environ[_TF_SHARED_LIBRARY_DIR]
-    tf_shared_library_path = "%s/libtensorflow_framework.so.1" % tf_shared_library_dir
+    tf_shared_library = repository_ctx.os.environ[_TF_SHARED_LIBRARY]
+    tf_shared_library_path = "%s/%s" % (tf_shared_library_dir, tf_shared_library)
     tf_shared_library_rule = _symlink_genrule_for_dir(
         repository_ctx,
         None,
         "",
-        "libtensorflow_framework.so.1",
+        "libtensorflow_framework_so",
         [tf_shared_library_path],
-        ["libtensorflow_framework.so.1"],
+        ["libtensorflow_framework.so"],
     )
 
     _tpl(repository_ctx, "BUILD", {
