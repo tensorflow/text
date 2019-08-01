@@ -19,15 +19,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import sys
-
 from tensorflow.python.ops import string_ops
 
 
 def _unichr(codepoint):
-  if sys.version_info[0] == 2:
+  try:
     return unichr(codepoint)
-  else:
+  except NameError:
     return chr(codepoint)
 
 
