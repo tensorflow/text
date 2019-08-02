@@ -49,6 +49,21 @@ class Utf8CharsOpTest(test.TestCase):
                                      wordshape_ops.WordShape.HAS_SOME_DIGITS)
     self.assertAllEqual(shapes, [False, True, False, True, True, True])
 
+  def testSomeDigitAndCurrency(self):
+    test_string = [u"abc", u"a\u06f3m".encode("utf-8"),
+                   u"90\u06f3".encode("utf-8"),
+                   u"a9b8c7", u"$9ab87c$", u"\u06f3m\u06f3"]
+    pattern_list = [wordshape_ops.WordShape.HAS_SOME_DIGITS,
+                    wordshape_ops.WordShape.HAS_CURRENCY_SYMBOL]
+    shapes = wordshape_ops.wordshape(test_string,
+                                     pattern=pattern_list)
+    self.assertAllEqual(shapes, [[False, False],
+                                 [True, False],
+                                 [False, False],
+                                 [True, False],
+                                 [True, True],
+                                 [True, False]])
+
   def testOnlyDigits(self):
     test_string = [u"abc", u"a9b".encode("utf-8"), u"90\u06f3".encode("utf-8")]
     shapes = wordshape_ops.wordshape(test_string,
@@ -228,7 +243,13 @@ class Utf8CharsOpTest(test.TestCase):
     test_string = [u"''", u"ABc$", u"$\uff07".encode("utf-8")]
     shapes = wordshape_ops.wordshape(
         test_string, wordshape_ops.WordShape.HAS_CURRENCY_SYMBOL)
-    self.assertAllEqual(shapes, [False, True, False])
+    self.assertAllEqual(shapes, [False, True, True])
+
+  def testCurrencySymbolAtBeginning(self):
+    test_string = [u"''", u"ABc$", u"$ABc", u"A$Bc"]
+    shapes = wordshape_ops.wordshape(
+        test_string, wordshape_ops.WordShape.HAS_CURRENCY_SYMBOL)
+    self.assertAllEqual(shapes, [False, True, True, True])
 
   def testNonLetters(self):
     test_string = [u"''", u"ABc", u"\uff07".encode("utf-8"),

@@ -135,7 +135,7 @@ class WordShape(enum.Enum):
   ENDS_WITH_CLOSE_QUOTE = _ends_with_close_quote_regex()
   HAS_QUOTE = r"^[`\p{Quotation_Mark}].*|.*[`\p{Quotation_Mark}]$"
   HAS_MATH_SYMBOL = r".*\p{Sm}.*"
-  HAS_CURRENCY_SYMBOL = r".*\p{Sc}$"
+  HAS_CURRENCY_SYMBOL = r".*\p{Sc}.*"
   HAS_NON_LETTER = r".*\P{L}.*"
 
 
