@@ -44,7 +44,8 @@ LookupStatus Lookup(int byte_start, int byte_end,
 
 // Sets byte_end to the longest byte sequence which:
 // 1) is a proper UTF8 sequence
-// 2) is in the vocab
+// 2) is in the vocab OR if split_unknown_characters is true, is a single
+//    UTF8 character.
 // If no match is found, found_match is set to false.
 LookupStatus LongestMatchStartingAt(int byte_start,
                                     const absl::string_view& token,
@@ -132,6 +133,8 @@ void AddWord(const absl::string_view& token, int byte_start, int byte_end,
   end_offset->push_back(byte_end);
 }
 
+// Adds a single unknown character subword, found when split_unknown_characters
+// is true.
 void AddUnknownCharacter(
     const absl::string_view& token, int byte_start, int byte_end,
     const std::string& suffix_indicator, bool use_unknown_token,
@@ -144,7 +147,7 @@ void AddUnknownCharacter(
     subwords->push_back(unknown_token);
   } else {
     if (byte_start > 0) {
-     // Prepend suffix_indicator if the token is within a word.
+     // Prepend suffix_indicator if the character is within a word.
      subwords->push_back(::absl::StrCat(
          suffix_indicator, absl::string_view(token.data() + byte_start, len)));
     } else {
