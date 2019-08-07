@@ -305,6 +305,29 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
           vocab=_DEATH_VOCAB,
           max_bytes_per_word=40,
       ),
+      # Test not splitting out unknown characters.
+      dict(
+          tokens=[[b"nap"]],
+          expected_subwords=[[[b"[UNK]"]]],
+          unknown_token="[UNK]",
+          vocab=_ENGLISH_VOCAB,
+      ),
+      # Test splitting out unknown characters.
+      dict(
+          tokens=[[b"nap"]],
+          expected_subwords=[[[b"na", b"[UNK]"]]],
+          unknown_token="[UNK]",
+          vocab=_ENGLISH_VOCAB,
+          split_unknown_characters=True,
+      ),
+      # Test splitting out unknown characters, with unknown_token set to None.
+      dict(
+          tokens=[[b"nap"]],
+          expected_subwords=[[[b"na", b"##p"]]],
+          unknown_token=None,
+          vocab=_ENGLISH_VOCAB,
+          split_unknown_characters=True,
+      ),
   ])
   def testWordPieceOpAndVerifyOffsets(self,
                                       tokens,
@@ -315,7 +338,8 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
                                       use_unknown_token=True,
                                       unknown_token="[UNK]",
                                       token_out_type=dtypes.string,
-                                      max_bytes_per_word=100):
+                                      max_bytes_per_word=100,
+                                      split_unknown_characters=False):
     for horizon in self._FORWARD_COMPATIBILITY_HORIZONS:
       with compat.forward_compatibility_horizon(*horizon):
         tokens_t = ragged_factory_ops.constant(tokens)
@@ -326,6 +350,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
             unknown_token=unknown_token,
             token_out_type=token_out_type,
             max_bytes_per_word=max_bytes_per_word,
+            split_unknown_characters=split_unknown_characters,
         )
         subwords_t, begin_t, end_t = tokenizer.tokenize_with_offsets(tokens_t)
         self.assertRaggedEqual(subwords_t, expected_subwords)
