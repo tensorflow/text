@@ -306,24 +306,27 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
           max_bytes_per_word=40,
       ),
       # Test not splitting out unknown characters.
+      # (p and ! are unknown)
       dict(
-          tokens=[[b"nap"]],
-          expected_subwords=[[[b"[UNK]"]]],
+          tokens=[[b"nap", b"hello!me"]],
+          expected_subwords=[[[b"[UNK]"], [b"[UNK]"]]],
           unknown_token="[UNK]",
           vocab=_ENGLISH_VOCAB,
       ),
       # Test splitting out unknown characters.
       dict(
-          tokens=[[b"nap"]],
-          expected_subwords=[[[b"na", b"[UNK]"]]],
+          tokens=[[b"nap", b"hello!me"]],
+          expected_subwords=[
+              [[b"na", b"[UNK]"], [b"hel", b"##lo", b"[UNK]", b"##me"]]],
           unknown_token="[UNK]",
           vocab=_ENGLISH_VOCAB,
           split_unknown_characters=True,
       ),
       # Test splitting out unknown characters, with unknown_token set to None.
       dict(
-          tokens=[[b"nap"]],
-          expected_subwords=[[[b"na", b"##p"]]],
+          tokens=[[b"nap", b"hello!me"]],
+          expected_subwords=[
+              [[b"na", b"##p"], [b"hel", b"##lo", b"##!", b"##me"]]],
           unknown_token=None,
           vocab=_ENGLISH_VOCAB,
           split_unknown_characters=True,
