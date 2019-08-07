@@ -42,7 +42,8 @@ class WordpieceTokenizer(TokenizerWithOffsets):
                suffix_indicator='##',
                max_bytes_per_word=100,
                token_out_type=dtypes.int64,
-               unknown_token='[UNK]'):
+               unknown_token='[UNK]',
+               split_unknown_characters=False):
     """Initializes the WordpieceTokenizer.
 
     Args:
@@ -58,6 +59,9 @@ class WordpieceTokenizer(TokenizerWithOffsets):
         `tf.int64`, the `vocab_lookup_table` is used to convert the
         `unknown_token` to an integer. If this is set to `None`,
         out-of-vocabulary tokens are left as is.
+      split_unknown_characters: (optional) Whether to split out single unknown
+        characters as subtokens. If False (default), words containing unknown
+        characters will be treated as single unknown tokens.
     """
     self._vocab_lookup_table = vocab_lookup_table
     self._suffix_indicator = suffix_indicator
@@ -65,6 +69,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
     self._token_out_type = token_out_type
     self._unknown_token = unknown_token if unknown_token else '[UNK]'
     self._use_unknown_token = True if unknown_token else False
+    self._split_unknown_characters = split_unknown_characters
 
   def tokenize(self, input):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
@@ -165,6 +170,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
               use_unknown_token=self._use_unknown_token,
               max_bytes_per_word=self._max_bytes_per_word,
               unknown_token=self._unknown_token,
+              split_unknown_characters=self._split_unknown_characters,
               **kwargs))
 
       # If ids are desired, look them up in the vocab table. Otherwise just

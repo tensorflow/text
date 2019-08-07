@@ -64,6 +64,14 @@ string GetUnknownToken(OpKernelConstruction* ctx) {
   return unknown_token;
 }
 
+bool GetSplitUnknownCharacters(OpKernelConstruction* ctx) {
+  bool split_unknown_characters;
+  ([=](bool* c) -> void {
+    OP_REQUIRES_OK(ctx, ctx->GetAttr("split_unknown_characters", c));
+  })(&split_unknown_characters);
+  return split_unknown_characters;
+}
+
 Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
                       string* container, string* table_handle) {
   {
@@ -162,7 +170,8 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
         suffix_indicator_(GetWordSplitChar(ctx)),
         max_bytes_per_word_(GetMaxCharsPerWord(ctx)),
         use_unknown_token_(GetShouldUseUnknownToken(ctx)),
-        unknown_token_(GetUnknownToken(ctx)) {
+        unknown_token_(GetUnknownToken(ctx)),
+        split_unknown_characters_(GetSplitUnknownCharacters(ctx)) {
     string output_row_partition_type;
     OP_REQUIRES_OK(ctx, ctx->GetAttr("output_row_partition_type",
                                      &output_row_partition_type));
@@ -202,7 +211,8 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
       OP_REQUIRES_OK(
           ctx, ToStatus(WordpieceTokenize(
                    values_vec(i), max_bytes_per_word_, suffix_indicator_,
-                   use_unknown_token_, unknown_token_, &vocab_map, &subwords,
+                   use_unknown_token_, unknown_token_,
+                   split_unknown_characters_, &vocab_map, &subwords,
                    &begin_offset, &end_offset, &num_wordpieces)));
 
       // Record the row splits.
@@ -271,6 +281,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
   const int max_bytes_per_word_;
   const bool use_unknown_token_;
   const string unknown_token_;
+  const bool split_unknown_characters_;
   RowPartitionType row_partition_type_;
 
   TF_DISALLOW_COPY_AND_ASSIGN(WordpieceTokenizeWithOffsetsOp);
