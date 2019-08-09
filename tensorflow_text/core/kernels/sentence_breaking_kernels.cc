@@ -158,7 +158,7 @@ class SentenceFragmentsOp : public OpKernel {
     DECLARE_AND_VALIDATE_INPUT_VECTOR(row_lengths, int64);
     DECLARE_AND_VALIDATE_INPUT_VECTOR(token_start, int64);
     DECLARE_AND_VALIDATE_INPUT_VECTOR(token_end, int64);
-    DECLARE_AND_VALIDATE_INPUT_VECTOR(token_word, string);
+    DECLARE_AND_VALIDATE_INPUT_VECTOR(token_word, tstring);
     DECLARE_AND_VALIDATE_INPUT_VECTOR(token_properties, int64);
 
 #undef DECLARE_AND_VALIDATE_INPUT_TENSOR
