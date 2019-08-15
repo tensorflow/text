@@ -56,6 +56,8 @@ LookupStatus LongestMatchStartingAt(int byte_start,
   std::vector<int32_t> byte_ends;
   int upper_limit = token.length();
   if (max_bytes_per_subtoken > 0) {
+    // If the max bytes of a subtoken is known, do not search beyond that
+    // length.
     upper_limit = std::min(upper_limit, byte_start + max_bytes_per_subtoken);
   }
   for (int32_t i = byte_start; i < upper_limit;) {

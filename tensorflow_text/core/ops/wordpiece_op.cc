@@ -64,7 +64,8 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     suffix_indicator: Characters prepended to a wordpiece to
       indicate that it is a suffix to another subword.
     max_bytes_per_word: Max size of input token.
-    max_bytes_per_token: Max size of output tokens.
+    max_bytes_per_token: Max size of output tokens. A non-positive value
+      means the max size is not known.
     use_unknown_token: Whether unknown_token should be used.
     unknown_token: The value to use when an unknown token is found.
     output_row_partition_type: Indicates what row-partitioning tensor should
