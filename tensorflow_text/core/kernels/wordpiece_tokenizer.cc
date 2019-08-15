@@ -49,14 +49,18 @@ LookupStatus Lookup(int byte_start, int byte_end,
 LookupStatus LongestMatchStartingAt(int byte_start,
                                     const absl::string_view& token,
                                     const std::string& suffix_indicator,
+                                    const int max_bytes_per_subtoken,
                                     const WordpieceVocab* vocab_map,
                                     int* byte_end, bool* found_match) {
   const char* token_bytes = token.data();
-  const int token_len = token.length();
   std::vector<int32_t> byte_ends;
-  for (int32_t i = byte_start; i < token_len;) {
+  int upper_limit = token.length();
+  if (max_bytes_per_subtoken > 0) {
+    upper_limit = std::min(upper_limit, byte_start + max_bytes_per_subtoken);
+  }
+  for (int32_t i = byte_start; i < upper_limit;) {
     UChar32 c;
-    U8_NEXT(token_bytes, i, token_len, c);
+    U8_NEXT(token_bytes, i, upper_limit, c);
     byte_ends.push_back(i);
   }
   int n = byte_ends.size();
@@ -116,10 +120,11 @@ void AddWord(const absl::string_view& token, int byte_start, int byte_end,
 
 LookupStatus TokenizeL2RGreedy(
     const absl::string_view& token, const int max_bytes_per_token,
-    const std::string& suffix_indicator, bool use_unknown_token,
-    const std::string& unknown_token, const WordpieceVocab* vocab_map,
-    std::vector<std::string>* subwords, std::vector<int>* begin_offset,
-    std::vector<int>* end_offset, int* num_word_pieces) {
+    const int max_bytes_per_subtoken, const std::string& suffix_indicator,
+    bool use_unknown_token, const std::string& unknown_token,
+    const WordpieceVocab* vocab_map, std::vector<std::string>* subwords,
+    std::vector<int>* begin_offset, std::vector<int>* end_offset,
+    int* num_word_pieces) {
   std::vector<std::string> candidate_subwords;
   std::vector<int> candidate_begin_offsets;
   std::vector<int> candidate_end_offsets;
@@ -128,6 +133,7 @@ LookupStatus TokenizeL2RGreedy(
     int byte_end;
     bool found_subword;
     auto status = LongestMatchStartingAt(byte_start, token, suffix_indicator,
+                                         max_bytes_per_subtoken,
                                          vocab_map, &byte_end, &found_subword);
     if (!status.success) return status;
     if (found_subword) {
@@ -155,10 +161,11 @@ LookupStatus TokenizeL2RGreedy(
 
 LookupStatus WordpieceTokenize(
     const absl::string_view& token, const int max_bytes_per_token,
-    const std::string& suffix_indicator, bool use_unknown_token,
-    const std::string& unknown_token, const WordpieceVocab* vocab_map,
-    std::vector<std::string>* subwords, std::vector<int>* begin_offset,
-    std::vector<int>* end_offset, int* num_word_pieces) {
+    const int max_bytes_per_subtoken, const std::string& suffix_indicator,
+    bool use_unknown_token, const std::string& unknown_token,
+    const WordpieceVocab* vocab_map, std::vector<std::string>* subwords,
+    std::vector<int>* begin_offset, std::vector<int>* end_offset,
+    int* num_word_pieces) {
   int token_len = token.size();
   if (token_len > max_bytes_per_token) {
     begin_offset->push_back(0);
@@ -172,9 +179,10 @@ LookupStatus WordpieceTokenize(
     }
     return LookupStatus::OK();
   }
-  return TokenizeL2RGreedy(token, max_bytes_per_token, suffix_indicator,
-                           use_unknown_token, unknown_token, vocab_map,
-                           subwords, begin_offset, end_offset, num_word_pieces);
+  return TokenizeL2RGreedy(
+    token, max_bytes_per_token, max_bytes_per_subtoken, suffix_indicator,
+    use_unknown_token, unknown_token, vocab_map,
+    subwords, begin_offset, end_offset, num_word_pieces);
 }
 
 }  // namespace text
