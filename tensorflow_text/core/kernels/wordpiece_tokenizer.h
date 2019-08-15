@@ -41,10 +41,11 @@ class WordpieceVocab {
 
 LookupStatus WordpieceTokenize(
     const absl::string_view& token, const int max_bytes_per_token,
-    const std::string& suffix_indicator, bool use_unknown_token,
-    const std::string& unknown_token, const WordpieceVocab* vocab_map,
-    std::vector<std::string>* subwords, std::vector<int>* begin_offset,
-    std::vector<int>* end_offset, int* num_word_pieces);
+    const int max_bytes_per_subtoken, const std::string& suffix_indicator,
+    bool use_unknown_token, const std::string& unknown_token,
+    const WordpieceVocab* vocab_map, std::vector<std::string>* subwords,
+    std::vector<int>* begin_offset, std::vector<int>* end_offset,
+    int* num_word_pieces);
 
 }  // namespace text
 }  // namespace tensorflow
