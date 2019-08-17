@@ -30,7 +30,7 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     .Attr("max_bytes_per_word: int")
     .Attr("use_unknown_token: bool")
     .Attr("unknown_token: string")
-    .Attr("split_unknown_characters: bool")
+    .Attr("split_unknown_characters: bool = false")
     .Attr("output_row_partition_type: {'row_lengths', 'row_splits'}"
           " = 'row_lengths'")
     .Output("output_values: string")
