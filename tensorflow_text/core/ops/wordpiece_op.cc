@@ -28,7 +28,7 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     .Input("vocab_lookup_table: resource")
     .Attr("suffix_indicator: string")
     .Attr("max_bytes_per_word: int")
-    .Attr("max_bytes_per_token: int")
+    .Attr("max_bytes_per_token: int = 0")
     .Attr("use_unknown_token: bool")
     .Attr("unknown_token: string")
     .Attr("output_row_partition_type: {'row_lengths', 'row_splits'}"
