@@ -48,12 +48,12 @@ int32 GetMaxCharsPerWord(OpKernelConstruction* ctx) {
   return max_chars_per_word;
 }
 
-int32 GetMaxBytesPerToken(OpKernelConstruction* ctx) {
-  int32 max_bytes_per_token;
+int32 GetMaxCharsPerToken(OpKernelConstruction* ctx) {
+  int32 max_chars_per_token;
   ([=](int32* c) -> void {
-    OP_REQUIRES_OK(ctx, ctx->GetAttr("max_bytes_per_token", c));
-  })(&max_bytes_per_token);
-  return max_bytes_per_token;
+    OP_REQUIRES_OK(ctx, ctx->GetAttr("max_chars_per_token", c));
+  })(&max_chars_per_token);
+  return max_chars_per_token;
 }
 
 bool GetShouldUseUnknownToken(OpKernelConstruction* ctx) {
@@ -169,7 +169,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
       : OpKernel(ctx),
         suffix_indicator_(GetWordSplitChar(ctx)),
         max_bytes_per_word_(GetMaxCharsPerWord(ctx)),
-        max_bytes_per_token_(GetMaxBytesPerToken(ctx)),
+        max_chars_per_token_(GetMaxCharsPerToken(ctx)),
         use_unknown_token_(GetShouldUseUnknownToken(ctx)),
         unknown_token_(GetUnknownToken(ctx)) {
     string output_row_partition_type;
@@ -210,7 +210,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
       int num_wordpieces = 0;
       OP_REQUIRES_OK(
           ctx, ToStatus(WordpieceTokenize(
-                   values_vec(i), max_bytes_per_word_, max_bytes_per_token_,
+                   values_vec(i), max_bytes_per_word_, max_chars_per_token_,
                    suffix_indicator_, use_unknown_token_, unknown_token_,
                    &vocab_map, &subwords, &begin_offset, &end_offset,
                    &num_wordpieces)));
@@ -279,7 +279,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
 
   const string suffix_indicator_;
   const int max_bytes_per_word_;
-  const int max_bytes_per_token_;
+  const int max_chars_per_token_;
   const bool use_unknown_token_;
   const string unknown_token_;
   RowPartitionType row_partition_type_;
