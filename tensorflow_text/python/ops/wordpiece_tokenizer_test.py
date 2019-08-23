@@ -455,29 +455,36 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
           ],
           vocab=_ENGLISH_VOCAB,
       ),
-      # Specifying max_bytes_per_token.
+      # Specifying max_chars_per_token.
       dict(
           tokens=[[b"don't", b"treadness"]],
-          max_bytes_per_token=5,
+          max_chars_per_token=5,
           expected_subwords=[
               [[b"don", b"##'", b"##t"], [b"tread", b"##ness"]]],
           vocab=_ENGLISH_VOCAB + [b"trea", b"##d"],
       ),
-      # Specifying max_bytes_per_token to 4, so that "tread" is not found, and
+      # Specifying max_chars_per_token to 4, so that "tread" is not found, and
       # is split into "trea", "##d".
       dict(
           tokens=[[b"don't", b"treadness"]],
-          max_bytes_per_token=4,
+          max_chars_per_token=4,
           expected_subwords=[
               [[b"don", b"##'", b"##t"], [b"trea", b"##d", b"##ness"]]],
           vocab=_ENGLISH_VOCAB + [b"trea", b"##d"],
+      ),
+      # Specifying max_chars_per_token where characters are multiple bytes.
+      dict(
+          tokens=[[_Utf8("大"), _Utf8("易")]],
+          max_chars_per_token=1,
+          expected_subwords=[[[_Utf8("大")], [_Utf8("易")]]],
+          vocab=_CHINESE_VOCAB,
       ),
   ])
   def testTensors(self,
                   tokens,
                   expected_subwords,
                   vocab,
-                  max_bytes_per_token=None,
+                  max_chars_per_token=None,
                   expected_start=None,
                   expected_limit=None,
                   use_unknown_token=True,
@@ -486,7 +493,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
     self.evaluate(vocab_table.initializer)
     tokenizer = WordpieceTokenizer(
         vocab_table, token_out_type=token_out_type,
-        max_bytes_per_token=max_bytes_per_token,
+        max_chars_per_token=max_chars_per_token,
     )
     subwords = tokenizer.tokenize(tokens)
     self.assertRaggedEqual(subwords, expected_subwords)
