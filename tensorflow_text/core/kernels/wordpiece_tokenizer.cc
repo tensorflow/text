@@ -144,7 +144,12 @@ void AddUnknownCharacter(
   end_offset->push_back(byte_end);
   int len = byte_end - byte_start;
   if (use_unknown_token) {
-    subwords->push_back(unknown_token);
+    if (byte_start > 0) {
+     // Prepend suffix_indicator if the character is within a word.
+     subwords->push_back(::absl::StrCat(suffix_indicator, unknown_token));
+    } else {
+      subwords->push_back(unknown_token);
+    }
   } else {
     if (byte_start > 0) {
      // Prepend suffix_indicator if the character is within a word.

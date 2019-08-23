@@ -317,7 +317,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
       dict(
           tokens=[[b"nap", b"hello!me"]],
           expected_subwords=[
-              [[b"na", b"[UNK]"], [b"hel", b"##lo", b"[UNK]", b"##me"]]],
+              [[b"na", b"##[UNK]"], [b"hel", b"##lo", b"##[UNK]", b"##me"]]],
           unknown_token="[UNK]",
           vocab=_ENGLISH_VOCAB,
           split_unknown_characters=True,
