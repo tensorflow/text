@@ -474,7 +474,7 @@ class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
       ),
       # Specifying max_chars_per_token where characters are multiple bytes.
       dict(
-          tokens=[[_Utf8("大"), _Utf8("易")]],
+          tokens=[[_Utf8(u"大"), _Utf8(u"易")]],
           max_chars_per_token=1,
           expected_subwords=[[[_Utf8("大")], [_Utf8("易")]]],
           vocab=_CHINESE_VOCAB,
