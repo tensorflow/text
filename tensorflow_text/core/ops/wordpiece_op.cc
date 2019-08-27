@@ -28,6 +28,7 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     .Input("vocab_lookup_table: resource")
     .Attr("suffix_indicator: string")
     .Attr("max_bytes_per_word: int")
+    .Attr("max_chars_per_token: int = 0")
     .Attr("use_unknown_token: bool")
     .Attr("unknown_token: string")
     .Attr("output_row_partition_type: {'row_lengths', 'row_splits'}"
@@ -63,10 +64,12 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     suffix_indicator: Characters prepended to a wordpiece to
       indicate that it is a suffix to another subword.
     max_bytes_per_word: Max size of input token.
+    max_chars_per_token: Max size of output tokens. A non-positive value
+      means the max size is not known.
     use_unknown_token: Whether unknown_token should be used.
     unknown_token: The value to use when an unknown token is found.
     output_row_partition_type: Indicates what row-partitioning tensor should
-      be returned by the op.  If this is set to 'row_splits', then the 
+      be returned by the op.  If this is set to 'row_splits', then the
       `output_row_lengths` output will contain row-splits instead of
       row-lengths.
 

@@ -41,6 +41,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
                vocab_lookup_table,
                suffix_indicator='##',
                max_bytes_per_word=100,
+               max_chars_per_token=None,
                token_out_type=dtypes.int64,
                unknown_token='[UNK]'):
     """Initializes the WordpieceTokenizer.
@@ -51,6 +52,9 @@ class WordpieceTokenizer(TokenizerWithOffsets):
       suffix_indicator: (optional) The characters prepended to a wordpiece to
         indicate that it is a suffix to another subword. Default is '##'.
       max_bytes_per_word: (optional) Max size of input token. Default is 100.
+      max_chars_per_token: (optional) Max size of subwords, excluding suffix
+        indicator. If known, providing this improves the efficiency of decoding
+        long words.
       token_out_type: (optional) The type of the token to return. This can be
         `tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
       unknown_token: (optional) The value to use when an unknown token is found.
@@ -62,6 +66,9 @@ class WordpieceTokenizer(TokenizerWithOffsets):
     self._vocab_lookup_table = vocab_lookup_table
     self._suffix_indicator = suffix_indicator
     self._max_bytes_per_word = max_bytes_per_word
+    self._max_chars_per_token = (
+        0 if max_chars_per_token is None
+        else max_chars_per_token)
     self._token_out_type = token_out_type
     self._unknown_token = unknown_token if unknown_token else '[UNK]'
     self._use_unknown_token = True if unknown_token else False
@@ -164,6 +171,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
               suffix_indicator=self._suffix_indicator,
               use_unknown_token=self._use_unknown_token,
               max_bytes_per_word=self._max_bytes_per_word,
+              max_chars_per_token=self._max_chars_per_token,
               unknown_token=self._unknown_token,
               **kwargs))
 
