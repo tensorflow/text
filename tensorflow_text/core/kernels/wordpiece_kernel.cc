@@ -124,8 +124,7 @@ class LookupTableVocab : public WordpieceVocab {
  public:
   LookupTableVocab(lookup::LookupInterface* table, OpKernelContext* ctx);
 
-  virtual LookupStatus Contains(const absl::string_view key,
-                                bool* value) const;
+  virtual LookupStatus Contains(const absl::string_view key, bool* value) const;
 
  private:
   // not owned
@@ -189,8 +188,9 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
     } else if (output_row_partition_type == "row_splits") {
       row_partition_type_ = ROW_SPLITS;
     } else {
-      OP_REQUIRES(ctx, false, errors::Internal(
-          "Unexpected value for output_row_partition_type"));
+      OP_REQUIRES(
+          ctx, false,
+          errors::Internal("Unexpected value for output_row_partition_type"));
     }
   }
 
