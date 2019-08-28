@@ -42,7 +42,7 @@ def case_fold_utf8(input, name=None):
   >>> case_fold_utf8(['The   Quick-Brown',
   ...                 'CAT jumped over',
   ...                 'the lazy dog  !!  ']
-  tf.Tensor(['The   quick-brown' 'cat jumped over' 'the lazy dog  !!  '],
+  tf.Tensor(['the   quick-brown' 'cat jumped over' 'the lazy dog  !!  '],
             shape=(3,), dtype=string)
   ```
 
