@@ -43,15 +43,17 @@ LookupStatus WordpieceTokenize(
     const absl::string_view& token, const int max_bytes_per_token,
     const int max_chars_per_subtoken, const std::string& suffix_indicator,
     bool use_unknown_token, const std::string& unknown_token,
+    bool split_unknown_characters,
     const WordpieceVocab* vocab_map, std::vector<std::string>* subwords,
     std::vector<int>* begin_offset, std::vector<int>* end_offset,
     int* num_word_pieces);
 
-// As above but with `max_byteds_per_subtoken` unknown.
+// As above but with `max_bytes_per_subtoken` unknown,
+// and split_unknown_characters=false. (For backwards compatability.)
 LookupStatus WordpieceTokenize(
     const absl::string_view& token, const int max_bytes_per_token,
     const std::string& suffix_indicator, bool use_unknown_token,
-    const std::string& unknown_token, bool split_unknown_characters,
+    const std::string& unknown_token,
     const WordpieceVocab* vocab_map, std::vector<std::string>* subwords,
     std::vector<int>* begin_offset, std::vector<int>* end_offset,
     int* num_word_pieces);
