@@ -28,6 +28,7 @@ _allowed_symbols = [
     "normalize_utf8",
     "pad_along_dimension",
     "Reduction",
+    "rouge_l",
     "sentence_fragments",
     "sliding_window",
     "span_alignment",

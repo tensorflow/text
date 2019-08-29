@@ -28,6 +28,7 @@ from tensorflow_text.python.ops.pointer_ops import span_overlaps
 from tensorflow_text.python.ops.sentence_breaking_ops import sentence_fragments
 from tensorflow_text.python.ops.sliding_window_op import sliding_window
 from tensorflow_text.python.ops.string_ops import coerce_to_structurally_valid_utf8
+from tensorflow_text.python.ops.text_similarity_metric_ops import rouge_l
 from tensorflow_text.python.ops.tokenization import Tokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.unicode_script_tokenizer import UnicodeScriptTokenizer
