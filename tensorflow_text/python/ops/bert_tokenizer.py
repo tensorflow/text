@@ -20,7 +20,10 @@ from __future__ import division
 from __future__ import google_type_annotations
 from __future__ import print_function
 
-import tensorflow as tf
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import math_ops
+from tensorflow.python.ops import string_ops
+from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow_text.python.ops import wordshape_ops
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
@@ -62,9 +65,10 @@ class BertTokenizer(Tokenizer):
     to_expand = rt.nested_row_lengths()[axis]
     to_elim = rt.nested_row_lengths()[axis + 1]
 
-    bar = tf.RaggedTensor.from_row_lengths(to_elim, row_lengths=to_expand)
-    new_row_lengths = tf.reduce_sum(bar, axis=1)
-    return tf.RaggedTensor.from_nested_row_lengths(
+    bar = ragged_tensor.RaggedTensor.from_row_lengths(
+        to_elim, row_lengths=to_expand)
+    new_row_lengths = math_ops.reduce_sum(bar, axis=1)
+    return ragged_tensor.RaggedTensor.from_nested_row_lengths(
         rt.flat_values,
         rt.nested_row_lengths()[:axis] + (new_row_lengths,))
 
@@ -72,7 +76,9 @@ class BertTokenizer(Tokenizer):
     """Performs basic word tokenization for BERT.
 
     Args:
-      text_input: A Tensor of untokenized strings.
+      text_input: A Tensor of untokenized strings with shape `[N]`.
+    Returns:
+      A RaggedTensor of tokens with shape `[N, (num_tokens)]`.
     """
     # lowercase and strip accents (if option is set)
     if self._lower_case:
@@ -82,32 +88,33 @@ class BertTokenizer(Tokenizer):
     text_input = normalize_utf8(text_input, "NFD")
 
     # strip out control characters
-    text_input = tf.strings.regex_replace(text_input,
-                                          r"\p{Cc}|\p{Cf}|\p{Mn}", "")
+    text_input = string_ops.regex_replace(text_input, r"\p{Cc}|\p{Cf}|\p{Mn}",
+                                          "")
 
     # For chinese and emoji characters, tokenize by unicode codepoints
     unicode_tokenizer = UnicodeScriptTokenizer(
         keep_whitespace=self._keep_whitespace)
     script_tokenized = unicode_tokenizer.tokenize(text_input)
-    token_script_ids = tf.strings.unicode_script(
-        tf.strings.unicode_decode(script_tokenized.flat_values, "UTF-8"))
+    token_script_ids = string_ops.unicode_script(
+        string_ops.unicode_decode(script_tokenized.flat_values, "UTF-8"))
 
-    is_chinese = tf.equal(token_script_ids, _CHINESE_SCRIPT_ID)[:, :1].values
+    is_chinese = math_ops.equal(token_script_ids,
+                                _CHINESE_SCRIPT_ID)[:, :1].values
     is_emoji = wordshape_ops.wordshape(script_tokenized.flat_values,
                                        wordshape_ops.WordShape.HAS_EMOJI)
     is_punct = wordshape_ops.wordshape(
         script_tokenized.flat_values,
         wordshape_ops.WordShape.IS_PUNCT_OR_SYMBOL)
     split_cond = is_chinese | is_emoji | is_punct
-    unicode_char_split = tf.strings.unicode_split(script_tokenized, "UTF-8")
+    unicode_char_split = string_ops.unicode_split(script_tokenized, "UTF-8")
 
-    unicode_split_tokens = tf.where(
+    unicode_split_tokens = array_ops.where(
         split_cond,
-        y=tf.expand_dims(script_tokenized.flat_values, 1),
+        y=array_ops.expand_dims(script_tokenized.flat_values, 1),
         x=unicode_char_split.values)
 
     # Pack back into a [batch, (num_tokens), (num_unicode_chars)] RT
-    chinese_mix_tokenized = tf.RaggedTensor.from_row_lengths(
+    chinese_mix_tokenized = ragged_tensor.RaggedTensor.from_row_lengths(
         values=unicode_split_tokens, row_lengths=script_tokenized.row_lengths())
 
     # Squeeze out to a [batch, (num_tokens)] RT

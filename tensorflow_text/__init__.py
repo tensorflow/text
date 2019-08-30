@@ -16,19 +16,25 @@
 """Various tensorflow ops related to text-processing."""
 from tensorflow.python.util.all_util import remove_undocumented
 
-# pylint: disable=wildcard-import,g-import-not-at-top
+# pylint: disable=wildcard-import
+from tensorflow_text.python import layers
+from tensorflow_text.python import metrics
 from tensorflow_text.python.ops import *
 
+
+# Public symbols in the "tensorflow_text" package.
 _allowed_symbols = [
+    "BertTokenizer",
     "case_fold_utf8",
     "coerce_to_structurally_valid_utf8",
     "gather_with_default",
     "greedy_constrained_sequence",
+    "layers",
+    "metrics",
     "ngrams",
     "normalize_utf8",
     "pad_along_dimension",
     "Reduction",
-    "rouge_l",
     "sentence_fragments",
     "sliding_window",
     "span_alignment",

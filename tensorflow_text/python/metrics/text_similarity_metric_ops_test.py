@@ -25,8 +25,8 @@ from absl.testing import parameterized
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from tensorflow_text.python.metrics import text_similarity_metric_ops
 from tensorflow_text.python.ops import ragged_test_util
-from tensorflow_text.python.ops import text_similarity_metric_ops
 
 
 def _tokenize_whitespace(text):

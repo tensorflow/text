@@ -13,16 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tensorflow Text layers for Keras API."""
-
+"""Tensorflow text-processing metrics."""
 from tensorflow.python.util.all_util import remove_undocumented
 
 # pylint: disable=wildcard-import
-from tensorflow_text.python.layers.todense import *
+from tensorflow_text.python.metrics.text_similarity_metric_ops import *
 
-# Public symbols in the "tensorflow_text.layers" package.
+# Public symbols in the "tensorflow_text.metrics" package.
 _allowed_symbols = [
-    "ToDense",
+    "rouge_l",
 ]
 
 remove_undocumented(__name__, _allowed_symbols)
