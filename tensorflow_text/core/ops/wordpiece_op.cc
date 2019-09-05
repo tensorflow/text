@@ -31,6 +31,7 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
     .Attr("max_chars_per_token: int = 0")
     .Attr("use_unknown_token: bool")
     .Attr("unknown_token: string")
+    .Attr("split_unknown_characters: bool = false")
     .Attr("output_row_partition_type: {'row_lengths', 'row_splits'}"
           " = 'row_lengths'")
     .Output("output_values: string")
@@ -68,6 +69,8 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
       means the max size is not known.
     use_unknown_token: Whether unknown_token should be used.
     unknown_token: The value to use when an unknown token is found.
+    split_unknown_characters: Whether individual unknown unicode characters
+      should be split out as subtokens.
     output_row_partition_type: Indicates what row-partitioning tensor should
       be returned by the op.  If this is set to 'row_splits', then the
       `output_row_lengths` output will contain row-splits instead of
