@@ -154,7 +154,8 @@ class RougeLOp : public OpKernel {
           // If in the last row or column, or if the tokens are not equal,
           // carry the largest score seen in the cell above or to the left of
           // the current cell.
-          scratch2d(a, b) = max({scratch2d(a - 1, b), scratch2d(a, b - 1)});
+          scratch2d(a, b) =
+              std::max({scratch2d(a - 1, b), scratch2d(a, b - 1)});
         } else {
           // If tokens are equal, we are part of a subsequence, so increment the
           // diagonal score.
