@@ -15,6 +15,13 @@ load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
 # Public TF.Text library to import #
 ####################################
 
+# Most TF users will want to add this as their dependency.
+alias(
+    name = "tensorflow_text",
+    actual = ":ops",
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "ops_lib",
     visibility = ["//visibility:public"],
@@ -30,7 +37,7 @@ cc_library(
 )
 
 py_library(
-    name = "tf-text",
+    name = "ops",
     srcs = [
         "__init__.py",
         "python/__init__.py",
@@ -40,10 +47,6 @@ py_library(
         "python/ops/__init__.py",
     ],
     srcs_version = "PY2AND3",
-    visibility = [
-        "//tensorflow_text:__subpackages__",
-        "//third_party/py/tensorflow_text:__pkg__",
-    ],
     deps = [
         ":bert_tokenizer",
         ":constrained_sequence_op",
@@ -66,6 +69,14 @@ py_library(
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python:util tensorflow dep,
+    ],
+)
+
+build_test(
+    name = "tf-text-build-test",
+    targets = [
+        ":ops",
+        ":ops_lib",
     ],
 )
 
@@ -136,10 +147,18 @@ py_test(
     ],
 )
 
-py_library(
+py_tf_text_library(
     name = "greedy_constrained_sequence_op",
     srcs = ["python/ops/greedy_constrained_sequence_op.py"],
-    data = [":python/ops/_constrained_sequence_op.so"],
+    cc_op_kernels = [
+        ":constrained_sequence_op",
+    ],
+    deps = [
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
 )
 
 py_test(
@@ -474,6 +493,44 @@ py_test(
     ],
 )
 
+py_library(
+    name = "todense_layer",
+    srcs = ["python/layers/todense.py"],
+    deps = [
+        # python:framework_ops tensorflow dep,
+        # python:sparse_ops tensorflow dep,
+        # python:sparse_tensor tensorflow dep,
+        # python/keras tensorflow dep,  # fixdeps: keep
+        # python/keras:base_layer tensorflow dep,
+        # python/keras:layers_base tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "todense_test",
+    size = "large",
+    srcs = ["python/layers/todense_test.py"],
+    python_version = "PY2",
+    srcs_version = "PY2AND3",
+    deps = [
+        ":todense_layer",
+        "@com_google_absl//absl/testing:parameterized",
+        #  numpy dep,
+        # python:client_testlib tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:sparse_tensor tensorflow dep,
+        # python/data/ops:dataset_ops tensorflow dep,
+        # python/keras tensorflow dep,
+        # python/keras:backend tensorflow dep,
+        # python/keras:base_layer tensorflow dep,
+        # python/keras:layers_base tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
 py_tf_text_library(
     name = "unicode_script_tokenizer",
     srcs = ["python/ops/unicode_script_tokenizer.py"],
@@ -511,10 +568,18 @@ py_test(
     ],
 )
 
-py_library(
+py_tf_text_library(
     name = "viterbi_constrained_sequence_op",
     srcs = ["python/ops/viterbi_constrained_sequence_op.py"],
-    data = [":python/ops/_constrained_sequence_op.so"],
+    cc_op_kernels = [
+        ":constrained_sequence_op",
+    ],
+    deps = [
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
 )
 
 py_test(
@@ -651,43 +716,5 @@ py_test(
         ":wordshape_ops",
         # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
-    ],
-)
-
-py_library(
-    name = "todense_layer",
-    srcs = ["python/layers/todense.py"],
-    deps = [
-        # python:framework_ops tensorflow dep,
-        # python:sparse_ops tensorflow dep,
-        # python:sparse_tensor tensorflow dep,
-        # python/keras tensorflow dep,  # fixdeps: keep
-        # python/keras:base_layer tensorflow dep,
-        # python/keras:layers_base tensorflow dep,
-        # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
-)
-
-py_test(
-    name = "todense_test",
-    size = "large",
-    srcs = ["python/layers/todense_test.py"],
-    python_version = "PY2",
-    srcs_version = "PY2AND3",
-    deps = [
-        ":todense_layer",
-        "@com_google_absl//absl/testing:parameterized",
-        #  numpy dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:sparse_tensor tensorflow dep,
-        # python/data/ops:dataset_ops tensorflow dep,
-        # python/keras tensorflow dep,
-        # python/keras:backend tensorflow dep,
-        # python/keras:base_layer tensorflow dep,
-        # python/keras:layers_base tensorflow dep,
-        # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
 )

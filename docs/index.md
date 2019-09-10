@@ -35,11 +35,9 @@ variable-length lists appropriate for text processing (e.g. characters may have
 multi-byte encodings, words can be of varying lengths, sentences have different
 numbers of tokens, documents have varying numbers of sentences, etc.).
 
-
 In addition to basic text handling and tensor representations, tf.Text provides
 library support for some feature engineering which includes constructing
 n-grams, detecting token-level structure in text (wordshape), and projecting
 features at one scale to another (e.g. constructing sentence-level
 representations from token-level information). View the
 [API DOCS](api_docs/python/index.md) for the full suite of available ops.
-
