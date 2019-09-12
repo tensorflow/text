@@ -99,7 +99,9 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
           return self.tokenize_with_offsets(
               ragged_conversion_ops.from_tensor(input_tensor))
         elif input_tensor.shape.ndims == 0:
-          raise ValueError("input's rank must be at least 1.")
+          (tokens, starts, limits) = self.tokenize_with_offsets(
+              array_ops.stack([input_tensor]))
+          return tokens.values, starts.values, limits.values
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
           # normal.

@@ -32,6 +32,7 @@ from tensorflow_text.python.ops.unicode_script_tokenizer import UnicodeScriptTok
 class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
 
   def setUp(self):
+    super(UnicodeScriptTokenizerOpTest, self).setUp()
     self.tokenizer = UnicodeScriptTokenizer()
 
   def testRequireParams(self):
@@ -40,9 +41,17 @@ class UnicodeScriptTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
         self.tokenizer.tokenize()
 
   def testScalar(self):
-    with self.cached_session():
-      with self.assertRaises(ValueError):
-        self.tokenizer.tokenize('I love Flume!')
+    test_value = constant_op.constant(b'I love Flume!')
+    expected_tokens = [b'I', b'love', b'Flume', b'!']
+    expected_offset_starts = [0, 2, 7, 12]
+    expected_offset_limits = [1, 6, 12, 13]
+    tokens = self.tokenizer.tokenize(test_value)
+    self.assertRaggedEqual(tokens, expected_tokens)
+    (tokens, starts, limits) = (
+        self.tokenizer.tokenize_with_offsets(test_value))
+    self.assertRaggedEqual(tokens, expected_tokens)
+    self.assertRaggedEqual(starts, expected_offset_starts)
+    self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testVectorSingleValue(self):
     test_value = constant_op.constant([b'I love Flume!'])

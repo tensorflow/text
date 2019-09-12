@@ -32,12 +32,21 @@ from tensorflow_text.python.ops.whitespace_tokenizer import WhitespaceTokenizer
 class WhitespaceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
 
   def setUp(self):
+    super(WhitespaceTokenizerOpTest, self).setUp()
     self.whitespace_tokenizer = WhitespaceTokenizer()
 
   def testScalar(self):
-    with self.cached_session():
-      with self.assertRaises(ValueError):
-        self.whitespace_tokenizer.tokenize('I love Flume!')
+    test_value = constant_op.constant(b'I love Flume!')
+    expected_tokens = [b'I', b'love', b'Flume!']
+    expected_offset_starts = [0, 2, 7]
+    expected_offset_limits = [1, 6, 13]
+    tokens = self.whitespace_tokenizer.tokenize(test_value)
+    self.assertRaggedEqual(tokens, expected_tokens)
+    (tokens, starts, limits) = (
+        self.whitespace_tokenizer.tokenize_with_offsets(test_value))
+    self.assertRaggedEqual(tokens, expected_tokens)
+    self.assertRaggedEqual(starts, expected_offset_starts)
+    self.assertRaggedEqual(limits, expected_offset_limits)
 
   def testVectorSingleValue(self):
     test_value = constant_op.constant([b'I love Flume!'])
