@@ -30,7 +30,6 @@ from tensorflow_text.python.ops.normalize_ops import normalize_utf8
 from tensorflow_text.python.ops.tokenization import Tokenizer
 from tensorflow_text.python.ops.unicode_script_tokenizer import UnicodeScriptTokenizer
 
-_CHINESE_SCRIPT_ID = 17
 _CLS_TOKEN = "[CLS]"
 _SEP_TOKEN = "[SEP]"
 _PAD_TOKEN = "[PAD]"
@@ -98,14 +97,20 @@ class BertTokenizer(Tokenizer):
     token_script_ids = string_ops.unicode_script(
         string_ops.unicode_decode(script_tokenized.flat_values, "UTF-8"))
 
-    is_chinese = math_ops.equal(token_script_ids,
-                                _CHINESE_SCRIPT_ID)[:, :1].values
+    is_cjkt = math_ops.logical_or(
+        math_ops.logical_or(
+            math_ops.equal(token_script_ids, 17),   # Han (Chinese) script
+            math_ops.equal(token_script_ids, 38)),  # Thai script
+        math_ops.logical_or(
+            math_ops.equal(token_script_ids, 105),  # Japanese script
+            math_ops.equal(token_script_ids, 119))  # Korean script
+        )[:, :1].values
     is_emoji = wordshape_ops.wordshape(script_tokenized.flat_values,
                                        wordshape_ops.WordShape.HAS_EMOJI)
     is_punct = wordshape_ops.wordshape(
         script_tokenized.flat_values,
         wordshape_ops.WordShape.IS_PUNCT_OR_SYMBOL)
-    split_cond = is_chinese | is_emoji | is_punct
+    split_cond = is_cjkt | is_emoji | is_punct
     unicode_char_split = string_ops.unicode_split(script_tokenized, "UTF-8")
 
     unicode_split_tokens = array_ops.where(
