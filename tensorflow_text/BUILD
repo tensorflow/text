@@ -72,13 +72,7 @@ py_library(
     ],
 )
 
-build_test(
-    name = "tf-text-build-test",
-    targets = [
-        ":ops",
-        ":ops_lib",
-    ],
-)
+# build_test
 
 ##########################
 # Individual tf.text ops #
