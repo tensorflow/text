@@ -25,7 +25,7 @@ function write_action_env_to_bazelrc() {
 if python -c "import tensorflow" &> /dev/null; then
     echo 'using installed tensorflow'
 else
-  pip install tensorflow==2.0.0b1
+  pip install tensorflow==2.0.0rc1
 fi
 
 TF_CFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )

@@ -49,7 +49,6 @@ py_library(
     srcs_version = "PY2AND3",
     deps = [
         ":bert_tokenizer",
-        ":constrained_sequence_op",
         ":create_feature_bitmask_op",
         ":greedy_constrained_sequence_op",
         ":ngrams_op",

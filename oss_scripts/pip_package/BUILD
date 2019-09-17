@@ -11,6 +11,6 @@ sh_binary(
         "LICENSE",
         "MANIFEST.in",
         "setup.py",
-        "//tensorflow_text:tf-text",
+        "//tensorflow_text",
     ],
 )

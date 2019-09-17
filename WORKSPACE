@@ -10,11 +10,10 @@ http_archive(
 
 http_archive(
     name = "com_google_absl",
-    sha256 = "0322e3a15fd119fcc8b03033e7011bb1beb7d6c4111f9e57272b7be78d56045a",
-    strip_prefix = "abseil-cpp-2f76a9bf50046e396138cc8eeb3cdc17b7a5ac24",
+    sha256 = "0b62fc2d00c2b2bc3761a892a17ac3b8af3578bd28535d90b4c914b0a7460d4e",
+    strip_prefix = "abseil-cpp-20190808",
     urls = [
-        "http://mirror.tensorflow.org/github.com/abseil/abseil-cpp/archive/2f76a9bf50046e396138cc8eeb3cdc17b7a5ac24.tar.gz",
-        "https://github.com/abseil/abseil-cpp/archive/2f76a9bf50046e396138cc8eeb3cdc17b7a5ac24.tar.gz",
+        "https://github.com/abseil/abseil-cpp/archive/20190808.zip",
     ],
 )
 
@@ -52,10 +51,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    strip_prefix = "tensorflow-2.0.0-beta1",
-    sha256 = "4e574181721b366cc0b807a8683a57122465760a24c6c8422228997afa6178d0",
+    strip_prefix = "tensorflow-2.0.0-rc1",
+    sha256 = "92ef324617ad99afb138f9aaae59610bc15f6095cdc94cb1c0b06da62c55e8b0",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/v2.0.0-beta1.zip"
+        "https://github.com/tensorflow/tensorflow/archive/v2.0.0-rc1.zip"
     ],
 )
 
