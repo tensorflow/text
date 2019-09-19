@@ -2,4 +2,4 @@
 set -e
 set -x
 
-source ../release.sh 2.7
+source github/tensorflow_text/oss_scripts/kokoro/linux/release.sh 2.7
