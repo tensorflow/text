@@ -1,2 +1,0 @@
-# Allow tensorflow.org owners to update docs
-file://depot/google3/third_party/py/tensorflow_docs/OWNERS

@@ -26,11 +26,11 @@ from __future__ import print_function
 
 import types
 
-from google3.testing.pybase import googletest
-from google3.third_party import tensorflow_text
+import tensorflow_text
+from tensorflow.python.platform import test
 
 
-class PublicNamesTest(googletest.TestCase):
+class PublicNamesTest(test.TestCase):
 
   def check_names(self, module, prefix="tf_text."):
     self.assertTrue(
@@ -56,4 +56,4 @@ class PublicNamesTest(googletest.TestCase):
 
 
 if __name__ == "__main__":
-  googletest.main()
+  test.main()

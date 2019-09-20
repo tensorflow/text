@@ -73,6 +73,8 @@ py_library(
 
 # build_test
 
+# public_names_test
+
 ##########################
 # Individual tf.text ops #
 ##########################
@@ -360,19 +362,6 @@ py_tf_text_library(
         # python:framework_ops tensorflow dep,
         # python:lookup_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
-)
-
-py_test(
-    name = "public_names_test",
-    size = "small",
-    srcs = ["public_names_test.py"],
-    python_version = "PY2",
-    srcs_version = "PY2AND3",
-    deps = [
-        ":ops",
-        ":ops_lib",
-        "//testing/pybase",
     ],
 )
 
