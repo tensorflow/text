@@ -14,18 +14,17 @@ cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 source env/bin/activate
 
 # install deps
-"pip" install --user --upgrade pip
-"pip" install --user --upgrade attrs
-"pip" install keras_applications==1.0.8 --no-deps --user
-"pip" install keras_preprocessing==1.0.2 --no-deps --user
-"pip" install numpy==1.14.5 --user
-"pip" install --user --upgrade "future>=0.17.1"
-"pip" install gast==0.2.2 --user
-"pip" install h5py==2.8.0 --user
-"pip" install grpcio --user
-"pip" install portpicker --user
-"pip" install scipy --user
-"pip" install scikit-learn --user
+pip install --upgrade attrs
+pip install keras_applications==1.0.8 --no-deps
+pip install keras_preprocessing==1.0.2 --no-deps
+pip install numpy==1.14.5
+pip install --upgrade "future>=0.17.1"
+pip install gast==0.2.2
+pip install h5py==2.8.0
+pip install grpcio
+pip install portpicker
+pip install scipy
+pip install scikit-learn
 
 # setup_pypi_credentials
 
