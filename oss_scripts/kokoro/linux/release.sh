@@ -5,7 +5,7 @@ set -x  # print evaluated commands
 PY_VERSION=${1}
 
 # install deps
-"pip${PY_VERSION}" install --upgrade pip
+"pip${PY_VERSION}" install --user --upgrade pip
 "pip${PY_VERSION}" install --user --upgrade attrs
 "pip${PY_VERSION}" install keras_applications==1.0.8 --no-deps --user
 "pip${PY_VERSION}" install keras_preprocessing==1.0.2 --no-deps --user
