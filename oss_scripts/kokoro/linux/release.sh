@@ -27,7 +27,7 @@ cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 git checkout "${RELEASE_BRANCH:-master}"
 
 # Run configure.
-./oss_scripts/configure.sh
+./oss_scripts/configure.sh python${PY_VERSION}
 
 # Build the pip package
 bazel build \
