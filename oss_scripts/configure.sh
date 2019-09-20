@@ -14,11 +14,6 @@
 # limitations under the License.
 # ==============================================================================
 
-PYTHON_BIN=python
-if [[ -n ${1} ]]; then
-  PYTHON_BIN=$1
-fi
-
 function write_to_bazelrc() {
   echo "$1" >> .bazelrc
 }
@@ -27,15 +22,15 @@ function write_action_env_to_bazelrc() {
   write_to_bazelrc "build --action_env $1=\"$2\""
 }
 
-if $PYTHON_BIN -c "import tensorflow" &> /dev/null; then
+if python -c "import tensorflow" &> /dev/null; then
     echo 'using installed tensorflow'
 else
-  $PYTHON_BIN -m pip install tensorflow==2.0.0rc1
+  pip install tensorflow==2.0.0rc1
 fi
 
-TF_CFLAGS=( $($PYTHON_BIN -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )
-TF_LFLAGS=( $($PYTHON_BIN -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
-TF_LFLAGS2=( $($PYTHON_BIN -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))' | awk '{print $2}') )
+TF_CFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )
+TF_LFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
+TF_LFLAGS2=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))' | awk '{print $2}') )
 
 write_action_env_to_bazelrc "TF_HEADER_DIR" ${TF_CFLAGS:2}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${TF_LFLAGS:2}
