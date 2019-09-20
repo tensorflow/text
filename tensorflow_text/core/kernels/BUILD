@@ -13,10 +13,10 @@ tf_kernel_library(
     name = "constrained_sequence_kernel",
     srcs = ["constrained_sequence_kernel.cc"],
     deps = [
+        "//third_party/tensorflow/core:protos_all_cc",
         "@com_google_absl//absl/base:core_headers",
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
     ],
 )
 
