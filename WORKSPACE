@@ -28,6 +28,15 @@ http_archive(
 )
 
 http_archive(
+    name = "com_google_sentencepiece",
+    strip_prefix = "sentencepiece-1.0.0",
+    sha256 = "c05901f30a1d0ed64cbcf40eba08e48894e1b0e985777217b7c9036cac631346",
+    urls = [
+        "https://github.com/google/sentencepiece/archive/1.0.0.zip"
+    ],
+)
+
+http_archive(
     name = "icu",
     strip_prefix = "icu-release-64-2",
     sha256 = "dfc62618aa4bd3ca14a3df548cd65fe393155edd213e49c39f3a30ccd618fc27",

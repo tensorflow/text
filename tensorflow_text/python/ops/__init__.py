@@ -27,8 +27,10 @@ from tensorflow_text.python.ops.pointer_ops import gather_with_default
 from tensorflow_text.python.ops.pointer_ops import span_alignment
 from tensorflow_text.python.ops.pointer_ops import span_overlaps
 from tensorflow_text.python.ops.sentence_breaking_ops import sentence_fragments
+from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 from tensorflow_text.python.ops.sliding_window_op import sliding_window
 from tensorflow_text.python.ops.string_ops import coerce_to_structurally_valid_utf8
+from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import Tokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.unicode_script_tokenizer import UnicodeScriptTokenizer

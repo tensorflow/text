@@ -3,7 +3,7 @@ package(
     default_visibility = ["//visibility:public"],
 )
 
-licenses(["notice"])  # Apache 2.0
+licenses(["notice"])
 
 exports_files(["LICENSE"])
 
@@ -29,6 +29,7 @@ cc_library(
         ":constrained_sequence_op_cc",
         ":normalize_ops_cc",
         ":sentence_breaking_ops_cc",
+        ":sentencepiece_tokenizer_cc",
         ":text_similarity_metric_ops_cc",
         ":unicode_script_tokenizer_cc",
         ":whitespace_tokenizer_cc",
@@ -56,6 +57,7 @@ py_library(
         ":pad_along_dimension_op",
         ":pointer_ops",
         ":sentence_breaking_ops",
+        ":sentencepiece_tokenizer",
         ":sliding_window_op",
         ":string_ops",
         ":text_similarity_metric_ops",
@@ -421,6 +423,53 @@ py_test(
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "sentencepiece_tokenizer",
+    srcs = ["python/ops/sentencepiece_tokenizer.py"],
+    cc_op_defs = ["core/ops/sentencepiece_ops.cc"],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels:sentencepiece_kernels",
+    ],
+    deps = [
+        ":tokenization",
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:string_ops tensorflow dep,
+        # python/ops/ragged:ragged_conversion_ops tensorflow dep,
+        # python/ops/ragged:ragged_string_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+exports_files(
+    glob(["python/ops/test_data/test_oss_model.*"]),
+)
+
+py_test(
+    name = "sentencepiece_tokenizer_test",
+    size = "large",
+    srcs = ["python/ops/sentencepiece_tokenizer_test.py"],
+    data = [
+        ":python/ops/test_data/test_oss_model.model",
+    ],
+    python_version = "PY2",
+    srcs_version = "PY2AND3",
+    deps = [
+        ":ragged_test_util",
+        ":sentencepiece_tokenizer",
+        "@com_google_absl//absl/testing:parameterized",
+        "//third_party/py/tensorflow:tensorflow_google",
+        "//third_party/sentencepiece/src:sentencepiece_model_py_pb2",
+        "//third_party/sentencepiece/src/python:sentencepiece_processor",
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
 )
 

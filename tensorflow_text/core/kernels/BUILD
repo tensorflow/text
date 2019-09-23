@@ -166,6 +166,29 @@ cc_library(
     ],
 )
 
+tf_kernel_library(
+    name = "sentencepiece_kernels",
+    srcs = ["sentencepiece_kernels.cc"],
+    deps = [
+        "//third_party/absl/container:flat_hash_map",
+        "//third_party/absl/memory",
+        "//third_party/absl/meta:type_traits",
+        "//third_party/absl/types:span",
+        "//third_party/sentencepiece/src:sentencepiece_cc_proto",
+        "//third_party/sentencepiece/src:sentencepiece_processor",
+        "//third_party/tensorflow/core:framework_headers_lib",  # buildcleaner: keep
+        "//third_party/tensorflow/core:lib_internal",
+        "//third_party/tensorflow/core:protos_all",
+        "//third_party/tensorflow/core/kernels:tensor_flag_utils",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/strings",
+        "@icu//:common",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:lib",
+    ],
+    alwayslink = 1,
+)
+
 cc_library(
     name = "text_kernels_test_util",
     testonly = 1,
