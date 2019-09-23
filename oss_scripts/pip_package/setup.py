@@ -32,7 +32,7 @@ from setuptools.command.install import install
 from setuptools.dist import Distribution
 
 project_name = 'tensorflow-text'
-project_version = '0.1.0-rc2'
+project_version = '0.1.0'
 
 
 class BinaryDistribution(Distribution):
