@@ -5,18 +5,35 @@
 
 # Module: text
 
-Various tensorflow ops related to text-processing.
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/__init__.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/__init__.py">View
 source</a>
+
+Various tensorflow ops related to text-processing.
 
 <!-- Placeholder for "Used in" -->
 
+## Modules
+
+[`keras`](./text/keras.md) module: Tensorflow Text Layers for Keras API.
+
+[`metrics`](./text/metrics.md) module: Tensorflow text-processing metrics.
 
 ## Classes
 
+[`class BertTokenizer`](./text/BertTokenizer.md): Basic tokenizer for BERT
+preprocessing.
+
+[`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
+implementations.
+
 [`class Reduction`](./text/Reduction.md): Type of reduction to be done by the
 n-gram op.
+
+[`class SentencepieceTokenizer`](./text/SentencepieceTokenizer.md): Tokenizes a
+tensor of UTF-8 strings.
 
 [`class Tokenizer`](./text/Tokenizer.md): Base class for tokenizer
 implementations.

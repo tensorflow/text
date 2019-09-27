@@ -5,6 +5,12 @@
 
 # text.sentence_fragments
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentence_breaking_ops.py">View
+source</a>
+
 Find the sentence fragments in a given text.
 
 ``` python
@@ -19,9 +25,6 @@ text.sentence_fragments(
     replace_control_characters=False
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentence_breaking_ops.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

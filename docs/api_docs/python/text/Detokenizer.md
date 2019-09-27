@@ -1,10 +1,10 @@
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
-<meta itemprop="name" content="text.Tokenizer" />
+<meta itemprop="name" content="text.Detokenizer" />
 <meta itemprop="path" content="Stable" />
-<meta itemprop="property" content="tokenize"/>
+<meta itemprop="property" content="detokenize"/>
 </div>
 
-# text.Tokenizer
+# text.Detokenizer
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
@@ -12,21 +12,21 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
-## Class `Tokenizer`
+## Class `Detokenizer`
 
-Base class for tokenizer implementations.
+Base class for detokenizer implementations.
 
 <!-- Placeholder for "Used in" -->
 
 ## Methods
 
-<h3 id="tokenize"><code>tokenize</code></h3>
+<h3 id="detokenize"><code>detokenize</code></h3>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
 ```python
-tokenize(input)
+detokenize(input)
 ```
 
 Tokenizes the input tensor.
@@ -38,4 +38,4 @@ Tokenizes the input tensor.
 
 #### Returns:
 
-An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
+An (N-1)-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.

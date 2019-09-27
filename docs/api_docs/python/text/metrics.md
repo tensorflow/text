@@ -1,0 +1,21 @@
+<div itemscope itemtype="http://developers.google.com/ReferenceObject">
+<meta itemprop="name" content="text.metrics" />
+<meta itemprop="path" content="Stable" />
+</div>
+
+# Module: text.metrics
+
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/metrics/__init__.py">View
+source</a>
+
+Tensorflow text-processing metrics.
+
+<!-- Placeholder for "Used in" -->
+
+## Functions
+
+[`rouge_l(...)`](../text/metrics/rouge_l.md): Computes LCS-based similarity
+score between the hypotheses and references.

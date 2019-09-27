@@ -8,21 +8,24 @@
 
 # text.WordpieceTokenizer
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
+source</a>
+
 ## Class `WordpieceTokenizer`
 
 Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py>View
-source</a>
-
 <!-- Placeholder for "Used in" -->
 
 
 <h2 id="__init__"><code>__init__</code></h2>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
 source</a>
 
 ```python
@@ -30,8 +33,10 @@ __init__(
     vocab_lookup_table,
     suffix_indicator='##',
     max_bytes_per_word=100,
+    max_chars_per_token=None,
     token_out_type=dtypes.int64,
-    unknown_token='[UNK]'
+    unknown_token='[UNK]',
+    split_unknown_characters=False
 )
 ```
 
@@ -46,6 +51,9 @@ Initializes the WordpieceTokenizer.
     '##'.
 *   <b>`max_bytes_per_word`</b>: (optional) Max size of input token. Default
     is 100.
+*   <b>`max_chars_per_token`</b>: (optional) Max size of subwords, excluding
+    suffix indicator. If known, providing this improves the efficiency of
+    decoding long words.
 *   <b>`token_out_type`</b>: (optional) The type of the token to return. This
     can be `tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
 *   <b>`unknown_token`</b>: (optional) The value to use when an unknown token is
@@ -53,12 +61,15 @@ Initializes the WordpieceTokenizer.
     is `tf.int64`, the `vocab_lookup_table` is used to convert the
     `unknown_token` to an integer. If this is set to `None`, out-of-vocabulary
     tokens are left as is.
+*   <b>`split_unknown_characters`</b>: (optional) Whether to split out single
+    unknown characters as subtokens. If False (default), words containing
+    unknown characters will be treated as single unknown tokens.
 
 ## Methods
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
 source</a>
 
 ```python
@@ -88,7 +99,7 @@ ID in the vocab_lookup_table representing that string) of the `jth` token in
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
 source</a>
 
 ```python

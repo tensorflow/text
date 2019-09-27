@@ -8,20 +8,23 @@
 
 # text.UnicodeScriptTokenizer
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py">View
+source</a>
+
 ## Class `UnicodeScriptTokenizer`
 
 Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py>View
-source</a>
-
 <!-- Placeholder for "Used in" -->
 
 <h2 id="__init__"><code>__init__</code></h2>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py">View
 source</a>
 
 ```python
@@ -39,7 +42,7 @@ Initializes a new instance.
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py">View
 source</a>
 
 ```python
@@ -67,7 +70,7 @@ tensor with an added ragged dimension for tokens of each string.
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py">View
 source</a>
 
 ```python

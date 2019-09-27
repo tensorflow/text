@@ -5,6 +5,12 @@
 
 # text.ngrams
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
+source</a>
+
 Create a tensor of n-grams based on the input data `data`.
 
 ``` python
@@ -17,9 +23,6 @@ text.ngrams(
     name=None
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

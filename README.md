@@ -181,6 +181,25 @@ print(iterator.get_next().to_list())
 [["It's", 'a', 'trap!']]
 ```
 
+### Keras API
+
+When you use different tokenizers and ops to preprocess your data, the resulting
+outputs are Ragged Tensors. The Keras API makes it easy now to train a model
+using Ragged Tensors without having to worry about padding or masking the data,
+by either using the ToDense layer which handles all of these for you or relying
+on Keras built-in layers support for natively working on ragged data.
+
+```python
+model = tf.keras.Sequential([
+  tf.keras.layers.InputLayer(input_shape=(None,), dtype='int32', ragged=True)
+  text.keras.layers.ToDense(pad_value=0, mask=True),
+  tf.keras.layers.Embedding(100, 16),
+  tf.keras.layers.LSTM(32),
+  tf.keras.layers.Dense(32, activation='relu'),
+  tf.keras.layers.Dense(1, activation='sigmoid')
+])
+```
+
 ## Other Text Ops
 
 TF.Text packages other useful preprocessing ops. We will review a couple below.

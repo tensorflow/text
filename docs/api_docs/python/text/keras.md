@@ -1,0 +1,21 @@
+<div itemscope itemtype="http://developers.google.com/ReferenceObject">
+<meta itemprop="name" content="text.keras" />
+<meta itemprop="path" content="Stable" />
+</div>
+
+# Module: text.keras
+
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/__init__.py">View
+source</a>
+
+Tensorflow Text Layers for Keras API.
+
+<!-- Placeholder for "Used in" -->
+
+## Modules
+
+[`layers`](../text/keras/layers.md) module: Tensorflow Text layers for Keras
+API.

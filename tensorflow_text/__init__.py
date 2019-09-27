@@ -17,7 +17,7 @@
 from tensorflow.python.util.all_util import remove_undocumented
 
 # pylint: disable=wildcard-import
-from tensorflow_text.python import layers
+from tensorflow_text.python import keras
 from tensorflow_text.python import metrics
 from tensorflow_text.python.ops import *
 
@@ -30,7 +30,7 @@ _allowed_symbols = [
     "Detokenizer",
     "gather_with_default",
     "greedy_constrained_sequence",
-    "layers",
+    "keras",
     "metrics",
     "ngrams",
     "normalize_utf8",

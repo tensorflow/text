@@ -5,6 +5,12 @@
 
 # text.coerce_to_structurally_valid_utf8
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/string_ops.py">View
+source</a>
+
 Coerce UTF-8 input strings to structurally valid UTF-8.
 
 ``` python
@@ -14,9 +20,6 @@ text.coerce_to_structurally_valid_utf8(
     name=None
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/string_ops.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

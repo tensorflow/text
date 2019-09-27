@@ -31,19 +31,43 @@ from tensorflow.python.ops import sparse_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 
 
-class ToDense(Layer):
-  """Converts a composite tensor input to a padded dense layer."""
+class ToDense(Layer):   # pylint: disable=g-classes-have-attributes
+  """Layer that makes padding and masking a Composite Tensors effortless.
+
+  The layer takes a RaggedTensor or a SparseTensor and converts it to a uniform
+  tensor by right-padding it or filling in missing values.
+
+  Example:
+
+  ```python
+  x = tf.keras.layers.Input(shape=(None, None), ragged=True)
+  y = tf_text.keras.layers.ToDense(mask=True)(x)
+  model = tf.keras.Model(x, y)
+
+  rt = tf.RaggedTensor.from_nested_row_splits(
+    flat_values=[10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+    nested_row_splits=([0, 1, 1, 5], [0, 3, 3, 5, 9, 10]))
+  model.predict(rt)
+
+  [[[10, 11, 12,  0], [ 0,  0,  0,  0], [ 0,  0,  0,  0], [ 0,  0,  0,  0]],
+   [[ 0,  0,  0,  0], [ 0,  0,  0,  0], [ 0,  0,  0,  0], [ 0,  0,  0,  0]],
+   [[ 0,  0,  0,  0], [13, 14,  0,  0], [15, 16, 17, 18], [19,  0,  0,  0]]]
+  ```
+
+  Arguments:
+    pad_value: A value used to pad and fill in the missing values. Should be a
+      meaningless value for the input data. Default is '0'.
+    mask: A Boolean value representing whether to mask the padded values. If
+      true, no any downstream Masking layer or Embedding layer with
+      mask_zero=True should be added. Default is 'False'.
+    **kwargs: kwargs of parent class.
+  Input shape: Any Ragged or Sparse Tensor is accepted, but it requires the type
+    of input to be specified via the Input or InputLayer from the Keras API.
+  Output shape: The output is a uniform tensor having the same shape, in case of
+    a ragged input or the same dense shape, in case of a sparse input.
+  """
 
   def __init__(self, pad_value=0, mask=False, **kwargs):
-    """Constructs the layer.
-
-    Args:
-      pad_value: The value used to pad and fill in the missing values.
-      mask: A Boolean value representing whether to mask the padded values. If
-        true, no any downstream Masking layer or Embedding layer with
-        mask_zero=True should be added.
-      **kwargs: kwargs of parent class.
-    """
     self._pad_value = pad_value
     self._mask = mask
     self._compute_output_and_mask_jointly = True
@@ -54,7 +78,7 @@ class ToDense(Layer):
 
   def call(self, inputs):
     if isinstance(inputs, ragged_tensor.RaggedTensor):
-      # Convert the ragged tensor to a padded dense tensor
+      # Convert the ragged tensor to a padded uniform tensor
       outputs = inputs.to_tensor(default_value=self._pad_value)
     elif isinstance(inputs, sparse_tensor.SparseTensor):
       # Fill in the missing value in the sparse_tensor

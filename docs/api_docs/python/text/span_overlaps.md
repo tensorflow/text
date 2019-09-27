@@ -5,6 +5,12 @@
 
 # text.span_overlaps
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View
+source</a>
+
 Returns a boolean tensor indicating which source and target spans overlap.
 
 ``` python
@@ -19,9 +25,6 @@ text.span_overlaps(
     name=None
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

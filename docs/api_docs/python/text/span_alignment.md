@@ -5,6 +5,12 @@
 
 # text.span_alignment
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View
+source</a>
+
 Return an alignment from a set of source spans to a set of target spans.
 
 ``` python
@@ -20,9 +26,6 @@ text.span_alignment(
     name=None
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 
@@ -88,7 +91,7 @@ tensors. If `multivalent_result=True`, then the returned tensor has shape
 
   Given the following source and target spans (with no batch dimensions):
 
-  ```python
+```python
   >>> #         0    5    10   15   20   25   30   35   40   45   50   55   60
   >>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
   >>> # Source: [-0-]     [-1-] [2] [3]    [4][-5-][-6-][-7-][-8-][-9-]
@@ -99,18 +102,20 @@ tensors. If `multivalent_result=True`, then the returned tensor has shape
   >>> target_start=[0,  5, 15, 20, 25, 31, 35, 42, 47, 52, 57]
   >>> target_limit=[5, 10, 20, 25, 30, 34, 38, 45, 52, 57, 61]
 
-  >>> span_alignment_lists(source_starts, source_limits,
-                           target_starts, target_limits)
-  [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-  >>> span_alignment_lists(source_starts, source_limits,
-  ...                      target_starts, target_limits,
-  ...                      multivalent_result=True)
-  [[0], [], [], [], [], [], [], [], [], []]
+```
 
+> > > span_alignment_lists(source_starts, source_limits, target_starts,
+> > > target_limits) [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+> > > span_alignment_lists(source_starts, source_limits, ... target_starts,
+> > > target_limits, ... multivalent_result=True) [[0], [], [], [], [], [], [],
+> > > [], [], []] ```
+
+```
   >>> span_alignment_lists(source_starts, source_limits,
   ...                      target_starts, target_limits,
   ...                      contains=True)
   [ 0, -1, -1, -1, -1, 5, 6, 7, -1, -1]
+```
 
   >>> span_alignment_lists(source_starts, source_limits,
   ...                      target_starts, target_limits,

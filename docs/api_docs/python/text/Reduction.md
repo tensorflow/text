@@ -8,12 +8,15 @@
 
 # text.Reduction
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
+source</a>
+
 ## Class `Reduction`
 
 Type of reduction to be done by the n-gram op.
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

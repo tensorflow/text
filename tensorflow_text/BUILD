@@ -42,7 +42,8 @@ py_library(
     srcs = [
         "__init__.py",
         "python/__init__.py",
-        "python/layers/__init__.py",
+        "python/keras/__init__.py",
+        "python/keras/layers/__init__.py",
         "python/metrics/__init__.py",
         "python/numpy/__init__.py",
         "python/ops/__init__.py",
@@ -526,7 +527,7 @@ py_test(
 
 py_library(
     name = "todense_layer",
-    srcs = ["python/layers/todense.py"],
+    srcs = ["python/keras/layers/todense.py"],
     deps = [
         # python:framework_ops tensorflow dep,
         # python:sparse_ops tensorflow dep,
@@ -541,7 +542,7 @@ py_library(
 py_test(
     name = "todense_test",
     size = "large",
-    srcs = ["python/layers/todense_test.py"],
+    srcs = ["python/keras/layers/todense_test.py"],
     python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [

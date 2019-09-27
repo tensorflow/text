@@ -5,6 +5,12 @@
 
 # text.gather_with_default
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View
+source</a>
+
 Gather slices with `indices=-1` mapped to `default`.
 
 ``` python
@@ -16,9 +22,6 @@ text.gather_with_default(
     axis=0
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

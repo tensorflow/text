@@ -5,6 +5,12 @@
 
 # text.sliding_window
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sliding_window_op.py">View
+source</a>
+
 Builds a sliding window for `data` with a specified width.
 
 ``` python
@@ -15,9 +21,6 @@ text.sliding_window(
     name=None
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sliding_window_op.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

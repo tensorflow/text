@@ -5,6 +5,12 @@
 
 # text.pad_along_dimension
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pad_along_dimension_op.py">View
+source</a>
+
 Add padding to the beginning and end of data in a specific dimension.
 
 ``` python
@@ -16,9 +22,6 @@ text.pad_along_dimension(
     name=None
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pad_along_dimension_op.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

@@ -37,12 +37,15 @@
 
 # text.WordShape
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordshape_ops.py">View
+source</a>
+
 ## Class `WordShape`
 
 Values for the 'pattern' arg of the wordshape op.
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordshape_ops.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

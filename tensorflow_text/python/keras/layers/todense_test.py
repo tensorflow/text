@@ -35,7 +35,7 @@ from tensorflow.python.keras.layers import recurrent_v2 as rnn_v2
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
-from tensorflow_text.python.layers.todense import ToDense
+from tensorflow_text.python.keras.layers.todense import ToDense
 
 
 class Final(Layer):

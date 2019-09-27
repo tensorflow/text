@@ -5,6 +5,12 @@
 
 # text.normalize_utf8
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py">View
+source</a>
+
 Normalizes each UTF-8 string in the input tensor using the specified rule.
 
 ``` python
@@ -14,9 +20,6 @@ text.normalize_utf8(
     name=None
 )
 ```
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 

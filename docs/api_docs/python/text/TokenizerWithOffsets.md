@@ -7,14 +7,17 @@
 
 # text.TokenizerWithOffsets
 
+<table class="tfo-notebook-buttons tfo-api" align="left">
+</table>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+source</a>
+
 ## Class `TokenizerWithOffsets`
 
 Base class for tokenizer implementations that return offsets.
 
 Inherits From: [`Tokenizer`](../text/Tokenizer.md)
-
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py>View
-source</a>
 
 <!-- Placeholder for "Used in" -->
 
@@ -22,7 +25,7 @@ source</a>
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
 ```python
@@ -42,7 +45,7 @@ An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
-<a target="_blank" href=https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py>View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
 ```python
