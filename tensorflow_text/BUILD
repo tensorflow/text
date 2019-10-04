@@ -39,7 +39,6 @@ cc_binary(
     ],
     copts = [
         "-pthread",
-        "-std=c++11",
     ],
     linkshared = 1,
     deps = [
@@ -118,7 +117,6 @@ cc_binary(
     ],
     copts = [
         "-pthread",
-        "-std=c++11",
     ],
     linkshared = 1,
     deps = [
@@ -234,7 +232,6 @@ cc_binary(
     ],
     copts = [
         "-pthread",
-        "-std=c++11",
     ],
     linkshared = 1,
     deps = [
@@ -338,7 +335,6 @@ cc_binary(
     ],
     copts = [
         "-pthread",
-        "-std=c++11",
     ],
     linkshared = 1,
     deps = [
@@ -417,7 +413,6 @@ cc_binary(
     ],
     copts = [
         "-pthread",
-        "-std=c++11",
     ],
     linkshared = 1,
     deps = [
@@ -461,7 +456,6 @@ cc_binary(
     ],
     copts = [
         "-pthread",
-        "-std=c++11",
     ],
     linkshared = 1,
     deps = [

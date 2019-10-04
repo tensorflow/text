@@ -28,6 +28,5 @@ exports_files(["LICENSE"])
 cc_library(
     name = "icu_normalization_data",
     srcs = ["normalization_data.c"],
-    copts = ["-std=c++11"],
     deps = ["@icu//:headers"],
 )

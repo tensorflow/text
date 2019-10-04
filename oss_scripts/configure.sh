@@ -28,6 +28,11 @@ else
   pip install tensorflow==1.14.0
 fi
 
+osname="$(uname -s)"
+if [[ $osname == "Linux" ]]; then
+  write_to_bazelrc "build --cxxopt='-std=c++11'"
+fi
+
 TF_CFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )
 TF_LFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
 TF_LFLAGS2=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))' | awk '{print $2}') )
