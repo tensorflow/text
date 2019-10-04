@@ -15,7 +15,7 @@ function update_bazel_macos {
   chmod +x bazel-*.sh && ./bazel-${BAZEL_VERSION}-installer-darwin-x86_64.sh --user && \
   rm -f bazel-${BAZEL_VERSION}-installer-darwin-x86_64.sh"
   # If the bazel update fails retry again in 60 seconds.
-  run_with_retry "${BAZEL_COMMAND}"
+  "${BAZEL_COMMAND}"
   # Add new bazel installation to path
   PATH="/Users/kbuilder/bin:$PATH"
 }
