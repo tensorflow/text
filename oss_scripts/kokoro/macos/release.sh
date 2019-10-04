@@ -37,21 +37,6 @@ cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 "python${PY_VERSION}" -m virtualenv env
 source env/bin/activate
 
-# Install pip dependencies
-pip install --user --upgrade setuptools==39.1.0
-pip install --user keras_applications==1.0.8 --no-deps
-pip install --user keras_preprocessing==1.0.2 --no-deps
-pip install --user --upgrade six mock portpicker scipy grpcio
-pip install --user scikit-learn==0.20.3
-pip install --user numpy==1.14.5
-pip install --user gast==0.2.2
-pip install --user h5py==2.8.0
-pip install --user --upgrade grpcio
-pip install --user --upgrade tb-nightly
-pip install --user --upgrade attrs
-pip install --user --upgrade tf-estimator-nightly
-pip install --user --upgrade "future>=0.17.1"
-
 # Checkout the release branch if specified.
 git checkout "${RELEASE_BRANCH:-master}"
 
