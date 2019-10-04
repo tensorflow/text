@@ -37,7 +37,7 @@ def py_tf_text_library(
     native.cc_library(
         name = library_name,
         srcs = cc_op_defs,
-        copts = [ "-pthread", "-std=c++11", ],
+        copts = [ "-pthread", ],
         alwayslink = 1,
         deps = cc_op_kernels + [
             "@local_config_tf//:libtensorflow_framework",
@@ -47,7 +47,7 @@ def py_tf_text_library(
 
     native.cc_binary(
         name = binary_name,
-        copts = [ "-pthread", "-std=c++11", ],
+        copts = [ "-pthread", ],
         linkshared = 1,
         deps = [
             ":" + library_name,
