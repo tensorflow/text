@@ -38,8 +38,7 @@ cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 source env/bin/activate
 
 # Checkout the release branch if specified.
-git stash  # Bug related to wordshape documentation files.
-git checkout "${RELEASE_BRANCH:-master}"
+git checkout -f "${RELEASE_BRANCH:-master}"
 
 # Run configure.
 export CC_OPT_FLAGS='-mavx'
