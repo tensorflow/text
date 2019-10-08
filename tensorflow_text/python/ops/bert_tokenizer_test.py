@@ -1,0 +1,324 @@
+# coding=utf-8
+# Copyright 2019 TF.Text Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# encoding=utf-8
+r"""Tests for BertTokenizer."""
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from absl.testing import parameterized
+from tensorflow.python.framework import constant_op
+from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import test_util
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import lookup_ops
+from tensorflow.python.ops import math_ops
+from tensorflow.python.ops.ragged import ragged_factory_ops
+from tensorflow.python.ops.ragged import ragged_tensor
+from tensorflow.python.platform import test
+from tensorflow_text.python.ops import bert_tokenizer
+
+
+def _utf8(x):
+  return x.encode('utf-8')
+
+
+_VOCAB = [
+    b"'",
+    b'##%',
+    b'##af',
+    b'##book',
+    b'##c',
+    b'##fr',
+    b'##hey',
+    b'##is',
+    b'##o',
+    b'##ost',
+    b'##s',
+    b'##tri',
+    b'##y',
+    b'$',
+    b'%',
+    b'&',
+    b'(',
+    b')',
+    b'*',
+    b'-',
+    b'.',
+    b'20',
+    b':',
+    b'?',
+    b'[CLS]',
+    b'[SEP]',
+    _utf8(u'國'),
+    _utf8(u'暐'),
+    _utf8(u'瀚'),
+    _utf8(u'韓'),
+    _utf8(u'食'),
+    _utf8(u'黃'),
+    _utf8(u'🤔'),
+    _utf8(u'🤣'),
+    b'^',
+    b'a',
+    b'ago',
+    b'among',
+    b'an',
+    b'and',
+    b'are',
+    b'aren',
+    b'awesome',
+    b'between',
+    b'candy',
+    b'china',
+    b'companies',
+    b'company',
+    b'crushed',
+    b'dug',
+    b'earnings',
+    b'engaged',
+    b'even',
+    b'few',
+    b'forecast',
+    b'getting',
+    b'had',
+    b'han',
+    b'has',
+    b'hers',
+    b'high',
+    b'hit',
+    b'hs',
+    b'hurting',
+    b'in',
+    b'indie',
+    b'is',
+    b'isn',
+    b'ka',
+    b'ku',
+    b'major',
+    b'maker',
+    b'moth',
+    b'nearly',
+    b'new',
+    b'now',
+    b'president',
+    b'record',
+    b'regulators',
+    b'reported',
+    b'rift',
+    b'rust',
+    b'sales',
+    b'shares',
+    b'slightly',
+    b'sprint',
+    b'states',
+    b'stock',
+    b't',
+    b'taste',
+    b'tension',
+    b'that',
+    b'the',
+    b'this',
+    b'today',
+    b'told',
+    b'topped',
+    b'trade',
+    b'trump',
+    b'united',
+    b'up',
+    b'weeks',
+    b'what',
+    b'why',
+    b'with',
+    b'year',
+    b'yo',
+    b'yu',
+]
+
+
+def _create_table(vocab, num_oov=1):
+  init = lookup_ops.KeyValueTensorInitializer(
+      vocab,
+      math_ops.range(
+          array_ops.size(vocab, out_type=dtypes.int64), dtype=dtypes.int64),
+      key_dtype=dtypes.string,
+      value_dtype=dtypes.int64)
+  return lookup_ops.StaticVocabularyTableV1(
+      init, num_oov, lookup_key_dtype=dtypes.string)
+
+
+class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
+
+  @parameterized.parameters([
+      dict(
+          text_inputs=[
+              _utf8(u'taste the rustisc indiefrost'),
+              _utf8(u'Han Kuo-yu (韓國食)🤔'),
+              _utf8(u'Añade la información del formulario y tus preguntas'),
+          ],
+          expected_tokens=[[b'taste', b'the', b'rustisc', b'indiefrost'],
+                           [
+                               b'Han', b'Kuo', b'-', b'yu', b'(',
+                               b'\xe9\x9f\x93', b'\xe5\x9c\x8b',
+                               b'\xe9\xa3\x9f', b')', b'\xf0\x9f\xa4\x94'
+                           ],
+                           [
+                               b'A\xc3\xb1ade', b'la', b'informaci\xc3\xb3n',
+                               b'del', b'formulario', b'y', b'tus', b'preguntas'
+                           ]],
+      ),
+      dict(
+          text_inputs=[
+              _utf8(u'UNwant\u00E9d,running'),
+              _utf8(u'Añade la información del formulario y tus preguntas'),
+          ],
+          expected_tokens=[[b'unwanted', b',', b'running'],
+                           [
+                               b'anade', b'la', b'informacion', b'del',
+                               b'formulario', b'y', b'tus', b'preguntas'
+                           ]],
+          lower_case=True,
+      ),
+      dict(
+          text_inputs=[
+              _utf8(u'Añade la información del formulario y tus preguntas')
+          ],
+          expected_tokens=[[
+              b'An', b'\xcc\x83', b'ade', b'la', b'informacio', b'\xcc\x81',
+              b'n', b'del', b'formulario', b'y', b'tus', b'preguntas'
+          ]],
+          normalization_form='NFD',
+      ),
+      # Test CJK are tokenized by unicode characters
+      dict(
+          text_inputs=[
+              _utf8(u'香港では４日'),
+              _utf8(u'영어독해 자만심 왜 문제일까'),
+              _utf8(u'據港媒《東網》報導')
+          ],
+          expected_tokens=[
+              [
+                  _utf8(u'香'),
+                  _utf8(u'港'),
+                  _utf8(u'では'),
+                  _utf8(u'４'),
+                  _utf8(u'日')
+              ],
+              [
+                  _utf8(u'영'),
+                  _utf8(u'어'),
+                  _utf8(u'독'),
+                  _utf8(u'해'),
+                  _utf8(u'자'),
+                  _utf8(u'만'),
+                  _utf8(u'심'),
+                  _utf8(u'왜'),
+                  _utf8(u'문'),
+                  _utf8(u'제'),
+                  _utf8(u'일'),
+                  _utf8(u'까'),
+              ],
+              [
+                  _utf8(u'據'),
+                  _utf8(u'港'),
+                  _utf8(u'媒'),
+                  _utf8(u'《'),
+                  _utf8(u'東'),
+                  _utf8(u'網'),
+                  _utf8(u'》'),
+                  _utf8(u'報'),
+                  _utf8(u'導')
+              ],
+          ],
+          normalization_form=None,
+      ),
+  ])
+  @test_util.run_in_graph_and_eager_modes
+  def test_basic_tokenize(self,
+                          text_inputs,
+                          expected_tokens,
+                          lower_case=False,
+                          normalization_form='NFC'):
+    text_inputs = ragged_factory_ops.constant(text_inputs)
+    tokenizer = bert_tokenizer.BasicTokenizer(
+        lower_case=lower_case, normalization_form=normalization_form)
+    tokens = tokenizer.tokenize(text_inputs)
+    self.assertAllEqual(tokens, expected_tokens)
+
+  @parameterized.parameters([
+      dict(
+          text_inputs=[
+              b'taste the rustisc indiefrost',
+              _utf8(u'Han Kuo-yu (韓國食)🤔'),
+              _utf8(u'dugtrio had an awesome 🤣 dugbook'),
+              b'yo^what$is*up?',
+              b'mothaf*&%ka',
+          ],
+          expected=[[[b'taste'], [b'the'], [b'rust', b'##is', b'##c'],
+                     [b'indie', b'##fr', b'##ost']],
+                    [[b'han'], [b'ku', b'##o'], [b'-'], [b'yu'], [b'('],
+                     [_utf8(u'韓')], [_utf8(u'國')], [_utf8(u'食')], [b')'],
+                     [_utf8(u'🤔')]],
+                    [[b'dug', b'##tri', b'##o'], [b'had'], [b'an'],
+                     [b'awesome'], [_utf8(u'🤣')], [b'dug', b'##book']],
+                    [[b'yo'], [b'^'], [b'what'], [b'$'], [b'is'], [b'*'],
+                     [b'up'], [b'?']],
+                    [[b'moth', b'##af'], [b'*'], [b'&'], [b'%'], [b'ka']]],
+          lower_case=True,
+          vocab=_VOCAB,
+      ),
+      # Test when we are expecting multiple OOV vocab ids and tf.string just
+      # maps
+      # out [UNK] token.
+      dict(
+          text_inputs=[
+              b'mothaf*&%ka cantfindme whodis',
+          ],
+          expected=[[[b'moth', b'##af'], [b'*'], [b'&'], [b'%'], [b'ka'],
+                     [b'[UNK]'], [b'[UNK]']]],
+          lower_case=True,
+          num_oov=2,
+          vocab=_VOCAB,
+      )
+  ])
+  @test_util.run_in_graph_and_eager_modes
+  def test_wordpiece_tokenize(self,
+                              text_inputs,
+                              expected,
+                              vocab,
+                              lower_case=True,
+                              num_oov=1):
+    text_inputs = constant_op.constant(text_inputs)
+    table = _create_table(vocab, num_oov)
+    self.evaluate(table.initializer)
+    tokenizer = bert_tokenizer.BertTokenizer(
+        table, token_out_type=dtypes.string, lower_case=lower_case)
+    results = tokenizer.tokenize(text_inputs)
+    self.assertAllEqual(results, expected)
+
+    # Verify that the int ids are the same.
+    expected_rt = ragged_factory_ops.constant(expected)
+    expected_int = table.lookup(expected_rt.flat_values)
+    expected_int_rt = ragged_tensor.RaggedTensor.from_nested_row_splits(
+        expected_int, expected_rt.nested_row_splits)
+    int_tokenizer = bert_tokenizer.BertTokenizer(
+        vocab_lookup_table=table,
+        token_out_type=dtypes.int64,
+        lower_case=lower_case)
+    results_int = int_tokenizer.tokenize(text_inputs)
+    self.assertAllEqual(results_int, expected_int_rt)
+
+if __name__ == '__main__':
+  test.main()
