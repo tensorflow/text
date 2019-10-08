@@ -46,4 +46,6 @@ export CC_OPT_FLAGS='-mavx'
 
 # Build the pip package
 bazel build oss_scripts/pip_package:build_pip_package
-./bazel-bin/oss_scripts/pip_package/build_pip_package .
+./bazel-bin/oss_scripts/pip_package/build_pip_package ${KOKORO_ARTIFACTS_DIR}
+
+ls ${KOKORO_ARTIFACTS_DIR}
