@@ -26,7 +26,7 @@ from __future__ import print_function
 
 import types
 
-import tensorflow_text
+import tensorflow_text as tensorflow_text
 from tensorflow.python.platform import test
 
 
