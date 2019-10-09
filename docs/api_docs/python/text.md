@@ -23,8 +23,7 @@ Various tensorflow ops related to text-processing.
 
 ## Classes
 
-[`class BertTokenizer`](./text/BertTokenizer.md): Basic tokenizer for BERT
-preprocessing.
+[`class BertTokenizer`](./text/BertTokenizer.md): Tokenizer used for BERT.
 
 [`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
 implementations.
