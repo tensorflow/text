@@ -489,8 +489,6 @@ py_test(
         ":ragged_test_util",
         ":sentencepiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
-        "@com_google_sentencepiece//src:sentencepiece_model_py_pb2",
-        "@com_google_sentencepiece//python:sentencepiece_processor",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,

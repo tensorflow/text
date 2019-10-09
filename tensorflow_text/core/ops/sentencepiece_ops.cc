@@ -65,40 +65,6 @@ REGISTER_OP("SentencepieceTokenizeOp")
       return Status::OK();
     });
 
-REGISTER_OP("SentencepieceTokenizeWithOffsetsOp")
-    .Input("sp_handle: resource")
-    .Input("input: string")
-    .Input("nbest_size: int32")
-    .Input("alpha: float")
-    .Input("add_bos: bool")
-    .Input("add_eos: bool")
-    .Input("reverse: bool")
-    .Attr("out_type: {int32, string} = DT_INT32")
-    .Attr("Tsplits: {int32, int64} = DT_INT64")
-    .Output("output_values: out_type")
-    .Output("output_splits: Tsplits")
-    .Output("output_offset_starts: int64")
-    .Output("output_offset_limits: int64")
-    .SetShapeFn([](InferenceContext* c) {
-      shape_inference::ShapeHandle unused;
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 0, &unused));
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(2), 0, &unused));
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(3), 0, &unused));
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(4), 0, &unused));
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(5), 0, &unused));
-      TF_RETURN_IF_ERROR(c->WithRank(c->input(6), 0, &unused));
-
-      c->set_output(0, c->Vector(InferenceContext::kUnknownDim));
-
-      shape_inference::DimensionHandle num_splits;
-      TF_RETURN_IF_ERROR(c->Add(c->NumElements(c->input(1)), 1, &num_splits));
-      c->set_output(1, c->Vector(num_splits));
-      c->set_output(2, c->Vector(InferenceContext::kUnknownDim));
-      c->set_output(3, c->Vector(InferenceContext::kUnknownDim));
-      return Status::OK();
-    });
-
 REGISTER_OP("SentencepieceDetokenizeOp")
     .Input("sp_handle: resource")
     .Input("input_values: T")
