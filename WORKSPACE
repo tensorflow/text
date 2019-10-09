@@ -3,6 +3,16 @@ workspace(name = "org_tensorflow_text")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "absl_py",
+    sha256 = "280c76ec0c9ab7a1dff550cdc37b7c7cd28551103dc3955202760ea8e381aa9d",
+    strip_prefix = "abseil-py-pypi-v0.8.0",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/abseil/abseil-py/archive/pypi-v0.8.0.tar.gz",
+        "https://github.com/abseil/abseil-py/archive/pypi-v0.8.0.tar.gz",
+    ],
+)
+
+http_archive(
     name = "bazel_skylib",
     sha256 = "2ef429f5d7ce7111263289644d233707dba35e39696377ebab8b0bc701f7818e",
     urls = ["https://github.com/bazelbuild/bazel-skylib/releases/download/0.8.0/bazel-skylib.0.8.0.tar.gz"],
@@ -14,6 +24,16 @@ http_archive(
     strip_prefix = "abseil-cpp-20190808",
     urls = [
         "https://github.com/abseil/abseil-cpp/archive/20190808.zip",
+    ],
+)
+
+http_archive(
+    name = "com_google_glog",
+    sha256 = "1ee310e5d0a19b9d584a855000434bb724aa744745d5b8ab1855c85bff8a8e21",
+    strip_prefix = "glog-028d37889a1e80e8a07da1b8945ac706259e5fd8",
+    urls = [
+        "https://mirror.bazel.build/github.com/google/glog/archive/028d37889a1e80e8a07da1b8945ac706259e5fd8.tar.gz",
+        "https://github.com/google/glog/archive/028d37889a1e80e8a07da1b8945ac706259e5fd8.tar.gz",
     ],
 )
 
