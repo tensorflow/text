@@ -25,7 +25,7 @@ function write_action_env_to_bazelrc() {
 if python -c "import tensorflow" &> /dev/null; then
     echo 'using installed tensorflow'
 else
-  pip install tensorflow==2.0.0rc1
+  pip install tensorflow==2.0.0
 fi
 
 osname="$(uname -s)"
