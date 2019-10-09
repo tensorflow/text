@@ -111,7 +111,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":bert_tokenizer",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
@@ -284,7 +284,7 @@ py_test(
     deps = [
         ":pad_along_dimension_op",
         ":ragged_test_util",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
@@ -321,7 +321,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":pointer_ops",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
@@ -339,7 +339,7 @@ py_test(
     deps = [
         ":pointer_ops",
         ":ragged_test_util",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -354,7 +354,7 @@ py_test(
     deps = [
         ":pointer_ops",
         ":ragged_test_util",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:dtypes tensorflow dep,
@@ -402,7 +402,7 @@ py_test(
     deps = [
         ":ragged_test_util",
         ":text_similarity_metric_ops",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:dtypes tensorflow dep,
@@ -439,7 +439,7 @@ py_test(
     deps = [
         ":ragged_test_util",
         ":sentence_breaking_ops",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:dtypes tensorflow dep,
@@ -488,10 +488,9 @@ py_test(
     deps = [
         ":ragged_test_util",
         ":sentencepiece_tokenizer",
-        "@com_google_absl//absl/testing:parameterized",
-        "//third_party/py/tensorflow:tensorflow_google",
-        "//third_party/sentencepiece/src:sentencepiece_model_py_pb2",
-        "//third_party/sentencepiece/src/python:sentencepiece_processor",
+        "@absl_py//absl/testing:parameterized",
+        "@com_google_sentencepiece//src:sentencepiece_model_py_pb2",
+        "@com_google_sentencepiece//python:sentencepiece_processor",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
@@ -519,7 +518,7 @@ py_test(
     deps = [
         ":ragged_test_util",
         ":sliding_window_op",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
@@ -572,7 +571,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":todense_layer",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         #  numpy dep,
         # python:client_testlib tensorflow dep,
         # python:dtypes tensorflow dep,
@@ -672,7 +671,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":viterbi_decode",
-        "@com_google_absl//absl/testing:absltest",
+        "@absl_py//absl/testing:absltest",
         #  numpy dep,
     ],
 )
@@ -741,7 +740,7 @@ py_test(
     deps = [
         ":ragged_test_util",
         ":wordpiece_tokenizer",
-        "@com_google_absl//absl/testing:parameterized",
+        "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:dtypes tensorflow dep,
