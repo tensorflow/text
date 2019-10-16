@@ -22,7 +22,6 @@ main() {
     output_dir="/tmp/tensorflow_text_pkg"
   fi
   mkdir -p ${output_dir}
-  output_dir=$(readlink -f "${output_dir}")
   echo "=== Destination directory: ${output_dir}"
 
   if [[ ! -d "bazel-bin/tensorflow_text" ]]; then
