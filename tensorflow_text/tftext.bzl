@@ -55,6 +55,8 @@ def py_tf_text_library(
         linkshared = 1,
         deps = [
             ":" + library_name,
+            "@local_config_tf//:libtensorflow_framework",
+            "@local_config_tf//:tf_header_lib",
         ],
     )
 

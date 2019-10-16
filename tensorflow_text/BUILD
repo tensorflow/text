@@ -423,7 +423,7 @@ py_tf_text_library(
     cc_op_defs = ["core/ops/sentence_breaking_ops.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:sentence_breaking_kernels",
-        "@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:lib",
     ],
     deps = [
         # python/ops/ragged:ragged_tensor tensorflow dep,

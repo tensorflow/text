@@ -14,9 +14,15 @@ tf_kernel_library(
     srcs = ["constrained_sequence_kernel.cc"],
     deps = [
         "@com_google_absl//absl/base:core_headers",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:protos_all_cc",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -27,9 +33,9 @@ cc_test(
         ":text_kernels_test_util",
         "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )
 
@@ -40,9 +46,9 @@ cc_test(
         ":text_kernels_test_util",
         "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )
 
@@ -53,9 +59,9 @@ cc_test(
         ":text_kernels_test_util",
         "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )
 
@@ -66,9 +72,9 @@ cc_test(
         ":text_kernels_test_util",
         "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )
 
@@ -79,9 +85,9 @@ cc_test(
         ":text_kernels_test_util",
         "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )
 
@@ -91,7 +97,12 @@ tf_kernel_library(
     deps = [
         "@com_google_absl//absl/strings",
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:framework",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -101,8 +112,13 @@ tf_kernel_library(
     deps = [
         "@com_google_absl//absl/strings",
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:lib",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -113,11 +129,11 @@ cc_test(
     deps = [
         ":rouge_l_kernel",
         "//tensorflow_text:text_similarity_metric_ops_cc",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:test",
-        "@org_tensorflow//tensorflow/core:test_main",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:test",
+        #"@org_tensorflow//tensorflow/core:test_main",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )
 
@@ -129,7 +145,12 @@ tf_kernel_library(
         ":sentence_fragmenter",
         "@com_google_absl//absl/strings",
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:framework",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -140,7 +161,9 @@ cc_library(
     deps = [
         "@com_google_absl//absl/strings",
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:lib",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
     ],
 )
 
@@ -162,7 +185,9 @@ cc_library(
     hdrs = ["sentence_fragmenter.h"],
     deps = [
         ":sentence_breaking_utils",
-        "@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:lib",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
     ],
 )
 
@@ -179,11 +204,14 @@ tf_kernel_library(
         "@com_google_sentencepiece//src:sentencepiece_cc_proto",
         "@com_google_sentencepiece//src:sentencepiece_processor",
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
-        "@org_tensorflow//tensorflow/core/kernels:tensor_flag_utils",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:framework_headers_lib",
+        #"@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:protos_all_cc",
+        #"@org_tensorflow//tensorflow/core/kernels:tensor_flag_utils",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
+        "@com_google_absl//absl/container:inlined_vector",
     ],
     alwayslink = 1,
 )
@@ -195,8 +223,10 @@ cc_library(
     hdrs = ["text_kernels_test_util.h"],
     deps = [
         "@com_google_googletest//:gtest",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
     ],
 )
 
@@ -205,8 +235,10 @@ tf_kernel_library(
     srcs = ["unicode_script_tokenize_kernel.cc"],
     deps = [
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:lib",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
     ],
     alwayslink = 1,
 )
@@ -218,11 +250,13 @@ cc_test(
         ":text_kernels_test_util",
         "//tensorflow_text:unicode_script_tokenizer_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:test",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:test",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
     ],
 )
 
@@ -231,8 +265,10 @@ tf_kernel_library(
     srcs = ["whitespace_tokenize_kernel.cc"],
     deps = [
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:lib",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
     ],
     alwayslink = 1,
 )
@@ -244,11 +280,13 @@ cc_test(
         ":text_kernels_test_util",
         "//tensorflow_text:whitespace_tokenizer_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:test",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:test",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
     ],
 )
 
@@ -258,8 +296,10 @@ tf_kernel_library(
     deps = [
         ":wordpiece_tokenizer",
         "@com_google_absl//absl/base:core_headers",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:lib",
+        "@local_config_tf//:libtensorflow_framework",
+        "@local_config_tf//:tf_header_lib",
     ],
 )
 
@@ -270,6 +310,9 @@ cc_library(
     deps = [
         "@com_google_absl//absl/strings",
         "@icu//:common",
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -280,10 +323,10 @@ cc_test(
     deps = [
         ":wordpiece_kernel",
         "//tensorflow_text:wordpiece_tokenizer_cc",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:test",
-        "@org_tensorflow//tensorflow/core:test_main",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        #"@org_tensorflow//tensorflow/core:framework",
+        #"@org_tensorflow//tensorflow/core:test",
+        #"@org_tensorflow//tensorflow/core:test_main",
+        #"@org_tensorflow//tensorflow/core:testlib",
+        #"@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )
