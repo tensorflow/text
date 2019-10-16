@@ -26,7 +26,7 @@ which bazel
 bazel version
 
 # Pick a more recent version of xcode
-sudo xcode-select --switch /Applications/Xcode_9.2.app/Contents/Developer
+sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
 
 # cd into the release branch in kokoro
 cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
@@ -49,3 +49,18 @@ bazel build oss_scripts/pip_package:build_pip_package
 ./bazel-bin/oss_scripts/pip_package/build_pip_package ${KOKORO_ARTIFACTS_DIR}
 
 ls ${KOKORO_ARTIFACTS_DIR}
+deactivate
+
+# Release
+if [[ "$UPLOAD_TO_PYPI" == "upload" ]]; then
+  PYPI_PASSWD="$(cat "$KOKORO_KEYSTORE_DIR"/74641_tftext_pypi_automation_passwd)"
+  cat >~/.pypirc <<EOL
+[pypi]
+username = __token__
+password = ${PYPI_PASSWD}
+EOL
+
+  cd ${KOKORO_ARTIFACTS_DIR}
+  python3 -m pip install -U twine
+  twine upload *.whl
+fi

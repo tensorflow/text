@@ -22,21 +22,39 @@ function write_action_env_to_bazelrc() {
   write_to_bazelrc "build --action_env $1=\"$2\""
 }
 
-if python -c "import tensorflow" &> /dev/null; then
-    echo 'using installed tensorflow'
+# Remove .bazelrc if it already exist
+[ -e .bazelrc ] && rm .bazelrc
+
+if [[ $(pip show tensorflow) == *tensorflow* ]] || [[ $(pip show tf-nightly) == *tf-nightly* ]] ; then
+  echo 'Using installed tensorflow.\n'
 else
+  echo 'Installing tensorflow.\n'
   pip install tensorflow==2.0.0
 fi
 
 osname="$(uname -s)"
 if [[ $osname == "Linux" ]]; then
-  write_to_bazelrc "build --cxxopt='-std=c++11'"
+  write_to_bazelrc "build:manylinux2010 --crosstool_top=@org_tensorflow//third_party/toolchains/preconfig/ubuntu16.04/gcc7_manylinux2010-nvcc-cuda10.0:toolchain"
+  write_to_bazelrc "build --config=manylinux2010"
+  write_to_bazelrc "test --config=manylinux2010"
 fi
+write_to_bazelrc "build --spawn_strategy=standalone"
+write_to_bazelrc "build --strategy=Genrule=standalone"
+write_to_bazelrc "build -c opt"
+write_to_bazelrc "build --define=framework_shared_object=true"
 
 TF_CFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )
 TF_LFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
-TF_LFLAGS2=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))' | awk '{print $2}') )
 
+SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
+SHARED_LIBRARY_NAME=$(echo $TF_LFLAGS | rev | cut -d":" -f1 | rev)
+if ! [[ $TF_LFLAGS =~ .*:.* ]]; then
+  if [[ "$(uname)" == "Darwin" ]]; then
+    SHARED_LIBRARY_NAME="libtensorflow_framework.dylib"
+  else
+    SHARED_LIBRARY_NAME="libtensorflow_framework.so"
+  fi
+fi
 write_action_env_to_bazelrc "TF_HEADER_DIR" ${TF_CFLAGS:2}
-write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${TF_LFLAGS:2}
-write_action_env_to_bazelrc "TF_SHARED_LIBRARY" ${TF_LFLAGS2:3}
+write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${SHARED_LIBRARY_DIR}
+write_action_env_to_bazelrc "TF_SHARED_LIBRARY_NAME" ${SHARED_LIBRARY_NAME}
