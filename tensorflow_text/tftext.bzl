@@ -30,9 +30,13 @@ def py_tf_text_library(
     cc_op_kernels: A list of c++ targets containing kernels that are used
         by the Python library.
   """
-  binary_name = "python/ops/_" + cc_op_kernels[0][1:] + ".so"
+  binary_path = 'python/ops'
+  if srcs:
+    binary_path_end_pos = srcs[0].rfind('/')
+    binary_path = srcs[0][0:binary_path_end_pos]
+  binary_name = binary_path + "/_" + cc_op_kernels[0][1:] + ".so"
   if cc_op_defs:
-    binary_name = "python/ops/_" + name + ".so"
+    binary_name = binary_path + "/_" + name + ".so"
     library_name = name + "_cc"
     native.cc_library(
         name = library_name,
@@ -51,6 +55,8 @@ def py_tf_text_library(
         linkshared = 1,
         deps = [
             ":" + library_name,
+            "@local_config_tf//:libtensorflow_framework",
+            "@local_config_tf//:tf_header_lib",
         ],
     )
 

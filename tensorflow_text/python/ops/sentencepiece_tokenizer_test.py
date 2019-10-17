@@ -19,7 +19,7 @@
 import os
 import sys
 from absl.testing import parameterized
-from google3.third_party.sentencepiece.src.python import sentencepiece_processor
+import sentencepiece as sentencepiece_processor
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors

@@ -6,10 +6,8 @@ PY_VERSION=${1}
 
 # Install the given bazel version on macos
 function update_bazel_macos {
-  if [[ -z "$1" ]]; then
+  if [[ "$BAZEL_VERSION" == "" ]]; then
     BAZEL_VERSION=${LATEST_BAZEL_VERSION}
-  else
-    BAZEL_VERSION=$1
   fi
   curl -L https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-darwin-x86_64.sh -O
   ls

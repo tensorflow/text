@@ -9,14 +9,25 @@ package(default_visibility = ["//visibility:public"])
 
 exports_files(["LICENSE"])
 
+# These are "random" deps likely needed by each library (http://b/142433427).
+# It is meant to be empty and filled by copybara.
+OSS_DEPS = [
+    "@com_google_absl//absl/container:inlined_vector",
+    "@com_google_absl//absl/strings",
+    "@com_google_absl//absl/types:optional",
+    "@com_google_absl//absl/types:span",
+    "@local_config_tf//:libtensorflow_framework",
+    "@local_config_tf//:tf_header_lib",
+]
+
 tf_kernel_library(
     name = "constrained_sequence_kernel",
     srcs = ["constrained_sequence_kernel.cc"],
-    deps = [
+    deps = OSS_DEPS + [
         "@com_google_absl//absl/base:core_headers",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+        # tf:protos_all_cc tensorflow dep,
     ],
 )
 
@@ -25,11 +36,11 @@ cc_test(
     srcs = ["constrained_sequence_kernel_input_validation_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        # tf:framework tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
+        "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
 
@@ -38,11 +49,11 @@ cc_test(
     srcs = ["exp_greedy_constrained_sequence_kernel_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        # tf:framework tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
+        "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
 
@@ -51,11 +62,11 @@ cc_test(
     srcs = ["exp_viterbi_constrained_sequence_kernel_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        # tf:framework tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
+        "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
 
@@ -64,11 +75,11 @@ cc_test(
     srcs = ["log_greedy_constrained_sequence_kernel_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        # tf:framework tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
+        "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
 
@@ -77,32 +88,32 @@ cc_test(
     srcs = ["log_viterbi_constrained_sequence_kernel_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        # tf:framework tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
+        "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
 
 tf_kernel_library(
     name = "normalize_kernels",
     srcs = ["normalize_kernels.cc"],
-    deps = [
-        "@com_google_absl//absl/strings",
+    deps = OSS_DEPS + [
+        # absl/strings dep
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
+        # tf:framework tensorflow dep,
     ],
 )
 
 tf_kernel_library(
     name = "rouge_l_kernel",
     srcs = ["rouge_l_kernel.cc"],
-    deps = [
-        "@com_google_absl//absl/strings",
+    deps = OSS_DEPS + [
+        # absl/strings dep
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
     ],
 )
 
@@ -112,24 +123,24 @@ cc_test(
     srcs = ["rouge_l_kernel_test.cc"],
     deps = [
         ":rouge_l_kernel",
+        # tf:framework tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:test_main tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:text_similarity_metric_ops_cc",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:test",
-        "@org_tensorflow//tensorflow/core:test_main",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )
 
 tf_kernel_library(
     name = "sentence_breaking_kernels",
     srcs = ["sentence_breaking_kernels.cc"],
-    deps = [
+    deps = OSS_DEPS + [
         ":sentence_breaking_utils",
         ":sentence_fragmenter",
-        "@com_google_absl//absl/strings",
+        # absl/strings dep
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
+        # tf:framework tensorflow dep,
     ],
 )
 
@@ -137,10 +148,10 @@ cc_library(
     name = "sentence_breaking_utils",
     srcs = ["sentence_breaking_utils.cc"],
     hdrs = ["sentence_breaking_utils.h"],
-    deps = [
-        "@com_google_absl//absl/strings",
+    deps = OSS_DEPS + [
+        # absl/strings dep
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:lib",
+        # tf:lib tensorflow dep,
     ],
 )
 
@@ -160,32 +171,31 @@ cc_library(
     name = "sentence_fragmenter",
     srcs = ["sentence_fragmenter.cc"],
     hdrs = ["sentence_fragmenter.h"],
-    deps = [
+    deps = OSS_DEPS + [
         ":sentence_breaking_utils",
-        "@org_tensorflow//tensorflow/core:lib",
+        # tf:lib tensorflow dep,
     ],
 )
 
 tf_kernel_library(
     name = "sentencepiece_kernels",
     srcs = ["sentencepiece_kernels.cc"],
-    deps = [
+    deps = OSS_DEPS + [
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/meta:type_traits",
-        "@com_google_absl//absl/strings",
-        "@com_google_absl//absl/types:span",
+        # absl/strings dep
+        # absl/types:span dep
+        "@icu//:common",
         "@com_google_sentencepiece//src:sentencepiece_cc_proto",
         "@com_google_sentencepiece//src:sentencepiece_processor",
-        "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:framework_headers_lib",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:protos_all_cc",
-        "@org_tensorflow//tensorflow/core/kernels:tensor_flag_utils",
+        # tf:framework tensorflow dep,
+        # tf:framework_headers_lib tensorflow dep,
+        # tf:lib tensorflow dep,
+        # tf:protos_all_cc tensorflow dep,
+        # tf/kernels:tensor_flag_utils tensorflow dep,
     ],
-    alwayslink = 1,
 )
 
 cc_library(
@@ -193,22 +203,21 @@ cc_library(
     testonly = 1,
     srcs = ["text_kernels_test_util.cc"],
     hdrs = ["text_kernels_test_util.h"],
-    deps = [
+    deps = OSS_DEPS + [
         "@com_google_googletest//:gtest",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:testlib",
+        # tf:framework tensorflow dep,
+        # tf:testlib tensorflow dep,
     ],
 )
 
 tf_kernel_library(
     name = "unicode_script_tokenize_kernel",
     srcs = ["unicode_script_tokenize_kernel.cc"],
-    deps = [
+    deps = OSS_DEPS + [
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
     ],
-    alwayslink = 1,
 )
 
 cc_test(
@@ -216,25 +225,24 @@ cc_test(
     srcs = ["unicode_script_tokenize_kernel_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        "//tensorflow_text:unicode_script_tokenizer_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:test",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
+        "//tensorflow_text:unicode_script_tokenizer_cc",
     ],
 )
 
 tf_kernel_library(
     name = "whitespace_tokenize_kernel",
     srcs = ["whitespace_tokenize_kernel.cc"],
-    deps = [
+    deps = OSS_DEPS + [
         "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
     ],
-    alwayslink = 1,
 )
 
 cc_test(
@@ -242,24 +250,24 @@ cc_test(
     srcs = ["whitespace_tokenize_kernel_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        "//tensorflow_text:whitespace_tokenizer_cc",
         "@com_google_googletest//:gtest_main",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core:test",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
+        "//tensorflow_text:whitespace_tokenizer_cc",
     ],
 )
 
 tf_kernel_library(
     name = "wordpiece_kernel",
     srcs = ["wordpiece_kernel.cc"],
-    deps = [
+    deps = OSS_DEPS + [
         ":wordpiece_tokenizer",
         "@com_google_absl//absl/base:core_headers",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
     ],
 )
 
@@ -267,8 +275,8 @@ cc_library(
     name = "wordpiece_tokenizer",
     srcs = ["wordpiece_tokenizer.cc"],
     hdrs = ["wordpiece_tokenizer.h"],
-    deps = [
-        "@com_google_absl//absl/strings",
+    deps = OSS_DEPS + [
+        # absl/strings dep
         "@icu//:common",
     ],
 )
@@ -279,11 +287,11 @@ cc_test(
     srcs = ["wordpiece_kernel_test.cc"],
     deps = [
         ":wordpiece_kernel",
+        # tf:framework tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:test_main tensorflow dep,
+        # tf:testlib tensorflow dep,
+        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:wordpiece_tokenizer_cc",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:test",
-        "@org_tensorflow//tensorflow/core:test_main",
-        "@org_tensorflow//tensorflow/core:testlib",
-        "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
     ],
 )

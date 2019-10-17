@@ -15,6 +15,11 @@ die() {
   exit 1
 }
 
+osname="$(uname -s)"
+if [[ $osname == "Darwin" ]]; then
+  alias readlink=greadlink
+fi
+
 main() {
   local output_dir="$1"
 
