@@ -110,6 +110,19 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
 
     self.assertRaggedEqual(expected_values, op)
 
+  def testRaggedStringJoinReductionInnerAxis(self):
+    test_data = ragged_factory_ops.constant([[["a", "b", "c"], ["dd", "ee"]],
+                                             [["f", "g", "h"], ["ii", "jj"]]])
+    op = ngrams_op.ngrams(
+        test_data,
+        width=2,
+        axis=-2,
+        reduction_type=ngrams_op.Reduction.STRING_JOIN,
+        string_separator="|")
+    expected_values = [[[b"a|dd", b"b|ee", b"c"]], [[b"f|ii", b"g|jj", b"h"]]]
+
+    self.assertRaggedEqual(expected_values, op)
+
   def testReductionWithNegativeAxis(self):
     test_data = constant_op.constant([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
     op = ngrams_op.ngrams(
@@ -153,16 +166,6 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
     expected_values = [[], [100.0]]
 
     self.assertRaggedEqual(expected_values, op)
-
-  def testStringJoinReductionFailsWithImproperAxis(self):
-    with self.assertRaisesRegexp(
-        errors.InvalidArgumentError,
-        r".*requires that ngrams' 'axis' parameter be -1."):
-      _ = ngrams_op.ngrams(
-          data=[],
-          width=2,
-          axis=0,
-          reduction_type=ngrams_op.Reduction.STRING_JOIN)
 
   def testUnspecifiedReductionTypeFails(self):
     with self.assertRaisesRegexp(errors.InvalidArgumentError,

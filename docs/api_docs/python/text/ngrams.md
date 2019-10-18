@@ -48,7 +48,7 @@ created using the sliding_window op.
     *   <a href="../text/Reduction.md#MEAN"><code>Reduction.MEAN</code></a>:
         Average values in the window.
     *   <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>:
-        Join strings in the window. Note that axis must be -1 here.
+        Join strings in the window.
 
 *   <b>`string_separator`</b>: The separator string used for
     <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>.
