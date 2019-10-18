@@ -29,7 +29,7 @@ if [[ $(pip show tensorflow) == *tensorflow* ]] || [[ $(pip show tf-nightly) == 
   echo 'Using installed tensorflow.'
 else
   echo 'Installing tensorflow.'
-  pip install tensorflow==2.0.0
+  pip install tensorflow==1.15.0
 fi
 
 osname="$(uname -s)"
