@@ -28,8 +28,6 @@ sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
 cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 
 # create virtual env
-"python${PY_VERSION}" -m pip install --upgrade pip
-"python${PY_VERSION}" -m pip install --upgrade virtualenv
 "python${PY_VERSION}" -m virtualenv env
 source env/bin/activate
 
