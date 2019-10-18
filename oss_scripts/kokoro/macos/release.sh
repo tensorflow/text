@@ -6,9 +6,7 @@ PY_VERSION=${1}
 
 # Install the given bazel version on macos
 function update_bazel_macos {
-  if [[ "$BAZEL_VERSION" == "" ]]; then
-    BAZEL_VERSION=${LATEST_BAZEL_VERSION}
-  fi
+  BAZEL_VERSION=$1
   curl -L https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-darwin-x86_64.sh -O
   ls
   chmod +x bazel-*.sh
@@ -19,7 +17,7 @@ function update_bazel_macos {
 }
 
 # Install bazel
-update_bazel_macos 0.24.1
+update_bazel_macos ${BAZEL_VERSION:-0.29.1}
 which bazel
 bazel version
 
@@ -30,8 +28,8 @@ sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
 cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 
 # create virtual env
-"pip${PY_VERSION}" install --user --upgrade pip
-"pip${PY_VERSION}" install --user --upgrade virtualenv
+"python${PY_VERSION}" -m pip install --upgrade pip
+"python${PY_VERSION}" -m pip install --upgrade virtualenv
 "python${PY_VERSION}" -m virtualenv env
 source env/bin/activate
 
