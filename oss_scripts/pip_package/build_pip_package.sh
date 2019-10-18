@@ -16,8 +16,10 @@ die() {
 }
 
 osname="$(uname -s)"
+echo $osname
+readlinkcmd=readlink
 if [[ $osname == "Darwin" ]]; then
-  alias readlink=greadlink
+  readlinkcmd=greadlink
 fi
 
 main() {
@@ -27,7 +29,7 @@ main() {
     output_dir="/tmp/tensorflow_text_pkg"
   fi
   mkdir -p ${output_dir}
-  output_dir=$(readlink -f "${output_dir}")
+  output_dir=$($readlinkcmd -f "${output_dir}")
   echo "=== Destination directory: ${output_dir}"
 
   if [[ ! -d "bazel-bin/tensorflow_text" ]]; then
