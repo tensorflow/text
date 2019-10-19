@@ -67,13 +67,14 @@ class ToDense(Layer):   # pylint: disable=g-classes-have-attributes
   """
 
   def __init__(self, pad_value=0, mask=False, **kwargs):
+    super(ToDense, self).__init__(**kwargs)
+
     self._pad_value = pad_value
     self._mask = mask
     self._compute_output_and_mask_jointly = True
+    self._supports_ragged_inputs = True
     self.trainable = False
     self.masking_layer = layers.Masking(mask_value=self._pad_value)
-
-    super(ToDense, self).__init__(**kwargs)
 
   def call(self, inputs):
     if isinstance(inputs, ragged_tensor.RaggedTensor):
