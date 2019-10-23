@@ -106,6 +106,7 @@ py_library(
 py_test(
     name = "bert_tokenizer_test",
     size = "small",
+    timeout = "moderate",
     srcs = ["python/ops/bert_tokenizer_test.py"],
     python_version = "PY2",
     srcs_version = "PY2AND3",
