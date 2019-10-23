@@ -568,6 +568,7 @@ py_test(
     size = "large",
     srcs = ["python/keras/layers/todense_test.py"],
     python_version = "PY2",
+    shard_count = 2,
     srcs_version = "PY2AND3",
     deps = [
         ":todense_layer",
