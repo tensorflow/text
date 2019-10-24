@@ -27,7 +27,7 @@ tf_kernel_library(
         "@com_google_absl//absl/base:core_headers",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
-        # tf:protos_all_cc tensorflow dep,
+        # tf:protos_all tensorflow dep,
     ],
 )
 
@@ -193,7 +193,7 @@ tf_kernel_library(
         # tf:framework tensorflow dep,
         # tf:framework_headers_lib tensorflow dep,
         # tf:lib tensorflow dep,
-        # tf:protos_all_cc tensorflow dep,
+        # tf:protos_all tensorflow dep,
         # tf/kernels:tensor_flag_utils tensorflow dep,
     ],
 )
