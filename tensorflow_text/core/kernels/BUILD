@@ -44,6 +44,38 @@ cc_test(
     ],
 )
 
+cc_library(
+    name = "regex_split",
+    srcs = ["regex_split.cc"],
+    hdrs = ["regex_split.h"],
+    deps = [
+        "//base",
+        # absl/strings dep
+        "//third_party/re2",
+    ],
+)
+
+tf_kernel_library(
+    name = "regex_split_kernels",
+    srcs = ["regex_split_kernels.cc"],
+    deps = [
+        ":regex_split",
+        "@com_google_absl//absl/memory",
+        # tf:framework tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "regex_split_test",
+    srcs = ["regex_split_test.cc"],
+    deps = [
+        ":regex_split",
+        "@com_google_googletest//:gtest_main",
+        # absl/strings dep
+        "//third_party/re2",
+    ],
+)
+
 cc_test(
     name = "exp_greedy_constrained_sequence_kernel_test",
     srcs = ["exp_greedy_constrained_sequence_kernel_test.cc"],

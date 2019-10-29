@@ -26,6 +26,8 @@ from tensorflow_text.python.ops.pad_along_dimension_op import pad_along_dimensio
 from tensorflow_text.python.ops.pointer_ops import gather_with_default
 from tensorflow_text.python.ops.pointer_ops import span_alignment
 from tensorflow_text.python.ops.pointer_ops import span_overlaps
+from tensorflow_text.python.ops.regex_split_ops import regex_split
+from tensorflow_text.python.ops.regex_split_ops import regex_split_with_offsets
 from tensorflow_text.python.ops.sentence_breaking_ops import sentence_fragments
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 from tensorflow_text.python.ops.sliding_window_op import sliding_window
