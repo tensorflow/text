@@ -28,6 +28,7 @@ cc_library(
     deps = [
         ":constrained_sequence_op_cc",
         ":normalize_ops_cc",
+        ":regex_split_ops_cc",
         ":sentence_breaking_ops_cc",
         ":sentencepiece_tokenizer_cc",
         ":text_similarity_metric_ops_cc",
@@ -57,6 +58,7 @@ py_library(
         ":normalize_ops",
         ":pad_along_dimension_op",
         ":pointer_ops",
+        ":regex_split_ops",
         ":sentence_breaking_ops",
         ":sentencepiece_tokenizer",
         ":sliding_window_op",
@@ -377,6 +379,30 @@ py_library(
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
         # python/ops/ragged:ragged_tensor_value tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "regex_split_ops",
+    srcs = ["python/ops/regex_split_ops.py"],
+    cc_op_defs = ["core/ops/regex_split_ops.cc"],
+    cc_op_kernels = ["//tensorflow_text/core/kernels:regex_split_kernels"],
+    deps = [
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "regex_split_ops_test",
+    size = "small",
+    srcs = ["python/ops/regex_split_ops_test.py"],
+    python_version = "PY2",
+    srcs_version = "PY2AND3",
+    deps = [
+        ":regex_split_ops",
+        # python:client_testlib tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:platform tensorflow dep,
     ],
 )
 

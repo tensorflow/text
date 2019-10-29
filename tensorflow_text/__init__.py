@@ -35,6 +35,8 @@ _allowed_symbols = [
     "ngrams",
     "normalize_utf8",
     "pad_along_dimension",
+    "regex_split",
+    "regex_split_with_offsets",
     "Reduction",
     "sentence_fragments",
     "SentencepieceTokenizer",
