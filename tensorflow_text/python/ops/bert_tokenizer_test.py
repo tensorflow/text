@@ -145,6 +145,15 @@ _VOCAB = [
     b'year',
     b'yo',
     b'yu',
+    _utf8(u'\u7231'),
+    _utf8(u'\u4e0a'),
+    _utf8(u'\u4e00'),
+    _utf8(u'\u4e2a'),
+    _utf8(u'\u4e0d'),
+    _utf8(u'\u56de'),
+    _utf8(u'\u5bb6'),
+    _utf8(u'\u7684'),
+    _utf8(u'\u4eba'),
 ]
 
 
@@ -196,8 +205,8 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
               _utf8(u'Añade la información del formulario y tus preguntas')
           ],
           expected_tokens=[[
-              b'An', b'\xcc\x83', b'ade', b'la', b'informacio', b'\xcc\x81',
-              b'n', b'del', b'formulario', b'y', b'tus', b'preguntas'
+              b'An\xcc\x83ade', b'la', b'informacio\xcc\x81n', b'del',
+              b'formulario', b'y', b'tus', b'preguntas'
           ]],
           normalization_form='NFD',
       ),
@@ -209,26 +218,15 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
               _utf8(u'據港媒《東網》報導')
           ],
           expected_tokens=[
+              [_utf8(u'香'),
+               _utf8(u'港'),
+               _utf8(u'では４'),
+               _utf8(u'日')],
               [
-                  _utf8(u'香'),
-                  _utf8(u'港'),
-                  _utf8(u'では'),
-                  _utf8(u'４'),
-                  _utf8(u'日')
-              ],
-              [
-                  _utf8(u'영'),
-                  _utf8(u'어'),
-                  _utf8(u'독'),
-                  _utf8(u'해'),
-                  _utf8(u'자'),
-                  _utf8(u'만'),
-                  _utf8(u'심'),
+                  _utf8(u'영어독해'),
+                  _utf8(u'자만심'),
                   _utf8(u'왜'),
-                  _utf8(u'문'),
-                  _utf8(u'제'),
-                  _utf8(u'일'),
-                  _utf8(u'까'),
+                  _utf8(u'문제일까'),
               ],
               [
                   _utf8(u'據'),
@@ -241,6 +239,14 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                   _utf8(u'報'),
                   _utf8(u'導')
               ],
+          ],
+          normalization_form=None,
+      ),
+      # Test Katakana followed by Hiragana.
+      dict(
+          text_inputs=[_utf8(u'のテキストとして')],
+          expected_tokens=[
+              [_utf8(u'のテキストとして')],
           ],
           normalization_form=None,
       ),
@@ -291,15 +297,35 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
           lower_case=True,
           num_oov=2,
           vocab=_VOCAB,
-      )
+      ),
+      dict(
+          text_inputs=[
+              b'candy',
+          ],
+          expected=[[[b'candy']]],
+          lower_case=True,
+          num_oov=2,
+          vocab=_VOCAB,
+      ),
+      dict(
+          text_inputs=[
+              _utf8(u'爱上一个不回家的人'),
+          ],
+          expected=[[[_utf8(u'爱')], [_utf8(u'上')], [_utf8(u'一')], [_utf8(u'个')],
+                     [_utf8(u'不')], [_utf8(u'回')], [_utf8(u'家')], [_utf8(u'的')],
+                     [_utf8(u'人')]]],
+          lower_case=True,
+          num_oov=2,
+          vocab=_VOCAB,
+      ),
   ])
   @test_util.run_in_graph_and_eager_modes
-  def test_wordpiece_tokenize(self,
-                              text_inputs,
-                              expected,
-                              vocab,
-                              lower_case=True,
-                              num_oov=1):
+  def test_bert_tokenizer(self,
+                          text_inputs,
+                          expected,
+                          vocab,
+                          lower_case=True,
+                          num_oov=1):
     text_inputs = constant_op.constant(text_inputs)
     table = _create_table(vocab, num_oov)
     self.evaluate(table.initializer)
