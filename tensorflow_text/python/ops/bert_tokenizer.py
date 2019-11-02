@@ -14,25 +14,52 @@
 # limitations under the License.
 
 """Basic tokenization ops for BERT preprocessing."""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import copy
+
 from tensorflow.python.framework import dtypes
-from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import string_ops
-from tensorflow.python.ops.ragged import ragged_string_ops
-from tensorflow_text.python.ops import wordshape_ops
+from tensorflow_text.python.ops import regex_split_ops
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
 from tensorflow_text.python.ops.tokenization import Tokenizer
-from tensorflow_text.python.ops.unicode_script_tokenizer import UnicodeScriptTokenizer
+from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
+from tensorflow_text.python.ops.wordshape_ops import WordShape
 
 
-class BasicTokenizer(Tokenizer):
+_DELIM_REGEX = [
+    WordShape.IS_WHITESPACE.value,
+    r"|".join([
+        r"[!-/]",
+        r"[:-@]",
+        r"[\[-`]",
+        r"[{-~]",
+        r"[\p{P}]",
+    ]),
+    r"|".join([
+        r"[\x{4E00}-\x{9FFF}]",
+        r"[\x{3400}-\x{4DBF}]",
+        r"[\x{20000}-\x{2A6DF}]",
+        r"[\x{2A700}-\x{2B73F}]",
+        r"[\x{2B740}-\x{2B81F}]",
+        r"[\x{2B820}-\x{2CEAF}]",
+        r"[\x{F900}-\x{FAFF}]",
+        r"[\x{2F800}-\x{2FA1F}]",
+    ]),
+]
+
+_DELIM_REGEX_PATTERN = "|".join(_DELIM_REGEX)
+_KEEP_DELIM_NO_WHITESPACE = copy.deepcopy(_DELIM_REGEX)
+_KEEP_DELIM_NO_WHITESPACE.remove(WordShape.IS_WHITESPACE.value)
+
+_KEEP_DELIM_NO_WHITESPACE_PATTERN = "|".join(_KEEP_DELIM_NO_WHITESPACE)
+
+
+class BasicTokenizer(TokenizerWithOffsets):
   """Basic tokenizer for for tokenizing text.
 
   A basic tokenizer that tokenizes using some deterministic rules:
@@ -46,8 +73,8 @@ class BasicTokenizer(Tokenizer):
     keep_whitespace: bool - If true, preserves whitespace characters instead of
       stripping them away.
     normalization_form: If true and lower_case=False, the input text will be
-      normalized to `normalization_form`. See normalize_utf8() op for a list
-      of valid values.
+      normalized to `normalization_form`. See normalize_utf8() op for a list of
+      valid values.
   """
 
   def __init__(self,
@@ -55,39 +82,17 @@ class BasicTokenizer(Tokenizer):
                keep_whitespace=False,
                normalization_form=None):
     self._lower_case = lower_case
-    self._keep_whitespace = keep_whitespace
+    if not keep_whitespace:
+      self._keep_delim_regex_pattern = _KEEP_DELIM_NO_WHITESPACE_PATTERN
+    else:
+      self._keep_delim_regex_pattern = _DELIM_REGEX_PATTERN
     self._normalization_form = normalization_form
 
-  def _is_cjk(self, script_ids):
-    is_chinese = math_ops.logical_or(
-        math_ops.equal(script_ids, 17),  # Han (Chinese) script
-        math_ops.equal(script_ids, 74))  # Traditional Han (Chinese) script
-    is_korean = math_ops.logical_or(
-        math_ops.equal(script_ids, 119),  # Korean script
-        math_ops.equal(script_ids, 18))
-    return math_ops.logical_or(
-        is_chinese,
-        math_ops.logical_or(
-            math_ops.equal(script_ids, 105),  # Japanese script
-            is_korean))
-
-  def _should_split(self, script_tokenized):
-    token_script_ids = string_ops.unicode_script(
-        ragged_string_ops.unicode_decode(script_tokenized.flat_values,
-                                         "UTF-8"))[:, :1]
-
-    token_script_ids_flat = token_script_ids.flat_values
-    is_cjk = self._is_cjk(token_script_ids_flat)
-    is_emoji = wordshape_ops.wordshape(script_tokenized.flat_values,
-                                       wordshape_ops.WordShape.HAS_EMOJI)
-    is_punct = wordshape_ops.wordshape(
-        script_tokenized.flat_values,
-        wordshape_ops.WordShape.IS_PUNCT_OR_SYMBOL)
-    split_cond = is_cjk | is_emoji | is_punct
-    return split_cond
-
-  # TODO(thuang513): add support for tokenize_with_offsets()
   def tokenize(self, text_input):
+    tokens, _, _ = self.tokenize_with_offsets(text_input)
+    return tokens
+
+  def tokenize_with_offsets(self, text_input):
     """Performs basic word tokenization for BERT.
 
     Args:
@@ -108,21 +113,9 @@ class BasicTokenizer(Tokenizer):
     # strip out control characters
     text_input = string_ops.regex_replace(text_input, r"\p{Cc}|\p{Cf}", " ")
 
-    # For chinese and emoji characters, tokenize by unicode codepoints
-    unicode_tokenizer = UnicodeScriptTokenizer(
-        keep_whitespace=self._keep_whitespace)
-    script_tokenized = unicode_tokenizer.tokenize(text_input)
-
-    split_cond = self._should_split(script_tokenized)
-
-    unicode_char_split = ragged_string_ops.unicode_split(
-        script_tokenized, "UTF-8")
-    unicode_split_tokens = array_ops.where(
-        array_ops.squeeze(split_cond),
-        y=array_ops.expand_dims(script_tokenized.values, axis=1),
-        x=unicode_char_split.values)
-    final_tokens = script_tokenized.with_flat_values(unicode_split_tokens)
-    return final_tokens.merge_dims(-2, -1)
+    return regex_split_ops.regex_split_with_offsets(
+        text_input, _DELIM_REGEX_PATTERN, self._keep_delim_regex_pattern,
+        "BertBasicTokenizer")
 
 
 class BertTokenizer(Tokenizer):
