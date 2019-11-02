@@ -92,6 +92,7 @@ py_library(
     tags = ["ignore_srcs"],
     deps = [
         ":normalize_ops",
+        ":regex_split_ops",
         ":tokenization",
         ":unicode_script_tokenizer",
         ":wordpiece_tokenizer",
