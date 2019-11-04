@@ -49,9 +49,8 @@ cc_library(
     srcs = ["regex_split.cc"],
     hdrs = ["regex_split.h"],
     deps = [
-        "//base",
         # absl/strings dep
-        "//third_party/re2",
+        "@com_google_re2//:re2",
     ],
 )
 
@@ -72,7 +71,7 @@ cc_test(
         ":regex_split",
         "@com_google_googletest//:gtest_main",
         # absl/strings dep
-        "//third_party/re2",
+        "@com_google_re2//:re2",
     ],
 )
 
