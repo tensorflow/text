@@ -17,7 +17,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "absl/strings/string_view.h"
-#include "third_party/re2/re2.h"
+#include "re2/re2.h"
 
 namespace tensorflow {
 namespace text {

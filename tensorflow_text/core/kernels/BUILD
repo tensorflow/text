@@ -48,16 +48,17 @@ cc_library(
     name = "regex_split",
     srcs = ["regex_split.cc"],
     hdrs = ["regex_split.h"],
-    deps = [
+    deps = OSS_DEPS + [
         # absl/strings dep
         "@com_google_re2//:re2",
+        # tf:framework tensorflow dep,
     ],
 )
 
 tf_kernel_library(
     name = "regex_split_kernels",
     srcs = ["regex_split_kernels.cc"],
-    deps = [
+    deps = OSS_DEPS + [
         ":regex_split",
         "@com_google_absl//absl/memory",
         # tf:framework tensorflow dep,

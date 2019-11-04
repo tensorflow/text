@@ -15,13 +15,19 @@
 #ifndef TENSORFLOW_TEXT_CORE_KERNELS_REGEX_SPLIT_H_
 #define TENSORFLOW_TEXT_CORE_KERNELS_REGEX_SPLIT_H_
 
+#include <string>
+#include <vector>
+
 #include "absl/strings/string_view.h"
-#include "third_party/re2/re2.h"
+#include "re2/re2.h"
+#include "tensorflow/core/framework/types.h"
 
 namespace tensorflow {
 namespace text {
 
-void RegexSplit(const string& input, const RE2& re2, bool include_delimiter,
+void RegexSplit(const std::string& input,
+                const RE2& re2,
+                bool include_delimiter,
                 const RE2& include_delim_regex,
                 std::vector<absl::string_view>* tokens,
                 std::vector<int64>* begin_offsets,
