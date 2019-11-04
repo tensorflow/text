@@ -23,7 +23,6 @@
 namespace tensorflow {
 namespace text {
 
-using ::absl::MakeUnique;
 using ::tensorflow::Status;
 
 void GetRegexFromInput(tensorflow::OpKernelContext* ctx,
@@ -34,7 +33,7 @@ void GetRegexFromInput(tensorflow::OpKernelContext* ctx,
               errors::InvalidArgument("Pattern must be scalar, but received ",
                                       pattern_tensor->shape().DebugString()));
   const string regex_pattern = pattern_tensor->flat<tstring>()(0);
-  *result = MakeUnique<RE2>(regex_pattern);
+  *result = absl::make_unique<RE2>(regex_pattern);
   OP_REQUIRES(ctx, (*result)->ok(),
               errors::InvalidArgument("Invalid pattern: ", regex_pattern,
                                       ", error: ", (*result)->error()));
