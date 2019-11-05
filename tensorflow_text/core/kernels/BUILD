@@ -132,6 +132,7 @@ tf_kernel_library(
     name = "normalize_kernels",
     srcs = ["normalize_kernels.cc"],
     deps = OSS_DEPS + [
+        "//third_party/icu/data:icu_normalization_data",
         # absl/strings dep
         "@icu//:common",
         # tf:framework tensorflow dep,
