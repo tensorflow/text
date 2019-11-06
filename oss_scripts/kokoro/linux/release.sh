@@ -7,12 +7,18 @@ PY_VERSION=${1}
 # cd into the release branch in kokoro
 cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 
+# Checkout the release branch if specified.
+git checkout "${RELEASE_BRANCH:-master}"
+
+# Breakout for alternative build script (used for debugging)
+if [[ ! -z "$ALT_BUILD_SCRIPT" ]]; then
+  $ALT_BUILD_SCRIPT $PY_VERSION
+  exit
+fi
+
 # create virtual env
 "python${PY_VERSION}" -m virtualenv env
 source env/bin/activate
-
-# Checkout the release branch if specified.
-git checkout "${RELEASE_BRANCH:-master}"
 
 # Run configure.
 ./oss_scripts/configure.sh

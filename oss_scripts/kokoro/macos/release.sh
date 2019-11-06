@@ -4,6 +4,15 @@ set -x  # print evaluated commands
 
 PY_VERSION=${1}
 
+# Checkout the release branch if specified.
+git checkout -f "${RELEASE_BRANCH:-master}"
+
+# Breakout for alternative build script (used for debugging)
+if [[ ! -z "$ALT_BUILD_SCRIPT" ]]; then
+  $ALT_BUILD_SCRIPT $PY_VERSION
+  exit
+fi
+
 # Install the given bazel version on macos
 function update_bazel_macos {
   BAZEL_VERSION=$1
@@ -30,9 +39,6 @@ cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 # create virtual env
 "python${PY_VERSION}" -m virtualenv env
 source env/bin/activate
-
-# Checkout the release branch if specified.
-git checkout -f "${RELEASE_BRANCH:-master}"
 
 # Run configure.
 export CC_OPT_FLAGS='-mavx'
