@@ -49,12 +49,17 @@ http_archive(
 
 http_archive(
     name = "com_google_re2",
-    sha256 = "d070e2ffc5476c496a6a872a6f246bfddce8e7797d6ba605a7c8d72866743bf9",
-    strip_prefix = "re2-506cfa4bffd060c06ec338ce50ea3468daa6c814",
+    sha256 = "7f33d878666aa1a1f034ec7b06cc192820117aecdf5ee0b5107cc93c935aa9d4",
+    strip_prefix = "re2-6921af4d12664c5a0e7317e0cfeb4ca7ba9d5bfa",
     urls = [
-        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/re2/archive/506cfa4bffd060c06ec338ce50ea3468daa6c814.tar.gz",
-        "https://github.com/google/re2/archive/506cfa4bffd060c06ec338ce50ea3468daa6c814.tar.gz",
+        "https://github.com/google/re2/archive/6921af4d12664c5a0e7317e0cfeb4ca7ba9d5bfa.zip",
     ],
+)
+
+http_archive(
+    name = "rules_cc",
+    strip_prefix = "rules_cc-master",
+    urls = ["https://github.com/bazelbuild/rules_cc/archive/master.zip"],
 )
 
 http_archive(
