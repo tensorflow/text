@@ -8,25 +8,8 @@ PY_VERSION=${1}
 cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 
 # create virtual env
-"pip${PY_VERSION}" install --user --upgrade pip
-"pip${PY_VERSION}" install --user --upgrade virtualenv
 "python${PY_VERSION}" -m virtualenv env
 source env/bin/activate
-
-# install deps
-pip install --upgrade attrs
-pip install keras_applications==1.0.8 --no-deps
-pip install keras_preprocessing==1.0.2 --no-deps
-pip install numpy==1.14.5
-pip install --upgrade "future>=0.17.1"
-pip install gast==0.2.2
-pip install h5py==2.8.0
-pip install grpcio
-pip install portpicker
-pip install scipy
-pip install scikit-learn
-
-# setup_pypi_credentials
 
 # Checkout the release branch if specified.
 git checkout "${RELEASE_BRANCH:-master}"
@@ -35,8 +18,27 @@ git checkout "${RELEASE_BRANCH:-master}"
 ./oss_scripts/configure.sh
 
 # Build the pip package
-bazel build \
-  --crosstool_top=@org_tensorflow//third_party/toolchains/preconfig/ubuntu16.04/gcc7_manylinux2010:toolchain \
-  oss_scripts/pip_package:build_pip_package
+bazel build oss_scripts/pip_package:build_pip_package
+./bazel-bin/oss_scripts/pip_package/build_pip_package ${KOKORO_ARTIFACTS_DIR}
 
-./bazel-bin/oss_scripts/pip_package/build_pip_package $HOME/wheels
+ls ${KOKORO_ARTIFACTS_DIR}
+deactivate
+
+cd ${KOKORO_ARTIFACTS_DIR}
+python3 -m pip install -U auditwheel==1.8.0
+python3 -m pip install -U wheel==0.31.1
+for f in *.whl; do auditwheel repair -w . --plat manylinux1_x86_64 $f; done
+
+# Release
+if [[ "$UPLOAD_TO_PYPI" == "upload" ]]; then
+  PYPI_PASSWD="$(cat "$KOKORO_KEYSTORE_DIR"/74641_tftext_pypi_automation_passwd)"
+  cat >~/.pypirc <<EOL
+[pypi]
+username = __token__
+password = ${PYPI_PASSWD}
+EOL
+
+  cd ${KOKORO_ARTIFACTS_DIR}
+  python3 -m pip install -U twine
+  twine upload tensorflow_text-*-manylinux1_x86_64.whl
+fi
