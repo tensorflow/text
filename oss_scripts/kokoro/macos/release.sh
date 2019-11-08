@@ -4,6 +4,9 @@ set -x  # print evaluated commands
 
 PY_VERSION=${1}
 
+# cd into the release branch in kokoro
+cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
+
 # Checkout the release branch if specified.
 git checkout -f "${RELEASE_BRANCH:-master}"
 
@@ -32,9 +35,6 @@ bazel version
 
 # Pick a more recent version of xcode
 sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
-
-# cd into the release branch in kokoro
-cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 
 # create virtual env
 "python${PY_VERSION}" -m virtualenv env

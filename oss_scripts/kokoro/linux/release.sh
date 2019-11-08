@@ -8,7 +8,7 @@ PY_VERSION=${1}
 cd "${KOKORO_ARTIFACTS_DIR}"/github/tensorflow_text/
 
 # Checkout the release branch if specified.
-git checkout "${RELEASE_BRANCH:-master}"
+git checkout -f "${RELEASE_BRANCH:-master}"
 
 # Breakout for alternative build script (used for debugging)
 if [[ ! -z "$ALT_BUILD_SCRIPT" ]]; then
