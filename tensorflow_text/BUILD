@@ -96,7 +96,6 @@ py_library(
         ":tokenization",
         ":unicode_script_tokenizer",
         ":wordpiece_tokenizer",
-        ":wordshape_ops",
         # python:array_ops tensorflow dep,
         # python:dtypes tensorflow dep,
         # python:math_ops tensorflow dep,
