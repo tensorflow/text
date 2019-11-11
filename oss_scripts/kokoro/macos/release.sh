@@ -40,6 +40,10 @@ sudo xcode-select --switch /Applications/Xcode_10.1.app/Contents/Developer
 "python${PY_VERSION}" -m virtualenv env
 source env/bin/activate
 
+# Update to macos extensions
+sed -i '' 's/".so"/".dylib"/' tensorflow_text/tftext.bzl
+perl -pi -e "s/(load_library.load_op_library.*)\\.so'/\$1.dylib'/" $(find tensorflow_text/python -type f)
+
 # Run configure.
 export CC_OPT_FLAGS='-mavx'
 ./oss_scripts/configure.sh
