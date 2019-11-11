@@ -28,11 +28,10 @@ from tensorflow_text.python.ops.normalize_ops import normalize_utf8
 from tensorflow_text.python.ops.tokenization import Tokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
-from tensorflow_text.python.ops.wordshape_ops import WordShape
 
 
 _DELIM_REGEX = [
-    WordShape.IS_WHITESPACE.value,
+    r"\s+",
     r"|".join([
         r"[!-/]",
         r"[:-@]",
@@ -54,7 +53,7 @@ _DELIM_REGEX = [
 
 _DELIM_REGEX_PATTERN = "|".join(_DELIM_REGEX)
 _KEEP_DELIM_NO_WHITESPACE = copy.deepcopy(_DELIM_REGEX)
-_KEEP_DELIM_NO_WHITESPACE.remove(WordShape.IS_WHITESPACE.value)
+_KEEP_DELIM_NO_WHITESPACE.remove(r"\s+")
 
 _KEEP_DELIM_NO_WHITESPACE_PATTERN = "|".join(_KEEP_DELIM_NO_WHITESPACE)
 
