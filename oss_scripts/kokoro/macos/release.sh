@@ -42,6 +42,7 @@ source env/bin/activate
 
 # Update to macos extensions
 sed -i '' 's/".so"/".dylib"/' tensorflow_text/tftext.bzl
+sed -i '' 's/*.so/*.dylib/' oss_scripts/pip_package/MANIFEST.in
 perl -pi -e "s/(load_library.load_op_library.*)\\.so'/\$1.dylib'/" $(find tensorflow_text/python -type f)
 
 # Run configure.
