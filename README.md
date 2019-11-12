@@ -1,5 +1,9 @@
 # TensorFlow Text - Text processing in Tensorflow
 
+IMPORTANT: When installing TF Text with `pip install`, please note the version
+of TensorFlow you are running, as you should specify the corresponding version
+of TF Text.
+
 [![GitHub
 Issues](https://img.shields.io/github/issues/tensorflow/text.svg)](https://github.com/tensorflow/text/issues)
 [![Contributions
@@ -272,6 +276,27 @@ print(bigrams.to_list())
 
 ### Install using PIP
 
+When installing TF Text with `pip install`, please note the version
+of TensorFlow you are running, as you should specify the corresponding version
+of TF Text. For example, if your using TF 2.0, install the 2.0 version of TF
+Text, and if your using TF 1.15, install the 1.15 version of TF Text.
+
 ```bash
-pip install -U tensorflow-text
+pip install -U tensorflow-text==<version>
 ```
+
+### Build from source steps:
+
+Note that TF Text needs to be built in the same environment as TensorFlow. Thus,
+if you manually build TF Text, it is highly recommended that you also build
+TensorFlow.
+
+1. [build and install TensorFlow](https://www.tensorflow.org/install/source).
+1. Clone the TF Text repo:
+   `git clone https://github.com/tensorflow/text.git`
+1. Configure your environment:
+   `./oss_scripts/configure.sh`
+1. Build the binary:
+   `bazel build oss_scripts/pip_package:build_pip_package`
+1. Create the pip package:
+   `./bazel-bin/oss_scripts/pip_package/build_pip_package <out_dir>`

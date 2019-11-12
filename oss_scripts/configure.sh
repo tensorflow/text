@@ -32,12 +32,7 @@ else
   pip install tensorflow==2.0.0
 fi
 
-osname="$(uname -s)"
-if [[ $osname == "Linux" ]]; then
-  write_to_bazelrc "build:manylinux2010 --crosstool_top=@org_tensorflow//third_party/toolchains/preconfig/ubuntu16.04/gcc7_manylinux2010-nvcc-cuda10.0:toolchain"
-  write_to_bazelrc "build --config=manylinux2010"
-  write_to_bazelrc "test --config=manylinux2010"
-fi
+write_to_bazelrc "build:manylinux2010 --crosstool_top=@org_tensorflow//third_party/toolchains/preconfig/ubuntu16.04/gcc7_manylinux2010-nvcc-cuda10.0:toolchain"
 write_to_bazelrc "build --spawn_strategy=standalone"
 write_to_bazelrc "build --strategy=Genrule=standalone"
 write_to_bazelrc "build -c opt"

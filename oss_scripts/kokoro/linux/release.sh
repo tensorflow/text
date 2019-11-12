@@ -24,7 +24,7 @@ source env/bin/activate
 ./oss_scripts/configure.sh
 
 # Build the pip package
-bazel build oss_scripts/pip_package:build_pip_package
+bazel build --config=manylinux2010 oss_scripts/pip_package:build_pip_package
 ./bazel-bin/oss_scripts/pip_package/build_pip_package ${KOKORO_ARTIFACTS_DIR}
 
 ls ${KOKORO_ARTIFACTS_DIR}
