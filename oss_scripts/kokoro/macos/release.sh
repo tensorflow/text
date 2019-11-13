@@ -65,7 +65,11 @@ username = __token__
 password = ${PYPI_PASSWD}
 EOL
 
+  # create virtual env
+  python3 -m virtualenv /tmp/env
+  source /tmp/env/bin/activate
+  pip install twine
+
   cd ${KOKORO_ARTIFACTS_DIR}
-  python3 -m pip install -U twine
   twine upload *.whl
 fi
