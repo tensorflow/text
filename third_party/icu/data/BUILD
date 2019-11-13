@@ -29,4 +29,5 @@ cc_library(
     name = "icu_normalization_data",
     srcs = ["normalization_data.c"],
     deps = ["@icu//:headers"],
+    alwayslink = 1,
 )
