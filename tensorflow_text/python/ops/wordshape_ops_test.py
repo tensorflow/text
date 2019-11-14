@@ -76,7 +76,7 @@ class Utf8CharsOpTest(test.TestCase):
                                      wordshape_ops.WordShape.IS_NUMERIC_VALUE)
     self.assertAllEqual(shapes, [True, True, True, False, True])
 
-  def testWhitespace(self):
+  def SKIP_testWhitespace(self):
     test_string = [u" ", u"\v", u"\r\n", u"\u3000".encode("utf-8"),
                    u" a", u"abc", u"a\nb", u"\u3000 \n".encode("utf-8")]
     shapes = wordshape_ops.wordshape(test_string,
@@ -116,26 +116,26 @@ class Utf8CharsOpTest(test.TestCase):
         test_string, wordshape_ops.WordShape.ENDS_WITH_PUNCT_OR_SYMBOL)
     self.assertAllEqual(shapes, [False, False, True, True])
 
-  def testSentenceTerminal(self):
+  def SKIP_testSentenceTerminal(self):
     test_string = [u"abc", u".b", u"b.", u"b,", u"b!!!", u"abc?!"]
     shapes = wordshape_ops.wordshape(
         test_string, wordshape_ops.WordShape.ENDS_WITH_SENTENCE_TERMINAL)
     self.assertAllEqual(shapes, [False, False, True, False, True, True])
 
-  def testMultipleSentenceTerminal(self):
+  def SKIP_testMultipleSentenceTerminal(self):
     test_string = [u"abc", u".b", u"b.", u"b,", u"b!!!", u"abc?!"]
     shapes = wordshape_ops.wordshape(
         test_string,
         wordshape_ops.WordShape.ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL)
     self.assertAllEqual(shapes, [False, False, False, False, True, True])
 
-  def testTerminalPunct(self):
+  def SKIP_testTerminalPunct(self):
     test_string = [u"abc", u".b", u"b.", u"b,", u"b!!!", u"abc?!"]
     shapes = wordshape_ops.wordshape(
         test_string, wordshape_ops.WordShape.ENDS_WITH_TERMINAL_PUNCT)
     self.assertAllEqual(shapes, [False, False, True, True, True, True])
 
-  def testMultipleTerminalPunct(self):
+  def SKIP_testMultipleTerminalPunct(self):
     test_string = [u"abc", u".b", u"b.", u"b,,", u"b!!!", u"abc?!"]
     shapes = wordshape_ops.wordshape(
         test_string, wordshape_ops.WordShape.ENDS_WITH_MULTIPLE_TERMINAL_PUNCT)
@@ -204,7 +204,7 @@ class Utf8CharsOpTest(test.TestCase):
                                      wordshape_ops.WordShape.HAS_TITLE_CASE)
     self.assertAllEqual(shapes, [False, False, False, True, False, True])
 
-  def testNoQuotes(self):
+  def SKIP_testNoQuotes(self):
     test_string = [u"abc", u"\"ABc", u"ABC'", u"Abc\u201c".encode("utf-8"),
                    u"aBcd"]
     shapes = wordshape_ops.wordshape(test_string,
@@ -225,7 +225,7 @@ class Utf8CharsOpTest(test.TestCase):
         test_string, wordshape_ops.WordShape.ENDS_WITH_CLOSE_QUOTE)
     self.assertAllEqual(shapes, [True, True, True, False, False, False])
 
-  def testQuote(self):
+  def SKIP_testQuote(self):
     test_string = [u"''", u"ABc\"", u"\uff07".encode("utf-8"),
                    u"\u2018".encode("utf-8"), u"aBcd", u"``",
                    u"\u300d".encode("utf-8")]

@@ -109,16 +109,16 @@ class WordShape(enum.Enum):
   HAS_SOME_DIGITS = r".*\P{Nd}\p{Nd}.*|.*\p{Nd}\P{Nd}.*"
   HAS_ONLY_DIGITS = r"\p{Nd}+"
   IS_NUMERIC_VALUE = r"([+-]?((\p{Nd}+\.?\p{Nd}*)|(\.\p{Nd}+)))([eE]-?\p{Nd}+)?"
-  IS_WHITESPACE = r"\p{Whitespace}+"
+  # IS_WHITESPACE = r"\p{Whitespace}+"
   HAS_NO_PUNCT_OR_SYMBOL = r"[^\p{P}\p{S}]*"
   HAS_SOME_PUNCT_OR_SYMBOL = r".*[^\p{P}\p{S}][\p{P}\p{S}].*|.*[\p{P}\p{S}][^\p{P}\p{S}].*"  # pylint: disable=line-too-long
   IS_PUNCT_OR_SYMBOL = r"[\p{P}|\p{S}]+"
   BEGINS_WITH_PUNCT_OR_SYMBOL = r"[\p{P}\p{S}].*"
   ENDS_WITH_PUNCT_OR_SYMBOL = r".*[\p{P}\p{S}]"
-  ENDS_WITH_SENTENCE_TERMINAL = r".*[\p{Sentence_Terminal}]"
-  ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL = r".*[\p{Sentence_Terminal}]{2}"
-  ENDS_WITH_TERMINAL_PUNCT = r".*[\p{Terminal_Punctuation}]"
-  ENDS_WITH_MULTIPLE_TERMINAL_PUNCT = r".*[\p{Terminal_Punctuation}]{2}"
+  # ENDS_WITH_SENTENCE_TERMINAL = r".*[\p{Sentence_Terminal}]"
+  # ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL = r".*[\p{Sentence_Terminal}]{2}"
+  # ENDS_WITH_TERMINAL_PUNCT = r".*[\p{Terminal_Punctuation}]"
+  # ENDS_WITH_MULTIPLE_TERMINAL_PUNCT = r".*[\p{Terminal_Punctuation}]{2}"
   ENDS_WITH_ELLIPSIS = r".*(\.{3}|[" + u"\u2026" + u"\u22ef" + "])"
   IS_EMOTICON = _emoticon_regex()
   ENDS_WITH_EMOTICON = r".*(" + _emoticon_regex() + r")$"
@@ -130,10 +130,10 @@ class WordShape(enum.Enum):
   IS_MIXED_CASE_LETTERS = r"\p{L}*\p{Lu}\p{L}*\p{Ll}\p{L}*|\p{L}*\p{Ll}\p{L}*\p{Lu}\p{L}*"  # pylint: disable=line-too-long
   # Is a single capital letter alone a title case?
   HAS_TITLE_CASE = r"\P{L}*[\p{Lu}\p{Lt}]\p{Ll}+.*"
-  HAS_NO_QUOTES = "[^\"'`\\p{Quotation_Mark}]*"
+  # HAS_NO_QUOTES = "[^\"'`\\p{Quotation_Mark}]*"
   BEGINS_WITH_OPEN_QUOTE = _begins_with_open_quote_regex()
   ENDS_WITH_CLOSE_QUOTE = _ends_with_close_quote_regex()
-  HAS_QUOTE = r"^[`\p{Quotation_Mark}].*|.*[`\p{Quotation_Mark}]$"
+  # HAS_QUOTE = r"^[`\p{Quotation_Mark}].*|.*[`\p{Quotation_Mark}]$"
   HAS_MATH_SYMBOL = r".*\p{Sm}.*"
   HAS_CURRENCY_SYMBOL = r".*\p{Sc}.*"
   HAS_NON_LETTER = r".*\P{L}.*"

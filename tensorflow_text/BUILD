@@ -110,7 +110,6 @@ py_test(
     size = "small",
     timeout = "moderate",
     srcs = ["python/ops/bert_tokenizer_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":bert_tokenizer",
@@ -160,7 +159,6 @@ py_test(
     name = "create_feature_bitmask_op_test",
     size = "small",
     srcs = ["python/ops/create_feature_bitmask_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":create_feature_bitmask_op",
@@ -191,7 +189,6 @@ py_test(
     name = "greedy_constrained_sequence_op_test",
     size = "small",
     srcs = ["python/ops/greedy_constrained_sequence_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":greedy_constrained_sequence_op",
@@ -222,7 +219,6 @@ py_test(
     name = "ngrams_op_test",
     size = "small",
     srcs = ["python/ops/ngrams_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":ngrams_op",
@@ -253,7 +249,6 @@ py_test(
     name = "normalize_ops_test",
     size = "small",
     srcs = ["python/ops/normalize_ops_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":normalize_ops",
@@ -282,7 +277,6 @@ py_test(
     name = "pad_along_dimension_op_test",
     size = "medium",
     srcs = ["python/ops/pad_along_dimension_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":pad_along_dimension_op",
@@ -320,7 +314,6 @@ py_library(
 py_test(
     name = "gather_with_default_op_test",
     srcs = ["python/ops/gather_with_default_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":pointer_ops",
@@ -337,7 +330,6 @@ py_test(
 py_test(
     name = "span_alignment_op_test",
     srcs = ["python/ops/span_alignment_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":pointer_ops",
@@ -352,7 +344,6 @@ py_test(
 py_test(
     name = "span_overlaps_op_test",
     srcs = ["python/ops/span_overlaps_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":pointer_ops",
@@ -396,7 +387,6 @@ py_test(
     name = "regex_split_ops_test",
     size = "small",
     srcs = ["python/ops/regex_split_ops_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":regex_split_ops",
@@ -424,7 +414,6 @@ py_test(
     name = "text_similarity_metric_ops_test",
     size = "small",
     srcs = ["python/metrics/text_similarity_metric_ops_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":ragged_test_util",
@@ -461,7 +450,6 @@ py_test(
     name = "sentence_breaking_ops_test",
     size = "small",
     srcs = ["python/ops/sentence_breaking_ops_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":ragged_test_util",
@@ -510,14 +498,11 @@ py_test(
     data = [
         ":python/ops/test_data/test_oss_model.model",
     ],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":ragged_test_util",
         ":sentencepiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
-        "@com_google_sentencepiece//src:sentencepiece_model_py_pb2",
-        "@com_google_sentencepiece//python:sentencepiece_processor",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
@@ -540,7 +525,6 @@ py_test(
     name = "sliding_window_op_test",
     size = "small",
     srcs = ["python/ops/sliding_window_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":ragged_test_util",
@@ -567,7 +551,6 @@ py_test(
     name = "coerce_to_valid_utf8_op_test",
     size = "small",
     srcs = ["python/ops/coerce_to_valid_utf8_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":string_ops",
@@ -594,7 +577,6 @@ py_test(
     name = "todense_test",
     size = "large",
     srcs = ["python/keras/layers/todense_test.py"],
-    python_version = "PY2",
     shard_count = 2,
     srcs_version = "PY2AND3",
     deps = [
@@ -639,7 +621,6 @@ py_test(
     name = "unicode_script_tokenizer_test",
     size = "large",
     srcs = ["python/ops/unicode_script_tokenizer_test.py"],
-    python_version = "PY2",
     shard_count = 5,
     srcs_version = "PY2AND3",
     deps = [
@@ -670,7 +651,6 @@ py_test(
     name = "viterbi_constrained_sequence_op_test",
     size = "small",
     srcs = ["python/ops/viterbi_constrained_sequence_op_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":ragged_test_util",
@@ -695,7 +675,6 @@ py_test(
     name = "viterbi_decode_test",
     size = "small",
     srcs = ["python/numpy/viterbi_decode_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":viterbi_decode",
@@ -728,7 +707,6 @@ py_test(
     name = "whitespace_tokenizer_test",
     size = "large",
     srcs = ["python/ops/whitespace_tokenizer_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":ragged_test_util",
@@ -763,7 +741,6 @@ py_test(
     name = "wordpiece_tokenizer_test",
     size = "small",
     srcs = ["python/ops/wordpiece_tokenizer_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":ragged_test_util",
@@ -794,7 +771,6 @@ py_test(
     name = "wordshape_ops_test",
     size = "small",
     srcs = ["python/ops/wordshape_ops_test.py"],
-    python_version = "PY2",
     srcs_version = "PY2AND3",
     deps = [
         ":wordshape_ops",
