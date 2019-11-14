@@ -294,9 +294,5 @@ TensorFlow.
 1. [build and install TensorFlow](https://www.tensorflow.org/install/source).
 1. Clone the TF Text repo:
    `git clone https://github.com/tensorflow/text.git`
-1. Configure your environment:
-   `./oss_scripts/configure.sh`
-1. Build the binary:
-   `bazel build oss_scripts/pip_package:build_pip_package`
-1. Create the pip package:
-   `./bazel-bin/oss_scripts/pip_package/build_pip_package <out_dir>`
+1. Run the build script to create a pip package:
+   `./oss_scripts/run_build.sh`
