@@ -211,6 +211,13 @@ class Utf8CharsOpTest(test.TestCase):
                                      wordshape_ops.WordShape.HAS_NO_QUOTES)
     self.assertAllEqual(shapes, [True, False, False, False, True])
 
+  def testTestNoQuotes(self):
+    test_string = [u"abc", u"\"ABc", u"ABC'", u"Abc\u201c".encode("utf-8"),
+                   u"aBcd"]
+    shapes = wordshape_ops.wordshape(test_string,
+                                     wordshape_ops.WordShape.TEST_HAS_NO_QUOTES)
+    self.assertAllEqual(shapes, [True, False, False, False, True])
+
   def testOpenQuote(self):
     test_string = [u"''", u"ABc\"", u"\uff07".encode("utf-8"),
                    u"\u2018".encode("utf-8"), u"aBcd", u"``"]
