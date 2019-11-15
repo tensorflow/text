@@ -131,6 +131,7 @@ class WordShape(enum.Enum):
   # Is a single capital letter alone a title case?
   HAS_TITLE_CASE = r"\P{L}*[\p{Lu}\p{Lt}]\p{Ll}+.*"
   # HAS_NO_QUOTES = "[^\"'`\\p{Quotation_Mark}]*"
+  TEST_HAS_NO_QUOTES = "[^\"'`\\p{Quotation_Mark}]*"
   BEGINS_WITH_OPEN_QUOTE = _begins_with_open_quote_regex()
   ENDS_WITH_CLOSE_QUOTE = _ends_with_close_quote_regex()
   # HAS_QUOTE = r"^[`\p{Quotation_Mark}].*|.*[`\p{Quotation_Mark}]$"
