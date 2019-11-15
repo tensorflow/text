@@ -81,6 +81,7 @@ class BasicTokenizer(TokenizerWithOffsets):
                keep_whitespace=False,
                normalization_form=None):
     self._lower_case = lower_case
+    self._lower_case = lower_case
     if not keep_whitespace:
       self._keep_delim_regex_pattern = _KEEP_DELIM_NO_WHITESPACE_PATTERN
     else:
