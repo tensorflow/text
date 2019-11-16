@@ -169,10 +169,7 @@ _wordshape_doc = {
           fairly broad set of floating point and integer representations (but
           not Nan or Inf).
           """,
-    WordShape.IS_WHITESPACE:
-        """
-          The input consists entirely of whitespace.
-          """,
+    # IS_WHITESPACE docs
     WordShape.HAS_NO_PUNCT_OR_SYMBOL:
         """
           The input contains no unicode punctuation or symbol characters.
@@ -194,22 +191,10 @@ _wordshape_doc = {
         """
           The input ends with a punctuation or symbol character.
           """,
-    WordShape.ENDS_WITH_SENTENCE_TERMINAL:
-        """
-          The input ends with a sentence-terminal character.
-          """,
-    WordShape.ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL:
-        """
-          The input ends with multiple sentence-terminal characters.
-          """,
-    WordShape.ENDS_WITH_TERMINAL_PUNCT:
-        """
-          The input ends with a terminal-punctuation character.
-          """,
-    WordShape.ENDS_WITH_MULTIPLE_TERMINAL_PUNCT:
-        """
-          The input ends with multiple terminal-punctuation characters.
-          """,
+    # ENDS_WITH_SENTENCE_TERMINAL docs
+    # ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL docs
+    # ENDS_WITH_TERMINAL_PUNCT docs
+    # ENDS_WITH_MULTIPLE_TERMINAL_PUNCT docs
     WordShape.ENDS_WITH_ELLIPSIS:
         """
           The input ends with an ellipsis (i.e. with three or more
@@ -256,10 +241,7 @@ _wordshape_doc = {
           The input has title case (i.e. the first character is upper or title
           case, and the remaining characters are lowercase).
           """,
-    WordShape.HAS_NO_QUOTES:
-        """
-          The input string contains no quote characters.
-          """,
+    # HAS_NO_QUOTES docs
     WordShape.BEGINS_WITH_OPEN_QUOTE:
         r"""
           The input begins with an open quote.
@@ -320,10 +302,7 @@ _wordshape_doc = {
 
           Note: U+B4 (ACUTE ACCENT) is not included.
           """,
-    WordShape.HAS_QUOTE:
-        """
-          The input starts or ends with a unicode quotation mark.
-          """,
+    # HAS_QUOTE docs
     WordShape.HAS_MATH_SYMBOL:
         """
           The input contains a mathematical symbol.
