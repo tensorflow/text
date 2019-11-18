@@ -16,7 +16,6 @@
 # coding=utf-8
 """Tests for SentencePieceProcessor Tensorflow op."""
 
-import os
 import sys
 from absl.testing import parameterized
 from tensorflow.python.framework import constant_op
@@ -25,13 +24,9 @@ from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import gfile
+from tensorflow.python.platform import test
 from tensorflow_text.python.ops import ragged_test_util
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
-
-from google3.pyglib import flags
-from google3.testing.pybase import googletest
-
-FLAGS = flags.FLAGS
 
 
 def _utf8(tokens):
@@ -57,10 +52,8 @@ class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
 
   def setUp(self):
     super(SentencepieceTokenizerOpTest, self).setUp()
-    sentencepiece_model_file = os.path.join(
-        FLAGS.test_srcdir,
-        'google3/third_party/tensorflow_text/python/ops/test_data/test_oss_model.model'
-    )
+    sentencepiece_model_file = (
+        'third_party/tensorflow_text/python/ops/test_data/test_oss_model.model')
     self.model = gfile.GFile(sentencepiece_model_file, 'r').read()
 
   def testGetVocabSize(self):
@@ -460,4 +453,4 @@ class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
 
 
 if __name__ == '▁_main__':
-  googletest.main()
+  test.main()
