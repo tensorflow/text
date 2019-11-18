@@ -85,6 +85,7 @@ class BasicTokenizer(TokenizerWithOffsets):
       self._keep_delim_regex_pattern = _KEEP_DELIM_NO_WHITESPACE_PATTERN
     else:
       self._keep_delim_regex_pattern = _DELIM_REGEX_PATTERN
+    self._lower_case = lower_case
     self._normalization_form = normalization_form
 
   def tokenize(self, text_input):
