@@ -23,10 +23,11 @@ namespace tensorflow {
 namespace text {
 namespace {
 
-std::vector<absl::string_view> RunTest(const string& input, const string& regex,
-                                       const string& delim_regex) {
-  RE2 re2(regex);
-  RE2 include_delim_re2(delim_regex);
+std::vector<absl::string_view> RunTest(const tstring& input,
+                                       const tstring& regex,
+                                       const tstring& delim_regex) {
+  RE2 re2((absl::string_view(regex)));
+  RE2 include_delim_re2((absl::string_view(delim_regex)));
 
   std::vector<int64> begin_offsets;
   std::vector<int64> end_offsets;
@@ -38,9 +39,9 @@ std::vector<absl::string_view> RunTest(const string& input, const string& regex,
 }
 
 TEST(RegexSplitTest, JapaneseAndWhitespace) {
-  string regex = "(\\p{Hiragana}+|\\p{Katakana}+|\\s)";
-  string delim_regex = "(\\p{Hiragana}+|\\p{Katakana}+)";
-  string input = "He said フランスです";
+  tstring regex = "(\\p{Hiragana}+|\\p{Katakana}+|\\s)";
+  tstring delim_regex = "(\\p{Hiragana}+|\\p{Katakana}+)";
+  tstring input = "He said フランスです";
   auto extracted_tokens = RunTest(input, regex, delim_regex);
   EXPECT_THAT(extracted_tokens, testing::ElementsAreArray({
                                     "He",
@@ -51,8 +52,8 @@ TEST(RegexSplitTest, JapaneseAndWhitespace) {
 }
 
 TEST(RegexSplitTest, Japanese) {
-  string regex = "(\\p{Hiragana}+|\\p{Katakana}+)";
-  string input = "He said フランスです";
+  tstring regex = "(\\p{Hiragana}+|\\p{Katakana}+)";
+  tstring input = "He said フランスです";
   auto extracted_tokens = RunTest(input, regex, regex);
   EXPECT_THAT(extracted_tokens, testing::ElementsAreArray({
                                     "He said ",
@@ -62,8 +63,8 @@ TEST(RegexSplitTest, Japanese) {
 }
 
 TEST(RegexSplitTest, ChineseHan) {
-  string regex = "(\\p{Han})";
-  string input = "敵人變盟友背後盤算";
+  tstring regex = "(\\p{Han})";
+  tstring input = "敵人變盟友背後盤算";
   auto extracted_tokens = RunTest(input, regex, regex);
   EXPECT_THAT(extracted_tokens,
               testing::ElementsAreArray(

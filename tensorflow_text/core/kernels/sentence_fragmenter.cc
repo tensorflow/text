@@ -45,7 +45,7 @@ bool IsPeriodSeparatedAcronym(const Token &token) {
 // token sequence.
 Status SpaceAllowedBeforeToken(const UnicodeUtil *util, const Token &token,
                                bool *result) {
-  const string &word = token.word();
+  const tstring &word = token.word();
   bool is_ellipsis = false;
   TF_RETURN_IF_ERROR(util->IsEllipsis(word, &is_ellipsis));
 
@@ -80,7 +80,7 @@ class SentenceFragmenter::FragmentBoundaryMatch {
   Status Advance(const UnicodeUtil *util, const Document &document, int index,
                  bool *result) {
     const Token &token = document.tokens()[index];
-    const string &word = token.word();
+    const tstring &word = token.word();
     bool no_transition = false;
 
     bool is_terminal_punc = false;

@@ -33,13 +33,13 @@ class CaseFoldUTF8Op : public tensorflow::OpKernel {
   void Compute(tensorflow::OpKernelContext* context) override {
     const tensorflow::Tensor* input_tensor;
     OP_REQUIRES_OK(context, context->input("input", &input_tensor));
-    const auto& input_vec = input_tensor->flat<string>();
+    const auto& input_vec = input_tensor->flat<tstring>();
 
     // TODO(gregbillock): support forwarding
     tensorflow::Tensor* output_tensor;
     OP_REQUIRES_OK(context, context->allocate_output(0, input_tensor->shape(),
                                                      &output_tensor));
-    auto output_vec = output_tensor->flat<string>();
+    auto output_vec = output_tensor->flat<tstring>();
 
     icu::ErrorCode icu_error;
     const icu::Normalizer2* nfkc_cf = icu::Normalizer2::getNFKCCasefoldInstance(
@@ -51,7 +51,9 @@ class CaseFoldUTF8Op : public tensorflow::OpKernel {
     for (int64 i = 0; i < input_vec.size(); ++i) {
       string output_text;
       icu::StringByteSink<string> byte_sink(&output_text);
-      nfkc_cf->normalizeUTF8(0, input_vec(i), byte_sink, nullptr, icu_error);
+      const auto& input = input_vec(i);
+      nfkc_cf->normalizeUTF8(0, icu::StringPiece(input.data(), input.size()),
+                             byte_sink, nullptr, icu_error);
       OP_REQUIRES(context, !U_FAILURE(icu_error), errors::Internal(
           "Could not normalize input string: " + input_vec(i)));
       output_vec(i) = output_text;
@@ -83,12 +85,12 @@ class NormalizeUTF8Op : public tensorflow::OpKernel {
   void Compute(tensorflow::OpKernelContext* context) override {
     const tensorflow::Tensor* input_tensor;
     OP_REQUIRES_OK(context, context->input("input", &input_tensor));
-    const auto& input_vec = input_tensor->flat<string>();
+    const auto& input_vec = input_tensor->flat<tstring>();
 
     tensorflow::Tensor* output_tensor;
     OP_REQUIRES_OK(context, context->allocate_output(0, input_tensor->shape(),
                                                      &output_tensor));
-    auto output_vec = output_tensor->flat<string>();
+    auto output_vec = output_tensor->flat<tstring>();
 
     icu::ErrorCode icu_error;
     const icu::Normalizer2* normalizer = nullptr;
@@ -122,10 +124,14 @@ class NormalizeUTF8Op : public tensorflow::OpKernel {
     for (int64 i = 0; i < input_vec.size(); ++i) {
       string output_text;
       icu::StringByteSink<string> byte_sink(&output_text);
-      normalizer->normalizeUTF8(0, input_vec(i), byte_sink, nullptr, icu_error);
-      OP_REQUIRES(context, !U_FAILURE(icu_error), errors::Internal(
-          absl::StrCat(icu_error.errorName(),
-                       ": Could not normalize input string: ", input_vec(i))));
+      const auto& input = input_vec(i);
+      normalizer->normalizeUTF8(0, icu::StringPiece(input.data(), input.size()),
+                                byte_sink, nullptr, icu_error);
+      OP_REQUIRES(
+          context, !U_FAILURE(icu_error),
+          errors::Internal(absl::StrCat(icu_error.errorName(),
+                                        ": Could not normalize input string: ",
+                                        absl::string_view(input_vec(i)))));
       output_vec(i) = output_text;
     }
   }

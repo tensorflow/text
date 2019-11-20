@@ -75,7 +75,7 @@ template <typename T>
 T GetPieceOrId(const sentencepiece::SentencePieceText::SentencePiece& sp);
 
 template <>
-string GetPieceOrId<string>(
+tensorflow::tstring GetPieceOrId<tensorflow::tstring>(
     const sentencepiece::SentencePieceText::SentencePiece& sp) {
   return sp.piece();
 }
@@ -249,7 +249,8 @@ class SentencepieceTokenizeOp : public OpKernel {
     core::ScopedUnref unref_me(sp);
 
     const Tensor& input_values_tensor = ctx->input(1);
-    const auto input_values_flat = input_values_tensor.flat<string>();
+    const auto input_values_flat =
+        input_values_tensor.flat<tensorflow::tstring>();
     const int64 num_of_input_values = input_values_flat.size();
 
     const Tensor* nbest_size_tensor = nullptr;
@@ -259,7 +260,9 @@ class SentencepieceTokenizeOp : public OpKernel {
 
     OP_REQUIRES_OK(ctx, HandleExtraOptions(ctx, sp));
 
-    std::vector<std::vector<T>> tokens(num_of_input_values);
+    std::vector<std::vector<typename std::conditional<
+        std::is_same<T, tstring>::value, std::string, T>::type>>
+        tokens(num_of_input_values);
     const auto& worker_threads =
         *(ctx->device()->tensorflow_cpu_worker_threads());
     ::tensorflow::Shard(
@@ -323,9 +326,9 @@ REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                         SentencepieceTokenizeOp<int32, int32>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<string>("out_type")
+                            .TypeConstraint<tensorflow::tstring>("out_type")
                             .TypeConstraint<int32>("Tsplits"),
-                        SentencepieceTokenizeOp<string, int32>);
+                        SentencepieceTokenizeOp<tensorflow::tstring, int32>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                             .Device(DEVICE_CPU)
                             .TypeConstraint<int32>("out_type")
@@ -333,9 +336,9 @@ REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                         SentencepieceTokenizeOp<int32, int64>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<string>("out_type")
+                            .TypeConstraint<tensorflow::tstring>("out_type")
                             .TypeConstraint<int64>("Tsplits"),
-                        SentencepieceTokenizeOp<string, int64>);
+                        SentencepieceTokenizeOp<tensorflow::tstring, int64>);
 
 template <typename T, typename Tsplits>
 class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
@@ -353,7 +356,8 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
     core::ScopedUnref unref_me(sp);
 
     const Tensor& input_values_tensor = ctx->input(1);
-    const auto input_values_flat = input_values_tensor.flat<string>();
+    const auto input_values_flat =
+        input_values_tensor.flat<tensorflow::tstring>();
     const int64 num_of_input_values = input_values_flat.size();
 
     const Tensor* nbest_size_tensor = nullptr;
@@ -436,21 +440,23 @@ REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeWithOffsetsOp")
                             .TypeConstraint<int32>("out_type")
                             .TypeConstraint<int32>("Tsplits"),
                         SentencepieceTokenizeWithOffsetsOp<int32, int32>);
-REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeWithOffsetsOp")
-                            .Device(DEVICE_CPU)
-                            .TypeConstraint<string>("out_type")
-                            .TypeConstraint<int32>("Tsplits"),
-                        SentencepieceTokenizeWithOffsetsOp<string, int32>);
+REGISTER_KERNEL_BUILDER(
+    Name("SentencepieceTokenizeWithOffsetsOp")
+        .Device(DEVICE_CPU)
+        .TypeConstraint<tensorflow::tstring>("out_type")
+        .TypeConstraint<int32>("Tsplits"),
+    SentencepieceTokenizeWithOffsetsOp<tensorflow::tstring, int32>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeWithOffsetsOp")
                             .Device(DEVICE_CPU)
                             .TypeConstraint<int32>("out_type")
                             .TypeConstraint<int64>("Tsplits"),
                         SentencepieceTokenizeWithOffsetsOp<int32, int64>);
-REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeWithOffsetsOp")
-                            .Device(DEVICE_CPU)
-                            .TypeConstraint<string>("out_type")
-                            .TypeConstraint<int64>("Tsplits"),
-                        SentencepieceTokenizeWithOffsetsOp<string, int64>);
+REGISTER_KERNEL_BUILDER(
+    Name("SentencepieceTokenizeWithOffsetsOp")
+        .Device(DEVICE_CPU)
+        .TypeConstraint<tensorflow::tstring>("out_type")
+        .TypeConstraint<int64>("Tsplits"),
+    SentencepieceTokenizeWithOffsetsOp<tensorflow::tstring, int64>);
 
 template <typename T, typename Tsplits>
 class SentencepieceDetokenizeOp : public OpKernel {
@@ -478,7 +484,7 @@ class SentencepieceDetokenizeOp : public OpKernel {
     Tensor* output_tensor;
     OP_REQUIRES_OK(ctx,
                    ctx->allocate_output(0, {num_of_sentences}, &output_tensor));
-    auto output_flat = output_tensor->flat<string>();
+    auto output_flat = output_tensor->flat<tensorflow::tstring>();
 
     const auto& worker_threads =
         *(ctx->device()->tensorflow_cpu_worker_threads());
@@ -490,11 +496,16 @@ class SentencepieceDetokenizeOp : public OpKernel {
                          &output_flat](int64 start, int64 limit) {
                           absl::ReaderMutexLock lock(&sp->mu);
                           for (int i = start; i < limit; ++i) {
-                            const std::vector<T> pieces(
-                                &input_values_flat(input_splits_flat(i)),
-                                &input_values_flat(input_splits_flat(i + 1)));
+                            const std::vector<typename std::conditional<
+                                std::is_same<T, tstring>::value, std::string,
+                                T>::type>
+                                pieces(&input_values_flat(input_splits_flat(i)),
+                                       &input_values_flat(
+                                           input_splits_flat(i + 1)));
+                            std::string output_flat_str;
                             OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Decode(
-                                                    pieces, &output_flat(i))));
+                                                    pieces, &output_flat_str)));
+                            output_flat(i) = output_flat_str;
                           }
                         });
   }
@@ -507,9 +518,9 @@ REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                         SentencepieceDetokenizeOp<int32, int32>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<string>("T")
+                            .TypeConstraint<tensorflow::tstring>("T")
                             .TypeConstraint<int32>("Tsplits"),
-                        SentencepieceDetokenizeOp<string, int32>);
+                        SentencepieceDetokenizeOp<tensorflow::tstring, int32>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                             .Device(DEVICE_CPU)
                             .TypeConstraint<int32>("T")
@@ -517,9 +528,9 @@ REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                         SentencepieceDetokenizeOp<int32, int64>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<string>("T")
+                            .TypeConstraint<tensorflow::tstring>("T")
                             .TypeConstraint<int64>("Tsplits"),
-                        SentencepieceDetokenizeOp<string, int64>);
+                        SentencepieceDetokenizeOp<tensorflow::tstring, int64>);
 
 class SentencepieceVocabSizeOp : public OpKernel {
  public:
@@ -563,7 +574,7 @@ class SentencepieceIdToStringOp : public OpKernel {
     Tensor* output_tensor;
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(0, input_tensor.shape(), &output_tensor));
-    auto output_tensor_flat = output_tensor->flat<string>();
+    auto output_tensor_flat = output_tensor->flat<tensorflow::tstring>();
 
     absl::ReaderMutexLock lock(&sp->mu);
     for (int i = 0; i < input_tensor_flat.size(); ++i) {

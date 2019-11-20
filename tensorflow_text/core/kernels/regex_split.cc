@@ -19,7 +19,7 @@
 namespace tensorflow {
 namespace text {
 
-void RegexSplit(const string& input, const RE2& re2, bool include_delimiter,
+void RegexSplit(const tstring& input, const RE2& re2, bool include_delimiter,
                 const RE2& include_delim_regex,
                 std::vector<absl::string_view>* tokens,
                 std::vector<int64>* begin_offsets,
