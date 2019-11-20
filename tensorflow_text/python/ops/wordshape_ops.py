@@ -109,7 +109,7 @@ class WordShape(enum.Enum):
   HAS_SOME_DIGITS = r".*\P{Nd}\p{Nd}.*|.*\p{Nd}\P{Nd}.*"
   HAS_ONLY_DIGITS = r"\p{Nd}+"
   IS_NUMERIC_VALUE = r"([+-]?((\p{Nd}+\.?\p{Nd}*)|(\.\p{Nd}+)))([eE]-?\p{Nd}+)?"
-  # IS_WHITESPACE = r"\p{Whitespace}+"
+  IS_WHITESPACE = r"\p{Whitespace}+"
   HAS_NO_PUNCT_OR_SYMBOL = r"[^\p{P}\p{S}]*"
   HAS_SOME_PUNCT_OR_SYMBOL = r".*[^\p{P}\p{S}][\p{P}\p{S}].*|.*[\p{P}\p{S}][^\p{P}\p{S}].*"  # pylint: disable=line-too-long
   IS_PUNCT_OR_SYMBOL = r"[\p{P}|\p{S}]+"
@@ -169,7 +169,10 @@ _wordshape_doc = {
           fairly broad set of floating point and integer representations (but
           not Nan or Inf).
           """,
-    # IS_WHITESPACE docs
+    WordShape.IS_WHITESPACE:
+        """
+          The input consists entirely of whitespace.
+          """,
     WordShape.HAS_NO_PUNCT_OR_SYMBOL:
         """
           The input contains no unicode punctuation or symbol characters.
