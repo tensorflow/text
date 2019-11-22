@@ -134,7 +134,8 @@ tf_kernel_library(
     deps = OSS_DEPS + [
         "//third_party/icu/data:icu_normalization_data",
         # absl/strings dep
-        "@icu//:common",
+        "@icu//:nfkc",
+        "@icu//:nfkc_cf",
         # tf:framework tensorflow dep,
     ],
 )
@@ -144,7 +145,6 @@ tf_kernel_library(
     srcs = ["rouge_l_kernel.cc"],
     deps = OSS_DEPS + [
         # absl/strings dep
-        "@icu//:common",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
     ],
@@ -220,7 +220,6 @@ tf_kernel_library(
         "@com_google_absl//absl/meta:type_traits",
         # absl/strings dep
         # absl/types:span dep
-        "@icu//:common",
         "@com_google_sentencepiece//src:sentencepiece_cc_proto",
         "@com_google_sentencepiece//src:sentencepiece_processor",
         # tf:framework tensorflow dep,

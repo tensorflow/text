@@ -32,6 +32,16 @@ cc_library(
     ],
 )
 
+alias(
+    name = "nfkc",
+    actual = ":common",
+)
+
+alias(
+    name = "nfkc_cf",
+    actual = ":common",
+)
+
 cc_library(
     name = "icuuc",
     srcs = glob(
