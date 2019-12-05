@@ -26,14 +26,14 @@ from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
 from tensorflow_text.python.ops.tokenization import Detokenizer
-from tensorflow_text.python.ops.tokenization import Tokenizer
+from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_sentencepiece_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_sentencepiece_tokenizer.so'))  # pylint: disable=g-bad-import-order
 
 
-class SentencepieceTokenizer(Tokenizer, Detokenizer):
+class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
   """Tokenizes a tensor of UTF-8 strings."""
 
   def __init__(self,
