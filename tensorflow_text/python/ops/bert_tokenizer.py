@@ -21,11 +21,11 @@ from __future__ import print_function
 import copy
 
 from tensorflow.python.framework import dtypes
+from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import string_ops
 from tensorflow_text.python.ops import regex_split_ops
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
-from tensorflow_text.python.ops.tokenization import Tokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
 
@@ -117,7 +117,7 @@ class BasicTokenizer(TokenizerWithOffsets):
         "BertBasicTokenizer")
 
 
-class BertTokenizer(Tokenizer):
+class BertTokenizer(TokenizerWithOffsets):
   """Tokenizer used for BERT.
 
     This tokenizer applies an end-to-end, text string to wordpiece tokenization.
@@ -171,6 +171,15 @@ class BertTokenizer(Tokenizer):
         vocab_lookup_table, suffix_indicator, max_bytes_per_word,
         max_chars_per_token, token_out_type, unknown_token,
         split_unknown_characters)
+
+  def tokenize_with_offsets(self, text_input):
+    tokens, begin, _ = self._basic_tokenizer.tokenize_with_offsets(text_input)
+    wordpieces, wp_begin, wp_end = (
+        self._wordpiece_tokenizer.tokenize_with_offsets(tokens))
+    begin_expanded = array_ops.expand_dims(begin, axis=2)
+    final_begin = begin_expanded + wp_begin
+    final_end = begin_expanded + wp_end
+    return wordpieces, final_begin, final_end
 
   def tokenize(self, text_input):
     """Performs untokenized text to wordpiece tokenization for BERT.
