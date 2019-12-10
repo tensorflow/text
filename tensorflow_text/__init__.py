@@ -48,6 +48,7 @@ _allowed_symbols = [
     "UnicodeScriptTokenizer",
     "viterbi_constrained_sequence",
     "WhitespaceTokenizer",
+    "SplitMergeTokenizer",
     "wordshape",
     "WordShape",
     "WordpieceTokenizer",

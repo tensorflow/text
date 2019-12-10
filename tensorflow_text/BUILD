@@ -31,6 +31,7 @@ cc_library(
         ":regex_split_ops_cc",
         ":sentence_breaking_ops_cc",
         ":sentencepiece_tokenizer_cc",
+        ":split_merge_tokenizer_cc",
         ":text_similarity_metric_ops_cc",
         ":unicode_script_tokenizer_cc",
         ":whitespace_tokenizer_cc",
@@ -62,6 +63,7 @@ py_library(
         ":sentence_breaking_ops",
         ":sentencepiece_tokenizer",
         ":sliding_window_op",
+        ":split_merge_tokenizer",
         ":string_ops",
         ":text_similarity_metric_ops",
         ":todense_layer",
@@ -713,6 +715,34 @@ py_test(
         ":whitespace_tokenizer",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "split_merge_tokenizer",
+    srcs = ["python/ops/split_merge_tokenizer.py"],
+    cc_op_defs = ["core/ops/split_merge_tokenize_op.cc"],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels:split_merge_tokenize_kernel",
+    ],
+    deps = [
+        ":tokenization",
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "split_merge_tokenizer_test",
+    size = "small",
+    srcs = ["python/ops/split_merge_tokenizer_test.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":split_merge_tokenizer",
+        # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
