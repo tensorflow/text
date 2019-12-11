@@ -22,6 +22,7 @@ import copy
 
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import string_ops
 from tensorflow_text.python.ops import regex_split_ops
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
@@ -128,7 +129,8 @@ class BertTokenizer(TokenizerWithOffsets):
 
   Attributes:
     vocab_lookup_table: A lookup table implementing the LookupInterface
-      containing the vocabulary of subwords.
+      containing the vocabulary of subwords or a string which is the file path
+      to the vocab.txt file.
     suffix_indicator: (optional) The characters prepended to a wordpiece to
       indicate that it is a suffix to another subword. Default is '##'.
     max_bytes_per_word: (optional) Max size of input token. Default is 100.
@@ -165,6 +167,11 @@ class BertTokenizer(TokenizerWithOffsets):
                lower_case=False,
                keep_whitespace=False,
                normalization_form=None):
+    if isinstance(vocab_lookup_table, str):
+      init = lookup_ops.TextFileIdTableInitializer(vocab_lookup_table)
+      vocab_lookup_table = lookup_ops.StaticVocabularyTableV1(
+          init, num_oov_buckets=1, lookup_key_dtype=dtypes.string)
+
     self._basic_tokenizer = BasicTokenizer(lower_case, keep_whitespace,
                                            normalization_form)
     self._wordpiece_tokenizer = WordpieceTokenizer(
