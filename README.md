@@ -278,8 +278,8 @@ print(bigrams.to_list())
 
 When installing TF Text with `pip install`, please note the version
 of TensorFlow you are running, as you should specify the corresponding version
-of TF Text. For example, if your using TF 2.0, install the 2.0 version of TF
-Text, and if your using TF 1.15, install the 1.15 version of TF Text.
+of TF Text. For example, if you're using TF 2.0, install the 2.0 version of TF
+Text, and if you're using TF 1.15, install the 1.15 version of TF Text.
 
 ```bash
 pip install -U tensorflow-text==<version>
