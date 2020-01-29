@@ -44,38 +44,6 @@ cc_test(
     ],
 )
 
-cc_library(
-    name = "regex_split",
-    srcs = ["regex_split.cc"],
-    hdrs = ["regex_split.h"],
-    deps = OSS_DEPS + [
-        # absl/strings dep
-        "@com_google_re2//:re2",
-        # tf:framework tensorflow dep,
-    ],
-)
-
-tf_kernel_library(
-    name = "regex_split_kernels",
-    srcs = ["regex_split_kernels.cc"],
-    deps = OSS_DEPS + [
-        ":regex_split",
-        "@com_google_absl//absl/memory",
-        # tf:framework tensorflow dep,
-    ],
-)
-
-cc_test(
-    name = "regex_split_test",
-    srcs = ["regex_split_test.cc"],
-    deps = [
-        ":regex_split",
-        "@com_google_googletest//:gtest_main",
-        # absl/strings dep
-        "@com_google_re2//:re2",
-    ],
-)
-
 cc_test(
     name = "exp_greedy_constrained_sequence_kernel_test",
     srcs = ["exp_greedy_constrained_sequence_kernel_test.cc"],
@@ -128,6 +96,76 @@ cc_test(
     ],
 )
 
+cc_library(
+    name = "disjoint_set_forest",
+    hdrs = ["disjoint_set_forest.h"],
+    deps = OSS_DEPS + [
+        # tf:lib tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "disjoint_set_forest_test",
+    size = "small",
+    srcs = ["disjoint_set_forest_test.cc"],
+    deps = [
+        ":disjoint_set_forest",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+tf_kernel_library(
+    name = "mst_op_kernels",
+    srcs = ["mst_op_kernels.cc"],
+    deps = OSS_DEPS + [
+        ":mst_solver",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "mst_solver",
+    hdrs = ["mst_solver.h"],
+    deps = OSS_DEPS + [
+        ":disjoint_set_forest",
+        # absl/types:span dep
+        # absl/strings dep
+        # tf:lib tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "mst_solver_test",
+    size = "small",
+    srcs = ["mst_solver_test.cc"],
+    deps = [
+        ":mst_solver",
+        "@com_google_googletest//:gtest",
+        "@com_google_googletest//:gtest_main",
+        # tf:test tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "mst_solver_random_comparison_test",
+    size = "small",
+    timeout = "long",
+    srcs = ["mst_solver_random_comparison_test.cc"],
+    tags = [
+        "nofastbuild",  # exclude from non-opt TAP projects
+        "optonly",  # exclude from non-opt TAP projects
+    ],
+    deps = [
+        ":mst_solver",
+        ":spanning_tree_iterator",
+        "@com_google_googletest//:gtest",  # google-only
+        "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/flags:flag",
+        # tf:lib tensorflow dep,
+    ],
+)
+
 tf_kernel_library(
     name = "normalize_kernels",
     srcs = ["normalize_kernels.cc"],
@@ -137,6 +175,38 @@ tf_kernel_library(
         "@icu//:nfkc",
         "@icu//:nfkc_cf",
         # tf:framework tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "regex_split",
+    srcs = ["regex_split.cc"],
+    hdrs = ["regex_split.h"],
+    deps = OSS_DEPS + [
+        # absl/strings dep
+        "@com_google_re2//:re2",
+        # tf:framework tensorflow dep,
+    ],
+)
+
+tf_kernel_library(
+    name = "regex_split_kernels",
+    srcs = ["regex_split_kernels.cc"],
+    deps = OSS_DEPS + [
+        ":regex_split",
+        "@com_google_absl//absl/memory",
+        # tf:framework tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "regex_split_test",
+    srcs = ["regex_split_test.cc"],
+    deps = [
+        ":regex_split",
+        "@com_google_googletest//:gtest_main",
+        # absl/strings dep
+        "@com_google_re2//:re2",
     ],
 )
 
@@ -227,6 +297,27 @@ tf_kernel_library(
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
         # tf/kernels:tensor_flag_utils tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "spanning_tree_iterator",
+    testonly = 1,
+    srcs = ["spanning_tree_iterator.cc"],
+    hdrs = ["spanning_tree_iterator.h"],
+    deps = OSS_DEPS + [
+        # tf:lib tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "spanning_tree_iterator_test",
+    size = "small",
+    srcs = ["spanning_tree_iterator_test.cc"],
+    deps = [
+        ":spanning_tree_iterator",
+        "@com_google_googletest//:gtest_main",
+        # tf:lib tensorflow dep,
     ],
 )
 

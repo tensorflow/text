@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2019 TF.Text Authors.
+# Copyright 2020 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ _allowed_symbols = [
     "gather_with_default",
     "greedy_constrained_sequence",
     "keras",
+    "max_spanning_tree",
     "metrics",
     "ngrams",
     "normalize_utf8",

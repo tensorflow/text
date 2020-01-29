@@ -27,6 +27,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":constrained_sequence_op_cc",
+        ":mst_ops_cc",
         ":normalize_ops_cc",
         ":regex_split_ops_cc",
         ":sentence_breaking_ops_cc",
@@ -55,6 +56,7 @@ py_library(
         ":bert_tokenizer",
         ":create_feature_bitmask_op",
         ":greedy_constrained_sequence_op",
+        ":mst_ops",
         ":ngrams_op",
         ":normalize_ops",
         ":pad_along_dimension_op",
@@ -199,6 +201,38 @@ py_test(
         # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "mst_ops",
+    srcs = ["python/ops/mst_ops.py"],
+    cc_op_defs = ["core/ops/mst_ops.cc"],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels:mst_op_kernels",
+    ],
+    deps = [
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:errors tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:standard_ops tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "mst_ops_test",
+    srcs = ["python/ops/mst_ops_test.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":mst_ops",
+        # python:array_ops tensorflow dep,
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:math_ops tensorflow dep,
     ],
 )
 
