@@ -13,86 +13,161 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Lint as: python3
 """Integration tests for TF.Text ops in model server."""
 
 import os
+import shutil
+import tempfile
+
+import numpy as np
 import tensorflow as tf
 import tensorflow_text as text
 
-tf.compat.v1.enable_eager_execution()
-op_dir = os.path.join(os.path.dirname(text.__file__), 'python/ops')
 
-# Constrained sequence
-module = tf.load_op_library(os.path.join(op_dir,
-                                         '_constrained_sequence_op.so'))
-export_path = os.path.join('/tmp/mdl_seq',
-                           '01')
-root = tf.train.Checkpoint()
-root.f = tf.function(module.constrained_sequence)
-to_save = root.f.get_concrete_function(tf.TensorSpec(None, tf.float32),
-                                       tf.TensorSpec(None, tf.int32),
-                                       tf.TensorSpec(None, tf.bool),
-                                       tf.TensorSpec(None, tf.float32),
-                                       False,
-                                       False,
-                                       False)
-tf.saved_model.save(root, export_path, to_save)
+class TfTextOps(tf.Module):
+  """Module for saving TF Text concrete function."""
 
-# Sentence fragments
-module = tf.load_op_library(os.path.join(op_dir,
-                                         '_sentence_breaking_ops.so'))
-export_path = os.path.join('/tmp/mdl_sent',
-                           '01')
-root = tf.train.Checkpoint()
-root.f = tf.function(module.sentence_fragments)
-to_save = root.f.get_concrete_function(tf.TensorSpec(None, tf.int64),
-                                       tf.TensorSpec(None, tf.int64),
-                                       tf.TensorSpec(None, tf.int64),
-                                       tf.TensorSpec(None, tf.string),
-                                       tf.TensorSpec(None, tf.int64),
-                                       'UTF-8')
-tf.saved_model.save(root, export_path, to_save)
+  @tf.function
+  def __call__(self, x):
+    # Constrained sequence
+    cs_scores = np.array([[10.0, 12.0, 6.0, 4.0], [13.0, 12.0, 11.0, 10.0]])
+    cs_input = np.array([cs_scores, cs_scores, cs_scores], dtype=np.float32)
+    cs_transition_weights = np.array([[-1.0, 1.0, -2.0, 2.0, 0.0],
+                                      [3.0, -3.0, 4.0, -4.0, 0.0],
+                                      [5.0, 1.0, 10.0, 1.0, 1.0],
+                                      [-7.0, 7.0, -8.0, 8.0, 0.0],
+                                      [0.0, 1.0, 2.0, 3.0, 0.0]],
+                                     dtype=np.float32)
+    cs_allowed_transitions = np.array([[True, True, True, True, True],
+                                       [True, True, True, True, True],
+                                       [True, False, True, False, False],
+                                       [True, True, True, True, True],
+                                       [True, False, True, True, True]])
+    constrained_sequence = text.viterbi_constrained_sequence(
+        cs_input, [2, 2, 2], allowed_transitions=cs_allowed_transitions,
+        transition_weights=cs_transition_weights, use_log_space=True,
+        use_start_and_end_states=True)
+    # Max Spanning Tree
+    mst_num_nodes = tf.constant([4, 3], tf.int32)
+    mst_scores = tf.constant([[[0, 0, 0, 0],
+                               [1, 0, 0, 0],
+                               [1, 2, 0, 0],
+                               [1, 2, 3, 4]],
+                              [[4, 3, 2, 9],
+                               [0, 0, 2, 9],
+                               [0, 0, 0, 9],
+                               [9, 9, 9, 9]]],
+                             tf.int32)  # pyformat: disable
+    (max_spanning_tree, _) = text.max_spanning_tree(mst_num_nodes, mst_scores)
+    # Normalize
+    normalized = text.case_fold_utf8(['A String'])
+    normalized = text.normalize_utf8(normalized)
+    # Regex split
+    regex_split = text.regex_split(input=['Yo dawg!'],
+                                   delim_regex_pattern=r'\s')
+    # Rouge-L
+    rl_hypotheses = tf.ragged.constant(
+        [['captain', 'of', 'the', 'delta', 'flight'],
+         ['the', '1990', 'transcript']])
+    rl_references = tf.ragged.constant(
+        [['delta', 'air', 'lines', 'flight'],
+         ['this', 'concludes', 'the', 'transcript']])
+    (rouge_l, _, _) = text.metrics.rouge_l(rl_hypotheses, rl_references)
+    # Sentence breaking
+    sb_token_word = [['Welcome', 'to', 'the', 'U.S.', '!', 'Harry'],
+                     ['Wu', 'Tang', 'Clan', ';', 'ain\'t', 'nothing']]
+    sb_token_properties = [[0, 0, 0, 256, 0, 0], [0, 0, 0, 0, 0, 0]]
+    sb_token_starts = []
+    sb_token_ends = []
+    for sentence in sb_token_word:
+      sentence_string = ''
+      sentence_start = []
+      sentence_end = []
+      for word in sentence:
+        sentence_start.append(len(sentence_string))
+        sentence_string = sentence_string.join([word, ' '])
+        sentence_end.append(len(sentence_string))
+      sb_token_starts.append(sentence_start)
+      sb_token_ends.append(sentence_end)
+    sb_token_starts = tf.constant(sb_token_starts, dtype=tf.int64)
+    sb_token_ends = tf.constant(sb_token_ends, dtype=tf.int64)
+    sb_token_properties = tf.ragged.constant(sb_token_properties,
+                                             dtype=tf.int64)
+    (sentence_breaking, _, _, _) = text.sentence_fragments(
+        sb_token_word, sb_token_starts, sb_token_ends, sb_token_properties)
+    # Sentencepiece tokenizer
+    sp_model_file = (
+        'third_party/tensorflow_text/python/ops/test_data/test_oss_model.model')
+    sp_model = open(sp_model_file, 'rb').read()
+    sp_tokenizer = text.SentencepieceTokenizer(sp_model)
+    sentencepiece = sp_tokenizer.tokenize(['A sentence of things.'])
+    sentencepiece = sp_tokenizer.detokenize(sentencepiece)
+    (sentencepiece, _, _) = sp_tokenizer.tokenize_with_offsets(sentencepiece)
+    sentencepiece_size = sp_tokenizer.vocab_size()
+    sentencepiece_id = sp_tokenizer.id_to_string(1)
+    # Split merge tokenizer - not in this version
+    sm_tokenizer = text.SplitMergeTokenizer()
+    split_merge = sm_tokenizer.tokenize(b'IloveFlume!',
+                                        [0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0])
+    # Unicode script tokenizer
+    us_tokenizer = text.UnicodeScriptTokenizer()
+    unicode_script = us_tokenizer.tokenize(['a string'])
+    # Whitespace tokenizer
+    ws_tokenizer = text.WhitespaceTokenizer()
+    whitespace = ws_tokenizer.tokenize(['a string'])
+    # Wordpiece tokenizer
+    wp_initializer = tf.lookup.KeyValueTensorInitializer(
+        ['i'], [1], key_dtype=tf.string, value_dtype=tf.int64)
+    self.wp_vocab_table = tf.lookup.StaticHashTable(wp_initializer,
+                                                    default_value=-1)
+    wp_tokenizer = text.WordpieceTokenizer(self.wp_vocab_table)
+    wordpiece = wp_tokenizer.tokenize(['i am'])
+    # Wordshape
+    wordshapes = text.wordshape([u'a-b', u'a\u2010b'.encode('utf-8')],
+                                text.WordShape.HAS_PUNCTUATION_DASH)
 
-# Unicode script tokenizer
-module = tf.load_op_library(os.path.join(op_dir,
-                                         '_unicode_script_tokenizer.so'))
-export_path = os.path.join('/tmp/mdl_uni',
-                           '01')
-root = tf.train.Checkpoint()
-root.f = tf.function(module.unicode_script_tokenize_with_offsets)
-to_save = root.f.get_concrete_function(tf.TensorSpec(None, tf.int32),
-                                       tf.TensorSpec(None, tf.int32))
-tf.saved_model.save(root, export_path, to_save)
-
-# Whitespace tokenizer
-module = tf.load_op_library(os.path.join(op_dir,
-                                         '_whitespace_tokenizer.so'))
-export_path = os.path.join('/tmp/mdl_ws',
-                           '01')
-root = tf.train.Checkpoint()
-root.f = tf.function(module.whitespace_tokenize_with_offsets)
-to_save = root.f.get_concrete_function(tf.TensorSpec(None, tf.int32),
-                                       tf.TensorSpec(None, tf.int32))
-tf.saved_model.save(root, export_path, to_save)
-
-# Wordpiece tokenizer
-module = tf.load_op_library(os.path.join(op_dir,
-                                         '_wordpiece_tokenizer.so'))
-export_path = os.path.join('/tmp/mdl_wp',
-                           '01')
-root = tf.train.Checkpoint()
-vocab = tf.constant(['hell', '##o', 'world'])
-init = tf.lookup.KeyValueTensorInitializer(
-    vocab, tf.range(tf.size(vocab, out_type=tf.int64), dtype=tf.int64),
-    key_dtype=tf.string, value_dtype=tf.int64)
-root.table = tf.lookup.StaticVocabularyTable(init, 1,
-                                             lookup_key_dtype=tf.string)
+    with tf.control_dependencies([constrained_sequence,
+                                  max_spanning_tree,
+                                  normalized,
+                                  regex_split,
+                                  rouge_l,
+                                  sentence_breaking,
+                                  sentencepiece,
+                                  sentencepiece_id,
+                                  sentencepiece_size,
+                                  split_merge,
+                                  unicode_script,
+                                  whitespace,
+                                  wordpiece,
+                                  wordshapes]):
+      y = tf.add(x, [1])
+    return {'y': y}
 
 
-def fn(self, tokens):
-  return module.wordpiece_tokenize_with_offsets(
-      tokens, self.table.resource_handle, '##', 100, True, '<UNK>')
-root.f = tf.function(fn)
-to_save = root.f.get_concrete_function(root, tf.TensorSpec(None, tf.string))
-tf.saved_model.save(root, export_path, to_save)
+module = TfTextOps()
+export_path = tempfile.TemporaryDirectory()
+print('Exporting saved model to ', export_path)
+call = module.__call__.get_concrete_function(
+    tf.TensorSpec([1], tf.float32, 'x'))
+tf.saved_model.save(module, export_path.name, call)
+
+# Copy files from temp directory
+print('Moving files:')
+dst_path = os.path.join('third_party/tensorflow_serving/servables/',
+                        'tensorflow/testdata/tf_text_regression/01')
+for src_dir, dirs, files in os.walk(export_path.name):
+  dst_dir = src_dir.replace(export_path.name, dst_path, 1)
+  if not os.path.exists(dst_dir):
+    os.makedirs(dst_dir)
+  for file_ in files:
+    print(file_)
+    src_file = os.path.join(src_dir, file_)
+    dst_file = os.path.join(dst_dir, file_)
+    if os.path.exists(dst_file):
+      # in case of the src and dst are the same file
+      if os.path.samefile(src_file, dst_file):
+        continue
+      os.remove(dst_file)
+    shutil.move(src_file, dst_dir)
 
