@@ -21,6 +21,7 @@ from __future__ import print_function
 import copy
 
 from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import string_ops
@@ -29,7 +30,6 @@ from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
-
 
 _DELIM_REGEX = [
     r"\s+",
@@ -97,6 +97,7 @@ class BasicTokenizer(TokenizerWithOffsets):
 
     Args:
       text_input: A `Tensor` or `RaggedTensor` of untokenized UTF-8 strings.
+
     Returns:
       A `RaggedTensor` of tokenized strings from text_input.
     """
@@ -142,8 +143,8 @@ class BertTokenizer(TokenizerWithOffsets):
     unknown_token: (optional) The value to use when an unknown token is found.
       Default is "[UNK]". If this is set to a string, and `token_out_type` is
       `tf.int64`, the `vocab_lookup_table` is used to convert the
-      `unknown_token` to an integer. If this is set to `None`,
-      out-of-vocabulary tokens are left as is.
+      `unknown_token` to an integer. If this is set to `None`, out-of-vocabulary
+      tokens are left as is.
     split_unknown_characters: (optional) Whether to split out single unknown
       characters as subtokens. If False (default), words containing unknown
       characters will be treated as single unknown tokens.
@@ -152,8 +153,8 @@ class BertTokenizer(TokenizerWithOffsets):
     keep_whitespace: bool - If true, preserves whitespace characters instead of
       stripping them away.
     normalization_form: If true and lower_case=False, the input text will be
-      normalized to `normalization_form`. See normalize_utf8() op for a list
-      of valid values.
+      normalized to `normalization_form`. See normalize_utf8() op for a list of
+      valid values.
   """
 
   def __init__(self,
@@ -167,7 +168,8 @@ class BertTokenizer(TokenizerWithOffsets):
                lower_case=False,
                keep_whitespace=False,
                normalization_form=None):
-    if isinstance(vocab_lookup_table, str):
+    if isinstance(vocab_lookup_table, str) or isinstance(
+        vocab_lookup_table, ops.Tensor):
       init = lookup_ops.TextFileIdTableInitializer(vocab_lookup_table)
       vocab_lookup_table = lookup_ops.StaticVocabularyTableV1(
           init, num_oov_buckets=1, lookup_key_dtype=dtypes.string)
@@ -194,6 +196,7 @@ class BertTokenizer(TokenizerWithOffsets):
     Args:
       text_input: input: A `Tensor` or `RaggedTensor` of untokenized UTF-8
         strings.
+
     Returns:
       A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string
       contents (or ID in the vocab_lookup_table representing that string)
