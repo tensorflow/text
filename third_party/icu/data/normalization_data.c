@@ -7,7 +7,7 @@ U_CDECL_BEGIN
 const struct {
     double bogus;
     uint8_t bytes[163760]; 
-} icudt64l_dat={ 0.0, {
+} icudt64l_norm_dat={ 0.0, {
 144,0,218,39,20,0,0,0,0,0,2,0,67,109,110,68,
 1,0,0,0,3,0,0,0,32,67,111,112,121,114,105,103,
 104,116,32,40,67,41,32,50,48,49,54,32,97,110,100,32,
@@ -10246,4 +10246,4 @@ const struct {
 }
 };
 U_CDECL_END
-U_CAPI const void * U_EXPORT2 uprv_getICUData_other() { return icudt64l_dat.bytes; }
+U_CAPI const void * U_EXPORT2 uprv_getICUData_other() { return icudt64l_norm_dat.bytes; }
