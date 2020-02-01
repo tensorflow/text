@@ -32,6 +32,7 @@ _allowed_symbols = [
     "greedy_constrained_sequence",
     "keras",
     "max_spanning_tree",
+    "max_spanning_tree_gradient",
     "metrics",
     "ngrams",
     "normalize_utf8",

@@ -19,6 +19,7 @@ from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
 from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_bitmask
 from tensorflow_text.python.ops.greedy_constrained_sequence_op import greedy_constrained_sequence
 from tensorflow_text.python.ops.mst_ops import max_spanning_tree
+from tensorflow_text.python.ops.mst_ops import max_spanning_tree_gradient
 from tensorflow_text.python.ops.ngrams_op import ngrams
 from tensorflow_text.python.ops.ngrams_op import Reduction
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
