@@ -604,7 +604,7 @@ py_library(
         # python:sparse_tensor tensorflow dep,
         # python/keras tensorflow dep,  # fixdeps: keep
         # python/keras:base_layer tensorflow dep,
-        # python/keras/layers:layers_base tensorflow dep,
+        # python/keras/layers tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -628,7 +628,7 @@ py_test(
         # python/keras tensorflow dep,
         # python/keras:backend tensorflow dep,
         # python/keras:base_layer tensorflow dep,
-        # python/keras/layers:layers_base tensorflow dep,
+        # python/keras/layers tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
 )
