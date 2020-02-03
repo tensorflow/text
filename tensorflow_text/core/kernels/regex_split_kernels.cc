@@ -65,8 +65,9 @@ class RegexSplitOp : public tensorflow::OpKernel {
     row_splits.push_back(0);
 
     for (size_t i = 0; i < input_flat.size(); ++i) {
-      RegexSplit(input_flat(i), *delim_re, should_keep_delim, *keep_delim_re,
-                 &tokens, &begin_offsets, &end_offsets);
+      RegexSplit(absl::string_view(input_flat(i).data()), *delim_re,
+                 should_keep_delim, *keep_delim_re, &tokens, &begin_offsets,
+                 &end_offsets);
       row_splits.push_back(begin_offsets.size());
     }
 

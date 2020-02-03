@@ -200,7 +200,6 @@ cc_library(
     deps = OSS_DEPS + [
         # absl/strings dep
         "@com_google_re2//:re2",
-        # tf:framework tensorflow dep,
     ],
 )
 
@@ -222,6 +221,7 @@ cc_test(
         "@com_google_googletest//:gtest_main",
         # absl/strings dep
         "@com_google_re2//:re2",
+        # tf:lib tensorflow dep,
     ],
 )
 

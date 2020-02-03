@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 #include "absl/strings/string_view.h"
 #include "re2/re2.h"
+#include "tensorflow/core/platform/tstring.h"
 
 namespace tensorflow {
 namespace text {
