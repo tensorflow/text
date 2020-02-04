@@ -20,10 +20,22 @@ OSS_DEPS = [
     "@local_config_tf//:tf_header_lib",
 ]
 
+cc_library(
+    name = "constrained_sequence",
+    srcs = ["constrained_sequence.cc"],
+    hdrs = ["constrained_sequence.h"],
+    deps = OSS_DEPS + [
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+        # tf:protos_all_cc tensorflow dep,
+    ],
+)
+
 tf_kernel_library(
     name = "constrained_sequence_kernel",
     srcs = ["constrained_sequence_kernel.cc"],
     deps = OSS_DEPS + [
+        ":constrained_sequence",
         "@com_google_absl//absl/base:core_headers",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
