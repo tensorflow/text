@@ -5,6 +5,8 @@
 
 # text.pad_along_dimension
 
+<!-- Insert buttons and diff -->
+
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 

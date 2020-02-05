@@ -68,6 +68,8 @@ def _ragged_substr(text_input, begin, end):
 
 
 _VOCAB = [
+    b'[unused1]',
+    b'[unused23]',
     b"'",
     b'##%',
     b'##af',
@@ -357,6 +359,19 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
           lower_case=True,
           num_oov=2,
       ),
+      # Test 'preserve_unused_token' option
+      dict(
+          text_inputs=[
+              b'taste the rustisc indiefrost [unused1]',
+              _utf8(u'爱上一个不回家的人[unused23]'),
+          ],
+          expected=[[[b'taste'], [b'the'], [b'rust', b'##is', b'##c'],
+                     [b'indie', b'##fr', b'##ost'], [b'[unused1]']],
+                    [[_utf8(u'爱')], [_utf8(u'上')], [_utf8(u'一')], [_utf8(u'个')],
+                     [_utf8(u'不')], [_utf8(u'回')], [_utf8(u'家')], [_utf8(u'的')],
+                     [_utf8(u'人')], [b'[unused23]']]],
+          preserve_unused_token=True,
+      ),
   ])
   @test_util.run_in_graph_and_eager_modes
   def test_bert_tokenizer(self,
@@ -365,14 +380,18 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                           vocab=None,
                           expected_extracted=None,
                           lower_case=True,
-                          num_oov=1):
+                          num_oov=1,
+                          preserve_unused_token=False):
     text_inputs = constant_op.constant(text_inputs)
     if not vocab:
       vocab = _VOCAB
     table = _create_table(vocab, num_oov)
     self.evaluate(table.initializer)
     tokenizer = bert_tokenizer.BertTokenizer(
-        table, token_out_type=dtypes.string, lower_case=lower_case)
+        table,
+        token_out_type=dtypes.string,
+        lower_case=lower_case,
+        preserve_unused_token=preserve_unused_token)
     results = tokenizer.tokenize(text_inputs)
     self.assertAllEqual(results, expected)
 
@@ -384,7 +403,8 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     int_tokenizer = bert_tokenizer.BertTokenizer(
         vocab_lookup_table=table,
         token_out_type=dtypes.int64,
-        lower_case=lower_case)
+        lower_case=lower_case,
+        preserve_unused_token=preserve_unused_token)
     results_int = int_tokenizer.tokenize(text_inputs)
     self.assertAllEqual(results_int, expected_int_rt)
 

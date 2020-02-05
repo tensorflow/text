@@ -5,6 +5,8 @@
 
 # text.span_alignment
 
+<!-- Insert buttons and diff -->
+
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 
@@ -117,8 +119,10 @@ tensors. If `multivalent_result=True`, then the returned tensor has shape
   [ 0, -1, -1, -1, -1, 5, 6, 7, -1, -1]
 ```
 
+```
   >>> span_alignment_lists(source_starts, source_limits,
   ...                      target_starts, target_limits,
   ...                      partial_overlap=True,
   ...                      multivalent_result=True)
   [[0], [], [2], [3], [4], [5], [6], [7], [8], [8, 9]]
+```

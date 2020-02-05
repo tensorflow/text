@@ -13,8 +13,6 @@ source</a>
 
 Tensorflow text-processing metrics.
 
-<!-- Placeholder for "Used in" -->
-
 ## Functions
 
 [`rouge_l(...)`](../text/metrics/rouge_l.md): Computes LCS-based similarity

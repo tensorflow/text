@@ -5,6 +5,8 @@
 
 # text.normalize_utf8
 
+<!-- Insert buttons and diff -->
+
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 

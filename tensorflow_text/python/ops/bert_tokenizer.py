@@ -55,12 +55,12 @@ _DELIM_REGEX = [
 _DELIM_REGEX_PATTERN = "|".join(_DELIM_REGEX)
 _KEEP_DELIM_NO_WHITESPACE = copy.deepcopy(_DELIM_REGEX)
 _KEEP_DELIM_NO_WHITESPACE.remove(r"\s+")
-
+_UNUSED_TOKEN_REGEX = "\\[unused\\d+\\]"
 _KEEP_DELIM_NO_WHITESPACE_PATTERN = "|".join(_KEEP_DELIM_NO_WHITESPACE)
 
 
 class BasicTokenizer(TokenizerWithOffsets):
-  """Basic tokenizer for for tokenizing text.
+  r"""Basic tokenizer for for tokenizing text.
 
   A basic tokenizer that tokenizes using some deterministic rules:
   - For most languages, this tokenizer will split on whitespace.
@@ -75,18 +75,30 @@ class BasicTokenizer(TokenizerWithOffsets):
     normalization_form: If true and lower_case=False, the input text will be
       normalized to `normalization_form`. See normalize_utf8() op for a list of
       valid values.
+    preserve_unused_token: If true, text in the regex format "\\[unused\\d+\\]"
+      will be treated as a token and thus remain preserved as is to be looked up
+      in the vocabulary.
   """
 
   def __init__(self,
                lower_case=False,
                keep_whitespace=False,
-               normalization_form=None):
+               normalization_form=None,
+               preserve_unused_token=False):
     self._lower_case = lower_case
     if not keep_whitespace:
       self._keep_delim_regex_pattern = _KEEP_DELIM_NO_WHITESPACE_PATTERN
     else:
       self._keep_delim_regex_pattern = _DELIM_REGEX_PATTERN
     self._normalization_form = normalization_form
+
+    if preserve_unused_token:
+      self._delim_regex_pattern = "|".join(
+          [_UNUSED_TOKEN_REGEX, _DELIM_REGEX_PATTERN])
+      self._keep_delim_regex_pattern = "|".join(
+          [_UNUSED_TOKEN_REGEX, self._keep_delim_regex_pattern])
+    else:
+      self._delim_regex_pattern = _DELIM_REGEX_PATTERN
 
   def tokenize(self, text_input):
     tokens, _, _ = self.tokenize_with_offsets(text_input)
@@ -113,14 +125,13 @@ class BasicTokenizer(TokenizerWithOffsets):
 
     # strip out control characters
     text_input = string_ops.regex_replace(text_input, r"\p{Cc}|\p{Cf}", " ")
-
     return regex_split_ops.regex_split_with_offsets(
-        text_input, _DELIM_REGEX_PATTERN, self._keep_delim_regex_pattern,
+        text_input, self._delim_regex_pattern, self._keep_delim_regex_pattern,
         "BertBasicTokenizer")
 
 
 class BertTokenizer(TokenizerWithOffsets):
-  """Tokenizer used for BERT.
+  r"""Tokenizer used for BERT.
 
     This tokenizer applies an end-to-end, text string to wordpiece tokenization.
     It first applies basic tokenization, and then follwed by wordpiece
@@ -155,6 +166,9 @@ class BertTokenizer(TokenizerWithOffsets):
     normalization_form: If true and lower_case=False, the input text will be
       normalized to `normalization_form`. See normalize_utf8() op for a list of
       valid values.
+    preserve_unused_token: If true, text in the regex format `\\[unused\\d+\\]`
+      will be treated as a token and thus remain preserved as is to be looked up
+      in the vocabulary.
   """
 
   def __init__(self,
@@ -167,7 +181,8 @@ class BertTokenizer(TokenizerWithOffsets):
                split_unknown_characters=False,
                lower_case=False,
                keep_whitespace=False,
-               normalization_form=None):
+               normalization_form=None,
+               preserve_unused_token=False):
     if isinstance(vocab_lookup_table, str) or isinstance(
         vocab_lookup_table, ops.Tensor):
       init = lookup_ops.TextFileIdTableInitializer(vocab_lookup_table)
@@ -175,7 +190,8 @@ class BertTokenizer(TokenizerWithOffsets):
           init, num_oov_buckets=1, lookup_key_dtype=dtypes.string)
 
     self._basic_tokenizer = BasicTokenizer(lower_case, keep_whitespace,
-                                           normalization_form)
+                                           normalization_form,
+                                           preserve_unused_token)
     self._wordpiece_tokenizer = WordpieceTokenizer(
         vocab_lookup_table, suffix_indicator, max_bytes_per_word,
         max_chars_per_token, token_out_type, unknown_token,

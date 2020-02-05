@@ -5,6 +5,8 @@
 
 # text.gather_with_default
 
+<!-- Insert buttons and diff -->
+
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 

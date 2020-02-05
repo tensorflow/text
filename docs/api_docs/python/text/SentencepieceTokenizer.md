@@ -11,6 +11,8 @@
 
 # text.SentencepieceTokenizer
 
+<!-- Insert buttons and diff -->
+
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 
@@ -21,7 +23,7 @@ source</a>
 
 Tokenizes a tensor of UTF-8 strings.
 
-Inherits From: [`Tokenizer`](../text/Tokenizer.md),
+Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 [`Detokenizer`](../text/Detokenizer.md)
 
 <!-- Placeholder for "Used in" -->

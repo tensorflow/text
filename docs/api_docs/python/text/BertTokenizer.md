@@ -3,9 +3,12 @@
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="tokenize"/>
+<meta itemprop="property" content="tokenize_with_offsets"/>
 </div>
 
 # text.BertTokenizer
+
+<!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
@@ -17,7 +20,7 @@ source</a>
 
 Tokenizer used for BERT.
 
-Inherits From: [`Tokenizer`](../text/Tokenizer.md)
+Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
 <!-- Placeholder for "Used in" -->
 
@@ -29,7 +32,8 @@ See BasicTokenizer and WordpieceTokenizer for their respective details.
 #### Attributes:
 
 *   <b>`vocab_lookup_table`</b>: A lookup table implementing the LookupInterface
-    containing the vocabulary of subwords.
+    containing the vocabulary of subwords or a string which is the file path to
+    the vocab.txt file.
 *   <b>`suffix_indicator`</b>: (optional) The characters prepended to a
     wordpiece to indicate that it is a suffix to another subword. Default is
     '##'.
@@ -55,6 +59,9 @@ See BasicTokenizer and WordpieceTokenizer for their respective details.
 *   <b>`normalization_form`</b>: If true and lower_case=False, the input text
     will be normalized to `normalization_form`. See normalize_utf8() op for a
     list of valid values.
+*   <b>`preserve_unused_token`</b>: If true, text in the regex format
+    `\\[unused\\d+\\]` will be treated as a token and thus remain preserved as
+    is to be looked up in the vocabulary.
 
 <h2 id="__init__"><code>__init__</code></h2>
 
@@ -72,9 +79,12 @@ __init__(
     split_unknown_characters=False,
     lower_case=False,
     keep_whitespace=False,
-    normalization_form=None
+    normalization_form=None,
+    preserve_unused_token=False
 )
 ```
+
+Initialize self. See help(type(self)) for accurate signature.
 
 ## Methods
 
@@ -99,3 +109,32 @@ Performs untokenized text to wordpiece tokenization for BERT.
 A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string contents (or
 ID in the vocab_lookup_table representing that string) of the `jth` token in
 `input[i1...iN]`
+
+<h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
+source</a>
+
+```python
+tokenize_with_offsets(text_input)
+```
+
+Tokenizes the input tensor and returns the result with offsets.
+
+#### Args:
+
+*   <b>`input`</b>: An N-dimensional UTF-8 string (or optionally integer)
+    `Tensor` or `RaggedTensor`.
+
+#### Returns:
+
+A tuple `(tokens, start_offsets, limit_offsets)` where:
+
+*   `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
+    `RaggedTensor`.
+*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the starting indices of each token (byte indices for input
+    strings).
+*   `limit_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the exclusive ending indices of each token (byte indices for
+    input strings).

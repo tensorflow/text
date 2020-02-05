@@ -13,8 +13,6 @@ source</a>
 
 Tensorflow Text Layers for Keras API.
 
-<!-- Placeholder for "Used in" -->
-
 ## Modules
 
 [`layers`](../text/keras/layers.md) module: Tensorflow Text layers for Keras
