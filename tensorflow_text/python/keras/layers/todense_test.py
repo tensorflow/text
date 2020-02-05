@@ -80,8 +80,7 @@ class RaggedTensorsToDenseLayerTest(keras_parameterized.TestCase):
         optimizer="sgd",
         loss="mse",
         metrics=["accuracy"],
-        run_eagerly=testing_utils.should_run_eagerly(),
-        experimental_run_tf_function=testing_utils.should_run_tf_function())
+        run_eagerly=testing_utils.should_run_eagerly())
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
@@ -103,8 +102,7 @@ class RaggedTensorsToDenseLayerTest(keras_parameterized.TestCase):
         optimizer="sgd",
         loss="mse",
         metrics=["accuracy"],
-        run_eagerly=testing_utils.should_run_eagerly(),
-        experimental_run_tf_function=testing_utils.should_run_tf_function())
+        run_eagerly=testing_utils.should_run_eagerly())
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
@@ -141,8 +139,7 @@ class RaggedTensorsToDenseLayerTest(keras_parameterized.TestCase):
         optimizer="rmsprop",
         loss="binary_crossentropy",
         metrics=["accuracy"],
-        run_eagerly=testing_utils.should_run_eagerly(),
-        experimental_run_tf_function=testing_utils.should_run_tf_function())
+        run_eagerly=testing_utils.should_run_eagerly())
 
     output = model.predict(input_data)
     self.assertAllEqual(np.zeros((2, 1)).shape, output.shape)
@@ -170,8 +167,7 @@ class SparseTensorsToDenseLayerTest(keras_parameterized.TestCase):
         optimizer="sgd",
         loss="mse",
         metrics=["accuracy"],
-        run_eagerly=testing_utils.should_run_eagerly(),
-        experimental_run_tf_function=testing_utils.should_run_tf_function())
+        run_eagerly=testing_utils.should_run_eagerly())
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
@@ -193,8 +189,7 @@ class SparseTensorsToDenseLayerTest(keras_parameterized.TestCase):
         optimizer="sgd",
         loss="mse",
         metrics=["accuracy"],
-        run_eagerly=testing_utils.should_run_eagerly(),
-        experimental_run_tf_function=testing_utils.should_run_tf_function())
+        run_eagerly=testing_utils.should_run_eagerly())
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
