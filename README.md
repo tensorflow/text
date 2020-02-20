@@ -281,6 +281,8 @@ of TensorFlow you are running, as you should specify the corresponding version
 of TF Text. For example, if you're using TF 2.0, install the 2.0 version of TF
 Text, and if you're using TF 1.15, install the 1.15 version of TF Text.
 
+Also, please note that Windows OS is not supported for the TF text.
+
 ```bash
 pip install -U tensorflow-text==<version>
 ```
