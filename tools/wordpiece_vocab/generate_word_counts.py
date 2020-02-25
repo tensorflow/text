@@ -22,7 +22,7 @@ import tempfile
 from absl import app
 from absl import flags
 import apache_beam as beam
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import tensorflow_transform as tft
 import tensorflow_transform.beam as tft_beam
 from tensorflow_transform.tf_metadata import dataset_metadata
