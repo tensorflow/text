@@ -146,9 +146,8 @@ _wordshape_doc = {
         """
           The input contains at least one unicode dash character.
 
-          Note that this is similar to HAS_ANY_HYPHEN, but uses the Pd (Dash)
-          unicode property. This property will not match to soft-hyphens and
-          katakana middle dot characters.
+          Note that this uses the Pd (Dash) unicode property. This property will
+          not match to soft-hyphens and katakana middle dot characters.
           """,
     WordShape.HAS_NO_DIGITS:
         """
