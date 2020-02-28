@@ -1,6 +1,6 @@
 # [internal] load python3.bzl
 load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
-# [internal] load build_test.bzl
+load("//tools/build_defs/build_test:build_test.bzl", "build_test")
 
 # Visibility rules
 package(
