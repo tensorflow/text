@@ -27,8 +27,8 @@ namespace text {
 void RegexSplit(absl::string_view input, const RE2& re2, bool include_delimiter,
                 const RE2& include_delim_regex,
                 std::vector<absl::string_view>* tokens,
-                std::vector<long long>* begin_offsets,
-                std::vector<long long>* end_offsets);
+                std::vector<int64>* begin_offsets,
+                std::vector<int64>* end_offsets);
 
 }  // namespace text
 }  // namespace tensorflow
