@@ -75,7 +75,7 @@ http_archive(
     ],
     build_file = "//third_party/icu:BUILD.bzl",
     patches = ["//third_party/icu:udata.patch"],
-    patch_args = ["-p1"],
+    patch_args = ["-p1", "-s"],
 )
 
 http_archive(
