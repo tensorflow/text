@@ -743,6 +743,7 @@ py_test(
     name = "whitespace_tokenizer_test",
     size = "large",
     srcs = ["python/ops/whitespace_tokenizer_test.py"],
+    shard_count = 4,
     srcs_version = "PY2AND3",
     deps = [
         ":ragged_test_util",
