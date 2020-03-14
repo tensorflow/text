@@ -11,33 +11,41 @@
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
-source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View source</a>
 
-## Class `Tokenizer`
+
 
 Base class for tokenizer implementations.
 
 <!-- Placeholder for "Used in" -->
 
+
 ## Methods
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
-source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View source</a>
 
 ```python
-tokenize(input)
+tokenize(
+    input
+)
 ```
 
 Tokenizes the input tensor.
 
+
 #### Args:
 
-*   <b>`input`</b>: An N-dimensional UTF-8 string (or optionally integer)
-    `Tensor` or `RaggedTensor`.
+
+* <b>`input`</b>: An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+  `RaggedTensor`.
+
 
 #### Returns:
 
 An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
+
+
+
+
