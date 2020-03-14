@@ -202,6 +202,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
     lookup::LookupInterface* lookup_table;
     OP_REQUIRES_OK(ctx,
                    GetLookupTable("vocab_lookup_table", ctx, &lookup_table));
+    core::ScopedUnref unref_me(lookup_table);
     LookupTableVocab vocab_map(lookup_table, ctx);
 
     std::vector<string> subwords;
