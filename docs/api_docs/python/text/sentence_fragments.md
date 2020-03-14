@@ -15,16 +15,10 @@ source</a>
 
 Find the sentence fragments in a given text.
 
-``` python
+```python
 text.sentence_fragments(
-    token_word,
-    token_starts,
-    token_ends,
-    token_properties,
-    input_encoding='UTF-8',
-    errors='replace',
-    replacement_char=65533,
-    replace_control_characters=False
+    token_word, token_starts, token_ends, token_properties, input_encoding='UTF-8',
+    errors='replace', replacement_char=65533, replace_control_characters=False
 )
 ```
 

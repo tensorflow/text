@@ -16,16 +16,11 @@
 
 Split `input` by delimiters that match a regex pattern.
 
-``` python
+```python
 text.regex_split(
-    input,
-    delim_regex_pattern,
-    keep_delim_regex_pattern='',
-    name=None
+    input, delim_regex_pattern, keep_delim_regex_pattern='', name=None
 )
 ```
-
-
 
 <!-- Placeholder for "Used in" -->
 

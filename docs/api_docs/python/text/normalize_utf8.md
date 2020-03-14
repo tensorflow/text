@@ -15,11 +15,9 @@ source</a>
 
 Normalizes each UTF-8 string in the input tensor using the specified rule.
 
-``` python
+```python
 text.normalize_utf8(
-    input,
-    normalization_form='NFKC',
-    name=None
+    input, normalization_form='NFKC', name=None
 )
 ```
 

@@ -15,16 +15,10 @@ source</a>
 
 Returns a boolean tensor indicating which source and target spans overlap.
 
-``` python
+```python
 text.span_overlaps(
-    source_start,
-    source_limit,
-    target_start,
-    target_limit,
-    contains=False,
-    contained_by=False,
-    partial_overlap=False,
-    name=None
+    source_start, source_limit, target_start, target_limit, contains=False,
+    contained_by=False, partial_overlap=False, name=None
 )
 ```
 

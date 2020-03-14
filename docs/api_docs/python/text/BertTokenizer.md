@@ -16,11 +16,18 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
 source</a>
 
-## Class `BertTokenizer`
-
 Tokenizer used for BERT.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
+
+```python
+text.BertTokenizer(
+    vocab_lookup_table, suffix_indicator='##', max_bytes_per_word=100,
+    max_chars_per_token=None, token_out_type=dtypes.int64, unknown_token='[UNK]',
+    split_unknown_characters=False, lower_case=False, keep_whitespace=False,
+    normalization_form=None, preserve_unused_token=False
+)
+```
 
 <!-- Placeholder for "Used in" -->
 
@@ -63,29 +70,6 @@ See BasicTokenizer and WordpieceTokenizer for their respective details.
     `\\[unused\\d+\\]` will be treated as a token and thus remain preserved as
     is to be looked up in the vocabulary.
 
-<h2 id="__init__"><code>__init__</code></h2>
-
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
-source</a>
-
-```python
-__init__(
-    vocab_lookup_table,
-    suffix_indicator='##',
-    max_bytes_per_word=100,
-    max_chars_per_token=None,
-    token_out_type=dtypes.int64,
-    unknown_token='[UNK]',
-    split_unknown_characters=False,
-    lower_case=False,
-    keep_whitespace=False,
-    normalization_form=None,
-    preserve_unused_token=False
-)
-```
-
-Initialize self. See help(type(self)) for accurate signature.
-
 ## Methods
 
 <h3 id="tokenize"><code>tokenize</code></h3>
@@ -94,7 +78,9 @@ Initialize self. See help(type(self)) for accurate signature.
 source</a>
 
 ```python
-tokenize(text_input)
+tokenize(
+    text_input
+)
 ```
 
 Performs untokenized text to wordpiece tokenization for BERT.
@@ -116,7 +102,9 @@ ID in the vocab_lookup_table representing that string) of the `jth` token in
 source</a>
 
 ```python
-tokenize_with_offsets(text_input)
+tokenize_with_offsets(
+    text_input
+)
 ```
 
 Tokenizes the input tensor and returns the result with offsets.

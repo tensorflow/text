@@ -45,8 +45,6 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordshape_ops.py">View
 source</a>
 
-## Class `WordShape`
-
 Values for the 'pattern' arg of the wordshape op.
 
 <!-- Placeholder for "Used in" -->
@@ -169,9 +167,8 @@ The supported wordshape identifiers are:
 *   <a href="../text/WordShape.md#HAS_PUNCTUATION_DASH"><code>WordShape.HAS_PUNCTUATION_DASH</code></a>:
     The input contains at least one unicode dash character.
 
-    Note that this is similar to HAS_ANY_HYPHEN, but uses the Pd (Dash) unicode
-    property. This property will not match to soft-hyphens and katakana middle
-    dot characters.
+    Note that this uses the Pd (Dash) unicode property. This property will not
+    match to soft-hyphens and katakana middle dot characters.
 
 *   <a href="../text/WordShape.md#HAS_QUOTE"><code>WordShape.HAS_QUOTE</code></a>:
     The input starts or ends with a unicode quotation mark.
@@ -213,7 +210,7 @@ The supported wordshape identifiers are:
 *   <a href="../text/WordShape.md#IS_WHITESPACE"><code>WordShape.IS_WHITESPACE</code></a>:
     The input consists entirely of whitespace.
 
-## Class Members
+## Class Variables
 
 *   `BEGINS_WITH_OPEN_QUOTE` <a id="BEGINS_WITH_OPEN_QUOTE"></a>
 *   `BEGINS_WITH_PUNCT_OR_SYMBOL` <a id="BEGINS_WITH_PUNCT_OR_SYMBOL"></a>

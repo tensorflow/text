@@ -15,12 +15,9 @@ source</a>
 
 Builds a sliding window for `data` with a specified width.
 
-``` python
+```python
 text.sliding_window(
-    data,
-    width,
-    axis=-1,
-    name=None
+    data, width, axis=-1, name=None
 )
 ```
 

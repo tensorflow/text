@@ -5,6 +5,8 @@
 
 # text.metrics.rouge_l
 
+<!-- Insert buttons and diff -->
+
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 
@@ -15,9 +17,7 @@ Computes LCS-based similarity score between the hypotheses and references.
 
 ```python
 text.metrics.rouge_l(
-    hypotheses,
-    references,
-    alpha=None
+    hypotheses, references, alpha=None
 )
 ```
 

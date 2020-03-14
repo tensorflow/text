@@ -16,8 +16,6 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
 source</a>
 
-## Class `Reduction`
-
 Type of reduction to be done by the n-gram op.
 
 <!-- Placeholder for "Used in" -->
@@ -31,7 +29,7 @@ The supported reductions are as follows:
 *   <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>:
     Join strings in the window.
 
-## Class Members
+## Class Variables
 
 *   `MEAN` <a id="MEAN"></a>
 *   `STRING_JOIN` <a id="STRING_JOIN"></a>

@@ -2,9 +2,12 @@
 <meta itemprop="name" content="text.keras.layers.ToDense" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
+<meta itemprop="property" content="__new__"/>
 </div>
 
 # text.keras.layers.ToDense
+
+<!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
@@ -12,9 +15,13 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/todense.py">View
 source</a>
 
-## Class `ToDense`
-
 Layer that makes padding and masking a Composite Tensors effortless.
+
+```python
+text.keras.layers.ToDense(
+    pad_value=0, mask=False, **kwargs
+)
+```
 
 <!-- Placeholder for "Used in" -->
 
@@ -50,16 +57,3 @@ model.predict(rt)
     the Input or InputLayer from the Keras API. Output shape: The output is a
     uniform tensor having the same shape, in case of a ragged input or the same
     dense shape, in case of a sparse input.
-
-<h2 id="__init__"><code>__init__</code></h2>
-
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/todense.py">View
-source</a>
-
-```python
-__init__(
-    pad_value=0,
-    mask=False,
-    **kwargs
-)
-```

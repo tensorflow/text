@@ -15,8 +15,6 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
-## Class `TokenizerWithOffsets`
-
 Base class for tokenizer implementations that return offsets.
 
 Inherits From: [`Tokenizer`](../text/Tokenizer.md)
@@ -31,7 +29,9 @@ Inherits From: [`Tokenizer`](../text/Tokenizer.md)
 source</a>
 
 ```python
-tokenize(input)
+tokenize(
+    input
+)
 ```
 
 Tokenizes the input tensor.
@@ -51,7 +51,9 @@ An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
 source</a>
 
 ```python
-tokenize_with_offsets(input)
+tokenize_with_offsets(
+    input
+)
 ```
 
 Tokenizes the input tensor and returns the result with offsets.

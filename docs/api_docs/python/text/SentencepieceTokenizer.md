@@ -19,34 +19,19 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
 source</a>
 
-## Class `SentencepieceTokenizer`
-
 Tokenizes a tensor of UTF-8 strings.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 [`Detokenizer`](../text/Detokenizer.md)
 
-<!-- Placeholder for "Used in" -->
-
-<h2 id="__init__"><code>__init__</code></h2>
-
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
-source</a>
-
 ```python
-__init__(
-    model=None,
-    out_type=dtypes.int32,
-    nbest_size=0,
-    alpha=1.0,
-    reverse=False,
-    add_bos=False,
-    add_eos=False,
-    name=None
+text.SentencepieceTokenizer(
+    model=None, out_type=dtypes.int32, nbest_size=0, alpha=1.0, reverse=False,
+    add_bos=False, add_eos=False, name=None
 )
 ```
 
-Creates & initializes a Sentencepiece processor.
+<!-- Placeholder for "Used in" -->
 
 #### Args:
 
@@ -66,10 +51,6 @@ Creates & initializes a Sentencepiece processor.
     after reversing (if enabled).
 *   <b>`name`</b>: The name argument that is passed to the op function.
 
-#### Returns:
-
-*   <b>`pieces`</b>: A SentencepieceTokenizer.
-
 ## Methods
 
 <h3 id="detokenize"><code>detokenize</code></h3>
@@ -79,8 +60,7 @@ source</a>
 
 ```python
 detokenize(
-    input,
-    name=None
+    input, name=None
 )
 ```
 
@@ -103,8 +83,7 @@ source</a>
 
 ```python
 id_to_string(
-    input,
-    name=None
+    input, name=None
 )
 ```
 
@@ -126,8 +105,7 @@ source</a>
 
 ```python
 tokenize(
-    input,
-    name=None
+    input, name=None
 )
 ```
 
@@ -151,8 +129,7 @@ source</a>
 
 ```python
 tokenize_with_offsets(
-    input,
-    name=None
+    input, name=None
 )
 ```
 
@@ -175,7 +152,9 @@ tensor with an added ragged dimension for tokens of each string.
 source</a>
 
 ```python
-vocab_size(name=None)
+vocab_size(
+    name=None
+)
 ```
 
 Returns the vocabulary size.

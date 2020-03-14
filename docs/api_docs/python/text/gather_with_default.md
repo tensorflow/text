@@ -15,13 +15,9 @@ source</a>
 
 Gather slices with `indices=-1` mapped to `default`.
 
-``` python
+```python
 text.gather_with_default(
-    params,
-    indices,
-    default,
-    name=None,
-    axis=0
+    params, indices, default, name=None, axis=0
 )
 ```
 

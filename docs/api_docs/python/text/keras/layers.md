@@ -5,6 +5,8 @@
 
 # Module: text.keras.layers
 
+<!-- Insert buttons and diff -->
+
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 
@@ -12,8 +14,6 @@
 source</a>
 
 Tensorflow Text layers for Keras API.
-
-<!-- Placeholder for "Used in" -->
 
 ## Classes
 
