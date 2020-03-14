@@ -13,10 +13,9 @@
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
-source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View source</a>
 
-## Class `Reduction`
+
 
 Type of reduction to be done by the n-gram op.
 
@@ -24,15 +23,12 @@ Type of reduction to be done by the n-gram op.
 
 The supported reductions are as follows:
 
-*   <a href="../text/Reduction.md#SUM"><code>Reduction.SUM</code></a>: Add
-    values in the window.
-*   <a href="../text/Reduction.md#MEAN"><code>Reduction.MEAN</code></a>: Average
-    values in the window.
-*   <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>:
-    Join strings in the window.
+* <a href="../text/Reduction.md#SUM"><code>Reduction.SUM</code></a>: Add values in the window.
+* <a href="../text/Reduction.md#MEAN"><code>Reduction.MEAN</code></a>: Average values in the window.
+* <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>: Join strings in the window.
 
-## Class Members
+## Class Variables
 
-*   `MEAN` <a id="MEAN"></a>
-*   `STRING_JOIN` <a id="STRING_JOIN"></a>
-*   `SUM` <a id="SUM"></a>
+* `MEAN` <a id="MEAN"></a>
+* `STRING_JOIN` <a id="STRING_JOIN"></a>
+* `SUM` <a id="SUM"></a>

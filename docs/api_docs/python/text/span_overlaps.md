@@ -10,23 +10,20 @@
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View
-source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View source</a>
+
+
 
 Returns a boolean tensor indicating which source and target spans overlap.
 
-``` python
+```python
 text.span_overlaps(
-    source_start,
-    source_limit,
-    target_start,
-    target_limit,
-    contains=False,
-    contained_by=False,
-    partial_overlap=False,
-    name=None
+    source_start, source_limit, target_start, target_limit, contains=False,
+    contained_by=False, partial_overlap=False, name=None
 )
 ```
+
+
 
 <!-- Placeholder for "Used in" -->
 
@@ -54,29 +51,33 @@ span if any of the following are true:
 
 #### Args:
 
-*   <b>`source_start`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, source_size]`: the start offset of each source span.
-*   <b>`source_limit`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, source_size]`: the limit offset of each source span.
-*   <b>`target_start`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, target_size]`: the start offset of each target span.
-*   <b>`target_limit`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, target_size]`: the limit offset of each target span.
-*   <b>`contains`</b>: If true, then a source span is considered to overlap a
-    target span when the source span contains the target span.
-*   <b>`contained_by`</b>: If true, then a source span is considered to overlap
-    a target span when the source span is contained by the target span.
-*   <b>`partial_overlap`</b>: If true, then a source span is considered to
-    overlap a target span when the source span partially overlaps the target
-    span.
-*   <b>`name`</b>: A name for the operation (optional).
+
+* <b>`source_start`</b>: A B+1 dimensional potentially ragged tensor with shape
+  `[D1...DB, source_size]`: the start offset of each source span.
+* <b>`source_limit`</b>: A B+1 dimensional potentially ragged tensor with shape
+  `[D1...DB, source_size]`: the limit offset of each source span.
+* <b>`target_start`</b>: A B+1 dimensional potentially ragged tensor with shape
+  `[D1...DB, target_size]`: the start offset of each target span.
+* <b>`target_limit`</b>: A B+1 dimensional potentially ragged tensor with shape
+  `[D1...DB, target_size]`: the limit offset of each target span.
+* <b>`contains`</b>: If true, then a source span is considered to overlap a target span
+  when the source span contains the target span.
+* <b>`contained_by`</b>: If true, then a source span is considered to overlap a target
+  span when the source span is contained by the target span.
+* <b>`partial_overlap`</b>: If true, then a source span is considered to overlap a
+  target span when the source span partially overlaps the target span.
+* <b>`name`</b>: A name for the operation (optional).
+
 
 #### Returns:
 
 A B+2 dimensional potentially ragged boolean tensor with shape
 `[D1...DB, source_size, target_size]`.
 
+
+
 #### Raises:
+
 
 * <b>`ValueError`</b>: If the span tensors are incompatible.
 

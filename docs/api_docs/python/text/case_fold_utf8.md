@@ -10,25 +10,29 @@
 <table class="tfo-notebook-buttons tfo-api" align="left">
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py">View
-source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py">View source</a>
+
+
 
 Applies case folding to every UTF-8 string in the input.
 
-``` python
+```python
 text.case_fold_utf8(
-    input,
-    name=None
+    input, name=None
 )
 ```
 
+
+
 <!-- Placeholder for "Used in" -->
 
-The input is a `Tensor` or `RaggedTensor` of any shape, and the resulting output
-has the same shape as the input. Note that NFKC normalization is implicitly
-applied to the strings.
+The input is a `Tensor` or `RaggedTensor` of any shape, and the resulting
+output has the same shape as the input. Note that NFKC normalization is
+implicitly applied to the strings.
 
 #### For example:
+
+
 
 ```python
 >>> case_fold_utf8(['The   Quick-Brown',
@@ -40,8 +44,10 @@ tf.Tensor(['the   quick-brown' 'cat jumped over' 'the lazy dog  !!  '],
 
 #### Args:
 
-*   <b>`input`</b>: A `Tensor` or `RaggedTensor` of UTF-8 encoded strings.
-*   <b>`name`</b>: The name for this op (optional).
+
+* <b>`input`</b>: A `Tensor` or `RaggedTensor` of UTF-8 encoded strings.
+* <b>`name`</b>: The name for this op (optional).
+
 
 #### Returns:
 

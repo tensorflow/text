@@ -32,7 +32,7 @@ from setuptools.command.install import install
 from setuptools.dist import Distribution
 
 project_name = 'tensorflow-text'
-project_version = '2.0.0-rc0'
+project_version = '2.2.0-b0'
 
 
 class BinaryDistribution(Distribution):
@@ -73,11 +73,11 @@ setup(
     cmdclass={'install': InstallPlatlib},
     distclass=BinaryDistribution,
     install_requires=[
-        'tensorflow>=2.0.0, <2.1',
+        'tensorflow>=2.2.0, <2.4',
     ],
     extras_require={
         'tensorflow_gpu': [
-            'tensorflow-gpu>=2.0.0, <2.1',
+            'tensorflow-gpu>=2.2.0, <2.4',
         ],
         'tests': [
             'absl-py',
