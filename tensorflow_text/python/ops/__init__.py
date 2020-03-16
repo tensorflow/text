@@ -15,7 +15,11 @@
 
 """Various TensorFlow ops related to text-processing."""
 
-from tensorflow.python.ops.ragged import ragged_ops as _ragged_ops
+# pylint: disable=g-import-not-at-top,g-statement-before-imports
+try:
+  from tensorflow.python.ops.ragged import ragged_ops as _ragged_ops
+except ImportError:
+  pass
 from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
 from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_bitmask
 from tensorflow_text.python.ops.greedy_constrained_sequence_op import greedy_constrained_sequence
