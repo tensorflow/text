@@ -82,9 +82,8 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
             output tokens=["New", "York"]
 
     Returns:
-      A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string
-      contents (or ID in the vocab_lookup_table representing that string)
-      of the `jth` token in `input[i1...iN]`
+      A `RaggedTensor` of strings where `tokens[i1...iN, j]` is the string
+      content of the `j-th` token in `input[i1...iN]`
     """
     subword, _, _ = self.tokenize_with_offsets(input, labels)
     return subword
@@ -93,7 +92,7 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
                             input,  # pylint: disable=redefined-builtin
                             labels,
                             force_split_at_break_character=True):
-    """Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
+    """Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
 
     ### Example:
 
@@ -141,20 +140,15 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
             output tokens=["New", "York"]
 
     Returns:
-      A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string
-      contents (or ID in the vocab_lookup_table representing that string)
-      of the `jth` token in `input[i1...iN]`
-
-    Returns:
       A tuple `(tokens, start_offsets, limit_offsets)` where:
-
-        * `tokens[i1...iN, j]` is a `RaggedTensor` of the string contents (or ID
-          in the vocab_lookup_table representing that string) of the `jth` token
-          in `input[i1...iN]`.
-        * `start_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets
-          for the start of the `jth` token in `input[i1...iN]`.
-        * `limit_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets
-          for the end of the `jth` token in `input[i`...iN]`.
+        * `tokens` is a `RaggedTensor` of strings where `tokens[i1...iN, j]` is
+          the string content of the `j-th` token in `input[i1...iN]`
+        * `start_offsets` is a `RaggedTensor` of int64s where
+          `start_offsets[i1...iN, j]` is the byte offset for the start of the
+          `j-th` token in `input[i1...iN]`.
+        * `limit_offsets` is a `RaggedTensor` of int64s where
+          `limit_offsets[i1...iN, j]` is the byte offset immediately after the
+          end of the `j-th` token in `input[i...iN]`.
     """
     name = None
     with ops.name_scope(
