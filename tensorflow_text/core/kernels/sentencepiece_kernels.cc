@@ -174,7 +174,7 @@ class SentencepieceOp : public OpKernel {
 
     auto creator =
         [ctx, this](SentencepieceResource** resource)
-            EXCLUSIVE_LOCKS_REQUIRED(mu_) {
+            ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_) {
               SentencepieceResource* sp = new SentencepieceResource();
 
               string model_proto_attr;
@@ -223,8 +223,8 @@ class SentencepieceOp : public OpKernel {
 
  private:
   absl::Mutex mu_;
-  PersistentTensor sp_handle_ GUARDED_BY(mu_);
-  bool handle_set_ GUARDED_BY(mu_);
+  PersistentTensor sp_handle_ ABSL_GUARDED_BY(mu_);
+  bool handle_set_ ABSL_GUARDED_BY(mu_);
   ContainerInfo cinfo_;
   bool use_node_name_sharing_;
 
