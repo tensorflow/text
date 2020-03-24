@@ -20,6 +20,7 @@ from __future__ import division
 from __future__ import print_function
 
 from tensorflow.python.compat import compat
+from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
@@ -32,6 +33,10 @@ from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_wordpiece_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_wordpiece_tokenizer.so'))
+
+_tf_text_wordpiece_tokenizer_op_create_counter = monitoring.Counter(
+    '/nlx/api/python/wordpiece_tokenizer_create_counter',
+    'Counter for number of WordpieceTokenizers created in Python.')
 
 
 class WordpieceTokenizer(TokenizerWithOffsets):
@@ -67,6 +72,8 @@ class WordpieceTokenizer(TokenizerWithOffsets):
         characters as subtokens. If False (default), words containing unknown
         characters will be treated as single unknown tokens.
     """
+    super(WordpieceTokenizer, self).__init__()
+    _tf_text_wordpiece_tokenizer_op_create_counter.get_cell().increase_by(1)
     self._vocab_lookup_table = vocab_lookup_table
     self._suffix_indicator = suffix_indicator
     self._max_bytes_per_word = max_bytes_per_word

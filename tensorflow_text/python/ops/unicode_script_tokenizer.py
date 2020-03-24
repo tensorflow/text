@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
@@ -35,6 +36,10 @@ from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_unicode_script_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_unicode_script_tokenizer.so'))
 
+_tf_text_unicode_script_tokenizer_create_counter = monitoring.Counter(
+    "/nlx/api/python/unicode_script_tokenizer_create_counter",
+    "Counter for number of UnicodeScriptTokenizers created in Python.")
+
 
 class UnicodeScriptTokenizer(TokenizerWithOffsets):
   """Tokenizes a tensor of UTF-8 strings on Unicode script boundaries."""
@@ -47,6 +52,7 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
           tokens (default `False`).
     """
     super(UnicodeScriptTokenizer, self).__init__()
+    _tf_text_unicode_script_tokenizer_create_counter.get_cell().increase_by(1)
     self._keep_whitespace = keep_whitespace
 
   def tokenize(self, input):  # pylint: disable=redefined-builtin

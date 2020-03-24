@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
@@ -35,9 +36,19 @@ from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_whitespace_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_whitespace_tokenizer.so'))
 
+_tf_text_whitespace_tokenizer_op_create_counter = monitoring.Counter(
+    "/nlx/api/python/whitespace_tokenizer_create_counter",
+    "Counter for number of WhitespaceTokenizers created in Python.")
+
 
 class WhitespaceTokenizer(TokenizerWithOffsets):
   """Tokenizes a tensor of UTF-8 strings on whitespaces."""
+
+  def __init__(self):
+    """Initializes the WhitespaceTokenizer.
+    """
+    super(WhitespaceTokenizer, self).__init__()
+    _tf_text_whitespace_tokenizer_op_create_counter.get_cell().increase_by(1)
 
   def tokenize(self, input):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings on whitespaces.

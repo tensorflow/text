@@ -20,6 +20,7 @@ from __future__ import print_function
 
 import copy
 
+from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
@@ -30,6 +31,10 @@ from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
+
+_tf_text_bert_tokenizer_op_create_counter = monitoring.Counter(
+    "/nlx/api/python/bert_tokenizer_create_counter",
+    "Counter for number of BertTokenizers created in Python.")
 
 _DELIM_REGEX = [
     r"\s+",
@@ -183,6 +188,8 @@ class BertTokenizer(TokenizerWithOffsets):
                keep_whitespace=False,
                normalization_form=None,
                preserve_unused_token=False):
+    super(BertTokenizer, self).__init__()
+    _tf_text_bert_tokenizer_op_create_counter.get_cell().increase_by(1)
     if isinstance(vocab_lookup_table, str) or isinstance(
         vocab_lookup_table, ops.Tensor):
       init = lookup_ops.TextFileIdTableInitializer(vocab_lookup_table)
