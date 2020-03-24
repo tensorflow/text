@@ -17,9 +17,7 @@ Returns a subgradient of the MaximumSpanningTree op.
 
 ```python
 text.max_spanning_tree_gradient(
-    mst_op,
-    d_loss_d_max_scores,
-    *_
+    mst_op, d_loss_d_max_scores, *_
 )
 ```
 

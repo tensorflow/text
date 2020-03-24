@@ -16,33 +16,19 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
 source</a>
 
-## Class `WordpieceTokenizer`
-
 Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-<!-- Placeholder for "Used in" -->
-
-
-<h2 id="__init__"><code>__init__</code></h2>
-
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
-source</a>
-
 ```python
-__init__(
-    vocab_lookup_table,
-    suffix_indicator='##',
-    max_bytes_per_word=100,
-    max_chars_per_token=None,
-    token_out_type=dtypes.int64,
-    unknown_token='[UNK]',
+text.WordpieceTokenizer(
+    vocab_lookup_table, suffix_indicator='##', max_bytes_per_word=100,
+    max_chars_per_token=None, token_out_type=dtypes.int64, unknown_token='[UNK]',
     split_unknown_characters=False
 )
 ```
 
-Initializes the WordpieceTokenizer.
+<!-- Placeholder for "Used in" -->
 
 #### Args:
 
@@ -75,7 +61,9 @@ Initializes the WordpieceTokenizer.
 source</a>
 
 ```python
-tokenize(input)
+tokenize(
+    input
+)
 ```
 
 Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
@@ -105,7 +93,9 @@ ID in the vocab_lookup_table representing that string) of the `jth` token in
 source</a>
 
 ```python
-tokenize_with_offsets(input)
+tokenize_with_offsets(
+    input
+)
 ```
 
 Tokenizes a tensor of UTF-8 string tokens further into subword tokens.

@@ -15,8 +15,6 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/whitespace_tokenizer.py">View
 source</a>
 
-## Class `WhitespaceTokenizer`
-
 Tokenizes a tensor of UTF-8 strings on whitespaces.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
@@ -31,7 +29,9 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 source</a>
 
 ```python
-tokenize(input)
+tokenize(
+    input
+)
 ```
 
 Tokenizes a tensor of UTF-8 strings on whitespaces.
@@ -55,7 +55,9 @@ tensor with an added ragged dimension for tokens of each string.
 source</a>
 
 ```python
-tokenize_with_offsets(input)
+tokenize_with_offsets(
+    input
+)
 ```
 
 Tokenizes a tensor of UTF-8 strings on whitespaces.

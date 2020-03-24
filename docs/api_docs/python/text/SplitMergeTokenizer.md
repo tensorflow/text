@@ -15,8 +15,6 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_tokenizer.py">View
 source</a>
 
-## Class `SplitMergeTokenizer`
-
 Tokenizes a tensor of UTF-8 string into words according to labels.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
@@ -33,9 +31,7 @@ source</a>
 
 ```python
 tokenize(
-    input,
-    labels,
-    force_split_at_break_character=True
+    input, labels, force_split_at_break_character=True
 )
 ```
 
@@ -88,9 +84,7 @@ source</a>
 
 ```python
 tokenize_with_offsets(
-    input,
-    labels,
-    force_split_at_break_character=True
+    input, labels, force_split_at_break_character=True
 )
 ```
 

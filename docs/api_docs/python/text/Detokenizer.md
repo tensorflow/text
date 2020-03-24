@@ -14,8 +14,6 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
-## Class `Detokenizer`
-
 Base class for detokenizer implementations.
 
 <!-- Placeholder for "Used in" -->
@@ -28,7 +26,9 @@ Base class for detokenizer implementations.
 source</a>
 
 ```python
-detokenize(input)
+detokenize(
+    input
+)
 ```
 
 Tokenizes the input tensor.

@@ -16,24 +16,17 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py">View
 source</a>
 
-## Class `UnicodeScriptTokenizer`
-
 Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-<!-- Placeholder for "Used in" -->
-
-<h2 id="__init__"><code>__init__</code></h2>
-
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py">View
-source</a>
-
 ```python
-__init__(keep_whitespace=False)
+text.UnicodeScriptTokenizer(
+    keep_whitespace=False
+)
 ```
 
-Initializes a new instance.
+<!-- Placeholder for "Used in" -->
 
 #### Args:
 
@@ -48,7 +41,9 @@ Initializes a new instance.
 source</a>
 
 ```python
-tokenize(input)
+tokenize(
+    input
+)
 ```
 
 Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.
@@ -76,7 +71,9 @@ tensor with an added ragged dimension for tokens of each string.
 source</a>
 
 ```python
-tokenize_with_offsets(input)
+tokenize_with_offsets(
+    input
+)
 ```
 
 Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.

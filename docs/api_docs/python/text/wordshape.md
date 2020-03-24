@@ -15,11 +15,9 @@ source</a>
 
 Determine wordshape features for each input string.
 
-``` python
+```python
 text.wordshape(
-    input_tensor,
-    pattern,
-    name=None
+    input_tensor, pattern, name=None
 )
 ```
 

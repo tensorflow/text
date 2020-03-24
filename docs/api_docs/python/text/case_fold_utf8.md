@@ -15,10 +15,9 @@ source</a>
 
 Applies case folding to every UTF-8 string in the input.
 
-``` python
+```python
 text.case_fold_utf8(
-    input,
-    name=None
+    input, name=None
 )
 ```
 

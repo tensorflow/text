@@ -15,14 +15,9 @@ source</a>
 
 Create a tensor of n-grams based on the input data `data`.
 
-``` python
+```python
 text.ngrams(
-    data,
-    width,
-    axis=-1,
-    reduction_type=None,
-    string_separator=' ',
-    name=None
+    data, width, axis=-1, reduction_type=None, string_separator=' ', name=None
 )
 ```
 

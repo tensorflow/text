@@ -15,13 +15,9 @@ source</a>
 
 Add padding to the beginning and end of data in a specific dimension.
 
-``` python
+```python
 text.pad_along_dimension(
-    data,
-    axis=-1,
-    left_pad=None,
-    right_pad=None,
-    name=None
+    data, axis=-1, left_pad=None, right_pad=None, name=None
 )
 ```
 

@@ -17,10 +17,7 @@ Finds the maximum directed spanning tree of a digraph.
 
 ```python
 text.max_spanning_tree(
-    num_nodes,
-    scores,
-    forest=False,
-    name=None
+    num_nodes, scores, forest=False, name=None
 )
 ```
 

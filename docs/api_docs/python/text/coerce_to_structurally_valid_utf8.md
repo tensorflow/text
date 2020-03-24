@@ -15,11 +15,9 @@ source</a>
 
 Coerce UTF-8 input strings to structurally valid UTF-8.
 
-``` python
+```python
 text.coerce_to_structurally_valid_utf8(
-    input,
-    replacement_char=_unichr(65533),
-    name=None
+    input, replacement_char=_unichr(65533), name=None
 )
 ```
 

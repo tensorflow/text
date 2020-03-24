@@ -14,8 +14,6 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
-## Class `Tokenizer`
-
 Base class for tokenizer implementations.
 
 <!-- Placeholder for "Used in" -->
@@ -28,7 +26,9 @@ Base class for tokenizer implementations.
 source</a>
 
 ```python
-tokenize(input)
+tokenize(
+    input
+)
 ```
 
 Tokenizes the input tensor.
