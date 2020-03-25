@@ -18,8 +18,10 @@ die() {
 osname="$(uname -s)"
 echo $osname
 readlinkcmd=readlink
+plat_name=""
 if [[ $osname == "Darwin" ]]; then
   readlinkcmd=greadlink
+  plat_name="--plat-name macosx-10.9-x86_64"
 fi
 
 main() {
@@ -54,7 +56,7 @@ main() {
   pushd "${temp_dir}" > /dev/null
 
   # Build pip package
-  python setup.py bdist_wheel --universal
+  python setup.py bdist_wheel --universal $plat_name
   cp dist/*.whl "${output_dir}"
 }
 
