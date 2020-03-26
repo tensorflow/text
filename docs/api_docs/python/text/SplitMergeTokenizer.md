@@ -1,6 +1,7 @@
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.SplitMergeTokenizer" />
 <meta itemprop="path" content="Stable" />
+<meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="tokenize"/>
 <meta itemprop="property" content="tokenize_with_offsets"/>
 </div>
@@ -18,6 +19,10 @@ source</a>
 Tokenizes a tensor of UTF-8 string into words according to labels.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
+
+```python
+text.SplitMergeTokenizer()
+```
 
 <!-- Placeholder for "Used in" -->
 
@@ -73,9 +78,8 @@ Tokenizes a tensor of UTF-8 strings according to labels.
 
 #### Returns:
 
-A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string contents (or
-ID in the vocab_lookup_table representing that string) of the `jth` token in
-`input[i1...iN]`
+A `RaggedTensor` of strings where `tokens[i1...iN, j]` is the string content of
+the `j-th` token in `input[i1...iN]`
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
@@ -88,7 +92,7 @@ tokenize_with_offsets(
 )
 ```
 
-Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
+Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
 
 ### Example:
 
@@ -132,18 +136,10 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
 #### Returns:
 
-A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string contents (or
-ID in the vocab_lookup_table representing that string) of the `jth` token in
-`input[i1...iN]`
-
-#### Returns:
-
-A tuple `(tokens, start_offsets, limit_offsets)` where:
-
-*   `tokens[i1...iN, j]` is a `RaggedTensor` of the string contents (or ID in
-    the vocab_lookup_table representing that string) of the `jth` token in
-    `input[i1...iN]`.
-*   `start_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
-    start of the `jth` token in `input[i1...iN]`.
-*   `limit_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
-    end of the `jth` token in `input[i`...iN]`.
+A tuple `(tokens, start_offsets, limit_offsets)` where: * `tokens` is a
+`RaggedTensor` of strings where `tokens[i1...iN, j]` is the string content of
+the `j-th` token in `input[i1...iN]` * `start_offsets` is a `RaggedTensor` of
+int64s where `start_offsets[i1...iN, j]` is the byte offset for the start of the
+`j-th` token in `input[i1...iN]`. * `limit_offsets` is a `RaggedTensor` of
+int64s where `limit_offsets[i1...iN, j]` is the byte offset immediately after
+the end of the `j-th` token in `input[i...iN]`.
