@@ -47,6 +47,7 @@ _allowed_symbols = [
     "span_overlaps",
     "Tokenizer",
     "TokenizerWithOffsets",
+    "UnicodeCharTokenizer",
     "UnicodeScriptTokenizer",
     "viterbi_constrained_sequence",
     "WhitespaceTokenizer",

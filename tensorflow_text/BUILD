@@ -70,6 +70,7 @@ py_library(
         ":text_similarity_metric_ops",
         ":todense_layer",
         ":tokenization",
+        ":unicode_char_tokenizer",
         ":unicode_script_tokenizer",
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
@@ -629,6 +630,37 @@ py_test(
         # python/keras:backend tensorflow dep,
         # python/keras:base_layer tensorflow dep,
         # python/keras/layers tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "unicode_char_tokenizer",
+    srcs = ["python/ops/unicode_char_tokenizer.py"],
+    deps = [
+        ":tokenization",
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:string_ops tensorflow dep,
+        # python/ops/ragged:ragged_string_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "unicode_char_tokenizer_test",
+    size = "large",
+    srcs = ["python/ops/unicode_char_tokenizer_test.py"],
+    shard_count = 5,
+    srcs_version = "PY2AND3",
+    deps = [
+        ":ragged_test_util",
+        ":unicode_char_tokenizer",
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
 )
