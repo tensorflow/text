@@ -43,6 +43,9 @@ implementations.
 [`class TokenizerWithOffsets`](./text/TokenizerWithOffsets.md): Base class for
 tokenizer implementations that return offsets.
 
+[`class UnicodeCharTokenizer`](./text/UnicodeCharTokenizer.md): Tokenizes a
+tensor of UTF-8 strings on Unicode character boundaries.
+
 [`class UnicodeScriptTokenizer`](./text/UnicodeScriptTokenizer.md): Tokenizes a
 tensor of UTF-8 strings on Unicode script boundaries.
 

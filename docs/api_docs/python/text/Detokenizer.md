@@ -31,7 +31,7 @@ detokenize(
 )
 ```
 
-Tokenizes the input tensor.
+Assembles the tokens in the input tensor into a human-consumable string.
 
 #### Args:
 
@@ -40,4 +40,4 @@ Tokenizes the input tensor.
 
 #### Returns:
 
-An (N-1)-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
+An (N-1)-dimensional UTF-8 string `Tensor` or `RaggedTensor`.

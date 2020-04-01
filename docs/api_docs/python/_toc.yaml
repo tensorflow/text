@@ -47,6 +47,8 @@ toc:
     path: /text/api_docs/python/text/Tokenizer
   - title: TokenizerWithOffsets
     path: /text/api_docs/python/text/TokenizerWithOffsets
+  - title: UnicodeCharTokenizer
+    path: /text/api_docs/python/text/UnicodeCharTokenizer
   - title: UnicodeScriptTokenizer
     path: /text/api_docs/python/text/UnicodeScriptTokenizer
   - title: viterbi_constrained_sequence
