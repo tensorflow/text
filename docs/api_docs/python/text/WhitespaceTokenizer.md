@@ -1,6 +1,7 @@
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.WhitespaceTokenizer" />
 <meta itemprop="path" content="Stable" />
+<meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="tokenize"/>
 <meta itemprop="property" content="tokenize_with_offsets"/>
 </div>
@@ -18,6 +19,10 @@ source</a>
 Tokenizes a tensor of UTF-8 strings on whitespaces.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
+
+```python
+text.WhitespaceTokenizer()
+```
 
 <!-- Placeholder for "Used in" -->
 

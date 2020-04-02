@@ -10,6 +10,7 @@
 *   <a href="./text/SplitMergeTokenizer.md"><code>text.SplitMergeTokenizer</code></a>
 *   <a href="./text/Tokenizer.md"><code>text.Tokenizer</code></a>
 *   <a href="./text/TokenizerWithOffsets.md"><code>text.TokenizerWithOffsets</code></a>
+*   <a href="./text/UnicodeCharTokenizer.md"><code>text.UnicodeCharTokenizer</code></a>
 *   <a href="./text/UnicodeScriptTokenizer.md"><code>text.UnicodeScriptTokenizer</code></a>
 *   <a href="./text/WhitespaceTokenizer.md"><code>text.WhitespaceTokenizer</code></a>
 *   <a href="./text/WordShape.md"><code>text.WordShape</code></a>
