@@ -70,6 +70,7 @@ py_library(
         ":text_similarity_metric_ops",
         ":todense_layer",
         ":tokenization",
+        ":tokenizer_from_module",
         ":unicode_char_tokenizer",
         ":unicode_script_tokenizer",
         ":viterbi_constrained_sequence_op",
@@ -844,6 +845,19 @@ py_test(
         # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "tokenizer_from_module",
+    srcs = ["python/ops/tokenizer_from_module.py"],
+    srcs_version = "PY3",
+    deps = [
+        ":split_merge_tokenizer",
+        ":tokenization",
+        "//third_party/py/tensorflow_hub",
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
 
