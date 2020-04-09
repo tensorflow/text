@@ -75,23 +75,45 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
         one or more ICU defined whitespace character:
          -if force_split_at_break_character is set true, then create a new word
             at the first non-space character, regardless of the label of that
-            character, for instance
-            input="New York", labels=[0, 1, 1, 0, 1, 1, 1, 1]
-            output tokens=["New", "York"]
-            input="New York", labels=[0, 1, 1, 1, 1, 1, 1, 1]
-            output tokens=["New", "York"]
-            input="New York", labels=[0, 1, 1, 1, 0, 1, 1, 1]
-            output tokens=["New", "York"]
+            character, for instance:
 
+            ```python
+            input="New York"
+            labels=[0, 1, 1, 0, 1, 1, 1, 1]
+            output tokens=["New", "York"]
+            ```
+
+            ```python
+            input="New York"
+            labels=[0, 1, 1, 1, 1, 1, 1, 1]
+            output tokens=["New", "York"]
+            ```
+
+            ```python
+            input="New York",
+            labels=[0, 1, 1, 1, 0, 1, 1, 1]
+            output tokens=["New", "York"]
+            ```
          -otherwise, whether to create a new word or not for the first non-space
-            character depends on the label of that character, for instance
-            input="New York", labels=[0, 1, 1, 0, 1, 1, 1, 1]
-            output tokens=["NewYork"]
-            input="New York", labels=[0, 1, 1, 1, 1, 1, 1, 1]
-            output tokens=["NewYork"]
-            input="New York", labels=[0, 1, 1, 1, 0, 1, 1, 1]
-            output tokens=["New", "York"]
+            character depends on the label of that character, for instance:
 
+            ```python
+            input="New York",
+            labels=[0, 1, 1, 0, 1, 1, 1, 1]
+            output tokens=["NewYork"]
+            ```
+
+            ```python
+            input="New York",
+            labels=[0, 1, 1, 1, 1, 1, 1, 1]
+            output tokens=["NewYork"]
+            ```
+
+            ```python
+            input="New York",
+            labels=[0, 1, 1, 1, 0, 1, 1, 1]
+            output tokens=["New", "York"]
+            ```
     Returns:
       A `RaggedTensor` of strings where `tokens[i1...iN, j]` is the string
       content of the `j-th` token in `input[i1...iN]`
@@ -133,22 +155,45 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
         one or more ICU defined whitespace character:
          -if force_split_at_break_character is set true, then create a new word
             at the first non-space character, regardless of the label of that
-            character, for instance
-            input="New York", labels=[0, 1, 1, 0, 1, 1, 1, 1]
-            output tokens=["New", "York"]
-            input="New York", labels=[0, 1, 1, 1, 1, 1, 1, 1]
-            output tokens=["New", "York"]
-            input="New York", labels=[0, 1, 1, 1, 0, 1, 1, 1]
-            output tokens=["New", "York"]
+            character, for instance:
 
-         -otherwise, whether to create a new word or not for the first non-space
-            character depends on the label of that character, for instance
-            input="New York", labels=[0, 1, 1, 0, 1, 1, 1, 1]
-            output tokens=["NewYork"]
-            input="New York", labels=[0, 1, 1, 1, 1, 1, 1, 1]
-            output tokens=["NewYork"]
-            input="New York", labels=[0, 1, 1, 1, 0, 1, 1, 1]
+            ```python
+            input="New York"
+            labels=[0, 1, 1, 0, 1, 1, 1, 1]
             output tokens=["New", "York"]
+            ```
+
+            ```python
+            input="New York"
+            labels=[0, 1, 1, 1, 1, 1, 1, 1]
+            output tokens=["New", "York"]
+            ```
+
+            ```python
+            input="New York",
+            labels=[0, 1, 1, 1, 0, 1, 1, 1]
+            output tokens=["New", "York"]
+            ```
+         -otherwise, whether to create a new word or not for the first non-space
+            character depends on the label of that character, for instance:
+
+            ```python
+            input="New York",
+            labels=[0, 1, 1, 0, 1, 1, 1, 1]
+            output tokens=["NewYork"]
+            ```
+
+            ```python
+            input="New York",
+            labels=[0, 1, 1, 1, 1, 1, 1, 1]
+            output tokens=["NewYork"]
+            ```
+
+            ```python
+            input="New York",
+            labels=[0, 1, 1, 1, 0, 1, 1, 1]
+            output tokens=["New", "York"]
+            ```
 
     Returns:
       A tuple `(tokens, start_offsets, limit_offsets)` where:
