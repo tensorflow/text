@@ -195,7 +195,7 @@ on Keras built-in layers support for natively working on ragged data.
 
 ```python
 model = tf.keras.Sequential([
-  tf.keras.layers.InputLayer(input_shape=(None,), dtype='int32', ragged=True)
+  tf.keras.layers.InputLayer(input_shape=(None,), dtype='int32', ragged=True),
   text.keras.layers.ToDense(pad_value=0, mask=True),
   tf.keras.layers.Embedding(100, 16),
   tf.keras.layers.LSTM(32),
