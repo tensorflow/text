@@ -39,6 +39,7 @@ from tensorflow_text.python.ops.sentence_breaking_ops import sentence_fragments
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 from tensorflow_text.python.ops.sliding_window_op import sliding_window
 from tensorflow_text.python.ops.split_merge_tokenizer import SplitMergeTokenizer
+from tensorflow_text.python.ops.split_merge_tokenizer_v2 import SplitMergeTokenizerV2
 from tensorflow_text.python.ops.string_ops import coerce_to_structurally_valid_utf8
 from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import Tokenizer

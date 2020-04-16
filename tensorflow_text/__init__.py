@@ -52,6 +52,7 @@ _allowed_symbols = [
     "viterbi_constrained_sequence",
     "WhitespaceTokenizer",
     "SplitMergeTokenizer",
+    "SplitMergeTokenizerV2",
     "wordshape",
     "WordShape",
     "WordpieceTokenizer",
