@@ -28,7 +28,7 @@ REGISTER_OP("SplitMergeTokenizeWithOffsets")
     .Input("input_values: string")
     .Input("labels: int32")
     .Input("row_splits: int32")
-    .Input("force_split_at_break_character: bool")
+    .Attr("force_split_at_break_character: bool = true")
     .Output("output_values: string")
     .Output("output_row_splits: int64")
     .Output("start_values: int64")
@@ -59,8 +59,8 @@ REGISTER_OP("SplitMergeTokenizeWithOffsets")
     labels: 1D Tensor of split merge labels.
     row_splits: row_splits together with labels forms a 2D ragged tensor, the
       ith row corresponds to the split/merge labels for input_values[i].
-    force_split_at_break_character: bool scalar, indicates whether to force
-      start a new word after seeing an ICU defined whitespace character.
+    force_split_at_break_character: bool indicates whether to force start a
+      new word after seeing a ICU defined whitespace character.
 
   Returns:
     * output_values: 1D tensor containing the tokens for all input strings.
@@ -79,12 +79,9 @@ Status SplitMergeTokenizeWithOffsetsShapeFn(InferenceContext* c) {
   ShapeHandle input_values = c->input(0);
   ShapeHandle labels = c->input(1);
   ShapeHandle row_splits = c->input(2);
-  ShapeHandle force_split_at_break_character = c->input(3);
   TF_RETURN_IF_ERROR(c->WithRank(input_values, 1, &input_values));
   TF_RETURN_IF_ERROR(c->WithRank(labels, 1, &labels));
   TF_RETURN_IF_ERROR(c->WithRank(row_splits, 1, &row_splits));
-  TF_RETURN_IF_ERROR(c->WithRank(force_split_at_break_character, 0,
-                                 &force_split_at_break_character));
   DimensionHandle num_input_values = c->Dim(input_values, 0);
   c->set_output(0, c->UnknownShapeOfRank(1));  // output_values
   DimensionHandle num_splits;
