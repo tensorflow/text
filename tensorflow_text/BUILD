@@ -479,6 +479,7 @@ py_tf_text_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
+        ":regex_split_ops",
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
