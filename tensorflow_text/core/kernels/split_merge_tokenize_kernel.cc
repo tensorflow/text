@@ -117,8 +117,7 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
  public:
   explicit SplitMergeTokenizeWithOffsetsOp(OpKernelConstruction* ctx)
       : OpKernel(ctx) {
-    OP_REQUIRES_OK(ctx, ctx->GetAttr("force_split_at_break_character",
-                                     &force_split_at_break_character_));
+    // Nothing
   }
 
   void Compute(OpKernelContext* ctx) override {
@@ -129,6 +128,12 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
     OP_REQUIRES_OK(ctx, ctx->input("labels", &labels));
     const Tensor* row_splits;
     OP_REQUIRES_OK(ctx, ctx->input("row_splits", &row_splits));
+    const Tensor* force_split_at_break_character;
+    OP_REQUIRES_OK(ctx, ctx->input("force_split_at_break_character",
+                                   &force_split_at_break_character));
+    const bool force_split_at_break_character_bool =
+        force_split_at_break_character->flat<bool>()(0);
+
     OP_REQUIRES(ctx, input_values->dim_size(0) == row_splits->dim_size(0) - 1,
                 errors::InvalidArgument("Expecting row_splits have ",
                                         input_values->dim_size(0) + 1,
@@ -150,7 +155,7 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
           ctx, TokenizeByLabel(
                    values_vec(i),
                    labels->Slice(row_splits_vec(i), row_splits_vec(i + 1)),
-                   force_split_at_break_character_, &tokens, &begin_offset,
+                   force_split_at_break_character_bool, &tokens, &begin_offset,
                    &end_offset, &num_tokens));
 
       // Record the row splits.
@@ -206,8 +211,6 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
   }
 
  private:
-  bool force_split_at_break_character_;
-
   TF_DISALLOW_COPY_AND_ASSIGN(SplitMergeTokenizeWithOffsetsOp);
 };
 
