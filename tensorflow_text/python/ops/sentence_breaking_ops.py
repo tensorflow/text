@@ -76,10 +76,10 @@ class RegexSentenceBreaker(SentenceBreakerWithOffsets):
 
     Args:
       new_sentence_regex: (optional) A string containing the regex pattern of a
-        new line sentence delimiter. Default is '\r\n'.
+        new line sentence delimiter. Default is '\r?\n'.
     """
     if not new_sentence_regex:
-      new_sentence_regex = '\r\n'
+      new_sentence_regex = '\r?\n'
     self._new_sentence_regex = new_sentence_regex
 
   def break_sentences(self, input):  # pylint: disable=redefined-builtin

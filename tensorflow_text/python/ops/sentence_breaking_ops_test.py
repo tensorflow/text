@@ -69,7 +69,7 @@ class RegexSentenceBreakerTestCases(test.TestCase, parameterized.TestCase):
   def testRegexSentenceBreaker(self,
                                text_input,
                                expected,
-                               new_sentence_regex="\n"):
+                               new_sentence_regex=None):
     text_input = constant_op.constant(text_input)
     sentence_breaker = sentence_breaking_ops.RegexSentenceBreaker(
         new_sentence_regex)
