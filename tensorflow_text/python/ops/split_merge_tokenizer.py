@@ -118,7 +118,8 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
       A `RaggedTensor` of strings where `tokens[i1...iN, j]` is the string
       content of the `j-th` token in `input[i1...iN]`
     """
-    subword, _, _ = self.tokenize_with_offsets(input, labels)
+    subword, _, _ = self.tokenize_with_offsets(input, labels,
+                                               force_split_at_break_character)
     return subword
 
   def tokenize_with_offsets(self,

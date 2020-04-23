@@ -138,6 +138,10 @@ class SplitMergeTokenizerTest(test.TestCase):
     self.assertAllEqual(starts, expected_offset_starts)
     self.assertAllEqual(limits, expected_offset_limits)
 
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(test_value, test_label)
+    self.assertAllEqual(tokens, expected_tokens)
+
     # When force_split_at_break_character set false, we may combine two tokens
     # together to form a word according to the label of the first non-space
     # character.
@@ -147,7 +151,7 @@ class SplitMergeTokenizerTest(test.TestCase):
     # Assertions below clarify what the expected offsets mean:
     self.assertEqual(test_string[0:1], b'I')
 
-    # Notice that the original text between the [start, limit) offset for the
+    # Notice that the original text between the [start, limit) offsets for the
     # second token differs from the token text by an extra space: this is
     # by design, that space is not copied in the token.
     self.assertEqual(test_string[2:12], b'love Flume')
@@ -159,6 +163,11 @@ class SplitMergeTokenizerTest(test.TestCase):
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
     self.assertAllEqual(limits, expected_offset_limits)
+
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(
+        test_value, test_label, force_split_at_break_character=False)
+    self.assertAllEqual(tokens, expected_tokens)
 
   def testVectorSingleValueTokenChinese(self):
     test_value = constant_op.constant([_Utf8(u'我在谷歌　写代码')])
@@ -189,6 +198,10 @@ class SplitMergeTokenizerTest(test.TestCase):
     tokens_by_offsets = _RaggedSubstr(test_value, starts, limits)
     self.assertAllEqual(expected_tokens, tokens_by_offsets)
 
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(test_value, test_label)
+    self.assertAllEqual(tokens, expected_tokens)
+
     # Although force_split_at_break_character is set false we actually predict a
     # SPLIT at '写', so we still start a new token: '写代码'.
     (tokens, starts, limits) = (
@@ -199,6 +212,11 @@ class SplitMergeTokenizerTest(test.TestCase):
     # Extract tokens according to the returned starts, limits.
     tokens_by_offsets = _RaggedSubstr(test_value, starts, limits)
     self.assertAllEqual(expected_tokens, tokens_by_offsets)
+
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(
+        test_value, test_label, force_split_at_break_character=False)
+    self.assertAllEqual(tokens, expected_tokens)
 
   def testHigherRank(self):
     # [2, 1]
@@ -232,6 +250,10 @@ class SplitMergeTokenizerTest(test.TestCase):
     self.assertAllEqual([[[0, 1, 5, 10]], [[0, 4]]], starts)
     self.assertAllEqual([[[1, 5, 10, 11]], [[3, 14]]], limits)
 
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(test_value, test_label)
+    self.assertAllEqual(tokens, expected_tokens)
+
   def testVectorMultipleValue(self):
     test_value = constant_op.constant([b'IloveFlume!',
                                        b'and tensorflow'])
@@ -262,6 +284,10 @@ class SplitMergeTokenizerTest(test.TestCase):
     self.assertAllEqual(tokens, expected_tokens)
     tokens_by_offsets = _RaggedSubstr(test_value, starts, limits)
     self.assertAllEqual(tokens_by_offsets, expected_tokens)
+
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(test_value, test_label)
+    self.assertAllEqual(tokens, expected_tokens)
 
   def testRaggedInput(self):
     test_value = ragged_factory_ops.constant([
@@ -312,6 +338,10 @@ class SplitMergeTokenizerTest(test.TestCase):
     tokens_by_offsets = _RaggedSubstr(test_value, starts, limits)
     self.assertAllEqual(tokens_by_offsets, expected_tokens)
 
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(test_value, test_label)
+    self.assertAllEqual(tokens, expected_tokens)
+
   def testRaggedInputHigherRank(self):
     test_value = ragged_factory_ops.constant([
         [[b'IloveFlume!', b'and tensorflow']],
@@ -360,6 +390,10 @@ class SplitMergeTokenizerTest(test.TestCase):
     self.assertAllEqual(tokens, expected_tokens)
     tokens_by_offsets = _RaggedSubstr(test_value, starts, limits)
     self.assertAllEqual(tokens_by_offsets, expected_tokens)
+
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(test_value, test_label)
+    self.assertAllEqual(tokens, expected_tokens)
 
 
 if __name__ == '__main__':
