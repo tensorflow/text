@@ -108,7 +108,8 @@ class SplitMergeTokenizerTest(test.TestCase):
     self.assertAllEqual(extracted_tokens, expected_tokens)
 
   def testVectorSingleValueTokenCrossSpace(self):
-    test_value = constant_op.constant([b'I love Flume!'])
+    test_string = b'I love Flume!'
+    test_value = constant_op.constant([test_string])
     test_label = constant_op.constant([
         [
             # I
@@ -142,7 +143,16 @@ class SplitMergeTokenizerTest(test.TestCase):
     # character.
     expected_tokens = [[b'I', b'loveFlume', b'!']]
     expected_offset_starts = [[0, 2, 12]]
-    expected_offset_limits = [[1, 11, 13]]
+    expected_offset_limits = [[1, 12, 13]]
+    # Assertions below clarify what the expected offsets mean:
+    self.assertEqual(test_string[0:1], b'I')
+
+    # Notice that the original text between the [start, limit) offset for the
+    # second token differs from the token text by an extra space: this is
+    # by design, that space is not copied in the token.
+    self.assertEqual(test_string[2:12], b'love Flume')
+    self.assertEqual(test_string[12:13], b'!')
+
     (tokens, starts, limits) = (
         self.tokenizer.tokenize_with_offsets(
             test_value, test_label, force_split_at_break_character=False))

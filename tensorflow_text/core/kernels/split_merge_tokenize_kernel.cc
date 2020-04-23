@@ -86,21 +86,18 @@ Status TokenizeByLabel(const absl::string_view& text,
   const auto& labels = labels_tensor.unaligned_flat<int32>();
   for (int i = 0; i < chars.size(); ++i) {
     const bool is_break_character = IsBreakChar(chars[i]);
-    if (labels(i) == split_label || !has_new_token_generated_for_text ||
-        (last_character_is_break_character && force_split_at_break_character)) {
-      // Start a new token with chars[i].
-      if (!is_break_character) {
+    if (!is_break_character) {
+      if (labels(i) == split_label || !has_new_token_generated_for_text ||
+          (last_character_is_break_character &&
+           force_split_at_break_character)) {
         tokens->emplace_back(chars[i].data(), chars[i].length());
         begin_offset->push_back(start);
         end_offset->push_back(start + chars[i].length());
         *num_tokens += 1;
         has_new_token_generated_for_text = true;
-      }
-    } else {
-      // Append chars[i] to the last token.
-      if (!is_break_character) {
+      } else {
         tokens->back().append(chars[i].data(), chars[i].length());
-        end_offset->back() += chars[i].length();
+        end_offset->back() = start + chars[i].length();
       }
     }
 
