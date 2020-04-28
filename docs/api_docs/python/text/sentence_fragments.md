@@ -36,26 +36,23 @@ text attributes.
     ragged_rank=1) containing offsets where the token starts.
 *   <b>`token_ends`</b>: A Tensor (w/ rank=2) or a RaggedTensor (w/
     ragged_rank=1) containing offsets where the token ends.
-*   <b>`token_properties`</b>: A Tensor (w/ rank=2) or a RaggedTensor (w/
-    ragged_rank=1) containing a bitmask.
+*   <b>`token_properties`</b>: (Optional) A Tensor (w/ rank=2) or a RaggedTensor
+    (w/ ragged_rank=1) containing a bitmask.
 
     The values of the bitmask are:
 
-    *   0x01 (ILL_FORMED) - Text is ill-formed according to TextExtractor;
-        typically applies to all tokens of a paragraph that is too short or
-        lacks terminal punctuation. 0x40 (TITLE)
+    *   0x01 (ILL_FORMED) - Text is ill-formed: typically applies to all tokens
+        of a paragraph that is too short or lacks terminal punctuation.
     *   0x02 (HEADING)
     *   0x04 (BOLD)
     *   0x10 (UNDERLINED)
     *   0x20 (LIST)
+    *   0x40 (TITLE)
     *   0x80 (EMOTICON)
-    *   0x100 (ACRONYM) - Token was identified by Lexer as an acronym. Lexer
-        identifies period-, hyphen-, and space-separated acronyms: "U.S.",
-        "U-S", and "U S". Lexer normalizes all three to "US", but the token word
-        field normalizes only space-separated acronyms.
-    *   0x200 (HYPERLINK) - Indicates that the token (or part of the token) is a
-        covered by at least one hyperlink. More information of the hyperlink is
-        stored in the first token covered by the hyperlink.
+    *   0x100 (ACRONYM) - Token was identified as an acronym. Period-, hyphen-,
+        and space-separated acronyms: "U.S.", "U-S", and "U S".
+    *   0x200 (HYPERLINK) - Indicates that the token (or part of the token) is
+        covered by at least one hyperlink.
 
 *   <b>`input_encoding`</b>: String name for the unicode encoding that should be
     used to decode each string.

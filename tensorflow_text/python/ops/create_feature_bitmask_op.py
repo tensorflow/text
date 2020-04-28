@@ -13,10 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tokenize text ops.
-
-Uses the SAFT Tokenization library for sentence and word breaking
-"""
+"""Tokenize text ops."""
 
 from __future__ import absolute_import
 from __future__ import division
