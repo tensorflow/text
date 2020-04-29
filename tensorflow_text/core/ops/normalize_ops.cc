@@ -50,5 +50,48 @@ rules.
 See http://unicode.org/reports/tr15/
 )doc");
 
+REGISTER_OP("NormalizeUTF8WithOffsets")
+    .Input("input: string")
+    .Attr("normalization_form: string")
+    .Attr("container: string = ''")
+    .Attr("shared_name: string = ''")
+    .Attr("use_node_name_sharing: bool = false")
+    .Output("output: string")
+    .Output("handle: resource")
+    .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+      c->set_output(0, c->input(0));
+      c->set_output(1, c->Scalar());
+      return Status::OK();
+    })
+    .Doc(R"doc(
+Normalizes each UTF8 string in the input tensor using 'normalization_form'
+rules.
+
+See http://unicode.org/reports/tr15/
+)doc");
+
+REGISTER_OP("FindSourceOffsets")
+    .Input("resource_handle: resource")
+    .Input("input_starts_values: int32")
+    .Input("input_starts_splits: Tsplits")
+    .Input("input_limits_values: int32")
+    .Input("input_limits_splits: Tsplits")
+    .Attr("Tsplits: {int32, int64} = DT_INT64")
+    .Output("output_values_starts: int32")
+    .Output("output_values_limits: int32")
+    .Output("output_splits: Tsplits")
+    .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+      shape_inference::ShapeHandle unused;
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 0, &unused));
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(2), 1, &unused));
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(3), 1, &unused));
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(4), 1, &unused));
+      c->set_output(0, c->input(1));
+      c->set_output(1, c->input(3));
+      c->set_output(2, c->input(2));
+      return Status::OK();
+    });
+
 }  // namespace text
 }  // namespace tensorflow

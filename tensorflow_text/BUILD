@@ -307,7 +307,6 @@ py_tf_text_library(
     ],
     deps = [
         # python:dtypes tensorflow dep,
-        # python/ops/ragged tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
