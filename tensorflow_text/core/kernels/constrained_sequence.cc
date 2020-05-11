@@ -112,6 +112,7 @@ void ViterbiAnalysis(
   std::vector<double> *previous_scores = &scores_a;
   std::vector<double> *current_scores = &scores_b;
 
+  const bool vlog3 = VLOG_IS_ON(3);
   for (int curr_state = 0; curr_state < num_states; ++curr_state) {
     std::vector<int> &current_bps = backpointers[0];
     if (use_start_end_states) {
@@ -119,8 +120,10 @@ void ViterbiAnalysis(
       // where the OOB->state transition is valid, and set scores as needed.
       if (has_allowed_transitions &&
           !allowed_transitions(out_of_bounds_index, curr_state)) {
-        VLOG(3) << "(" << batch << ", 0, [START]->" << curr_state
-                << "): disallowed.";
+        if (vlog3) {
+          LOG(INFO) << "(" << batch << ", 0, [START]->" << curr_state
+                    << "): disallowed.";
+        }
         continue;
       }
 
@@ -140,16 +143,20 @@ void ViterbiAnalysis(
         }
       }
 
-      if (has_transition_weights) {
-        VLOG(3) << "(" << batch << ", " << step << ", [START]->" << curr_state
-                << "): Total score: " << current_score
-                << " (raw: " << scores.GetScore(batch, step, curr_state)
-                << ", tw: "
-                << transition_weights(out_of_bounds_index, curr_state) << ")";
-      } else {
-        VLOG(3) << "(" << batch << ", " << step << ", [START]->" << curr_state
-                << "): Total score: " << current_score
-                << " (raw: " << scores.GetScore(batch, step, curr_state) << ")";
+      if (vlog3) {
+        if (has_transition_weights) {
+          LOG(INFO) << "(" << batch << ", " << step << ", [START]->"
+                    << curr_state << "): Total score: " << current_score
+                    << " (raw: " << scores.GetScore(batch, step, curr_state)
+                    << ", tw: "
+                    << transition_weights(out_of_bounds_index, curr_state)
+                    << ")";
+        } else {
+          LOG(INFO) << "(" << batch << ", " << step << ", [START]->"
+                    << curr_state << "): Total score: " << current_score
+                    << " (raw: " << scores.GetScore(batch, step, curr_state)
+                    << ")";
+        }
       }
 
       current_scores->at(curr_state) = current_score;
@@ -187,16 +194,20 @@ void ViterbiAnalysis(
       for (int prev_state = 0; prev_state < num_states; ++prev_state) {
         // If the previous state was an error state, pass to the next state.
         if (previous_bps[prev_state] == kErrorState) {
-          VLOG(3) << "(" << batch << ", " << step << ", "
-                  << prev_state << "->" << curr_state << "): prev state error.";
+          if (vlog3) {
+            LOG(INFO) << "(" << batch << ", " << step << ", " << prev_state
+                      << "->" << curr_state << "): prev state error.";
+          }
           continue;
         }
 
         // If this is not a permitted transition, continue.
         if (has_allowed_transitions &&
             !allowed_transitions(prev_state, curr_state)) {
-          VLOG(3) << "(" << batch << ", " << step << ", "
-                  << prev_state << "->" << curr_state << "): disallowed.";
+          if (vlog3) {
+            LOG(INFO) << "(" << batch << ", " << step << ", " << prev_state
+                       << "->" << curr_state << "): disallowed.";
+          }
           continue;
         }
 
@@ -214,19 +225,23 @@ void ViterbiAnalysis(
           }
         }
 
-        if (has_transition_weights) {
-          VLOG(3) << "(" << batch << ", " << step << ", " << prev_state << "->"
-                  << curr_state << "): Total score: " << current_score
-                  << " (prev: " << previous_scores->at(prev_state)
-                  << ", raw: " << scores.GetScore(batch, step, curr_state)
-                  << ", tw: " << transition_weights(prev_state, curr_state)
-                  << ")";
-        } else {
-          VLOG(3) << "(" << batch << ", " << step << ", " << prev_state << "->"
-                  << curr_state << "): Total score: " << current_score
-                  << " (prev: " << previous_scores->at(prev_state)
-                  << ", raw: " << scores.GetScore(batch, step, curr_state)
-                  << ")";
+        if (vlog3) {
+          if (has_transition_weights) {
+            LOG(INFO) << "(" << batch << ", " << step << ", " << prev_state
+                      << "->" << curr_state
+                      << "): Total score: " << current_score
+                      << " (prev: " << previous_scores->at(prev_state)
+                      << ", raw: " << scores.GetScore(batch, step, curr_state)
+                      << ", tw: " << transition_weights(prev_state, curr_state)
+                      << ")";
+          } else {
+            LOG(INFO) << "(" << batch << ", " << step << ", " << prev_state
+                      << "->" << curr_state
+                      << "): Total score: " << current_score
+                      << " (prev: " << previous_scores->at(prev_state)
+                      << ", raw: " << scores.GetScore(batch, step, curr_state)
+                      << ")";
+          }
         }
 
         if (current_score >= best_score) {
@@ -264,8 +279,10 @@ void ViterbiAnalysis(
     // If the previous state was an error state, pass to the next state.
     if (previous_bps[prev_state] == kErrorState) {
       current_scores->at(prev_state) = std::numeric_limits<float>::lowest();
-      VLOG(3) << "(" << batch << ", " << num_steps << ", "
-              << prev_state << "->[END]): prev state error.";
+      if (vlog3) {
+        LOG(INFO) << "(" << batch << ", " << num_steps << ", " << prev_state
+                  << "->[END]): prev state error.";
+      }
       continue;
     }
 
@@ -273,8 +290,10 @@ void ViterbiAnalysis(
     if (has_allowed_transitions && use_start_end_states &&
         !allowed_transitions(prev_state, final_state)) {
       current_scores->at(prev_state) = std::numeric_limits<float>::lowest();
-      VLOG(3) << "(" << batch << ", " << num_steps << ", "
-              << prev_state << "->[END]): disallowed.";
+      if (vlog3) {
+        LOG(INFO) << "(" << batch << ", " << num_steps << ", " << prev_state
+                  << "->[END]): disallowed.";
+      }
       continue;
     }
 
@@ -290,17 +309,18 @@ void ViterbiAnalysis(
         }
       }
 
-      if (has_transition_weights) {
-        VLOG(3) << "(" << batch << ", " << num_steps << ", " << prev_state
-                << "->[END]): Total score: " << current_score
-                << " (prev: " << previous_scores->at(prev_state)
-                << ", tw: " << transition_weights(prev_state, final_state)
-                << ")";
-      } else {
-        VLOG(3) << "(" << batch << ", " << num_steps << ", " << prev_state
-                << "->[END]): Total score: " << current_score
-                << " (prev: " << previous_scores->at(prev_state)
-                << ")";
+      if (vlog3) {
+        if (has_transition_weights) {
+          LOG(INFO) << "(" << batch << ", " << num_steps << ", " << prev_state
+                    << "->[END]): Total score: " << current_score
+                    << " (prev: " << previous_scores->at(prev_state)
+                    << ", tw: " << transition_weights(prev_state, final_state)
+                    << ")";
+        } else {
+          LOG(INFO) << "(" << batch << ", " << num_steps << ", " << prev_state
+                    << "->[END]): Total score: " << current_score
+                    << " (prev: " << previous_scores->at(prev_state) << ")";
+        }
       }
     }
 
@@ -311,7 +331,9 @@ void ViterbiAnalysis(
     }
   }
 
-  VLOG(3) << "Final score: " << final_score;
+  if (vlog3) {
+    LOG(INFO) << "Final score: " << final_score;
+  }
 
   // Calculate the path.
   if (best_source_state == kErrorState) {
