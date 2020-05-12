@@ -28,11 +28,12 @@ Inherits From: [`Tokenizer`](../text/Tokenizer.md)
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>@abc.abstractmethod</code>
+<code>tokenize(
     input
 )
-```
+</code></pre>
 
 Tokenizes the input tensor.
 
@@ -50,11 +51,12 @@ An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
-```python
-tokenize_with_offsets(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>@abc.abstractmethod</code>
+<code>tokenize_with_offsets(
     input
 )
-```
+</code></pre>
 
 Tokenizes the input tensor and returns the result with offsets.
 

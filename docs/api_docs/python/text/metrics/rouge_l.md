@@ -15,11 +15,11 @@ source</a>
 
 Computes LCS-based similarity score between the hypotheses and references.
 
-```python
-text.metrics.rouge_l(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.metrics.rouge_l(
     hypotheses, references, alpha=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

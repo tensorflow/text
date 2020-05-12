@@ -15,11 +15,11 @@ source</a>
 
 Normalizes each UTF-8 string in the input tensor using the specified rule.
 
-```python
-text.normalize_utf8(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.normalize_utf8(
     input, normalization_form='NFKC', name=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

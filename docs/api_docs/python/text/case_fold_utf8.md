@@ -15,11 +15,11 @@ source</a>
 
 Applies case folding to every UTF-8 string in the input.
 
-```python
-text.case_fold_utf8(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.case_fold_utf8(
     input, name=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

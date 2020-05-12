@@ -24,12 +24,12 @@ Tokenizes a tensor of UTF-8 strings.
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 [`Detokenizer`](../text/Detokenizer.md)
 
-```python
-text.SentencepieceTokenizer(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.SentencepieceTokenizer(
     model=None, out_type=dtypes.int32, nbest_size=0, alpha=1.0, reverse=False,
     add_bos=False, add_eos=False, name=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 
@@ -58,11 +58,11 @@ text.SentencepieceTokenizer(
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
 source</a>
 
-```python
-detokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>detokenize(
     input, name=None
 )
-```
+</code></pre>
 
 Detokenizes tokens into preprocessed text.
 
@@ -81,11 +81,11 @@ A N-1 dimensional string Tensor or RaggedTensor of the detokenized text.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
 source</a>
 
-```python
-id_to_string(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>id_to_string(
     input, name=None
 )
-```
+</code></pre>
 
 Converts vocabulary id into a token.
 
@@ -103,11 +103,11 @@ A tensor of string with the same shape as input.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize(
     input, name=None
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings.
 
@@ -127,11 +127,11 @@ tensor with an added ragged dimension for tokens of each string.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
 source</a>
 
-```python
-tokenize_with_offsets(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize_with_offsets(
     input, name=None
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings.
 
@@ -151,11 +151,11 @@ tensor with an added ragged dimension for tokens of each string.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
 source</a>
 
-```python
-vocab_size(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>vocab_size(
     name=None
 )
-```
+</code></pre>
 
 Returns the vocabulary size.
 

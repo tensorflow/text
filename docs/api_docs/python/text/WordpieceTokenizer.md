@@ -20,13 +20,13 @@ Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-```python
-text.WordpieceTokenizer(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.WordpieceTokenizer(
     vocab_lookup_table, suffix_indicator='##', max_bytes_per_word=100,
     max_chars_per_token=None, token_out_type=dtypes.int64, unknown_token='[UNK]',
     split_unknown_characters=False
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 
@@ -60,11 +60,11 @@ text.WordpieceTokenizer(
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize(
     input
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
@@ -92,11 +92,11 @@ ID in the vocab_lookup_table representing that string) of the `jth` token in
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
 source</a>
 
-```python
-tokenize_with_offsets(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize_with_offsets(
     input
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 

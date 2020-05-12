@@ -20,9 +20,9 @@ Tokenizes a tensor of UTF-8 strings on whitespaces.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-```python
-text.WhitespaceTokenizer()
-```
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.WhitespaceTokenizer()
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 
@@ -33,11 +33,11 @@ text.WhitespaceTokenizer()
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/whitespace_tokenizer.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize(
     input
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings on whitespaces.
 
@@ -59,11 +59,11 @@ tensor with an added ragged dimension for tokens of each string.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/whitespace_tokenizer.py">View
 source</a>
 
-```python
-tokenize_with_offsets(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize_with_offsets(
     input
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings on whitespaces.
 

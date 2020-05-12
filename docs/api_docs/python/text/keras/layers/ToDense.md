@@ -17,11 +17,11 @@ source</a>
 
 Layer that makes padding and masking a Composite Tensors effortless.
 
-```python
-text.keras.layers.ToDense(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.keras.layers.ToDense(
     pad_value=0, mask=False, **kwargs
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

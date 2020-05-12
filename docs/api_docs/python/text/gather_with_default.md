@@ -15,11 +15,11 @@ source</a>
 
 Gather slices with `indices=-1` mapped to `default`.
 
-```python
-text.gather_with_default(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.gather_with_default(
     params, indices, default, name=None, axis=0
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

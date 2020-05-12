@@ -20,9 +20,9 @@ Tokenizes a tensor of UTF-8 string into words according to labels.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-```python
-text.SplitMergeTokenizer()
-```
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.SplitMergeTokenizer()
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 
@@ -34,11 +34,11 @@ text.SplitMergeTokenizer()
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_tokenizer.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize(
     input, labels, force_split_at_break_character=True
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings according to labels.
 
@@ -65,16 +65,46 @@ Tokenizes a tensor of UTF-8 strings according to labels.
     seeing one or more ICU defined whitespace character: -if
     force_split_at_break_character is set true, then create a new word at the
     first non-space character, regardless of the label of that character, for
-    instance input="New York", labels=[0, 1, 1, 0, 1, 1, 1, 1] output
-    tokens=["New", "York"] input="New York", labels=[0, 1, 1, 1, 1, 1, 1, 1]
-    output tokens=["New", "York"] input="New York", labels=[0, 1, 1, 1, 0, 1, 1,
-    1] output tokens=["New", "York"]
+    instance:
+
+    ```python
+      input="New York"
+      labels=[0, 1, 1, 0, 1, 1, 1, 1]
+      output tokens=["New", "York"]
+    ```
+
+    ```python
+      input="New York"
+      labels=[0, 1, 1, 1, 1, 1, 1, 1]
+      output tokens=["New", "York"]
+    ```
+
+    ```python
+      input="New York",
+      labels=[0, 1, 1, 1, 0, 1, 1, 1]
+      output tokens=["New", "York"]
+    ```
 
     -otherwise, whether to create a new word or not for the first non-space
-    character depends on the label of that character, for instance input="New
-    York", labels=[0, 1, 1, 0, 1, 1, 1, 1] output tokens=["NewYork"] input="New
-    York", labels=[0, 1, 1, 1, 1, 1, 1, 1] output tokens=["NewYork"] input="New
-    York", labels=[0, 1, 1, 1, 0, 1, 1, 1] output tokens=["New", "York"]
+    character depends on the label of that character, for instance:
+
+    ```python
+      input="New York",
+      labels=[0, 1, 1, 0, 1, 1, 1, 1]
+      output tokens=["NewYork"]
+    ```
+
+    ```python
+      input="New York",
+      labels=[0, 1, 1, 1, 1, 1, 1, 1]
+      output tokens=["NewYork"]
+    ```
+
+    ```python
+      input="New York",
+      labels=[0, 1, 1, 1, 0, 1, 1, 1]
+      output tokens=["New", "York"]
+    ```
 
 #### Returns:
 
@@ -86,11 +116,11 @@ the `j-th` token in `input[i1...iN]`
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_tokenizer.py">View
 source</a>
 
-```python
-tokenize_with_offsets(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize_with_offsets(
     input, labels, force_split_at_break_character=True
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
 
@@ -123,16 +153,46 @@ Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
     seeing one or more ICU defined whitespace character: -if
     force_split_at_break_character is set true, then create a new word at the
     first non-space character, regardless of the label of that character, for
-    instance input="New York", labels=[0, 1, 1, 0, 1, 1, 1, 1] output
-    tokens=["New", "York"] input="New York", labels=[0, 1, 1, 1, 1, 1, 1, 1]
-    output tokens=["New", "York"] input="New York", labels=[0, 1, 1, 1, 0, 1, 1,
-    1] output tokens=["New", "York"]
+    instance:
+
+    ```python
+      input="New York"
+      labels=[0, 1, 1, 0, 1, 1, 1, 1]
+      output tokens=["New", "York"]
+    ```
+
+    ```python
+      input="New York"
+      labels=[0, 1, 1, 1, 1, 1, 1, 1]
+      output tokens=["New", "York"]
+    ```
+
+    ```python
+      input="New York",
+      labels=[0, 1, 1, 1, 0, 1, 1, 1]
+      output tokens=["New", "York"]
+    ```
 
     -otherwise, whether to create a new word or not for the first non-space
-    character depends on the label of that character, for instance input="New
-    York", labels=[0, 1, 1, 0, 1, 1, 1, 1] output tokens=["NewYork"] input="New
-    York", labels=[0, 1, 1, 1, 1, 1, 1, 1] output tokens=["NewYork"] input="New
-    York", labels=[0, 1, 1, 1, 0, 1, 1, 1] output tokens=["New", "York"]
+    character depends on the label of that character, for instance:
+
+    ```python
+      input="New York",
+      labels=[0, 1, 1, 0, 1, 1, 1, 1]
+      output tokens=["NewYork"]
+    ```
+
+    ```python
+      input="New York",
+      labels=[0, 1, 1, 1, 1, 1, 1, 1]
+      output tokens=["NewYork"]
+    ```
+
+    ```python
+      input="New York",
+      labels=[0, 1, 1, 1, 0, 1, 1, 1]
+      output tokens=["New", "York"]
+    ```
 
 #### Returns:
 

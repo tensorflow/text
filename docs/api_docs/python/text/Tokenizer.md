@@ -25,11 +25,12 @@ Base class for tokenizer implementations.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>@abc.abstractmethod</code>
+<code>tokenize(
     input
 )
-```
+</code></pre>
 
 Tokenizes the input tensor.
 

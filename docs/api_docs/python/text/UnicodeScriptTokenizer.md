@@ -20,11 +20,11 @@ Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-```python
-text.UnicodeScriptTokenizer(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.UnicodeScriptTokenizer(
     keep_whitespace=False
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 
@@ -40,11 +40,11 @@ text.UnicodeScriptTokenizer(
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize(
     input
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.
 
@@ -70,11 +70,11 @@ tensor with an added ragged dimension for tokens of each string.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_script_tokenizer.py">View
 source</a>
 
-```python
-tokenize_with_offsets(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize_with_offsets(
     input
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.
 

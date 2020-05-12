@@ -15,11 +15,11 @@ source</a>
 
 Determine wordshape features for each input string.
 
-```python
-text.wordshape(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.wordshape(
     input_tensor, pattern, name=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

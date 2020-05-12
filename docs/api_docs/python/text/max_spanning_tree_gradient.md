@@ -15,11 +15,11 @@ source</a>
 
 Returns a subgradient of the MaximumSpanningTree op.
 
-```python
-text.max_spanning_tree_gradient(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.max_spanning_tree_gradient(
     mst_op, d_loss_d_max_scores, *_
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

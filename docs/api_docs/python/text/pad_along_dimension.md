@@ -15,11 +15,11 @@ source</a>
 
 Add padding to the beginning and end of data in a specific dimension.
 
-```python
-text.pad_along_dimension(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.pad_along_dimension(
     data, axis=-1, left_pad=None, right_pad=None, name=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

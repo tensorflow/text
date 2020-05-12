@@ -25,11 +25,12 @@ Base class for detokenizer implementations.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
-```python
-detokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>@abc.abstractmethod</code>
+<code>detokenize(
     input
 )
-```
+</code></pre>
 
 Assembles the tokens in the input tensor into a human-consumable string.
 

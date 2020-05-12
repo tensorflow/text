@@ -15,11 +15,11 @@ source</a>
 
 Coerce UTF-8 input strings to structurally valid UTF-8.
 
-```python
-text.coerce_to_structurally_valid_utf8(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.coerce_to_structurally_valid_utf8(
     input, replacement_char=_unichr(65533), name=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

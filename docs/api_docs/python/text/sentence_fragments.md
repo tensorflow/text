@@ -15,12 +15,12 @@ source</a>
 
 Find the sentence fragments in a given text.
 
-```python
-text.sentence_fragments(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.sentence_fragments(
     token_word, token_starts, token_ends, token_properties, input_encoding='UTF-8',
     errors='replace', replacement_char=65533, replace_control_characters=False
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 
@@ -36,8 +36,8 @@ text attributes.
     ragged_rank=1) containing offsets where the token starts.
 *   <b>`token_ends`</b>: A Tensor (w/ rank=2) or a RaggedTensor (w/
     ragged_rank=1) containing offsets where the token ends.
-*   <b>`token_properties`</b>: (Optional) A Tensor (w/ rank=2) or a RaggedTensor
-    (w/ ragged_rank=1) containing a bitmask.
+*   <b>`token_properties`</b>: A Tensor (w/ rank=2) or a RaggedTensor (w/
+    ragged_rank=1) containing a bitmask.
 
     The values of the bitmask are:
 

@@ -15,11 +15,11 @@ source</a>
 
 Finds the maximum directed spanning tree of a digraph.
 
-```python
-text.max_spanning_tree(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.max_spanning_tree(
     num_nodes, scores, forest=False, name=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

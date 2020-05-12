@@ -22,9 +22,9 @@ Tokenizes a tensor of UTF-8 strings on Unicode character boundaries.
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 [`Detokenizer`](../text/Detokenizer.md)
 
-```python
-text.UnicodeCharTokenizer()
-```
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.UnicodeCharTokenizer()
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 
@@ -37,11 +37,11 @@ Resulting tokens are integers (unicode codepoints)
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_char_tokenizer.py">View
 source</a>
 
-```python
-detokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>detokenize(
     input, name=None
 )
-```
+</code></pre>
 
 Detokenizes input codepoints (integers) to UTF-8 strings.
 
@@ -60,11 +60,11 @@ A N-1 dimensional string tensor of the detokenized text.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_char_tokenizer.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize(
     input
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings on Unicode character boundaries.
 
@@ -85,11 +85,11 @@ tensor with an added ragged dimension for tokens (characters) of each string.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_char_tokenizer.py">View
 source</a>
 
-```python
-tokenize_with_offsets(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize_with_offsets(
     input
 )
-```
+</code></pre>
 
 Tokenizes a tensor of UTF-8 strings to Unicode characters.
 

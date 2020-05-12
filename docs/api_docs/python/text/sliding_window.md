@@ -15,11 +15,11 @@ source</a>
 
 Builds a sliding window for `data` with a specified width.
 
-```python
-text.sliding_window(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.sliding_window(
     data, width, axis=-1, name=None
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

@@ -20,14 +20,14 @@ Tokenizer used for BERT.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
-```python
-text.BertTokenizer(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.BertTokenizer(
     vocab_lookup_table, suffix_indicator='##', max_bytes_per_word=100,
     max_chars_per_token=None, token_out_type=dtypes.int64, unknown_token='[UNK]',
     split_unknown_characters=False, lower_case=False, keep_whitespace=False,
     normalization_form=None, preserve_unused_token=False
 )
-```
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 
@@ -36,7 +36,7 @@ first applies basic tokenization, and then follwed by wordpiece tokenization.
 
 See BasicTokenizer and WordpieceTokenizer for their respective details.
 
-#### Attributes:
+## Attributes
 
 *   <b>`vocab_lookup_table`</b>: A lookup table implementing the LookupInterface
     containing the vocabulary of subwords or a string which is the file path to
@@ -77,11 +77,11 @@ See BasicTokenizer and WordpieceTokenizer for their respective details.
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
 source</a>
 
-```python
-tokenize(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize(
     text_input
 )
-```
+</code></pre>
 
 Performs untokenized text to wordpiece tokenization for BERT.
 
@@ -101,11 +101,11 @@ ID in the vocab_lookup_table representing that string) of the `jth` token in
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
 source</a>
 
-```python
-tokenize_with_offsets(
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>tokenize_with_offsets(
     text_input
 )
-```
+</code></pre>
 
 Tokenizes the input tensor and returns the result with offsets.
 
