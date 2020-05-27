@@ -1,6 +1,7 @@
 workspace(name = "org_tensorflow_text")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+#load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 http_archive(
     name = "absl_py",
@@ -91,6 +92,35 @@ http_archive(
         "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",  # 2019-06-13
     ],
 )
+
+http_archive(
+    name = "org_tensorflow_hub",
+    strip_prefix = "hub-0.8.0",
+    sha256 = "968af30c448d51c36501b68df2c916fb4a61007db3240adc9248fa3a9be2da6f",
+    urls = [
+        "https://github.com/tensorflow/hub/archive/v0.8.0.zip"
+    ],
+)
+
+# Transitive dependencies for @org_tensorflow_hub.  We have to list them here:
+# https://docs.bazel.build/versions/master/external.html#transitive-dependencies
+#
+# For use by @org_tensorflow_hub//tensorflow_hub:protos.bzl.
+#git_repository(
+#    name = "com_google_protobuf",
+#    # v3.8.0
+#    commit = "09745575a923640154bcf307fba8aedff47f240a",
+#    remote = "https://github.com/google/protobuf.git",
+#)
+
+# Required by protobuf 3.8.0.
+#http_archive(
+#    name = "zlib",
+#    build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
+#    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+#    strip_prefix = "zlib-1.2.11",
+#    urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],
+#)
 
 http_archive(
     name = "org_tensorflow",
