@@ -70,6 +70,7 @@ py_library(
         ":text_similarity_metric_ops",
         ":todense_layer",
         ":tokenization",
+        ":tokenizer_from_module",
         ":unicode_char_tokenizer",
         ":unicode_script_tokenizer",
         ":viterbi_constrained_sequence_op",
@@ -694,6 +695,19 @@ py_test(
         # python/keras:base_layer tensorflow dep,
         # python/keras/layers tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "tokenizer_from_module",
+    srcs = ["python/ops/tokenizer_from_module.py"],
+    deps = [
+        "@org_tensorflow_hub//tensorflow_hub",
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+        "//tensorflow_text:tokenization",
     ],
 )
 

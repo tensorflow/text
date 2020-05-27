@@ -46,6 +46,7 @@ _allowed_symbols = [
     "span_alignment",
     "span_overlaps",
     "Tokenizer",
+    "TokenizerFromModule",
     "TokenizerWithOffsets",
     "UnicodeCharTokenizer",
     "UnicodeScriptTokenizer",

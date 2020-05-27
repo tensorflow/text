@@ -1,6 +1,7 @@
 workspace(name = "org_tensorflow_text")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+#load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 http_archive(
     name = "absl_py",
@@ -91,6 +92,20 @@ http_archive(
     urls = [
         "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
         "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",  # 2019-06-13
+    ],
+)
+
+# NOTE: according to
+# https://docs.bazel.build/versions/master/external.html#transitive-dependencies
+# we should list the transitive dependencies of @org_tensorflow_hub in this
+# WORKSPACE file.  Still, all of them are already listed by tf_workspace() which
+# is called later in this file.
+http_archive(
+    name = "org_tensorflow_hub",
+    strip_prefix = "hub-0.8.0",
+    sha256 = "968af30c448d51c36501b68df2c916fb4a61007db3240adc9248fa3a9be2da6f",
+    urls = [
+        "https://github.com/tensorflow/hub/archive/v0.8.0.zip"
     ],
 )
 
