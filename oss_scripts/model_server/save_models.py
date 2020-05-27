@@ -110,6 +110,9 @@ class TfTextOps(tf.Module):
     sm_tokenizer = text.SplitMergeTokenizer()
     split_merge = sm_tokenizer.tokenize(b'IloveFlume!',
                                         [0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0])
+    # Confirm TF unicode_script op that requires ICU works
+    tf_unicode_script = tf.strings.unicode_script(
+        [ord('a'), 0x0411, 0x82b8, ord(',')])
     # Unicode script tokenizer
     us_tokenizer = text.UnicodeScriptTokenizer()
     unicode_script = us_tokenizer.tokenize(['a string'])
@@ -127,20 +130,42 @@ class TfTextOps(tf.Module):
     wordshapes = text.wordshape([u'a-b', u'a\u2010b'.encode('utf-8')],
                                 text.WordShape.HAS_PUNCTUATION_DASH)
 
-    with tf.control_dependencies([constrained_sequence,
-                                  max_spanning_tree,
-                                  normalized,
-                                  regex_split,
-                                  rouge_l,
-                                  sentence_breaking,
-                                  sentencepiece,
-                                  sentencepiece_id,
-                                  sentencepiece_size,
-                                  split_merge,
-                                  unicode_script,
-                                  whitespace,
-                                  wordpiece,
-                                  wordshapes]):
+    # Assertion method
+    def assert_check(tensor):
+      return tf.assert_equal(tensor, tf.identity(tensor))
+
+    # Assertions
+    constrained_sequence_assert = assert_check(constrained_sequence.to_tensor())
+    max_spanning_tree_assert = assert_check(max_spanning_tree)
+    normalized_assert = assert_check(normalized)
+    regex_split_assert = assert_check(regex_split.to_tensor())
+    rouge_l_assert = assert_check(rouge_l)
+    sentence_breaking_assert = assert_check(sentence_breaking.to_tensor())
+    sentencepiece_assert = assert_check(sentencepiece.to_tensor())
+    sentencepiece_id_assert = assert_check(sentencepiece_id)
+    sentencepiece_size_assert = assert_check(sentencepiece_size)
+    split_merge_assert = assert_check(split_merge)
+    tf_unicode_script_assert = assert_check(tf_unicode_script)
+    unicode_script_assert = assert_check(unicode_script.to_tensor())
+    whitespace_assert = assert_check(whitespace.to_tensor())
+    wordpiece_assert = assert_check(wordpiece.to_tensor())
+    wordshapes_assert = assert_check(wordshapes)
+
+    with tf.control_dependencies([constrained_sequence_assert,
+                                  max_spanning_tree_assert,
+                                  normalized_assert,
+                                  regex_split_assert,
+                                  rouge_l_assert,
+                                  sentence_breaking_assert,
+                                  sentencepiece_assert,
+                                  sentencepiece_id_assert,
+                                  sentencepiece_size_assert,
+                                  split_merge_assert,
+                                  tf_unicode_script_assert,
+                                  unicode_script_assert,
+                                  whitespace_assert,
+                                  wordpiece_assert,
+                                  wordshapes_assert]):
       y = tf.add(x, [1])
     return {'y': y}
 
