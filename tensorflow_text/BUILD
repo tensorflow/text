@@ -34,6 +34,7 @@ cc_library(
         ":sentencepiece_tokenizer_cc",
         ":split_merge_tokenizer_cc",
         ":text_similarity_metric_ops_cc",
+        ":tokenizer_from_logits_cc",
         ":unicode_script_tokenizer_cc",
         ":whitespace_tokenizer_cc",
         ":wordpiece_tokenizer_cc",
@@ -70,6 +71,8 @@ py_library(
         ":text_similarity_metric_ops",
         ":todense_layer",
         ":tokenization",
+        ":tokenizer_from_logits",
+        ":tokenizer_from_module",
         ":unicode_char_tokenizer",
         ":unicode_script_tokenizer",
         ":viterbi_constrained_sequence_op",
@@ -693,6 +696,68 @@ py_test(
         # python/keras:backend tensorflow dep,
         # python/keras:base_layer tensorflow dep,
         # python/keras/layers tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "tokenizer_from_logits",
+    srcs = ["python/ops/tokenizer_from_logits.py"],
+    cc_op_defs = ["core/ops/tokenizer_from_logits_op.cc"],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels:tokenizer_from_logits_kernel",
+    ],
+    deps = [
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged tensorflow dep,
+        "//tensorflow_text:tokenization",
+    ],
+)
+
+py_test(
+    name = "tokenizer_from_logits_test",
+    size = "small",
+    srcs = ["python/ops/tokenizer_from_logits_test.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":tokenizer_from_logits",
+        # python:client_testlib tensorflow dep,
+        # python:errors tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "tokenizer_from_module",
+    srcs = ["python/ops/tokenizer_from_module.py"],
+    deps = [
+        "@org_tensorflow_hub//tensorflow_hub",
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+        "//tensorflow_text:tokenization",
+    ],
+)
+
+py_test(
+    name = "tokenizer_from_module_test",
+    size = "large",
+    srcs = ["python/ops/tokenizer_from_module_test.py"],
+    data = [
+        ":python/ops/test_data/segmenter_hub_module",
+    ],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":ops",
+        "@absl_py//absl/testing:parameterized",
+        # python:client_testlib tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:lookup_ops tensorflow dep,
+        # python:variables tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
 )

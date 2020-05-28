@@ -457,3 +457,15 @@ cc_test(
         "//tensorflow_text:wordpiece_tokenizer_cc",
     ],
 )
+
+tf_kernel_library(
+    name = "tokenizer_from_logits_kernel",
+    srcs = ["tokenizer_from_logits_kernel.cc"],
+    deps = OSS_DEPS + [
+        "@icu//:common",
+        # absl/strings dep
+        "@com_google_absl//absl/base:core_headers",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+    ],
+)
