@@ -24,6 +24,15 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 import tensorflow_text as text
 
+flags = tf.flags
+FLAGS = flags.FLAGS
+
+flags.DEFINE_string(
+    'dest',
+    ('third_party/tensorflow_serving/servables/tensorflow/testdata/'
+     'tf_text_regression/01'),
+    'Destination directory for the model.')
+
 
 class TfTextOps(tf.Module):
   """Module for saving TF Text concrete function."""
@@ -179,10 +188,8 @@ tf.saved_model.save(module, export_path.name, call)
 
 # Copy files from temp directory
 print('Moving files:')
-dst_path = os.path.join('third_party/tensorflow_serving/servables/',
-                        'tensorflow/testdata/tf_text_regression/01')
 for src_dir, dirs, files in os.walk(export_path.name):
-  dst_dir = src_dir.replace(export_path.name, dst_path, 1)
+  dst_dir = src_dir.replace(export_path.name, FLAGS.dest, 1)
   if not os.path.exists(dst_dir):
     os.makedirs(dst_dir)
   for file_ in files:
