@@ -24,6 +24,7 @@ from tensorflow_text.python.ops import *
 
 # Public symbols in the "tensorflow_text" package.
 _allowed_symbols = [
+    "BasicTokenizer",
     "BertTokenizer",
     "case_fold_utf8",
     "coerce_to_structurally_valid_utf8",
