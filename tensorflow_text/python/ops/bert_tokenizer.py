@@ -139,7 +139,7 @@ class BertTokenizer(TokenizerWithOffsets):
   r"""Tokenizer used for BERT.
 
     This tokenizer applies an end-to-end, text string to wordpiece tokenization.
-    It first applies basic tokenization, and then follwed by wordpiece
+    It first applies basic tokenization, and then followed by wordpiece
     tokenization.
 
     See BasicTokenizer and WordpieceTokenizer for their respective details.

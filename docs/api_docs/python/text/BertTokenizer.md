@@ -32,7 +32,7 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 <!-- Placeholder for "Used in" -->
 
 This tokenizer applies an end-to-end, text string to wordpiece tokenization. It
-first applies basic tokenization, and then follwed by wordpiece tokenization.
+first applies basic tokenization, and then followed by wordpiece tokenization.
 
 See BasicTokenizer and WordpieceTokenizer for their respective details.
 
