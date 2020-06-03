@@ -14,6 +14,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
@@ -33,23 +34,78 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 
 <!-- Placeholder for "Used in" -->
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`model`</b>: The sentencepiece model serialized proto.
-*   <b>`out_type`</b>: output type. tf.int32 or tf.string (Default = tf.int32)
-    Setting tf.int32 directly encodes the string into an id sequence.
-*   <b>`nbest_size`</b>: A scalar for sampling. nbest_size = {0,1}: No sampling
-    is performed. (default) nbest_size > 1: samples from the nbest_size results.
-    nbest_size < 0: assuming that nbest_size is infinite and samples from the
-    all hypothesis (lattice) using forward-filtering-and-backward-sampling
-    algorithm.
-*   <b>`alpha`</b>: A scalar for a smoothing parameter. Inverse temperature for
-    probability rescaling.
-*   <b>`reverse`</b>: Reverses the tokenized sequence (Default = false)
-*   <b>`add_bos`</b>: Add <s> to the result (Default = false)
-*   <b>`add_eos`</b>: Add </s> to the result (Default = false) <s>/</s> is added
-    after reversing (if enabled).
-*   <b>`name`</b>: The name argument that is passed to the op function.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
+
+<tr>
+<td>
+`model`
+</td>
+<td>
+The sentencepiece model serialized proto.
+</td>
+</tr><tr>
+<td>
+`out_type`
+</td>
+<td>
+output type. tf.int32 or tf.string (Default = tf.int32) Setting
+tf.int32 directly encodes the string into an id sequence.
+</td>
+</tr><tr>
+<td>
+`nbest_size`
+</td>
+<td>
+A scalar for sampling.
+nbest_size = {0,1}: No sampling is performed. (default)
+nbest_size > 1: samples from the nbest_size results.
+nbest_size < 0: assuming that nbest_size is infinite and samples
+from the all hypothesis (lattice) using
+forward-filtering-and-backward-sampling algorithm.
+</td>
+</tr><tr>
+<td>
+`alpha`
+</td>
+<td>
+A scalar for a smoothing parameter. Inverse temperature for
+probability rescaling.
+</td>
+</tr><tr>
+<td>
+`reverse`
+</td>
+<td>
+Reverses the tokenized sequence (Default = false)
+</td>
+</tr><tr>
+<td>
+`add_bos`
+</td>
+<td>
+Add <s> to the result (Default = false)
+</td>
+</tr><tr>
+<td>
+`add_eos`
+</td>
+<td>
+Add </s> to the result (Default = false) <s>/</s> is added after
+reversing (if enabled).
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
 
 ## Methods
 
@@ -66,15 +122,42 @@ source</a>
 
 Detokenizes tokens into preprocessed text.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: A `RaggedTensor` or `Tensor` of UTF-8 string tokens with a
-    rank of at least 1.
-*   <b>`name`</b>: The name argument that is passed to the op function.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+A `RaggedTensor` or `Tensor` of UTF-8 string tokens with a rank of
+at least 1.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 A N-1 dimensional string Tensor or RaggedTensor of the detokenized text.
+</td>
+</tr>
+
+</table>
 
 <h3 id="id_to_string"><code>id_to_string</code></h3>
 
@@ -89,14 +172,41 @@ source</a>
 
 Converts vocabulary id into a token.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: An arbitrary tensor of int32 representing the token IDs.
-*   <b>`name`</b>: The name argument that is passed to the op function.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+An arbitrary tensor of int32 representing the token IDs.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 A tensor of string with the same shape as input.
+</td>
+</tr>
+
+</table>
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
@@ -111,16 +221,42 @@ source</a>
 
 Tokenizes a tensor of UTF-8 strings.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: A `RaggedTensor` or `Tensor` of UTF-8 strings with any
-    shape.
-*   <b>`name`</b>: The name argument that is passed to the op function.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
 
-A `RaggedTensor` of tokenized text. The returned shape is the shape of the input
-tensor with an added ragged dimension for tokens of each string.
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A `RaggedTensor` of tokenized text. The returned shape is the shape of the
+input tensor with an added ragged dimension for tokens of each string.
+</td>
+</tr>
+
+</table>
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
@@ -135,16 +271,42 @@ source</a>
 
 Tokenizes a tensor of UTF-8 strings.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: A `RaggedTensor` or `Tensor` of UTF-8 strings with any
-    shape.
-*   <b>`name`</b>: The name argument that is passed to the op function.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
 
-A `RaggedTensor` of tokenized text. The returned shape is the shape of the input
-tensor with an added ragged dimension for tokens of each string.
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A `RaggedTensor` of tokenized text. The returned shape is the shape of the
+input tensor with an added ragged dimension for tokens of each string.
+</td>
+</tr>
+
+</table>
 
 <h3 id="vocab_size"><code>vocab_size</code></h3>
 
@@ -159,10 +321,31 @@ source</a>
 
 Returns the vocabulary size.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`name`</b>: The name argument that is passed to the op function.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 A scalar representing the vocabulary size.
+</td>
+</tr>
+
+</table>

@@ -8,6 +8,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View
@@ -46,33 +47,107 @@ span if any of the following are true:
   * `partial_overlap` is true, and there is a non-zero overlap between the
     source span and the target span.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`source_start`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, source_size]`: the start offset of each source span.
-*   <b>`source_limit`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, source_size]`: the limit offset of each source span.
-*   <b>`target_start`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, target_size]`: the start offset of each target span.
-*   <b>`target_limit`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, target_size]`: the limit offset of each target span.
-*   <b>`contains`</b>: If true, then a source span is considered to overlap a
-    target span when the source span contains the target span.
-*   <b>`contained_by`</b>: If true, then a source span is considered to overlap
-    a target span when the source span is contained by the target span.
-*   <b>`partial_overlap`</b>: If true, then a source span is considered to
-    overlap a target span when the source span partially overlaps the target
-    span.
-*   <b>`name`</b>: A name for the operation (optional).
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-#### Returns:
+<tr>
+<td>
+`source_start`
+</td>
+<td>
+A B+1 dimensional potentially ragged tensor with shape
+`[D1...DB, source_size]`: the start offset of each source span.
+</td>
+</tr><tr>
+<td>
+`source_limit`
+</td>
+<td>
+A B+1 dimensional potentially ragged tensor with shape
+`[D1...DB, source_size]`: the limit offset of each source span.
+</td>
+</tr><tr>
+<td>
+`target_start`
+</td>
+<td>
+A B+1 dimensional potentially ragged tensor with shape
+`[D1...DB, target_size]`: the start offset of each target span.
+</td>
+</tr><tr>
+<td>
+`target_limit`
+</td>
+<td>
+A B+1 dimensional potentially ragged tensor with shape
+`[D1...DB, target_size]`: the limit offset of each target span.
+</td>
+</tr><tr>
+<td>
+`contains`
+</td>
+<td>
+If true, then a source span is considered to overlap a target span
+when the source span contains the target span.
+</td>
+</tr><tr>
+<td>
+`contained_by`
+</td>
+<td>
+If true, then a source span is considered to overlap a target
+span when the source span is contained by the target span.
+</td>
+</tr><tr>
+<td>
+`partial_overlap`
+</td>
+<td>
+If true, then a source span is considered to overlap a
+target span when the source span partially overlaps the target span.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+A name for the operation (optional).
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
+<tr class="alt">
+<td colspan="2">
 A B+2 dimensional potentially ragged boolean tensor with shape
 `[D1...DB, source_size, target_size]`.
+</td>
+</tr>
 
-#### Raises:
+</table>
 
-* <b>`ValueError`</b>: If the span tensors are incompatible.
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Raises</h2></th></tr>
+
+<tr>
+<td>
+`ValueError`
+</td>
+<td>
+If the span tensors are incompatible.
+</td>
+</tr>
+</table>
 
 #### Example:
   Given the following source and target spans (with no batch dimensions):

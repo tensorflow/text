@@ -8,6 +8,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/mst_ops.py">View
@@ -26,16 +27,49 @@ Returns a subgradient of the MaximumSpanningTree op.
 Note that MaximumSpanningTree is only differentiable w.r.t. its |scores| input
 and its |max_scores| output.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`mst_op`</b>: The MaximumSpanningTree op being differentiated.
-*   <b>`d_loss_d_max_scores`</b>: [B] vector where entry b is the gradient of
-    the network loss w.r.t. entry b of the |max_scores| output of the |mst_op|.
-*   <b>`*_`</b>: The gradients w.r.t. the other outputs; ignored.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-#### Returns:
+<tr>
+<td>
+`mst_op`
+</td>
+<td>
+The MaximumSpanningTree op being differentiated.
+</td>
+</tr><tr>
+<td>
+`d_loss_d_max_scores`
+</td>
+<td>
+[B] vector where entry b is the gradient of the network
+loss w.r.t. entry b of the |max_scores| output of the |mst_op|.
+</td>
+</tr><tr>
+<td>
+`*_`
+</td>
+<td>
+The gradients w.r.t. the other outputs; ignored.
+</td>
+</tr>
+</table>
 
-1.  None, since the op is not differentiable w.r.t. its |num_nodes| input.
-2.  [B,M,M] tensor where entry b,t,s is a subgradient of the network loss w.r.t.
-    entry b,t,s of the |scores| input, with the same dtype as
-    |d_loss_d_max_scores|.
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
+<tr class="alt">
+<td colspan="2">
+1. None, since the op is not differentiable w.r.t. its |num_nodes| input.
+2. [B,M,M] tensor where entry b,t,s is a subgradient of the network loss
+w.r.t. entry b,t,s of the |scores| input, with the same dtype as
+|d_loss_d_max_scores|.
+</td>
+</tr>
+
+</table>

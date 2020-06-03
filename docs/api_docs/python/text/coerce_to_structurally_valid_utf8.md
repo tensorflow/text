@@ -8,6 +8,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/string_ops.py">View
@@ -28,18 +29,51 @@ the provided replacement character codepoint (default 65533). If you plan on
 overriding the default, use a single byte replacement character codepoint to
 preserve alignment to the source input string.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: UTF-8 string tensor to coerce to valid UTF-8.
-*   <b>`replacement_char`</b>: The replacement character to be used in place of
-    any invalid byte in the input. Any valid Unicode character may be used. The
-    default value is the default Unicode replacement character which is 0xFFFD
-    (or U+65533). Note that passing a replacement character expressible in 1
-    byte, such as ' ' or '?', will preserve string alignment to the source since
-    individual invalid bytes will be replaced with a 1-byte replacement.
-    (optional)
-*   <b>`name`</b>: A name for the operation (optional).
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+UTF-8 string tensor to coerce to valid UTF-8.
+</td>
+</tr><tr>
+<td>
+`replacement_char`
+</td>
+<td>
+The replacement character to be used in place of any
+invalid byte in the input. Any valid Unicode character may be used. The
+default value is the default Unicode replacement character which is
+0xFFFD (or U+65533). Note that passing a replacement character
+expressible in 1 byte, such as ' ' or '?', will preserve string
+alignment to the source since individual invalid bytes will be replaced
+with a 1-byte replacement. (optional)
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+A name for the operation (optional).
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
+<tr class="alt">
+<td colspan="2">
 A tensor of type string with the same shape as the input.
+</td>
+</tr>
+
+</table>

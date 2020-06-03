@@ -8,6 +8,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
@@ -29,35 +30,72 @@ windows of `width` adjacent elements from `data` using `reduction_type`. This
 op is intended to cover basic use cases; more complex combinations can be
 created using the sliding_window op.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`data`</b>: The data to reduce.
-*   <b>`width`</b>: The width of the ngram window. If there is not sufficient
-    data to fill out the ngram window, the resulting ngram will be empty.
-*   <b>`axis`</b>: The axis to create ngrams along. Note that for string join
-    reductions, only axis '-1' is supported; for other reductions, any positive
-    or negative axis can be used. Should be a constant.
-*   <b>`reduction_type`</b>: A member of the Reduction enum. Should be a
-    constant. Currently supports:
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-    *   <a href="../text/Reduction.md#SUM"><code>Reduction.SUM</code></a>: Add
-        values in the window.
-    *   <a href="../text/Reduction.md#MEAN"><code>Reduction.MEAN</code></a>:
-        Average values in the window.
-    *   <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>:
-        Join strings in the window. Note that axis must be -1 here.
+<tr> <td> `data` </td> <td> The data to reduce. </td> </tr><tr> <td> `width`
+</td> <td> The width of the ngram window. If there is not sufficient data to
+fill out the ngram window, the resulting ngram will be empty. </td> </tr><tr>
+<td> `axis` </td> <td> The axis to create ngrams along. Note that for string
+join reductions, only axis '-1' is supported; for other reductions, any positive
+or negative axis can be used. Should be a constant. </td> </tr><tr> <td>
+`reduction_type` </td> <td> A member of the Reduction enum. Should be a
+constant. Currently supports:
 
-*   <b>`string_separator`</b>: The separator string used for
-    <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>.
+*   <a href="../text/Reduction.md#SUM"><code>Reduction.SUM</code></a>: Add
+    values in the window.
+*   <a href="../text/Reduction.md#MEAN"><code>Reduction.MEAN</code></a>: Average
+    values in the window.
+*   <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>: Join strings in the window.
+    Note that axis must be -1 here.
+    </td>
+    </tr><tr>
+    <td>
+    `string_separator`
+    </td>
+    <td>
+    The separator string used for <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>.
     Ignored otherwise. Must be a string constant, not a Tensor.
+    </td>
+    </tr><tr>
+    <td>
+    `name`
+    </td>
+    <td>
+    The op name.
+    </td>
+    </tr>
+    </table>
 
-*   <b>`name`</b>: The op name.
+<!-- Tabular view -->
 
-#### Returns:
-
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
+<tr class="alt">
+<td colspan="2">
 A tensor of ngrams.
+</td>
+</tr>
 
-#### Raises:
+</table>
 
-*   <b>`InvalidArgumentError`</b>: if `reduction_type` is either None or not a
-    Reduction, or if `reduction_type` is STRING_JOIN and `axis` is not -1.
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Raises</h2></th></tr>
+
+<tr>
+<td>
+`InvalidArgumentError`
+</td>
+<td>
+if `reduction_type` is either None or not a Reduction,
+or if `reduction_type` is STRING_JOIN and `axis` is not -1.
+</td>
+</tr>
+</table>

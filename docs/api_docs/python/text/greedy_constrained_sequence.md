@@ -8,6 +8,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/greedy_constrained_sequence_op.py">View
@@ -45,62 +46,114 @@ tensor as specified by the sequence_lengths tensor. Finally, if a RaggedTensor
 is provided, the sequence_lengths will be ignored and the variable length
 sequences in the RaggedTensor will be used.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`scores`</b>: `<float32> [batch_size, num_steps, |num_states|]` A tensor
-    of scores, where `scores[b, t, s]` is the predicted score for transitioning
-    to state `s` at step `t` for batch `b`. The |num_states| dimension must
-    correspond to the num_states attribute for this op. This input may be
-    ragged; if it is ragged, the ragged tensor should have the same structure
-    [b, t, s] and only axis 1 should be ragged.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-*   <b>`sequence_length`</b>: `<{int32, int64}>[batch_size]` A rank-1 tensor
-    representing the length of the output sequence. If None, and the 'scores'
-    input is not ragged, sequence lengths will be assumed to be the length of
-    the score tensor.
+<tr>
+<td>
+`scores`
+</td>
+<td>
+`<float32> [batch_size, num_steps, |num_states|]`
+A tensor of scores, where `scores[b, t, s]` is the predicted score for
+transitioning to state `s` at step `t` for batch `b`. The |num_states|
+dimension must correspond to the num_states attribute for this op. This
+input may be ragged; if it is ragged, the ragged tensor should have the
+same structure [b, t, s] and only axis 1 should be ragged.
+</td>
+</tr><tr>
+<td>
+`sequence_length`
+</td>
+<td>
+`<{int32, int64}>[batch_size]`
+A rank-1 tensor representing the length of the output sequence. If None,
+and the 'scores' input is not ragged, sequence lengths will be assumed
+to be the length of the score tensor.
+</td>
+</tr><tr>
+<td>
+`allowed_transitions`
+</td>
+<td>
+if use_start_and_end_states is TRUE:
+`<bool>[num_states+1, num_states+1]`
+if use_start_and_end_states is FALSE:
+`<bool>[num_states, num_states]`
+A rank-2 tensor representing allowed transitions.
+- allowed_transitions[i][j] is true if the transition from state i to
+state j is allowed for i and j in 0...(num_states).
+- allowed_transitions[num_states][num_states] is ignored.
+If use_start_and_end_states is TRUE:
+- allowed_transitions[num_states][j] is true if the sequence is allowed
+to start from state j.
+- allowed_transitions[i][num_states] is true if the sequence is allowed
+to end on state i.
+Default - An empty tensor. This allows all sequence states to transition
+to all other sequence states.
+</td>
+</tr><tr>
+<td>
+`transition_weights`
+</td>
+<td>
+if use_start_and_end_states is TRUE:
+`<float32>[num_states+1, num_states+1]`
+if use_start_and_end_states is FALSE:
+`<float32>[num_states, num_states]`
+A rank-2 tensor representing transition weights.
+- transition_weights[i][j] is the coefficient that a candidate transition
+score will be multiplied by if that transition is from state i to
+state j.
+- transition_weights[num_states][num_states] is ignored.
+If use_start_and_end_states is TRUE:
+- transition_weights[num_states][j] is the coefficient that will be used
+if the transition starts with state j.
+- transition_weights[i][num_states] is the coefficient that will be used
+if the final state in the sequence is state i.
+Default - An empty tensor. This assigns a wieght of 1.0 all transitions
+</td>
+</tr><tr>
+<td>
+`use_log_space`
+</td>
+<td>
+Whether to use log space for the calculation. If false,
+calculations will be done in exp-space.
+</td>
+</tr><tr>
+<td>
+`use_start_and_end_states`
+</td>
+<td>
+If True, sequences will have an implicit start
+and end state added.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name scope within which this op should be constructed.
+</td>
+</tr>
+</table>
 
-*   <b>`allowed_transitions`</b>: if use_start_and_end_states is TRUE:
-    `<bool>[num_states+1, num_states+1]` if use_start_and_end_states is FALSE:
-    `<bool>[num_states, num_states]` A rank-2 tensor representing allowed
-    transitions.
+<!-- Tabular view -->
 
-    -   allowed_transitions[i][j] is true if the transition from state i to
-        state j is allowed for i and j in 0...(num_states).
-    -   allowed_transitions[num_states][num_states] is ignored. If
-        use_start_and_end_states is TRUE:
-    -   allowed_transitions[num_states][j] is true if the sequence is allowed to
-        start from state j.
-    -   allowed_transitions[i][num_states] is true if the sequence is allowed to
-        end on state i. Default - An empty tensor. This allows all sequence
-        states to transition to all other sequence states.
-
-*   <b>`transition_weights`</b>: if use_start_and_end_states is TRUE:
-    `<float32>[num_states+1, num_states+1]` if use_start_and_end_states is
-    FALSE: `<float32>[num_states, num_states]` A rank-2 tensor representing
-    transition weights.
-
-    -   transition_weights[i][j] is the coefficient that a candidate transition
-        score will be multiplied by if that transition is from state i to state
-        j.
-    -   transition_weights[num_states][num_states] is ignored. If
-        use_start_and_end_states is TRUE:
-    -   transition_weights[num_states][j] is the coefficient that will be used
-        if the transition starts with state j.
-    -   transition_weights[i][num_states] is the coefficient that will be used
-        if the final state in the sequence is state i. Default - An empty
-        tensor. This assigns a wieght of 1.0 all transitions
-
-*   <b>`use_log_space`</b>: Whether to use log space for the calculation. If
-    false, calculations will be done in exp-space.
-
-*   <b>`use_start_and_end_states`</b>: If True, sequences will have an implicit
-    start and end state added.
-
-*   <b>`name`</b>: The name scope within which this op should be constructed.
-
-#### Returns:
-
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
+<tr class="alt">
+<td colspan="2">
 An <int32>[batch_size, (num_steps)] ragged tensor containing the appropriate
 sequence of transitions. If a sequence is impossible, the value of the
-RaggedTensor for that and all following transitions in that sequence shall be
-'-1'.
+RaggedTensor for that and all following transitions in that sequence shall
+be '-1'.
+</td>
+</tr>
+
+</table>

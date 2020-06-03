@@ -11,6 +11,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
@@ -36,39 +37,109 @@ first applies basic tokenization, and then followed by wordpiece tokenization.
 
 See BasicTokenizer and WordpieceTokenizer for their respective details.
 
-## Attributes
+<!-- Tabular view -->
 
-*   <b>`vocab_lookup_table`</b>: A lookup table implementing the LookupInterface
-    containing the vocabulary of subwords or a string which is the file path to
-    the vocab.txt file.
-*   <b>`suffix_indicator`</b>: (optional) The characters prepended to a
-    wordpiece to indicate that it is a suffix to another subword. Default is
-    '##'.
-*   <b>`max_bytes_per_word`</b>: (optional) Max size of input token. Default
-    is 100.
-*   <b>`max_chars_per_token`</b>: (optional) Max size of subwords, excluding
-    suffix indicator. If known, providing this improves the efficiency of
-    decoding long words.
-*   <b>`token_out_type`</b>: (optional) The type of the token to return. This
-    can be `tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
-*   <b>`unknown_token`</b>: (optional) The value to use when an unknown token is
-    found. Default is "[UNK]". If this is set to a string, and `token_out_type`
-    is `tf.int64`, the `vocab_lookup_table` is used to convert the
-    `unknown_token` to an integer. If this is set to `None`, out-of-vocabulary
-    tokens are left as is.
-*   <b>`split_unknown_characters`</b>: (optional) Whether to split out single
-    unknown characters as subtokens. If False (default), words containing
-    unknown characters will be treated as single unknown tokens.
-*   <b>`lower_case`</b>: bool - If true, a preprocessing step is added to
-    lowercase the text, apply NFD normalization, and strip accents characters.
-*   <b>`keep_whitespace`</b>: bool - If true, preserves whitespace characters
-    instead of stripping them away.
-*   <b>`normalization_form`</b>: If true and lower_case=False, the input text
-    will be normalized to `normalization_form`. See normalize_utf8() op for a
-    list of valid values.
-*   <b>`preserve_unused_token`</b>: If true, text in the regex format
-    `\\[unused\\d+\\]` will be treated as a token and thus remain preserved as
-    is to be looked up in the vocabulary.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
+
+<tr>
+<td>
+`vocab_lookup_table`
+</td>
+<td>
+A lookup table implementing the LookupInterface
+containing the vocabulary of subwords or a string which is the file path
+to the vocab.txt file.
+</td>
+</tr><tr>
+<td>
+`suffix_indicator`
+</td>
+<td>
+(optional) The characters prepended to a wordpiece to
+indicate that it is a suffix to another subword. Default is '##'.
+</td>
+</tr><tr>
+<td>
+`max_bytes_per_word`
+</td>
+<td>
+(optional) Max size of input token. Default is 100.
+</td>
+</tr><tr>
+<td>
+`max_chars_per_token`
+</td>
+<td>
+(optional) Max size of subwords, excluding suffix
+indicator. If known, providing this improves the efficiency of decoding
+long words.
+</td>
+</tr><tr>
+<td>
+`token_out_type`
+</td>
+<td>
+(optional) The type of the token to return. This can be
+`tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
+</td>
+</tr><tr>
+<td>
+`unknown_token`
+</td>
+<td>
+(optional) The value to use when an unknown token is found.
+Default is "[UNK]". If this is set to a string, and `token_out_type` is
+`tf.int64`, the `vocab_lookup_table` is used to convert the
+`unknown_token` to an integer. If this is set to `None`, out-of-vocabulary
+tokens are left as is.
+</td>
+</tr><tr>
+<td>
+`split_unknown_characters`
+</td>
+<td>
+(optional) Whether to split out single unknown
+characters as subtokens. If False (default), words containing unknown
+characters will be treated as single unknown tokens.
+</td>
+</tr><tr>
+<td>
+`lower_case`
+</td>
+<td>
+bool - If true, a preprocessing step is added to lowercase the
+text, apply NFD normalization, and strip accents characters.
+</td>
+</tr><tr>
+<td>
+`keep_whitespace`
+</td>
+<td>
+bool - If true, preserves whitespace characters instead of
+stripping them away.
+</td>
+</tr><tr>
+<td>
+`normalization_form`
+</td>
+<td>
+If true and lower_case=False, the input text will be
+normalized to `normalization_form`. See normalize_utf8() op for a list of
+valid values.
+</td>
+</tr><tr>
+<td>
+`preserve_unused_token`
+</td>
+<td>
+If true, text in the regex format `\\[unused\\d+\\]`
+will be treated as a token and thus remain preserved as is to be looked up
+in the vocabulary.
+</td>
+</tr>
+</table>
 
 ## Methods
 
@@ -85,16 +156,37 @@ source</a>
 
 Performs untokenized text to wordpiece tokenization for BERT.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`text_input`</b>: input: A `Tensor` or `RaggedTensor` of untokenized
-    UTF-8 strings.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`text_input`
+</td>
+<td>
+input: A `Tensor` or `RaggedTensor` of untokenized UTF-8
+strings.
+</td>
+</tr>
+</table>
 
-A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string contents (or
-ID in the vocab_lookup_table representing that string) of the `jth` token in
-`input[i1...iN]`
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string
+contents (or ID in the vocab_lookup_table representing that string)
+of the `jth` token in `input[i1...iN]`
+</td>
+</tr>
+
+</table>
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
@@ -109,13 +201,30 @@ source</a>
 
 Tokenizes the input tensor and returns the result with offsets.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: An N-dimensional UTF-8 string (or optionally integer)
-    `Tensor` or `RaggedTensor`.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+`RaggedTensor`.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 A tuple `(tokens, start_offsets, limit_offsets)` where:
 
 *   `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
@@ -125,4 +234,6 @@ A tuple `(tokens, start_offsets, limit_offsets)` where:
     strings).
 *   `limit_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
     containing the exclusive ending indices of each token (byte indices for
-    input strings).
+    input strings). </td> </tr>
+
+</table>

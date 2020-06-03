@@ -12,6 +12,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/unicode_char_tokenizer.py">View
@@ -45,15 +46,42 @@ source</a>
 
 Detokenizes input codepoints (integers) to UTF-8 strings.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: A `RaggedTensor` or `Tensor` of codepoints (ints) with a
-    rank of at least 1.
-*   <b>`name`</b>: The name argument that is passed to the op function.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+A `RaggedTensor` or `Tensor` of codepoints (ints) with a rank of at
+least 1.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 A N-1 dimensional string tensor of the detokenized text.
+</td>
+</tr>
+
+</table>
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
@@ -71,14 +99,36 @@ Tokenizes a tensor of UTF-8 strings on Unicode character boundaries.
 Input strings are split on character boundaries using
 unicode_decode_with_offsets.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
+</td>
+</tr>
+</table>
 
-A `RaggedTensor` of tokenized text. The returned shape is the shape of the input
-tensor with an added ragged dimension for tokens (characters) of each string.
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A `RaggedTensor` of tokenized text. The returned shape is the shape of the
+input tensor with an added ragged dimension for tokens (characters) of
+each string.
+</td>
+</tr>
+
+</table>
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
@@ -95,14 +145,34 @@ Tokenizes a tensor of UTF-8 strings to Unicode characters.
 
 Returned token tensors are of integer type.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 A tuple `(tokens, start_offsets, limit_offsets)` where:
 
 *   `tokens`: A `RaggedTensor` of codepoints (integer type).
 *   `start_offsets`: A `RaggedTensor` of the tokens' starting byte offset.
-*   `limit_offsets`: A `RaggedTensor` of the tokens' ending byte offset.
+*   `limit_offsets`: A `RaggedTensor` of the tokens' ending byte offset. </td>
+    </tr>
+
+</table>

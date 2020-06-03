@@ -8,6 +8,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sliding_window_op.py">View
@@ -38,30 +39,64 @@ the `result` rows to be the same size as the `data` rows, you can use
 `pad_along_dimension` to add `width - 1` padding elements before calling
 this op.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`data`</b>: `<dtype> [O1...ON, A, I1...IM]` A potentially ragged
-    K-dimensional tensor with outer dimensions of size `O1...ON`; axis dimension
-    of size `A`; and inner dimensions of size `I1...IM`. I.e. `K = N + 1 + M`,
-    where `N>=0` and `M>=0`.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-*   <b>`width`</b>: An integer constant specifying the width of the window. Must
-    be greater than zero.
+<tr>
+<td>
+`data`
+</td>
+<td>
+`<dtype> [O1...ON, A, I1...IM]`
+A potentially ragged K-dimensional tensor with outer dimensions of size
+`O1...ON`; axis dimension of size `A`; and inner dimensions of size
+`I1...IM`.  I.e. `K = N + 1 + M`, where `N>=0` and `M>=0`.
+</td>
+</tr><tr>
+<td>
+`width`
+</td>
+<td>
+An integer constant specifying the width of the window. Must be
+greater than zero.
+</td>
+</tr><tr>
+<td>
+`axis`
+</td>
+<td>
+An integer constant specifying the axis along which sliding window
+is computed. Negative axis values from `-K` to `-1` are supported.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name for this op (optional).
+</td>
+</tr>
+</table>
 
-*   <b>`axis`</b>: An integer constant specifying the axis along which sliding
-    window is computed. Negative axis values from `-K` to `-1` are supported.
+<!-- Tabular view -->
 
-*   <b>`name`</b>: The name for this op (optional).
-
-#### Returns:
-
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
+<tr class="alt">
+<td colspan="2">
 A `K+1` dimensional tensor with the same dtype as `data`, where:
 
 *   `result[i1..iaxis, a]` = `data[i1..iaxis, a:a+width]`
 *   `result.shape[:axis]` = `data.shape[:axis]`
 *   `result.shape[axis]` = `data.shape[axis] - (width - 1)`
 *   `result.shape[axis + 1]` = `width`
-*   `result.shape[axis + 2:]` = `data.shape[axis + 1:]`
+*   `result.shape[axis + 2:]` = `data.shape[axis + 1:]` </td> </tr>
+
+</table>
 
 #### Examples:
 

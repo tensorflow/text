@@ -11,6 +11,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
@@ -30,28 +31,74 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 
 <!-- Placeholder for "Used in" -->
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`vocab_lookup_table`</b>: A lookup table implementing the LookupInterface
-    containing the vocabulary of subwords.
-*   <b>`suffix_indicator`</b>: (optional) The characters prepended to a
-    wordpiece to indicate that it is a suffix to another subword. Default is
-    '##'.
-*   <b>`max_bytes_per_word`</b>: (optional) Max size of input token. Default
-    is 100.
-*   <b>`max_chars_per_token`</b>: (optional) Max size of subwords, excluding
-    suffix indicator. If known, providing this improves the efficiency of
-    decoding long words.
-*   <b>`token_out_type`</b>: (optional) The type of the token to return. This
-    can be `tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
-*   <b>`unknown_token`</b>: (optional) The value to use when an unknown token is
-    found. Default is "[UNK]". If this is set to a string, and `token_out_type`
-    is `tf.int64`, the `vocab_lookup_table` is used to convert the
-    `unknown_token` to an integer. If this is set to `None`, out-of-vocabulary
-    tokens are left as is.
-*   <b>`split_unknown_characters`</b>: (optional) Whether to split out single
-    unknown characters as subtokens. If False (default), words containing
-    unknown characters will be treated as single unknown tokens.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
+
+<tr>
+<td>
+`vocab_lookup_table`
+</td>
+<td>
+A lookup table implementing the LookupInterface
+containing the vocabulary of subwords.
+</td>
+</tr><tr>
+<td>
+`suffix_indicator`
+</td>
+<td>
+(optional) The characters prepended to a wordpiece to
+indicate that it is a suffix to another subword. Default is '##'.
+</td>
+</tr><tr>
+<td>
+`max_bytes_per_word`
+</td>
+<td>
+(optional) Max size of input token. Default is 100.
+</td>
+</tr><tr>
+<td>
+`max_chars_per_token`
+</td>
+<td>
+(optional) Max size of subwords, excluding suffix
+indicator. If known, providing this improves the efficiency of decoding
+long words.
+</td>
+</tr><tr>
+<td>
+`token_out_type`
+</td>
+<td>
+(optional) The type of the token to return. This can be
+`tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
+</td>
+</tr><tr>
+<td>
+`unknown_token`
+</td>
+<td>
+(optional) The value to use when an unknown token is found.
+Default is "[UNK]". If this is set to a string, and `token_out_type` is
+`tf.int64`, the `vocab_lookup_table` is used to convert the
+`unknown_token` to an integer. If this is set to `None`,
+out-of-vocabulary tokens are left as is.
+</td>
+</tr><tr>
+<td>
+`split_unknown_characters`
+</td>
+<td>
+(optional) Whether to split out single unknown
+characters as subtokens. If False (default), words containing unknown
+characters will be treated as single unknown tokens.
+</td>
+</tr>
+</table>
 
 ## Methods
 
@@ -76,16 +123,36 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 [[['they', "##'", '##re'], ['the'], ['great', '##est']]]
 ```
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8
-    strings.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
+</td>
+</tr>
+</table>
 
-A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string contents (or
-ID in the vocab_lookup_table representing that string) of the `jth` token in
-`input[i1...iN]`
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string
+contents (or ID in the vocab_lookup_table representing that string)
+of the `jth` token in `input[i1...iN]`
+</td>
+</tr>
+
+</table>
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
@@ -114,13 +181,29 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 [[[4, 5, 7], [3], [5, 8]]]
 ```
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8
-    strings.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 A tuple `(tokens, start_offsets, limit_offsets)` where:
 
 *   `tokens[i1...iN, j]` is a `RaggedTensor` of the string contents (or ID in
@@ -129,4 +212,6 @@ A tuple `(tokens, start_offsets, limit_offsets)` where:
 *   `start_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
     start of the `jth` token in `input[i1...iN]`.
 *   `limit_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
-    end of the `jth` token in `input[i`...iN]`.
+    end of the `jth` token in `input[i`...iN]`. </td> </tr>
+
+</table>

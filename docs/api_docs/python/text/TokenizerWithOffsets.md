@@ -10,6 +10,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
@@ -37,14 +38,35 @@ source</a>
 
 Tokenizes the input tensor.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: An N-dimensional UTF-8 string (or optionally integer)
-    `Tensor` or `RaggedTensor`.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+`RaggedTensor`.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
+</td>
+</tr>
+
+</table>
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
@@ -60,13 +82,30 @@ source</a>
 
 Tokenizes the input tensor and returns the result with offsets.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`input`</b>: An N-dimensional UTF-8 string (or optionally integer)
-    `Tensor` or `RaggedTensor`.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
 
-#### Returns:
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+`RaggedTensor`.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
 A tuple `(tokens, start_offsets, limit_offsets)` where:
 
 *   `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
@@ -76,4 +115,6 @@ A tuple `(tokens, start_offsets, limit_offsets)` where:
     strings).
 *   `limit_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
     containing the exclusive ending indices of each token (byte indices for
-    input strings).
+    input strings). </td> </tr>
+
+</table>

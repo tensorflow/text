@@ -10,6 +10,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/todense.py">View
@@ -45,15 +46,40 @@ model.predict(rt)
  [[ 0,  0,  0,  0], [13, 14,  0,  0], [15, 16, 17, 18], [19,  0,  0,  0]]]
 ```
 
-#### Arguments:
+<!-- Tabular view -->
 
-*   <b>`pad_value`</b>: A value used to pad and fill in the missing values.
-    Should be a meaningless value for the input data. Default is '0'.
-*   <b>`mask`</b>: A Boolean value representing whether to mask the padded
-    values. If true, no any downstream Masking layer or Embedding layer with
-    mask_zero=True should be added. Default is 'False'.
-*   <b>`**kwargs`</b>: kwargs of parent class. Input shape: Any Ragged or Sparse
-    Tensor is accepted, but it requires the type of input to be specified via
-    the Input or InputLayer from the Keras API. Output shape: The output is a
-    uniform tensor having the same shape, in case of a ragged input or the same
-    dense shape, in case of a sparse input.
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Arguments</h2></th></tr>
+
+<tr>
+<td>
+`pad_value`
+</td>
+<td>
+A value used to pad and fill in the missing values. Should be a
+meaningless value for the input data. Default is '0'.
+</td>
+</tr><tr>
+<td>
+`mask`
+</td>
+<td>
+A Boolean value representing whether to mask the padded values. If
+true, no any downstream Masking layer or Embedding layer with
+mask_zero=True should be added. Default is 'False'.
+</td>
+</tr><tr>
+<td>
+`**kwargs`
+</td>
+<td>
+kwargs of parent class.
+</td>
+</tr>
+</table>
+
+Input shape: Any Ragged or Sparse Tensor is accepted, but it requires the type
+of input to be specified via the Input or InputLayer from the Keras API. Output
+shape: The output is a uniform tensor having the same shape, in case of a ragged
+input or the same dense shape, in case of a sparse input.

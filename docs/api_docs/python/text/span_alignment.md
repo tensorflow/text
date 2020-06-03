@@ -8,6 +8,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View
@@ -52,35 +53,103 @@ the source span.
 
 For a definition of span overlap, see the docstring for `span_overlaps()`.
 
-#### Args:
+<!-- Tabular view -->
 
-*   <b>`source_start`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, source_size]`: the start offset of each source span.
-*   <b>`source_limit`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, source_size]`: the limit offset of each source span.
-*   <b>`target_start`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, target_size]`: the start offset of each target span.
-*   <b>`target_limit`</b>: A B+1 dimensional potentially ragged tensor with
-    shape `[D1...DB, target_size]`: the limit offset of each target span.
-*   <b>`contains`</b>: If true, then a source span is considered to overlap a
-    target span when the source span contains the target span.
-*   <b>`contained_by`</b>: If true, then a source span is considered to overlap
-    a target span when the source span is contained by the target span.
-*   <b>`partial_overlap`</b>: If true, then a source span is considered to
-    overlap a target span when the source span partially overlaps the target
-    span.
-*   <b>`multivalent_result`</b>: Whether the result should contain a single
-    target span index (if `multivalent_result=False`) or a list of target span
-    indices (if `multivalent_result=True`) for each source span.
-*   <b>`name`</b>: A name for the operation (optional).
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-#### Returns:
+<tr>
+<td>
+`source_start`
+</td>
+<td>
+A B+1 dimensional potentially ragged tensor with shape
+`[D1...DB, source_size]`: the start offset of each source span.
+</td>
+</tr><tr>
+<td>
+`source_limit`
+</td>
+<td>
+A B+1 dimensional potentially ragged tensor with shape
+`[D1...DB, source_size]`: the limit offset of each source span.
+</td>
+</tr><tr>
+<td>
+`target_start`
+</td>
+<td>
+A B+1 dimensional potentially ragged tensor with shape
+`[D1...DB, target_size]`: the start offset of each target span.
+</td>
+</tr><tr>
+<td>
+`target_limit`
+</td>
+<td>
+A B+1 dimensional potentially ragged tensor with shape
+`[D1...DB, target_size]`: the limit offset of each target span.
+</td>
+</tr><tr>
+<td>
+`contains`
+</td>
+<td>
+If true, then a source span is considered to overlap a target span
+when the source span contains the target span.
+</td>
+</tr><tr>
+<td>
+`contained_by`
+</td>
+<td>
+If true, then a source span is considered to overlap a target
+span when the source span is contained by the target span.
+</td>
+</tr><tr>
+<td>
+`partial_overlap`
+</td>
+<td>
+If true, then a source span is considered to overlap a
+target span when the source span partially overlaps the target span.
+</td>
+</tr><tr>
+<td>
+`multivalent_result`
+</td>
+<td>
+Whether the result should contain a single target span
+index (if `multivalent_result=False`) or a list of target span indices (if
+`multivalent_result=True`) for each source span.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+A name for the operation (optional).
+</td>
+</tr>
+</table>
 
-An int64 tensor with values in the range: `-1 <= result < target_size`. If
-`multivalent_result=False`, then the returned tensor has shape `[source_size]`,
-where `source_size` is the length of the `source_start` and `source_limit` input
-tensors. If `multivalent_result=True`, then the returned tensor has shape
-`[source_size, (num_aligned_target_spans)].
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
+<tr class="alt">
+<td colspan="2">
+An int64 tensor with values in the range: `-1 <= result < target_size`.
+If `multivalent_result=False`, then the returned tensor has shape
+`[source_size]`, where `source_size` is the length of the `source_start`
+and `source_limit` input tensors.  If `multivalent_result=True`, then the
+returned tensor has shape `[source_size, (num_aligned_target_spans)].
+</td>
+</tr>
+
+</table>
 
 #### Examples:
 

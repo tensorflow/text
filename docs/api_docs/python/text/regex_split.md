@@ -8,6 +8,7 @@
 <!-- Insert buttons and diff -->
 
 <table class="tfo-notebook-buttons tfo-api" align="left">
+
 </table>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View source</a>
@@ -59,17 +60,54 @@ result, begin, end = regex_split_with_offsets(text_input, "\s")
 See https://github.com/google/re2/wiki/Syntax for the full list of supported
 expressions.
 
-#### Args:
+<!-- Tabular view -->
 
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-* <b>`input`</b>: A Tensor or RaggedTensor of string input.
-* <b>`delim_regex_pattern`</b>: A string containing the regex pattern of a delimiter.
-* <b>`keep_delim_regex_pattern`</b>: (optional) Regex pattern of delimiters that should
-  be kept in the result.
-* <b>`name`</b>: (optional) Name of the op.
+<tr>
+<td>
+`input`
+</td>
+<td>
+A Tensor or RaggedTensor of string input.
+</td>
+</tr><tr>
+<td>
+`delim_regex_pattern`
+</td>
+<td>
+A string containing the regex pattern of a delimiter.
+</td>
+</tr><tr>
+<td>
+`keep_delim_regex_pattern`
+</td>
+<td>
+(optional) Regex pattern of delimiters that should
+be kept in the result.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+(optional) Name of the op.
+</td>
+</tr>
+</table>
 
+<!-- Tabular view -->
 
-#### Returns:
-
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
+<tr class="alt">
+<td colspan="2">
 A RaggedTensors containing of type string containing the split string
 pieces.
+</td>
+</tr>
+
+</table>
