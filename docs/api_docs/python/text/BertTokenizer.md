@@ -38,7 +38,6 @@ first applies basic tokenization, and then followed by wordpiece tokenization.
 See BasicTokenizer and WordpieceTokenizer for their respective details.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
@@ -157,7 +156,6 @@ source</a>
 Performs untokenized text to wordpiece tokenization for BERT.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -174,7 +172,6 @@ strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -202,7 +199,6 @@ source</a>
 Tokenizes the input tensor and returns the result with offsets.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -219,7 +215,6 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

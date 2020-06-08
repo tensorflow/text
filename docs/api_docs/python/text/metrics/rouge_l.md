@@ -43,7 +43,6 @@ ROUGE-1.5.5.pl script. Setting alpha to a negative number triggers a
 compatibility mode with the tensor2tensor implementation of ROUGE-L.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
@@ -75,7 +74,6 @@ optional float parameter for weighting
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>

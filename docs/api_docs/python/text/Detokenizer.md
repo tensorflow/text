@@ -36,7 +36,6 @@ source</a>
 Assembles the tokens in the input tensor into a human-consumable string.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -53,7 +52,6 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

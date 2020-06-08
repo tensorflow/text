@@ -30,7 +30,6 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 <!-- Placeholder for "Used in" -->
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
@@ -70,7 +69,6 @@ ICU defined whitespace characters are dropped, unless the `keep_whitespace`
 option was specified at construction time.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -86,7 +84,6 @@ A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -121,7 +118,6 @@ ICU defined whitespace characters are dropped, unless the keep_whitespace option
 was specified at construction time.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -137,7 +133,6 @@ A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

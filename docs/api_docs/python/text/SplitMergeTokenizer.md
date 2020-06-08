@@ -54,7 +54,6 @@ Tokenizes a tensor of UTF-8 strings according to labels.
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -88,7 +87,6 @@ input="New York",
 labels=[0, 1, 1, 1, 0, 1, 1, 1]
 output tokens=["New", "York"]
 ```
-
 -otherwise, whether to create a new word or not for the first non-space
 character depends on the label of that character, for instance:
 
@@ -109,13 +107,11 @@ input="New York",
 labels=[0, 1, 1, 1, 0, 1, 1, 1]
 output tokens=["New", "York"]
 ```
-
 </td>
 </tr>
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -158,7 +154,6 @@ Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -192,7 +187,6 @@ input="New York",
 labels=[0, 1, 1, 1, 0, 1, 1, 1]
 output tokens=["New", "York"]
 ```
-
 -otherwise, whether to create a new word or not for the first non-space
 character depends on the label of that character, for instance:
 
@@ -213,13 +207,11 @@ input="New York",
 labels=[0, 1, 1, 1, 0, 1, 1, 1]
 output tokens=["New", "York"]
 ```
-
 </td>
 </tr>
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

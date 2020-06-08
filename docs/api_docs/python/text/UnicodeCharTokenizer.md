@@ -47,7 +47,6 @@ source</a>
 Detokenizes input codepoints (integers) to UTF-8 strings.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -71,7 +70,6 @@ The name argument that is passed to the op function.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -100,7 +98,6 @@ Input strings are split on character boundaries using
 unicode_decode_with_offsets.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -146,7 +143,6 @@ Tokenizes a tensor of UTF-8 strings to Unicode characters.
 Returned token tensors are of integer type.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -162,7 +158,6 @@ A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

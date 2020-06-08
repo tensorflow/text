@@ -27,7 +27,6 @@ Normalizes each UTF-8 string in the input tensor using the specified rule.
 See http://unicode.org/reports/tr15/
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
@@ -58,7 +57,6 @@ The name for this op (optional).
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>

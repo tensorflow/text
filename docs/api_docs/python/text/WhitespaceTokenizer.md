@@ -46,7 +46,6 @@ The strings are split on ICU defined whitespace characters. These whitespace
 characters are dropped.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -62,7 +61,6 @@ A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -92,7 +90,6 @@ The strings are split on ICU defined whitespace characters. These whitespace
 characters are dropped.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -108,7 +105,6 @@ A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
