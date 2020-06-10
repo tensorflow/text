@@ -20,8 +20,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
+
 from absl.testing import parameterized
 
+from tensorflow.python import keras
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
@@ -421,6 +424,61 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                                                       '##', '')
       stripped_prefix = expected_rt.with_flat_values(stripped_prefix_flat)
       self.assertAllEqual(extracted_wordpieces, stripped_prefix)
+
+  @test_util.run_in_graph_and_eager_modes
+  def test_keras_model_save(self):
+    vocab = [
+        'to',
+        'be',
+        'or',
+        'not',
+        'y',
+        '##o'
+    ]
+
+    class TokenizationLayer(keras.layers.Layer):
+
+      def __init__(self, vocab, **kwargs):
+        super(TokenizationLayer, self).__init__(**kwargs)
+        self.vocab = vocab
+        init = lookup_ops.KeyValueTensorInitializer(
+            vocab,
+            math_ops.range(
+                array_ops.size(vocab, out_type=dtypes.int64),
+                dtype=dtypes.int64),
+            key_dtype=dtypes.string,
+            value_dtype=dtypes.int64)
+        table = lookup_ops.StaticVocabularyTableV1(
+            init, 1, lookup_key_dtype=dtypes.string)
+        self.tokenizer = bert_tokenizer.BertTokenizer(table)
+
+      def get_config(self):
+        config = super(TokenizationLayer, self).get_config()
+        config.update({'vocab': self.vocab})
+        return config
+
+      def call(self, inputs):
+        return self.tokenizer.tokenize(inputs).to_tensor()
+
+    inputs = keras.layers.Input(shape=(), dtype=dtypes.string)
+    tokenization_layer = TokenizationLayer(vocab)
+    outputs = tokenization_layer(inputs)
+    model = keras.models.Model(inputs=inputs, outputs=outputs)
+
+    tmpdir = self.get_temp_dir()
+    model_filename = os.path.join(tmpdir, 'tmp_keras_bert_test.mdl')
+    model.save(model_filename)
+
+    loaded_model = keras.models.load_model(
+        model_filename,
+        custom_objects={'TokenizationLayer': TokenizationLayer(vocab)},
+        compile=False)
+    x = constant_op.constant([b'to be or not to be yo'])
+    self.evaluate(lookup_ops.tables_initializer())
+    results = loaded_model.predict(x, steps=1)
+    expected = ragged_factory_ops.constant([[[0], [1], [2], [3], [0], [1],
+                                             [4, 5]]]).to_tensor()
+    self.assertAllEqual(results, expected)
 
 
 if __name__ == '__main__':

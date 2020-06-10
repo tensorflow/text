@@ -21,9 +21,10 @@ from __future__ import print_function
 
 import abc
 
+from tensorflow.python.module import module
 
-# TODO(broken): Have this extend Module when it becomes public
-class Tokenizer(object):
+
+class Tokenizer(module.Module):
   """Base class for tokenizer implementations."""
 
   __metaclass__ = abc.ABCMeta

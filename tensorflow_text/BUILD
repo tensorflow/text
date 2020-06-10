@@ -130,6 +130,7 @@ py_test(
         # python:framework_test_lib tensorflow dep,
         # python:lookup_ops tensorflow dep,
         # python:math_ops tensorflow dep,
+        # python/keras tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
@@ -501,6 +502,9 @@ py_test(
 py_library(
     name = "tokenization",
     srcs = ["python/ops/tokenization.py"],
+    deps = [
+        # python/module tensorflow dep,
+    ],
 )
 
 py_tf_text_library(
