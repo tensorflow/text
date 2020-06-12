@@ -69,11 +69,55 @@ def _emoticon_regex():
 
 
 def _emoji_regex():
-  """Regexp to detect emoji characters."""
+  """Returns regexp to detect emoji characters.
+
+  Generated from https://unicode.org/emoji/charts/full-emoji-list.html,
+  https://unicode.org/Public/emoji/13.0/emoji-sequences.txt.
+  """
   char_class = "".join([
-      "[", u"\u2600", "-", u"\u26ff",
+      "[",
+      u"\u203c", u"\u2049", u"\u2139",
+      u"\u2194", "-", u"\u2199",
+      u"\u21a9", u"\u21aa",
+      u"\u231a", u"\u231b",
+      u"\u2328", u"\u23cf",
+      u"\u23e9", "-", u"\u23f3",
+      u"\u23f8", "-", u"\u23fa",
+      u"\u24c2", u"\u25aa", u"\u25ab"
+      u"\u25b6", u"\u25c0",
+      u"\u25fb", "-", u"\u25fe",
+      u"\u2600", "-", u"\u26ff",
+      u"\u2702", u"\u2705"
+      u"\u2708", "-", u"\u270d", u"\u270f",
+      u"\u2712", u"\u2714", u"\u2716", u"\u271d",
+      u"\u2721", u"\u2728", u"\u2733", u"\u2734",
+      u"\u2744", u"\u2747", u"\u274c", u"\u274e",
+      u"\u2753", "-", u"\u2755", u"\u2757",
+      u"\u2763", u"\u2764",
+      u"\u2795", "-", u"\u2797",
+      u"\u2934", u"\u2935",
+      u"\u2b05", "-", u"\u2b07",
+      u"\u2b1b", u"\u2b1c", u"\u2b50", u"\u2b55",
+      u"\u3030", u"\u303d", u"\u3297", u"\u3299",
+      u"\U0001f004", u"\U0001f0cf",
+      u"\U0001f170", u"\U0001f171", u"\U0001f17e", u"\U0001f17f",
+      u"\U0001f18e",
+      u"\U0001f191", "-", u"\U0001f19a",
+      u"\U0001f1e6", "-", u"\U0001f1ff",
+      u"\U0001f201", u"\U0001f202",
+      u"\U0001f21a", u"\U0001f22f",
+      u"\U0001f232", "-", u"\U0001f23a",
+      u"\U0001f250", u"\U0001f251",
       u"\U0001f300", "-", u"\U0001f6ff",
-      u"\U0001f900", "-", u"\U0001f9ff", "]"
+      u"\U0001f900", "-", u"\U0001f9ff",
+      u"\U0001fa70", "-", u"\U0001fa74",
+      u"\U0001fa78", "-", u"\U0001fa7a",
+      u"\U0001fa80", "-", u"\U0001fa86",
+      u"\U0001fa90", "-", u"\U0001faa8",
+      u"\U0001fab0", "-", u"\U0001fab6",
+      u"\U0001fac0", "-", u"\U0001fac2",
+      u"\U0001fad0", "-", u"\U0001fad6",
+      "]"
   ])  # pyformat:disable
   return ".*" + char_class + ".*"
 
@@ -322,6 +366,7 @@ def _add_identifier_list_to_docstring(func):
   identifier_list = "".join(
       "\n        * `%s`:%s\n" % (name, doc) for (name, doc) in sorted(items))
   func.__doc__ = func.__doc__ % dict(identifier_list=identifier_list)
+
 
 # Use the wordshape docstring we created above.
 _add_identifier_list_to_docstring(WordShape)
