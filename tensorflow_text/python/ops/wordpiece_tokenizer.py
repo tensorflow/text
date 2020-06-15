@@ -63,11 +63,10 @@ class WordpieceTokenizer(TokenizerWithOffsets):
         long words.
       token_out_type: (optional) The type of the token to return. This can be
         `tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
-      unknown_token: (optional) The value to use when an unknown token is found.
-        Default is "[UNK]". If this is set to a string, and `token_out_type` is
-        `tf.int64`, the `vocab_lookup_table` is used to convert the
-        `unknown_token` to an integer. If this is set to `None`,
-        out-of-vocabulary tokens are left as is.
+      unknown_token: (optional) The string value to substitute for an unknown
+        token. Default is "[UNK]". If set to `None`, no substitution occurs.
+        If `token_out_type` is `tf.int64`, the `vocab_lookup_table` is used
+        (after substitution) to convert the unknown token to an integer.
       split_unknown_characters: (optional) Whether to split out single unknown
         characters as subtokens. If False (default), words containing unknown
         characters will be treated as single unknown tokens.
