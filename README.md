@@ -287,11 +287,9 @@ pip install -U tensorflow-text==<version>
 
 ### Build from source steps:
 
-Note that TF Text needs to be built in the same environment as TensorFlow. Thus,
-if you manually build TF Text, it is highly recommended that you also build
-TensorFlow.
+Note that TF Text needs to be built in the same environment as TensorFlow or it
+is ran in.
 
-1. [build and install TensorFlow](https://www.tensorflow.org/install/source).
 1. Clone the TF Text repo:
    `git clone https://github.com/tensorflow/text.git`
 1. Run the build script to create a pip package:
