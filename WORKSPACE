@@ -3,6 +3,15 @@ workspace(name = "org_tensorflow_text")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "com_google_protobuf",
+    sha256 = "b9e92f9af8819bbbc514e2902aec860415b70209f31dfc8c4fa72515a5df9d59",
+    strip_prefix = "protobuf-310ba5ee72661c081129eb878c1bbcec936b20f0",
+    urls = [
+        "https://github.com/protocolbuffers/protobuf/archive/310ba5ee72661c081129eb878c1bbcec936b20f0.tar.gz",
+    ],
+)
+
+http_archive(
     name = "absl_py",
     sha256 = "280c76ec0c9ab7a1dff550cdc37b7c7cd28551103dc3955202760ea8e381aa9d",
     strip_prefix = "abseil-py-pypi-v0.8.0",
@@ -115,6 +124,8 @@ http_archive(
     urls = [
         "https://github.com/tensorflow/tensorflow/archive/v2.2.0.zip"
     ],
+    patches = ["//third_party/tensorflow:tf.patch"],
+    patch_args = ["-p1", "-s"],
 )
 
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
