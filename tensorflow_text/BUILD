@@ -32,6 +32,7 @@ cc_library(
         ":regex_split_ops_cc",
         ":sentence_breaking_ops_cc",
         ":sentencepiece_tokenizer_cc",
+        ":split_merge_from_logits_tokenizer_cc",
         ":split_merge_tokenizer_cc",
         ":text_similarity_metric_ops_cc",
         ":unicode_script_tokenizer_cc",
@@ -56,6 +57,7 @@ py_library(
         ":bert_tokenizer",
         ":create_feature_bitmask_op",
         ":greedy_constrained_sequence_op",
+        ":hub_module_tokenizer",
         ":mst_ops",
         ":ngrams_op",
         ":normalize_ops",
@@ -65,6 +67,7 @@ py_library(
         ":sentence_breaking_ops",
         ":sentencepiece_tokenizer",
         ":sliding_window_op",
+        ":split_merge_from_logits_tokenizer",
         ":split_merge_tokenizer",
         ":string_ops",
         ":text_similarity_metric_ops",
@@ -666,6 +669,65 @@ py_test(
         # python/keras:backend tensorflow dep,
         # python/keras:base_layer tensorflow dep,
         # python/keras/layers tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "hub_module_tokenizer",
+    srcs = ["python/ops/hub_module_tokenizer.py"],
+    deps = [
+        ":tokenization",
+        "@org_tensorflow_hub//tensorflow_hub",
+        # python:array_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "hub_module_tokenizer_test",
+    size = "large",
+    srcs = ["python/ops/hub_module_tokenizer_test.py"],
+    data = [
+        ":python/ops/test_data/segmenter_hub_module",
+    ],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":ops",
+        # python:client_testlib tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:lookup_ops tensorflow dep,
+        # python:variables tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "split_merge_from_logits_tokenizer",
+    srcs = ["python/ops/split_merge_from_logits_tokenizer.py"],
+    cc_op_defs = ["core/ops/tokenizer_from_logits_op.cc"],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels:tokenizer_from_logits_kernel",
+    ],
+    deps = [
+        ":tokenization",
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "split_merge_from_logits_tokenizer_test",
+    size = "small",
+    srcs = ["python/ops/split_merge_from_logits_tokenizer_test.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":split_merge_from_logits_tokenizer",
+        # python:client_testlib tensorflow dep,
+        # python:errors tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
 )

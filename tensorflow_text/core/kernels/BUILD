@@ -433,6 +433,18 @@ tf_kernel_library(
     ],
 )
 
+tf_kernel_library(
+    name = "tokenizer_from_logits_kernel",
+    srcs = ["tokenizer_from_logits_kernel.cc"],
+    deps = OSS_DEPS + [
+        "@icu//:common",
+        # absl/strings dep
+        "@com_google_absl//absl/base:core_headers",
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+    ],
+)
+
 cc_library(
     name = "wordpiece_tokenizer",
     srcs = ["wordpiece_tokenizer.cc"],

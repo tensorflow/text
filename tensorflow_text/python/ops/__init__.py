@@ -23,6 +23,7 @@ except ImportError:
 from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
 from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_bitmask
 from tensorflow_text.python.ops.greedy_constrained_sequence_op import greedy_constrained_sequence
+from tensorflow_text.python.ops.hub_module_tokenizer import HubModuleTokenizer
 from tensorflow_text.python.ops.mst_ops import max_spanning_tree
 from tensorflow_text.python.ops.mst_ops import max_spanning_tree_gradient
 from tensorflow_text.python.ops.ngrams_op import ngrams
@@ -38,6 +39,7 @@ from tensorflow_text.python.ops.regex_split_ops import regex_split_with_offsets
 from tensorflow_text.python.ops.sentence_breaking_ops import sentence_fragments
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 from tensorflow_text.python.ops.sliding_window_op import sliding_window
+from tensorflow_text.python.ops.split_merge_from_logits_tokenizer import SplitMergeFromLogitsTokenizer
 from tensorflow_text.python.ops.split_merge_tokenizer import SplitMergeTokenizer
 from tensorflow_text.python.ops.string_ops import coerce_to_structurally_valid_utf8
 from tensorflow_text.python.ops.tokenization import Detokenizer
