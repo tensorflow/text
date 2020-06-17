@@ -37,8 +37,8 @@ from tensorflow_text.python.ops import sentence_breaking_ops
 class RegexSentenceBreakerTestCases(test.TestCase, parameterized.TestCase):
 
   @parameterized.parameters([
-      # Split on new line.
       dict(
+          test_description="Split on new line",
           text_input=[
               b"Hi there.\nWhat time is it?\nIt is gametime.",
               b"Who let the dogs out?\nWho?\nWho?\nWho?",
@@ -46,8 +46,8 @@ class RegexSentenceBreakerTestCases(test.TestCase, parameterized.TestCase):
           expected=[[b"Hi there.", b"What time is it?", b"It is gametime."],
                     [b"Who let the dogs out?", b"Who?", b"Who?", b"Who?"]],
       ),
-      # Test trailing \n.
       dict(
+          test_description="Test trailing \\n.",
           text_input=[
               b"Hi there.\nWhat time is it?\nIt is gametime.",
               b"Who let the dogs out?\nWho?\nWho?\nWho?\n",
@@ -55,8 +55,8 @@ class RegexSentenceBreakerTestCases(test.TestCase, parameterized.TestCase):
           expected=[[b"Hi there.", b"What time is it?", b"It is gametime."],
                     [b"Who let the dogs out?", b"Who?", b"Who?", b"Who?"]],
       ),
-      # Custom regex.
       dict(
+          test_description="Custom regex.",
           text_input=[
               b"Hi there.\r\nWhat time is it?\r\nIt is gametime.",
               b"Who let the dogs out?\r\nWho?\r\nWho?\r\nWho?",
@@ -67,6 +67,7 @@ class RegexSentenceBreakerTestCases(test.TestCase, parameterized.TestCase):
       ),
   ])
   def testRegexSentenceBreaker(self,
+                               test_description,
                                text_input,
                                expected,
                                new_sentence_regex=None):
@@ -78,7 +79,7 @@ class RegexSentenceBreakerTestCases(test.TestCase, parameterized.TestCase):
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
+class SentenceFragmenterTestCasesV1(test.TestCase, parameterized.TestCase):
 
   def getTokenWord(self, text, token_starts, token_ends):
     def _FindSubstr(input_tensor):
@@ -110,8 +111,8 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
             constant_op.constant(result_end, dtype=dtypes.int64))
 
   @parameterized.parameters([
-      # Test acronyms
       dict(
+          test_description="Test acronyms.",
           text=[["Welcome to the U.S. don't be surprised."]],
           token_starts=[[0, 8, 11, 15, 20, 26, 29, 38]],
           token_ends=[[7, 10, 14, 19, 25, 28, 38, 39]],
@@ -121,8 +122,8 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
           expected_fragment_properties=[[1, 1]],
           expected_terminal_punc=[[3, 7]],
       ),
-      # Test batch containing acronyms
       dict(
+          test_description="Test batch containing acronyms.",
           text=[["Welcome to the U.S. don't be surprised."], ["I.B.M. yo"]],
           token_starts=[[0, 8, 11, 15, 20, 26, 29, 38], [0, 7]],
           token_ends=[[7, 10, 14, 19, 25, 28, 38, 39], [6, 9]],
@@ -132,8 +133,8 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
           expected_fragment_properties=[[1, 1], [0]],
           expected_terminal_punc=[[3, 7], [-1]],
       ),
-      # Test for semicolons
       dict(
+          test_description="Test for semicolons.",
           text=[["Welcome to the US; don't be surprised."]],
           token_starts=[[0, 8, 11, 15, 17, 19, 25, 28, 37]],
           token_ends=[[8, 10, 14, 19, 18, 24, 27, 37, 38]],
@@ -144,10 +145,11 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
           expected_terminal_punc=[[8]],
       ),
   ])
-  def testSentenceFragmentOp(
-      self, text, token_starts, token_ends, token_properties,
-      expected_fragment_start, expected_fragment_end,
-      expected_fragment_properties, expected_terminal_punc):
+  def testSentenceFragmentOp(self, test_description, text, token_starts,
+                             token_ends, token_properties,
+                             expected_fragment_start, expected_fragment_end,
+                             expected_fragment_properties,
+                             expected_terminal_punc):
     text = constant_op.constant(text)
     token_starts = ragged_factory_ops.constant(token_starts, dtype=dtypes.int64)
     token_ends = ragged_factory_ops.constant(token_ends, dtype=dtypes.int64)
@@ -166,8 +168,8 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
     self.assertAllEqual(expected_terminal_punc, terminal_punc)
 
   @parameterized.parameters([
-      # Test acronyms
       dict(
+          test_description="Test acronyms.",
           token_word=[
               ["Welcome", "to", "the", "U.S.", "!", "Harry"],
               ["Wb", "Tang", "Clan", ";", "ain't", "nothing"],
@@ -179,10 +181,9 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
           expected_terminal_punc=[[3, -1], [-1]],
       ),
   ])
-  def testDenseInputs(
-      self, token_word, token_properties,
-      expected_fragment_start, expected_fragment_end,
-      expected_fragment_properties, expected_terminal_punc):
+  def testDenseInputs(self, test_description, token_word, token_properties,
+                      expected_fragment_start, expected_fragment_end,
+                      expected_fragment_properties, expected_terminal_punc):
     token_starts, token_ends = self.getTokenOffsets(token_word)
     token_properties = constant_op.constant(
         token_properties, dtype=dtypes.int64)
@@ -199,8 +200,8 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
     self.assertAllEqual(expected_terminal_punc, terminal_punc)
 
   @parameterized.parameters([
-      # Too many ragged ranks
       dict(
+          test_description="Too many ragged ranks.",
           token_word=[
               ["Welcome", "to", "the", "U.S.", "don't", "be", "surprised"],
           ],
@@ -208,8 +209,8 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
           token_ends=[[[7, 10, 14, 19, 25, 28, 38, 39]]],
           token_properties=[[0, 0, 0, 256, 0, 0, 0, 0]],
       ),
-      # Too many ranks in a dense Tensor.
       dict(
+          test_description="Too many ranks in a dense Tensor.",
           token_word=[
               [[["Welcome", "to", "the", "U.S.", "don't", "be", "surprised"]]],
           ],
@@ -219,9 +220,13 @@ class SentenceFragmenterTestCases(test.TestCase, parameterized.TestCase):
           is_ragged=False,
       ),
   ])
-  def testBadInputShapes(
-      self, token_word, token_starts, token_ends, token_properties,
-      is_ragged=True):
+  def testBadInputShapes(self,
+                         test_description,
+                         token_word,
+                         token_starts,
+                         token_ends,
+                         token_properties,
+                         is_ragged=True):
     constant = ragged_factory_ops.constant if is_ragged else constant_op.constant
     token_starts = constant(token_starts, dtype=dtypes.int64)
     token_ends = constant(token_ends, dtype=dtypes.int64)

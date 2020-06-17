@@ -34,6 +34,7 @@ cc_library(
         ":sentencepiece_tokenizer_cc",
         ":split_merge_from_logits_tokenizer_cc",
         ":split_merge_tokenizer_cc",
+        ":state_based_sentence_breaker_op_cc",
         ":text_similarity_metric_ops_cc",
         ":unicode_script_tokenizer_cc",
         ":whitespace_tokenizer_cc",
@@ -69,6 +70,7 @@ py_library(
         ":sliding_window_op",
         ":split_merge_from_logits_tokenizer",
         ":split_merge_tokenizer",
+        ":state_based_sentence_breaker_op",
         ":string_ops",
         ":text_similarity_metric_ops",
         ":todense_layer",
@@ -506,13 +508,19 @@ py_library(
 py_tf_text_library(
     name = "sentence_breaking_ops",
     srcs = ["python/ops/sentence_breaking_ops.py"],
-    cc_op_defs = ["core/ops/sentence_breaking_ops.cc"],
+    cc_op_defs = [
+        "core/ops/sentence_breaking_ops.cc",
+    ],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:sentence_breaking_kernels",
-        # tf:lib tensorflow dep,
     ],
     deps = [
         ":regex_split_ops",
+        # tf:lib tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:string_ops tensorflow dep,
+        # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -523,7 +531,6 @@ py_test(
     srcs = ["python/ops/sentence_breaking_ops_test.py"],
     srcs_version = "PY2AND3",
     deps = [
-        ":ragged_test_util",
         ":sentence_breaking_ops",
         "@absl_py//absl/testing:parameterized",
         # python:client_testlib tensorflow dep,
@@ -531,6 +538,47 @@ py_test(
         # python:dtypes tensorflow dep,
         # python:errors tensorflow dep,
         # python:framework_test_lib tensorflow dep,
+        # python:string_ops tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/ops/ragged:ragged_map_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "state_based_sentence_breaker_op",
+    srcs = ["python/ops/state_based_sentence_breaker_op.py"],
+    cc_op_defs = [
+        "core/ops/sentence_breaking_ops_v2.cc",
+    ],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels:sentence_breaking_kernels_v2",
+    ],
+    deps = [
+        ":sentence_breaking_ops",
+        # tf:lib tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:string_ops tensorflow dep,
+        # python/ops/ragged:ragged_map_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "state_based_sentence_breaker_op_test",
+    size = "medium",
+    srcs = ["python/ops/state_based_sentence_breaker_op_test.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":state_based_sentence_breaker_op",
+        "@absl_py//absl/testing:parameterized",
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:errors tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:math_ops tensorflow dep,
         # python:string_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,

@@ -308,6 +308,38 @@ cc_library(
 )
 
 tf_kernel_library(
+    name = "sentence_breaking_kernels_v2",
+    srcs = ["sentence_breaking_kernels_v2.cc"],
+    deps = OSS_DEPS + [
+        ":sentence_fragmenter_v2",
+        # absl/strings dep
+        # tf:framework tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "sentence_fragmenter_v2",
+    srcs = ["sentence_fragmenter_v2.cc"],
+    hdrs = ["sentence_fragmenter_v2.h"],
+    deps = OSS_DEPS + [
+        # absl/strings dep
+        "@icu//:common",
+        # tf:lib tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "sentence_fragmenter_v2_test",
+    srcs = ["sentence_fragmenter_v2_test.cc"],
+    deps = [
+        ":sentence_fragmenter_v2",
+        "@com_google_googletest//:gtest_main",
+        # absl/strings dep
+        "@icu//:common",
+    ],
+)
+
+tf_kernel_library(
     name = "sentencepiece_kernels",
     srcs = ["sentencepiece_kernels.cc"],
     deps = OSS_DEPS + [
@@ -344,6 +376,18 @@ cc_test(
     deps = [
         ":spanning_tree_iterator",
         "@com_google_googletest//:gtest_main",
+        # tf:lib tensorflow dep,
+    ],
+)
+
+tf_kernel_library(
+    name = "split_merge_tokenize_kernel",
+    srcs = ["split_merge_tokenize_kernel.cc"],
+    deps = OSS_DEPS + [
+        "@icu//:common",
+        # absl/strings dep
+        "@com_google_absl//absl/base:core_headers",
+        # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
     ],
 )
@@ -415,18 +459,6 @@ tf_kernel_library(
     srcs = ["wordpiece_kernel.cc"],
     deps = OSS_DEPS + [
         ":wordpiece_tokenizer",
-        "@com_google_absl//absl/base:core_headers",
-        # tf:framework tensorflow dep,
-        # tf:lib tensorflow dep,
-    ],
-)
-
-tf_kernel_library(
-    name = "split_merge_tokenize_kernel",
-    srcs = ["split_merge_tokenize_kernel.cc"],
-    deps = OSS_DEPS + [
-        "@icu//:common",
-        # absl/strings dep
         "@com_google_absl//absl/base:core_headers",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
