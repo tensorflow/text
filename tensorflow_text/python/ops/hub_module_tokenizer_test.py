@@ -109,15 +109,10 @@ class HubModuleTokenizerTest(parameterized.TestCase, test.TestCase):
     tokens_no_offset = segmenter.tokenize(text_input)
     self.evaluate(lookup_ops.tables_initializer())
     self.evaluate(variables_lib.global_variables_initializer())
-
-    # TODO(salcianu): here and elsewhere in this package: use
-    # assertAllEqual(expected, actual) (instead of actual, expected) as that
-    # generates more readable error messages:
-    # http://google3/third_party/tensorflow/python/framework/test_util.py?l=2668&rcl=311760220
-    self.assertAllEqual(tokens, expected_tokens)
-    self.assertAllEqual(starts, expected_starts)
-    self.assertAllEqual(ends, expected_ends)
-    self.assertAllEqual(tokens_no_offset, expected_tokens)
+    self.assertAllEqual(expected_tokens, tokens)
+    self.assertAllEqual(expected_starts, starts)
+    self.assertAllEqual(expected_ends, ends)
+    self.assertAllEqual(expected_tokens, tokens_no_offset)
 
 
 if __name__ == "__main__":
