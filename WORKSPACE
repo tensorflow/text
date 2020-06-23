@@ -101,10 +101,10 @@ http_archive(
 # is called later in this file.
 http_archive(
     name = "org_tensorflow_hub",
-    strip_prefix = "hub-0.8.0",
-    sha256 = "968af30c448d51c36501b68df2c916fb4a61007db3240adc9248fa3a9be2da6f",
+    strip_prefix = "hub-0.7.0",
+    sha256 = "e8f2fea194a4d76a042700098d7c378ece74f594a15a103765e21134461dfd12",
     urls = [
-        "https://github.com/tensorflow/hub/archive/v0.8.0.zip"
+        "https://github.com/tensorflow/hub/archive/v0.7.0.zip"
     ],
 )
 
