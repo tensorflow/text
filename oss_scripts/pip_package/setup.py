@@ -74,6 +74,7 @@ setup(
     distclass=BinaryDistribution,
     install_requires=[
         'tensorflow>=2.2.0, <2.3',
+        'tensorflow_hub>=0.8.0',
     ],
     extras_require={
         'tensorflow_gpu': ['tensorflow-gpu>=2.1.0, <2.2',],
