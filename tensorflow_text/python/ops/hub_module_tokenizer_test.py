@@ -16,8 +16,6 @@
 # encoding=utf-8
 """Tests for HubModuleTokenizer."""
 
-import os
-
 from absl.testing import parameterized
 
 from tensorflow.python.framework import test_util
@@ -26,10 +24,6 @@ from tensorflow.python.ops import variables as variables_lib
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import hub_module_tokenizer  # pylint: disable=line-too-long
-
-
-# Should be set to "tensorflow_text" in the OSS version.
-TF_TEXT_PACKAGE = "tensorflow_text"
 
 
 def _Utf8(char):
@@ -102,8 +96,8 @@ class HubModuleTokenizerTest(parameterized.TestCase, test.TestCase):
                    expected_tokens,
                    expected_starts,
                    expected_ends):
-    hub_module_handle = os.path.join(
-        TF_TEXT_PACKAGE, "python/ops/test_data/segmenter_hub_module")
+    hub_module_handle = ("tensorflow_text/python/ops/test_data/"
+                         "segmenter_hub_module")
     segmenter = hub_module_tokenizer.HubModuleTokenizer(hub_module_handle)
     tokens, starts, ends = segmenter.tokenize_with_offsets(text_input)
     tokens_no_offset = segmenter.tokenize(text_input)
