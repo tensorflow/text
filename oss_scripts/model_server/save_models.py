@@ -83,7 +83,7 @@ class TfTextOps(tf.Module):
         [['delta', 'air', 'lines', 'flight'],
          ['this', 'concludes', 'the', 'transcript']])
     (rouge_l, _, _) = text.metrics.rouge_l(rl_hypotheses, rl_references)
-    # Sentence breaking
+    # Sentence breaking version 1 (token dependent)
     sb_token_word = [['Welcome', 'to', 'the', 'U.S.', '!', 'Harry'],
                      ['Wu', 'Tang', 'Clan', ';', 'ain\'t', 'nothing']]
     sb_token_properties = [[0, 0, 0, 256, 0, 0], [0, 0, 0, 0, 0, 0]]
@@ -105,6 +105,12 @@ class TfTextOps(tf.Module):
                                              dtype=tf.int64)
     (sentence_breaking, _, _, _) = text.sentence_fragments(
         sb_token_word, sb_token_starts, sb_token_ends, sb_token_properties)
+    # Sentence breaking version 2 (StateBasedSentenceBreaker)
+    sbv2_text_input = [['Welcome to the U.S.! Harry'],
+                       ['Wu Tang Clan; ain\'t nothing']]
+    sentence_breaker_v2 = text.StateBasedSentenceBreaker()
+    sbv2_fragment_text, _, _ = (
+        sentence_breaker_v2.break_sentences_with_offsets(sbv2_text_input))
     # Sentencepiece tokenizer
     sp_model_file = (
         'third_party/tensorflow_text/python/ops/test_data/test_oss_model.model')
@@ -170,6 +176,7 @@ class TfTextOps(tf.Module):
     regex_split_assert = assert_check(regex_split.to_tensor())
     rouge_l_assert = assert_check(rouge_l)
     sentence_breaking_assert = assert_check(sentence_breaking.to_tensor())
+    sentence_breaking_v2_assert = assert_check(sbv2_fragment_text.to_tensor())
     sentencepiece_assert = assert_check(sentencepiece.to_tensor())
     sentencepiece_id_assert = assert_check(sentencepiece_id)
     sentencepiece_size_assert = assert_check(sentencepiece_size)
@@ -187,6 +194,7 @@ class TfTextOps(tf.Module):
                                   regex_split_assert,
                                   rouge_l_assert,
                                   sentence_breaking_assert,
+                                  sentence_breaking_v2_assert,
                                   sentencepiece_assert,
                                   sentencepiece_id_assert,
                                   sentencepiece_size_assert,

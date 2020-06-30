@@ -17,6 +17,7 @@
 import abc
 
 from tensorflow.python.ops.ragged import ragged_tensor
+from tensorflow.python.util import deprecation
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_sentence_breaking_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_sentence_breaking_ops.so'))
@@ -72,7 +73,7 @@ class RegexSentenceBreaker(SentenceBreakerWithOffsets):
   """
 
   def __init__(self, new_sentence_regex=None):
-    r"""Creates an instance of `NewLineSentenceBreaker`.
+    r"""Creates an instance of `RegexSentenceBreaker`.
 
     Args:
       new_sentence_regex: (optional) A string containing the regex pattern of a
@@ -90,7 +91,8 @@ class RegexSentenceBreaker(SentenceBreakerWithOffsets):
                                                     self._new_sentence_regex)
 
 
-# TODO(thuang513): Wrap this into a HeuristicBasedSentenceBreaker class.
+@deprecation.deprecated(
+    None, "Deprecated, use 'HeuristicBasedSentenceBreaker' instead.")
 def sentence_fragments(token_word,
                        token_starts,
                        token_ends,
@@ -160,7 +162,8 @@ def sentence_fragments(token_word,
       -- or index of the last word itself, if it's an acronym (since acronyms
       include the terminal punctuation). index of the terminal punctuation
       token.
-  """
+  """  # pylint: disable=pointless-string-statement
+
   if not isinstance(token_starts, ragged_tensor.RaggedTensor):
     token_starts = ragged_tensor.RaggedTensor.from_tensor(token_starts)
   if not isinstance(token_ends, ragged_tensor.RaggedTensor):
