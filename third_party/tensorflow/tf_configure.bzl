@@ -133,8 +133,9 @@ def _symlink_genrule_for_dir(
         dest_dir,
         genrule_name,
         src_files = [],
-        dest_files = []):
-    """Returns a genrule to symlink(or copy if on Windows) a set of files.
+        dest_files = [],
+        tf_pip_dir_rename_pair = []):
+    """Returns a genrule to symlink (or copy if on Windows) a set of files.
 
     If src_dir is passed, files will be read from the given directory; otherwise
     we assume files are in src_files and dest_files.
@@ -146,20 +147,34 @@ def _symlink_genrule_for_dir(
         genrule_name: genrule name.
         src_files: list of source files instead of src_dir.
         dest_files: list of corresonding destination files.
+        tf_pip_dir_rename_pair: list of the pair of tf pip parent directory to
+          replace. For example, in TF pip package, the source code is under
+          "tensorflow_core", and we might want to replace it with
+          "tensorflow" to match the header includes.
 
     Returns:
         genrule target that creates the symlinks.
     """
+
+    # Check that tf_pip_dir_rename_pair has the right length
+    tf_pip_dir_rename_pair_len = len(tf_pip_dir_rename_pair)
+    if tf_pip_dir_rename_pair_len != 0 and tf_pip_dir_rename_pair_len != 2:
+        _fail("The size of argument tf_pip_dir_rename_pair should be either 0 or 2, but %d is given." % tf_pip_dir_rename_pair_len)
+
     if src_dir != None:
         src_dir = _norm_path(src_dir)
         dest_dir = _norm_path(dest_dir)
         files = "\n".join(sorted(_read_dir(repository_ctx, src_dir).splitlines()))
 
         # Create a list with the src_dir stripped to use for outputs.
-        dest_files = files.replace(src_dir, "").splitlines()
+        if tf_pip_dir_rename_pair_len:
+            dest_files = files.replace(src_dir, "").replace(tf_pip_dir_rename_pair[0], tf_pip_dir_rename_pair[1]).splitlines()
+        else:
+            dest_files = files.replace(src_dir, "").splitlines()
         src_files = files.splitlines()
     command = []
     outs = []
+
     for i in range(len(dest_files)):
         if dest_files[i] != "":
             # If we have only one file to link we do not want to use the dest_dir, as
@@ -184,6 +199,7 @@ def _tf_pip_impl(repository_ctx):
         tf_header_dir,
         "include",
         "tf_header_include",
+        tf_pip_dir_rename_pair = ["tensorflow_core", "tensorflow"],
     )
 
     tf_shared_library_dir = repository_ctx.os.environ[_TF_SHARED_LIBRARY_DIR]

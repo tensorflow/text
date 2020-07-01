@@ -14,6 +14,21 @@
 # limitations under the License.
 # ==============================================================================
 
+PLATFORM="$(uname -s | tr 'A-Z' 'a-z')"
+
+function is_linux() {
+  [[ "${PLATFORM}" == "linux" ]]
+}
+
+function is_macos() {
+  [[ "${PLATFORM}" == "darwin" ]]
+}
+
+function is_windows() {
+  # On windows, the shell script is actually running in msys
+  [[ "${PLATFORM}" =~ msys_nt*|mingw*|cygwin*|uwin* ]]
+}
+
 function write_to_bazelrc() {
   echo "$1" >> .bazelrc
 }
@@ -43,11 +58,27 @@ TF_CFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.ge
 TF_LFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
 TF_LFLAGS_2=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))' | awk '{print $2}') )
 
-SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
-SHARED_LIBRARY_NAME=$(echo $TF_LFLAGS_2 | rev | cut -d":" -f1 | rev)
-if [[ "$(uname)" == "Darwin" ]]; then
-  SHARED_LIBRARY_NAME="libtensorflow_framework.dylib"
+if is_windows; then
+  # Use pywrap_tensorflow instead of tensorflow_framework on Windows
+  SHARED_LIBRARY_DIR=${TF_CFLAGS:2:-7}"python"
+else
+  SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
 fi
-write_action_env_to_bazelrc "TF_HEADER_DIR" ${TF_CFLAGS:2}
+SHARED_LIBRARY_NAME=$(echo $TF_LFLAGS_2 | rev | cut -d":" -f1 | rev)
+if is_macos; then
+  SHARED_LIBRARY_NAME="libtensorflow_framework.dylib"
+elif is_windows; then
+  # Use pywrap_tensorflow's import library on Windows. It is in the same dir as the dll/pyd.
+  SHARED_LIBRARY_NAME="_pywrap_tensorflow_internal.lib"
+fi
+
+
+HEADER_DIR=${TF_CFLAGS:2}
+if is_windows; then
+  SHARED_LIBRARY_DIR=${SHARED_LIBRARY_DIR//\\//}
+  SHARED_LIBRARY_NAME=${SHARED_LIBRARY_NAME//\\//}
+  HEADER_DIR=${HEADER_DIR//\\//}
+fi
+write_action_env_to_bazelrc "TF_HEADER_DIR" ${HEADER_DIR}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${SHARED_LIBRARY_DIR}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_NAME" ${SHARED_LIBRARY_NAME}
