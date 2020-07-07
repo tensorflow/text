@@ -29,14 +29,23 @@ Various tensorflow ops related to text-processing.
 [`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
 implementations.
 
+[`class HubModuleTokenizer`](./text/HubModuleTokenizer.md): Tokenizer that uses
+a Hub module.
+
 [`class Reduction`](./text/Reduction.md): Type of reduction to be done by the
 n-gram op.
 
 [`class SentencepieceTokenizer`](./text/SentencepieceTokenizer.md): Tokenizes a
 tensor of UTF-8 strings.
 
+[`class SplitMergeFromLogitsTokenizer`](./text/SplitMergeFromLogitsTokenizer.md):
+Tokenizes a tensor of UTF-8 string into words according to logits.
+
 [`class SplitMergeTokenizer`](./text/SplitMergeTokenizer.md): Tokenizes a tensor
 of UTF-8 string into words according to labels.
+
+[`class StateBasedSentenceBreaker`](./text/StateBasedSentenceBreaker.md): A
+`SentenceBreaker` that splits sentence fragments separated by punctuation.
 
 [`class Tokenizer`](./text/Tokenizer.md): Base class for tokenizer
 implementations.
@@ -89,7 +98,8 @@ match a regex pattern.
 [`regex_split_with_offsets(...)`](./text/regex_split_with_offsets.md): Split
 `input` by delimiters that match a regex pattern; returns offsets.
 
-[`sentence_fragments(...)`](./text/sentence_fragments.md): Find the sentence fragments in a given text.
+[`sentence_fragments(...)`](./text/sentence_fragments.md): Find the sentence
+fragments in a given text. (deprecated)
 
 [`sliding_window(...)`](./text/sliding_window.md): Builds a sliding window for `data` with a specified width.
 

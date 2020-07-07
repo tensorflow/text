@@ -81,11 +81,10 @@ long words.
 `unknown_token`
 </td>
 <td>
-(optional) The value to use when an unknown token is found.
-Default is "[UNK]". If this is set to a string, and `token_out_type` is
-`tf.int64`, the `vocab_lookup_table` is used to convert the
-`unknown_token` to an integer. If this is set to `None`,
-out-of-vocabulary tokens are left as is.
+(optional) The string value to substitute for an unknown
+token. Default is "[UNK]". If set to `None`, no substitution occurs.
+If `token_out_type` is `tf.int64`, the `vocab_lookup_table` is used
+(after substitution) to convert the unknown token to an integer.
 </td>
 </tr><tr>
 <td>
@@ -194,7 +193,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

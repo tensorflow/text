@@ -5,9 +5,12 @@
 *   <a href="./text.md"><code>text</code></a>
 *   <a href="./text/BertTokenizer.md"><code>text.BertTokenizer</code></a>
 *   <a href="./text/Detokenizer.md"><code>text.Detokenizer</code></a>
+*   <a href="./text/HubModuleTokenizer.md"><code>text.HubModuleTokenizer</code></a>
 *   <a href="./text/Reduction.md"><code>text.Reduction</code></a>
 *   <a href="./text/SentencepieceTokenizer.md"><code>text.SentencepieceTokenizer</code></a>
+*   <a href="./text/SplitMergeFromLogitsTokenizer.md"><code>text.SplitMergeFromLogitsTokenizer</code></a>
 *   <a href="./text/SplitMergeTokenizer.md"><code>text.SplitMergeTokenizer</code></a>
+*   <a href="./text/StateBasedSentenceBreaker.md"><code>text.StateBasedSentenceBreaker</code></a>
 *   <a href="./text/Tokenizer.md"><code>text.Tokenizer</code></a>
 *   <a href="./text/TokenizerWithOffsets.md"><code>text.TokenizerWithOffsets</code></a>
 *   <a href="./text/UnicodeCharTokenizer.md"><code>text.UnicodeCharTokenizer</code></a>
