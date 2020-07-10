@@ -1,5 +1,6 @@
 # Kernels for tf.text ops.
 
+# [internal] load cc_proto_library.bzl
 load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_kernel_library")
 
 licenses(["notice"])  # Apache 2.0
@@ -193,10 +194,21 @@ cc_test(
     ],
 )
 
+proto_library(
+    name = "edit_changes_proto",
+    srcs = ["edit_changes.proto"],
+)
+
+cc_proto_library(
+    name = "edit_changes_cc_proto",
+    deps = [":edit_changes_proto"],
+)
+
 tf_kernel_library(
     name = "normalize_kernels",
     srcs = ["normalize_kernels.cc"],
     deps = OSS_DEPS + [
+        ":edit_changes_cc_proto",
         "//third_party/icu/data:icu_normalization_data",
         # absl/strings dep
         "@icu//:nfkc",

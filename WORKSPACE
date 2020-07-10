@@ -52,6 +52,18 @@ http_archive(
     ],
 )
 
+# 310ba5ee72661c081129eb878c1bbcec936b20f0 is based on protobuf v3.8.0 with a fix for protobuf.bzl, 
+# used by TensorFlow v2.2.0: https://github.com/tensorflow/tensorflow/blob/r2.2/tensorflow/workspace.bzl#L475
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "b9e92f9af8819bbbc514e2902aec860415b70209f31dfc8c4fa72515a5df9d59",
+    strip_prefix = "protobuf-310ba5ee72661c081129eb878c1bbcec936b20f0",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/310ba5ee72661c081129eb878c1bbcec936b20f0.tar.gz",
+        "https://github.com/protocolbuffers/protobuf/archive/310ba5ee72661c081129eb878c1bbcec936b20f0.tar.gz",
+    ],
+)
+
 http_archive(
     name = "com_google_re2",
     sha256 = "d070e2ffc5476c496a6a872a6f246bfddce8e7797d6ba605a7c8d72866743bf9",

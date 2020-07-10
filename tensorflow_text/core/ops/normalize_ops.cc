@@ -50,5 +50,43 @@ rules.
 See http://unicode.org/reports/tr15/
 )doc");
 
+REGISTER_OP("NormalizeUTF8WithOffsetsMap")
+    .Input("input: string")
+    .Attr("normalization_form: string")
+    .Output("output: string")
+    .Output("offsets_map: variant")
+    .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+      c->set_output(0, c->input(0));
+      c->set_output(1, c->input(0));
+      return Status::OK();
+    })
+    .Doc(R"doc(
+Normalizes each UTF8 string in the input tensor using 'normalization_form'
+rules. Returns the normalized strings in the output tensor and a tensor of the
+same shape containing offsets_map variant, which can be used to map the post-
+normalized string offsets to pre-normalized string offsets.
+
+See http://unicode.org/reports/tr15/
+)doc");
+
+REGISTER_OP("FindSourceOffsets")
+    .Input("offsets_map: variant")
+    .Input("input_offsets_values: int64")
+    .Input("input_offsets_splits: Tsplits")
+    .Attr("Tsplits: {int32, int64} = DT_INT64")
+    .Output("output_offsets_values: int64")
+    .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+      shape_inference::ShapeHandle unused;
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 1, &unused));
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(2), 1, &unused));
+      c->set_output(0, c->input(1));
+      return Status::OK();
+    })
+    .Doc(R"doc(
+Map the post-normalized string offsets in the input tensor to the pre-normalized
+string offsets using an input tensor containing offsets_map variant.
+)doc");
+
 }  // namespace text
 }  // namespace tensorflow

@@ -312,7 +312,7 @@ py_tf_text_library(
     ],
     deps = [
         # python:dtypes tensorflow dep,
-        # python/ops/ragged tensorflow dep,
+        # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -324,7 +324,6 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":normalize_ops",
-        ":ragged_test_util",
         # python:client_testlib tensorflow dep,
         # python:errors tensorflow dep,
         # python:framework_test_lib tensorflow dep,
