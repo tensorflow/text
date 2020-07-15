@@ -14,7 +14,7 @@
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentence_breaking_ops.py">View
 source</a>
 
-Find the sentence fragments in a given text.
+Find the sentence fragments in a given text. (deprecated)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.sentence_fragments(
@@ -24,6 +24,10 @@ Find the sentence fragments in a given text.
 </code></pre>
 
 <!-- Placeholder for "Used in" -->
+
+Warning: THIS FUNCTION IS DEPRECATED. It will be removed in a future version.
+Instructions for updating: Deprecated, use 'HeuristicBasedSentenceBreaker'
+instead.
 
 A sentence fragment is a potential next sentence determined using
 deterministic heuristics based on punctuation, capitalization, and similar

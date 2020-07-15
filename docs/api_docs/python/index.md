@@ -5,9 +5,12 @@
 *   <a href="./text.md"><code>text</code></a>
 *   <a href="./text/BertTokenizer.md"><code>text.BertTokenizer</code></a>
 *   <a href="./text/Detokenizer.md"><code>text.Detokenizer</code></a>
+*   <a href="./text/HubModuleTokenizer.md"><code>text.HubModuleTokenizer</code></a>
 *   <a href="./text/Reduction.md"><code>text.Reduction</code></a>
 *   <a href="./text/SentencepieceTokenizer.md"><code>text.SentencepieceTokenizer</code></a>
+*   <a href="./text/SplitMergeFromLogitsTokenizer.md"><code>text.SplitMergeFromLogitsTokenizer</code></a>
 *   <a href="./text/SplitMergeTokenizer.md"><code>text.SplitMergeTokenizer</code></a>
+*   <a href="./text/StateBasedSentenceBreaker.md"><code>text.StateBasedSentenceBreaker</code></a>
 *   <a href="./text/Tokenizer.md"><code>text.Tokenizer</code></a>
 *   <a href="./text/TokenizerWithOffsets.md"><code>text.TokenizerWithOffsets</code></a>
 *   <a href="./text/UnicodeCharTokenizer.md"><code>text.UnicodeCharTokenizer</code></a>
@@ -17,6 +20,7 @@
 *   <a href="./text/WordpieceTokenizer.md"><code>text.WordpieceTokenizer</code></a>
 *   <a href="./text/case_fold_utf8.md"><code>text.case_fold_utf8</code></a>
 *   <a href="./text/coerce_to_structurally_valid_utf8.md"><code>text.coerce_to_structurally_valid_utf8</code></a>
+*   <a href="./text/find_source_offsets.md"><code>text.find_source_offsets</code></a>
 *   <a href="./text/gather_with_default.md"><code>text.gather_with_default</code></a>
 *   <a href="./text/greedy_constrained_sequence.md"><code>text.greedy_constrained_sequence</code></a>
 *   <a href="./text/keras.md"><code>text.keras</code></a>
@@ -28,6 +32,7 @@
 *   <a href="./text/metrics/rouge_l.md"><code>text.metrics.rouge_l</code></a>
 *   <a href="./text/ngrams.md"><code>text.ngrams</code></a>
 *   <a href="./text/normalize_utf8.md"><code>text.normalize_utf8</code></a>
+*   <a href="./text/normalize_utf8_with_offsets_map.md"><code>text.normalize_utf8_with_offsets_map</code></a>
 *   <a href="./text/pad_along_dimension.md"><code>text.pad_along_dimension</code></a>
 *   <a href="./text/regex_split.md"><code>text.regex_split</code></a>
 *   <a href="./text/regex_split_with_offsets.md"><code>text.regex_split_with_offsets</code></a>

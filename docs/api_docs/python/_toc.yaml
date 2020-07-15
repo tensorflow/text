@@ -11,10 +11,14 @@ toc:
     path: /text/api_docs/python/text/coerce_to_structurally_valid_utf8
   - title: Detokenizer
     path: /text/api_docs/python/text/Detokenizer
+  - title: find_source_offsets
+    path: /text/api_docs/python/text/find_source_offsets
   - title: gather_with_default
     path: /text/api_docs/python/text/gather_with_default
   - title: greedy_constrained_sequence
     path: /text/api_docs/python/text/greedy_constrained_sequence
+  - title: HubModuleTokenizer
+    path: /text/api_docs/python/text/HubModuleTokenizer
   - title: max_spanning_tree
     path: /text/api_docs/python/text/max_spanning_tree
   - title: max_spanning_tree_gradient
@@ -23,6 +27,8 @@ toc:
     path: /text/api_docs/python/text/ngrams
   - title: normalize_utf8
     path: /text/api_docs/python/text/normalize_utf8
+  - title: normalize_utf8_with_offsets_map
+    path: /text/api_docs/python/text/normalize_utf8_with_offsets_map
   - title: pad_along_dimension
     path: /text/api_docs/python/text/pad_along_dimension
   - title: Reduction
@@ -34,6 +40,7 @@ toc:
   - title: SentencepieceTokenizer
     path: /text/api_docs/python/text/SentencepieceTokenizer
   - title: sentence_fragments
+    status: deprecated
     path: /text/api_docs/python/text/sentence_fragments
   - title: sliding_window
     path: /text/api_docs/python/text/sliding_window
@@ -41,8 +48,12 @@ toc:
     path: /text/api_docs/python/text/span_alignment
   - title: span_overlaps
     path: /text/api_docs/python/text/span_overlaps
+  - title: SplitMergeFromLogitsTokenizer
+    path: /text/api_docs/python/text/SplitMergeFromLogitsTokenizer
   - title: SplitMergeTokenizer
     path: /text/api_docs/python/text/SplitMergeTokenizer
+  - title: StateBasedSentenceBreaker
+    path: /text/api_docs/python/text/StateBasedSentenceBreaker
   - title: Tokenizer
     path: /text/api_docs/python/text/Tokenizer
   - title: TokenizerWithOffsets

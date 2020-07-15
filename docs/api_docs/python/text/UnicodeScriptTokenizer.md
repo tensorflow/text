@@ -60,12 +60,12 @@ source</a>
 
 Tokenizes a tensor of UTF-8 strings on Unicode script boundaries.
 
-The strings are split when a change in the Unicode script is detected between
-sequential tokens. The script codes used correspond to International Components
-for Unicode (ICU) UScriptCode values. See:
+The strings are split when successive tokens change their Unicode script or
+change being whitespace or not. The script codes used correspond to
+International Components for Unicode (ICU) UScriptCode values. See:
 http://icu-project.org/apiref/icu4c/uscript_8h.html
 
-ICU defined whitespace characters are dropped, unless the `keep_whitespace`
+ICU-defined whitespace characters are dropped, unless the `keep_whitespace`
 option was specified at construction time.
 
 <!-- Tabular view -->
