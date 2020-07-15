@@ -29,7 +29,9 @@ from tensorflow_text.python.ops.mst_ops import max_spanning_tree_gradient
 from tensorflow_text.python.ops.ngrams_op import ngrams
 from tensorflow_text.python.ops.ngrams_op import Reduction
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
+from tensorflow_text.python.ops.normalize_ops import find_source_offsets
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
+from tensorflow_text.python.ops.normalize_ops import normalize_utf8_with_offsets_map
 from tensorflow_text.python.ops.pad_along_dimension_op import pad_along_dimension
 from tensorflow_text.python.ops.pointer_ops import gather_with_default
 from tensorflow_text.python.ops.pointer_ops import span_alignment
