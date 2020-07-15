@@ -558,7 +558,6 @@ py_tf_text_library(
     ],
 )
 
-# This is required for other external users to build tests using this model.
 exports_files(
     glob(["python/ops/test_data/test_oss_model.*"]),
 )
