@@ -26,6 +26,7 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
+from tensorflow.python.training.tracking import tracking
 from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
@@ -36,6 +37,20 @@ gen_sentencepiece_tokenizer = load_library.load_op_library(resource_loader.get_p
 _tf_text_sentencepiece_tokenizer_op_create_counter = monitoring.Counter(
     "/nlx/api/python/sentencepiece_tokenizer_create_counter",
     "Counter for number of SentencepieceTokenizers created in Python.")
+
+
+class _SentencepieceModelResource(tracking.TrackableResource):
+  """Utility to track the model resource tensor (for SavedModel support)."""
+
+  def __init__(self, model, name):
+    super(_SentencepieceModelResource, self).__init__()
+    self._model = model
+    self._name = name
+
+  def _create_resource(self):
+    model, name = self._model, self._name
+    with ops.name_scope(name, "SentenceTokenizerInitializer", [model]):
+      return gen_sentencepiece_tokenizer.sentencepiece_op(model=model)
 
 
 class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
@@ -81,9 +96,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
     self.reverse = reverse
     self.add_bos = add_bos
     self.add_eos = add_eos
-    with ops.name_scope(name, "SentenceTokenizerInitializer", [model]):
-      self._resource_handle = gen_sentencepiece_tokenizer.sentencepiece_op(
-          model=model)
+    self._model_resource = _SentencepieceModelResource(model, name)
 
   def tokenize(self, input, name=None):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings.
@@ -116,9 +129,9 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
           # normal.
           (output_values, row_splits) = (
               gen_sentencepiece_tokenizer.sentencepiece_tokenize_op(
-                  self._resource_handle, input_tensor, self.nbest_size,
-                  self.alpha, self.add_bos, self.add_eos, self.reverse,
-                  self.out_type))
+                  self._model_resource.resource_handle, input_tensor,
+                  self.nbest_size, self.alpha, self.add_bos, self.add_eos,
+                  self.reverse, self.out_type))
           tokens = RaggedTensor.from_nested_row_splits(
               flat_values=output_values,
               nested_row_splits=[row_splits],
@@ -167,9 +180,9 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
            output_offset_limits) = (
                gen_sentencepiece_tokenizer
                .sentencepiece_tokenize_with_offsets_op(
-                   self._resource_handle, input_tensor, self.nbest_size,
-                   self.alpha, self.add_bos, self.add_eos, self.reverse,
-                   self.out_type))
+                   self._model_resource.resource_handle, input_tensor,
+                   self.nbest_size, self.alpha, self.add_bos, self.add_eos,
+                   self.reverse, self.out_type))
           tokens = RaggedTensor.from_nested_row_splits(
               flat_values=output_values,
               nested_row_splits=[output_splits],
@@ -214,7 +227,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
           return input_tensor.with_values(tokens)
         else:
           return gen_sentencepiece_tokenizer.sentencepiece_detokenize_op(
-              self._resource_handle, input_tensor.flat_values,
+              self._model_resource.resource_handle, input_tensor.flat_values,
               input_tensor.row_splits, self.add_bos, self.add_eos, self.reverse)
       else:
         if input_tensor.shape.ndims > 1:
@@ -236,7 +249,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
     """
     with ops.name_scope(name, "SentencepieceTokenizerVocabSize", [self]):
       return gen_sentencepiece_tokenizer.sentencepiece_vocab_size_op(
-          self._resource_handle)
+          self._model_resource.resource_handle)
 
   def id_to_string(self, input, name=None):  # pylint: disable=redefined-builtin
     """Converts vocabulary id into a token.
@@ -264,4 +277,4 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
             self.id_to_string(array_ops.reshape(input_tensor, [-1])),
             array_ops.shape(input_tensor))
       return gen_sentencepiece_tokenizer.sentencepiece_id_to_string_op(
-          self._resource_handle, input)
+          self._model_resource.resource_handle, input)

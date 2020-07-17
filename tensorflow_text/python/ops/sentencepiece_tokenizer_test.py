@@ -17,14 +17,21 @@
 """Tests for SentencePieceProcessor Tensorflow op."""
 
 import sys
+import tempfile
 from absl.testing import parameterized
+from tensorflow.python.eager import def_function
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors
+from tensorflow.python.framework import tensor_spec
 from tensorflow.python.framework import test_util
+from tensorflow.python.lib.io import file_io
+from tensorflow.python.module import module
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
+from tensorflow.python.saved_model import load
+from tensorflow.python.saved_model import save
 from tensorflow_text.python.ops import ragged_test_util
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 
@@ -36,6 +43,18 @@ def _utf8(tokens):
     return [_utf8(t) for t in tokens]
   else:
     return tokens.encode('utf-8')
+
+
+class TestSavedModelModule(module.Module):
+
+  def __init__(self, tokenizer):
+    self.tokenizer = tokenizer
+
+  @def_function.function(input_signature=[
+      tensor_spec.TensorSpec(shape=[None], dtype=dtypes.string)
+  ])
+  def tokenize(self, inputs):
+    return self.tokenizer.tokenize(inputs)
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -436,6 +455,17 @@ class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
     result = sp.tokenize(ragged_factory_ops.constant(sentences))
     detokenized = sp.detokenize(result)
     self.assertRaggedEqual(sentences, detokenized)
+
+  def testSavedModel(self):
+    sp = SentencepieceTokenizer(self.model)
+    test_module = TestSavedModelModule(sp)
+    inputs = constant_op.constant(['hello world'])
+    expected_result = test_module.tokenize(inputs)
+    temp_dir = tempfile.mkdtemp(dir=test.get_temp_dir())
+    save.save(test_module, temp_dir)
+    restored_model = load.load(temp_dir)
+    self.assertAllEqual(restored_model.tokenize(inputs), expected_result)
+    file_io.delete_recursively(temp_dir)
 
   def testEmptyModel(self):
     with self.cached_session():
