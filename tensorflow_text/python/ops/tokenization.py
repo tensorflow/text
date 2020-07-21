@@ -21,10 +21,9 @@ from __future__ import print_function
 
 import abc
 
-from tensorflow.python.module import module
 
-
-class Tokenizer(module.Module):
+# TODO(broken): Have this extend Module when it becomes public
+class Tokenizer(object):
   """Base class for tokenizer implementations."""
 
   __metaclass__ = abc.ABCMeta
@@ -69,7 +68,8 @@ class TokenizerWithOffsets(Tokenizer):
     raise NotImplementedError("Abstract method")
 
 
-class Detokenizer(module.Module):
+# TODO(broken): Have this extend Module when it becomes public
+class Detokenizer(object):
   """Base class for detokenizer implementations."""
 
   __metaclass__ = abc.ABCMeta
