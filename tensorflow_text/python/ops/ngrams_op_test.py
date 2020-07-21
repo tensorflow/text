@@ -25,11 +25,10 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import ngrams_op
-from tensorflow_text.python.ops import ragged_test_util
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
+class NgramsOpTest(test_util.TensorFlowTestCase):
 
   def testSumReduction(self):
     test_data = constant_op.constant([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
@@ -37,7 +36,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=2, axis=1, reduction_type=ngrams_op.Reduction.SUM)
     expected_values = [[3.0, 5.0], [30.0, 50.0]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testRaggedSumReduction(self):
     test_data = ragged_factory_ops.constant([[1.0, 2.0, 3.0, 4.0],
@@ -46,7 +45,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=2, axis=1, reduction_type=ngrams_op.Reduction.SUM)
     expected_values = [[3.0, 5.0, 7.0], [30.0, 50.0]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testRaggedSumReductionAxisZero(self):
     test_data = ragged_factory_ops.constant([[1.0, 2.0, 3.0, 4.0],
@@ -55,7 +54,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=2, axis=0, reduction_type=ngrams_op.Reduction.SUM)
     expected_values = [[11.0, 22.0, 33.0, 44.0]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testMeanReduction(self):
     test_data = constant_op.constant([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
@@ -63,7 +62,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=2, axis=1, reduction_type=ngrams_op.Reduction.MEAN)
     expected_values = [[1.5, 2.5], [15.0, 25.0]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testRaggedMeanReduction(self):
     test_data = ragged_factory_ops.constant([[1.0, 2.0, 3.0, 4.0],
@@ -72,7 +71,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=2, axis=-1, reduction_type=ngrams_op.Reduction.MEAN)
     expected_values = [[1.5, 2.5, 3.5], [15.0, 25.0]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testStringJoinReduction(self):
     test_data = constant_op.constant([["a", "b", "c"], ["dd", "ee", "ff"]])
@@ -84,7 +83,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         string_separator="|")
     expected_values = [[b"a|b", b"b|c"], [b"dd|ee", b"ee|ff"]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testStringJoinReductionAxisZero(self):
     test_data = constant_op.constant(["a", "b", "c"])
@@ -96,7 +95,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         string_separator="|")
     expected_values = [b"a|b", b"b|c"]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testRaggedStringJoinReduction(self):
     test_data = ragged_factory_ops.constant([["a", "b", "c"], ["dd", "ee"]])
@@ -108,7 +107,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         string_separator="|")
     expected_values = [[b"a|b", b"b|c"], [b"dd|ee"]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testReductionWithNegativeAxis(self):
     test_data = constant_op.constant([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
@@ -116,7 +115,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=2, axis=-1, reduction_type=ngrams_op.Reduction.SUM)
     expected_values = [[3.0, 5.0], [30.0, 50.0]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testReductionOnInnerAxis(self):
     test_data = constant_op.constant([[[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]],
@@ -125,7 +124,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=2, axis=-2, reduction_type=ngrams_op.Reduction.SUM)
     expected_values = [[[11.0, 22.0, 33.0]], [[44.0, 55.0, 66.0]]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testRaggedReductionOnInnerAxis(self):
     test_data = ragged_factory_ops.constant([[[1.0, 2.0, 3.0, 4.0],
@@ -135,7 +134,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=2, axis=-2, reduction_type=ngrams_op.Reduction.SUM)
     expected_values = [[[11.0, 22.0, 33.0, 44.0]], [[400.0, 600.0]]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testReductionOnAxisWithInsufficientValuesReturnsEmptySet(self):
     test_data = constant_op.constant([[1.0, 2.0, 3.0], [10.0, 20.0, 30.0]])
@@ -143,7 +142,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=4, axis=-1, reduction_type=ngrams_op.Reduction.SUM)
     expected_values = [[], []]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testRaggedReductionOnAxisWithInsufficientValuesReturnsEmptySet(self):
     test_data = ragged_factory_ops.constant([[1.0, 2.0, 3.0],
@@ -152,7 +151,7 @@ class NgramsOpTest(ragged_test_util.RaggedTensorTestCase):
         test_data, width=4, axis=1, reduction_type=ngrams_op.Reduction.SUM)
     expected_values = [[], [100.0]]
 
-    self.assertRaggedEqual(expected_values, op)
+    self.assertAllEqual(expected_values, op)
 
   def testStringJoinReductionFailsWithImproperAxis(self):
     with self.assertRaisesRegexp(
