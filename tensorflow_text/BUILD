@@ -502,9 +502,6 @@ py_test(
 py_library(
     name = "tokenization",
     srcs = ["python/ops/tokenization.py"],
-    deps = [
-        # python/module tensorflow dep,
-    ],
 )
 
 py_tf_text_library(
@@ -629,7 +626,6 @@ py_test(
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        # python/saved_model tensorflow dep,
     ],
 )
 
