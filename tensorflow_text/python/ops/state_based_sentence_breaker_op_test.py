@@ -21,6 +21,8 @@ from __future__ import print_function
 
 from absl.testing import parameterized
 
+from tensorflow.python.framework import constant_op
+from tensorflow.python.ops import array_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import state_based_sentence_breaker_op
 
@@ -30,90 +32,92 @@ class SentenceFragmenterTestCasesV2(test.TestCase, parameterized.TestCase):
   @parameterized.parameters([
       dict(
           test_description="Test acronyms",
-          doc=[["Welcome to the U.S. don't be surprised."]],
+          doc=["Welcome to the U.S. don't be surprised."],
           expected_fragment_text=[[
               b"Welcome to the U.S.", b"don't be surprised."
           ]],
       ),
       dict(
           test_description="Test batch containing acronyms",
-          doc=[["Welcome to the U.S. don't be surprised."], ["I.B.M. yo"]],
+          doc=["Welcome to the U.S. don't be surprised.", "I.B.M. yo"],
           expected_fragment_text=[[
               b"Welcome to the U.S.", b"don't be surprised."
           ], [b"I.B.M.", b"yo"]],
       ),
       dict(
           test_description="Test semicolons",
-          doc=[["Welcome to the US; don't be surprised."]],
+          doc=["Welcome to the US; don't be surprised."],
           expected_fragment_text=[[b"Welcome to the US; don't be surprised."]],
       ),
       dict(
           test_description="Basic test",
-          doc=[["Hello. Foo bar!"]],
+          doc=["Hello. Foo bar!"],
           expected_fragment_text=[[b"Hello.", b"Foo bar!"]],
       ),
       dict(
           test_description="Basic ellipsis test",
-          doc=[["Hello...foo bar"]],
+          doc=["Hello...foo bar"],
           expected_fragment_text=[[b"Hello...", b"foo bar"]],
       ),
       dict(
           test_description="Parentheses and ellipsis test",
-          doc=[["Hello (who are you...) foo bar"]],
+          doc=["Hello (who are you...) foo bar"],
           expected_fragment_text=[[b"Hello (who are you...)", b"foo bar"]],
       ),
       dict(
           test_description="Punctuation after parentheses test",
-          doc=[["Hello (who are you)? Foo bar!"]],
+          doc=["Hello (who are you)? Foo bar!"],
           expected_fragment_text=[[b"Hello (who are you)?", b"Foo bar!"]],
       ),
       dict(
           test_description="MidFragment Parentheses test",
-          doc=[["Hello (who are you) world? Foo bar"]],
+          doc=["Hello (who are you) world? Foo bar"],
           expected_fragment_text=[[b"Hello (who are you) world?", b"Foo bar"]],
       ),
       dict(
           test_description="Many final punctuation test",
-          doc=[["Hello!!!!! Who are you??"]],
+          doc=["Hello!!!!! Who are you??"],
           expected_fragment_text=[[b"Hello!!!!!", b"Who are you??"]],
       ),
       dict(
           test_description="Test emoticons within text",
-          doc=[["Hello world :) Oh, hi :-O"]],
+          doc=["Hello world :) Oh, hi :-O"],
           expected_fragment_text=[[b"Hello world :)", b"Oh, hi :-O"]],
       ),
       dict(
           test_description="Test emoticons with punctuation following",
-          doc=[["Hello world :)! Hi."]],
+          doc=["Hello world :)! Hi."],
           expected_fragment_text=[[b"Hello world :)!", b"Hi."]],
       ),
       dict(
           test_description="Test emoticon list",
-          #                1
-          #      01234 567890123456789
-          doc=[[b":) :-\\ (=^..^=) |-O"]],
+          doc=[b":) :-\\ (=^..^=) |-O"],
           expected_fragment_text=[[b":)", b":-\\", b"(=^..^=)", b"|-O"]],
       ),
       dict(
           test_description="Test emoticon batch",
-          doc=[[":)"], [":-\\"], ["(=^..^=)"], ["|-O"]],
+          doc=[":)", ":-\\", "(=^..^=)", "|-O"],
           expected_fragment_text=[[b":)"], [b":-\\"], [b"(=^..^=)"], [b"|-O"]],
       ),
   ])
   def testStateBasedSentenceBreaker(self, test_description, doc,
                                     expected_fragment_text):
+
+    doc = constant_op.constant(doc)
     sentence_breaker = (
         state_based_sentence_breaker_op.StateBasedSentenceBreaker())
     fragment_text, fragment_starts, fragment_ends = self.evaluate(
         sentence_breaker.break_sentences_with_offsets(doc))
 
-    offset_fragment_text = []
-
+    # Reshape tensors for fragment extraction.
+    doc_reshape = array_ops.reshape(doc, [-1, 1])
+    doc_reshape = self.evaluate(doc_reshape)
     fragment_starts = fragment_starts.to_list()
     fragment_ends = fragment_ends.to_list()
+    offset_fragment_text = []
 
     # Extract the fragments from doc based on the offsets obtained
-    for line, starts, ends in zip(doc, fragment_starts, fragment_ends):
+    for line, starts, ends in zip(doc_reshape, fragment_starts, fragment_ends):
       temp_offset_fragment_text = []
       for frag in line:
         for start_index, end_index in zip(starts, ends):
