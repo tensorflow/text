@@ -25,6 +25,7 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
+from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
@@ -62,11 +63,12 @@ class WordpieceTokenizer(TokenizerWithOffsets):
         indicator. If known, providing this improves the efficiency of decoding
         long words.
       token_out_type: (optional) The type of the token to return. This can be
-        `tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
+        `tf.int64` or `tf.int32` IDs, or `tf.string` subwords. The default is
+        `tf.int64`.
       unknown_token: (optional) The string value to substitute for an unknown
         token. Default is "[UNK]". If set to `None`, no substitution occurs.
-        If `token_out_type` is `tf.int64`, the `vocab_lookup_table` is used
-        (after substitution) to convert the unknown token to an integer.
+        If `token_out_type` is `tf.int32`/`tf.int64`, the `vocab_lookup_table`
+        is used (after substitution) to convert the unknown token to an integer.
       split_unknown_characters: (optional) Whether to split out single unknown
         characters as subtokens. If False (default), words containing unknown
         characters will be treated as single unknown tokens.
@@ -190,7 +192,12 @@ class WordpieceTokenizer(TokenizerWithOffsets):
       # If ids are desired, look them up in the vocab table. Otherwise just
       # return the string values.
       if self._token_out_type == dtypes.int64:
-        values = self._vocab_lookup_table.lookup(values)
+        values = math_ops.cast(
+            self._vocab_lookup_table.lookup(values), dtypes.int64)
+
+      if self._token_out_type == dtypes.int32:
+        values = math_ops.cast(
+            self._vocab_lookup_table.lookup(values), dtypes.int32)
 
       wordpieces = from_row_partition(values, row_splits, validate=False)
       starts = from_row_partition(starts, row_splits, validate=False)
