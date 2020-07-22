@@ -28,10 +28,23 @@ from tensorflow_text.python.ops import sentence_breaking_ops
 
 class StateBasedSentenceBreaker(sentence_breaking_ops.SentenceBreakerWithOffsets
                                ):
-  """A `SentenceBreaker` that splits sentence fragments separated by punctuation.
+  """A `Splitter` that uses a state machine to determine sentence breaks.
 
-  It returns the text of each sentence fragment, the starting index of the
-  fragment, and the ending index (exclusive) of the fragment.
+  `StateBasedSentenceBreaker` splits text into sentences by using a state
+  machine to determine when a sequence of characters indicates a potential
+  sentence break.
+
+  The state machine consists of an `initial state`, then transitions to a
+  `collecting terminal punctuation state` once an acronym, an emoticon, or
+  terminal punctuation (ellipsis, question mark, exclamation point, etc.), is
+  encountered.
+
+  It transitions to the `collecting close punctuation state` when a close
+  punctuation (close bracket, end quote, etc.) is found.
+
+  If non-punctuation is encountered in the collecting terminal punctuation or
+  collecting close punctuation states, then the state machine exits, returning
+  false, indicating it has moved past the end of a potential sentence fragment.
   """
 
   def break_sentences(self, doc):
