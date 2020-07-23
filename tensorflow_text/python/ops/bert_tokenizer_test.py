@@ -203,6 +203,17 @@ def _create_table(vocab, num_oov=1):
 
 class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
 
+  def test_bert_tokenizer_outputs(self):
+    text_inputs = constant_op.constant([_utf8('Test')])
+    vocab = _VOCAB
+    table = _create_table(vocab, 2)
+    self.evaluate(table.initializer)
+    tokenizer = bert_tokenizer.BertTokenizer(
+        table,
+        token_out_type=dtypes.int32)
+    results = tokenizer.tokenize(text_inputs)
+    self.assertAllEqual(results.dtype, dtypes.int32)
+
   @parameterized.parameters([
       dict(
           text_inputs=[

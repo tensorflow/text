@@ -415,6 +415,23 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     subwords, _, _ = tokenizer.tokenize_with_offsets(tokens)
 
     self.assertAllEqual(subwords, [[[0, 1, 2], [3], [96], [46]]])
+    self.assertEqual(subwords.dtype, dtypes.int64)
+
+  def testWordPieceOpWithInt32IdReturned(self):
+    """Let the table determine how to do a lookup on unknown tokens."""
+    tokens = ragged_factory_ops.constant(
+        [[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]])
+    vocab_table = _CreateTable(
+        _ENGLISH_VOCAB,
+        100  # OOV values
+    )
+    self.evaluate(vocab_table.initializer)
+    tokenizer = WordpieceTokenizer(
+        vocab_table, unknown_token=None, token_out_type=dtypes.int32)
+    subwords, _, _ = tokenizer.tokenize_with_offsets(tokens)
+
+    self.assertAllEqual(subwords, [[[0, 1, 2], [3], [96], [46]]])
+    self.assertEqual(subwords.dtype, dtypes.int32)
 
   @parameterized.parameters([
       dict(
