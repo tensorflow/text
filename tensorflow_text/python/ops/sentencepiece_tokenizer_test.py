@@ -16,14 +16,23 @@
 """Tests for SentencePieceProcessor Tensorflow op."""
 
 import sys
+import tempfile
 from absl.testing import parameterized
+from tensorflow.python.data.ops import dataset_ops
+from tensorflow.python.eager import context
+from tensorflow.python.eager import def_function
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors
+from tensorflow.python.framework import tensor_spec
 from tensorflow.python.framework import test_util
+from tensorflow.python.lib.io import file_io
+from tensorflow.python.module import module
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
+from tensorflow.python.saved_model import load
+from tensorflow.python.saved_model import save
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 
 
@@ -34,6 +43,18 @@ def _utf8(tokens):
     return [_utf8(t) for t in tokens]
   else:
     return tokens.encode('utf-8')
+
+
+class TestSavedModelModule(module.Module):
+
+  def __init__(self, tokenizer):
+    self.tokenizer = tokenizer
+
+  @def_function.function(input_signature=[
+      tensor_spec.TensorSpec(shape=[None], dtype=dtypes.string)
+  ])
+  def tokenize(self, inputs):
+    return self.tokenizer.tokenize(inputs)
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -378,6 +399,36 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
     result = sp.tokenize(ragged_factory_ops.constant(sentences))
     detokenized = sp.detokenize(result)
     self.assertAllEqual(_utf8(sentences), detokenized)
+
+  def testSavedModel(self):
+    sp = SentencepieceTokenizer(self.model)
+    test_module = TestSavedModelModule(sp)
+    inputs = constant_op.constant(['hello world'])
+    expected_result = test_module.tokenize(inputs)
+    temp_dir = tempfile.mkdtemp(dir=test.get_temp_dir())
+    save.save(test_module, temp_dir)
+    restored_model = load.load(temp_dir)
+    self.assertAllEqual(restored_model.tokenize(inputs), expected_result)
+    file_io.delete_recursively(temp_dir)
+
+  def testBasicPipeline(self):
+    if not context.executing_eagerly():
+      self.skipTest('testBasicPipeline only supported in eager mode.')
+
+    sp = SentencepieceTokenizer(self.model)
+
+    strings = ['hello', 'world']
+    dataset = dataset_ops.Dataset.from_tensor_slices(strings)
+    # Ensure we can map the tokenizer across the dataset.
+    dataset1 = dataset.map(sp.tokenize)
+    # Ensure there's no error with a second map call.
+    dataset2 = dataset.map(sp.tokenize)
+
+    expected = sp.tokenize(strings)
+    for i, result in enumerate(dataset1):
+      self.assertAllEqual(result, expected[i])
+    for i, result in enumerate(dataset2):
+      self.assertAllEqual(result, expected[i])
 
   def testEmptyModel(self):
     with self.cached_session():
