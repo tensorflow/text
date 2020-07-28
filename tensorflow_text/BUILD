@@ -197,6 +197,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":greedy_constrained_sequence_op",
+        ":ragged_test_util",
         #  numpy dep,
         # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
@@ -288,6 +289,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":ngrams_op",
+        ":ragged_test_util",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:errors tensorflow dep,
@@ -345,6 +347,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":pad_along_dimension_op",
+        ":ragged_test_util",
         "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
@@ -397,6 +400,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":pointer_ops",
+        ":ragged_test_util",
         "@absl_py//absl/testing:parameterized",
         # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
@@ -410,6 +414,7 @@ py_test(
     srcs_version = "PY2AND3",
     deps = [
         ":pointer_ops",
+        ":ragged_test_util",
         "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
@@ -419,6 +424,19 @@ py_test(
         # python/eager:context tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "ragged_test_util",
+    srcs = ["python/ops/ragged_test_util.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        #  numpy dep,
+        # python:framework_ops tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/ops/ragged:ragged_tensor_value tensorflow dep,
     ],
 )
 
@@ -465,12 +483,12 @@ py_test(
     srcs = ["python/metrics/text_similarity_metric_ops_test.py"],
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":text_similarity_metric_ops",
         "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
         # python:lookup_ops tensorflow dep,
         # python:math_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -554,6 +572,7 @@ py_test(
     ],
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":sentencepiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
         # python:client_testlib tensorflow dep,
@@ -581,6 +600,7 @@ py_test(
     srcs = ["python/ops/sliding_window_op_test.py"],
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":sliding_window_op",
         "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
@@ -672,6 +692,7 @@ py_test(
     shard_count = 5,
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":unicode_char_tokenizer",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
@@ -707,6 +728,7 @@ py_test(
     shard_count = 5,
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":unicode_script_tokenizer",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
@@ -735,6 +757,7 @@ py_test(
     srcs = ["python/ops/viterbi_constrained_sequence_op_test.py"],
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
         #  numpy dep,
@@ -791,6 +814,7 @@ py_test(
     shard_count = 4,
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":whitespace_tokenizer",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
@@ -852,12 +876,12 @@ py_test(
     srcs = ["python/ops/wordpiece_tokenizer_test.py"],
     srcs_version = "PY2AND3",
     deps = [
+        ":ragged_test_util",
         ":wordpiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
         # python:array_ops tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
         # python:lookup_ops tensorflow dep,
         # python:math_ops tensorflow dep,
         # python/compat tensorflow dep,

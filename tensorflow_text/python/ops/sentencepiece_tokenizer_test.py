@@ -33,6 +33,7 @@ from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
 from tensorflow.python.saved_model import load
 from tensorflow.python.saved_model import save
+from tensorflow_text.python.ops import ragged_test_util
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 
 
@@ -58,7 +59,7 @@ class TestSavedModelModule(module.Module):
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
+class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
                                    parameterized.TestCase):
 
   def getTokenizerAndSetOptions(self, reverse, add_bos, add_eos, out_type):
@@ -130,7 +131,7 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
             [9, 169, 21, 125, 169, 579, 6]],
            [[4, 199, 363, 310, 33, 7, 4, 21, 17, 17, 8]]]
     result = sp.id_to_string(ragged_factory_ops.constant(ids, dtypes.int32))
-    self.assertAllEqual(pieces, result)
+    self.assertRaggedEqual(pieces, result)
 
   @parameterized.parameters([
       (False, False, False, dtypes.int32),
@@ -161,7 +162,7 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
       expected = _utf8(['▁I', '▁l', 'o', 've', '▁l', 'amp', '.'])
     expected = self.transformExpected(expected)
     result = sp.tokenize(sentence)
-    self.assertAllEqual(expected, result)
+    self.assertRaggedEqual(expected, result)
     detokenized = sp.detokenize(result)
     self.assertAllEqual(_utf8(sentence), detokenized)
 
@@ -196,7 +197,7 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
                         ['▁I', '▁l', 'o', 've', '▁l', 'amp', '.']])
     expected = self.transformExpected(expected)
     result = sp.tokenize(sentences)
-    self.assertAllEqual(expected, result)
+    self.assertRaggedEqual(expected, result)
     detokenized = sp.detokenize(result)
     self.assertAllEqual(_utf8(sentences), detokenized)
 
@@ -238,7 +239,7 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
              's']]])
     expected = self.transformExpected(expected)
     result = sp.tokenize(constant_op.constant(sentences))
-    self.assertAllEqual(expected, result)
+    self.assertRaggedEqual(expected, result)
     detokenized = sp.detokenize(result)
     self.assertAllEqual(_utf8(sentences), detokenized)
 
@@ -279,9 +280,9 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
              's']]])
     expected = self.transformExpected(expected)
     result = sp.tokenize(ragged_factory_ops.constant(sentences))
-    self.assertAllEqual(expected, result)
+    self.assertRaggedEqual(expected, result)
     detokenized = sp.detokenize(result)
-    self.assertAllEqual(_utf8(sentences), detokenized)
+    self.assertRaggedEqual(_utf8(sentences), detokenized)
 
   @parameterized.parameters([
       (False, False, False, dtypes.int32),
@@ -317,11 +318,11 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
     expected_limits = self.transformExpected(expected_limits, True)
     (tokens, starts,
      limits) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentence))
-    self.assertAllEqual(expected_tok, tokens)
-    self.assertAllEqual(expected_starts, starts)
-    self.assertAllEqual(expected_limits, limits)
+    self.assertRaggedEqual(expected_tok, tokens)
+    self.assertRaggedEqual(expected_starts, starts)
+    self.assertRaggedEqual(expected_limits, limits)
     detokenized = sp.detokenize(tokens)
-    self.assertAllEqual(_utf8(sentence), detokenized)
+    self.assertRaggedEqual(_utf8(sentence), detokenized)
 
   def testTokenizeAndDetokenizeWithOffsetsSingleElementVector(self):
     sp = SentencepieceTokenizer(self.model, out_type=dtypes.string)
@@ -332,11 +333,11 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
     expected_limits = [[1, 3, 4, 6, 8, 11, 12]]
     (tokens, starts,
      limits) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
-    self.assertAllEqual(expected_tokens, tokens)
-    self.assertAllEqual(expected_starts, starts)
-    self.assertAllEqual(expected_limits, limits)
+    self.assertRaggedEqual(expected_tokens, tokens)
+    self.assertRaggedEqual(expected_starts, starts)
+    self.assertRaggedEqual(expected_limits, limits)
     detokenized = sp.detokenize(tokens)
-    self.assertAllEqual(_utf8(sentences), detokenized)
+    self.assertRaggedEqual(_utf8(sentences), detokenized)
 
   def testTokenizeAndDetokenizeWithOffsetsVector(self):
     sp = SentencepieceTokenizer(self.model, out_type=dtypes.string)
@@ -351,11 +352,11 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
                        [1, 3, 4, 6, 8, 11, 12]]
     (tokens, starts,
      limits) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
-    self.assertAllEqual(expected_tokens, tokens)
-    self.assertAllEqual(expected_starts, starts)
-    self.assertAllEqual(expected_limits, limits)
+    self.assertRaggedEqual(expected_tokens, tokens)
+    self.assertRaggedEqual(expected_starts, starts)
+    self.assertRaggedEqual(expected_limits, limits)
     detokenized = sp.detokenize(tokens)
-    self.assertAllEqual(_utf8(sentences), detokenized)
+    self.assertRaggedEqual(_utf8(sentences), detokenized)
 
   def testTokenizeAndDetokenizeWithOffsetsMatrix(self):
     sp = SentencepieceTokenizer(self.model, out_type=dtypes.string)
@@ -377,11 +378,11 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
                        [[0, 1, 5, 10, 13, 17, 18, 19, 20, 21, 22]]]
     (tokens, starts,
      limits) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
-    self.assertAllEqual(expected_tokens, tokens)
-    self.assertAllEqual(expected_starts, starts)
-    self.assertAllEqual(expected_limits, limits)
+    self.assertRaggedEqual(expected_tokens, tokens)
+    self.assertRaggedEqual(expected_starts, starts)
+    self.assertRaggedEqual(expected_limits, limits)
     detokenized = sp.detokenize(tokens)
-    self.assertAllEqual(_utf8(sentences), detokenized)
+    self.assertRaggedEqual(_utf8(sentences), detokenized)
 
   @parameterized.parameters([
       (-1, 0.1, dtypes.int32),
@@ -398,7 +399,7 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
                  ['Never tell me the odds']]
     result = sp.tokenize(ragged_factory_ops.constant(sentences))
     detokenized = sp.detokenize(result)
-    self.assertAllEqual(_utf8(sentences), detokenized)
+    self.assertRaggedEqual(_utf8(sentences), detokenized)
 
   def testSavedModel(self):
     sp = SentencepieceTokenizer(self.model)

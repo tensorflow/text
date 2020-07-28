@@ -25,12 +25,13 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.numpy import viterbi_decode
+from tensorflow_text.python.ops import ragged_test_util
 from tensorflow_text.python.ops import viterbi_constrained_sequence_op as sequence_op
 
 
 # TODO(b/122968457): Refactor this test logic.
 @test_util.run_all_in_graph_and_eager_modes
-class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
+class ViterbiConstrainedSequenceOpTest(ragged_test_util.RaggedTensorTestCase):
 
   def test_sequence_in_exp_space_with_start_end_states_single_input(self):
     use_log_space = False
@@ -70,8 +71,8 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertAllEqual(multiple_sequence_result,
-                        [sequence, sequence, sequence])
+    self.assertRaggedEqual(multiple_sequence_result,
+                           [sequence, sequence, sequence])
 
   def test_sequence_in_exp_space_with_start_end_states_multi_input(self):
     use_log_space = False
@@ -111,8 +112,8 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertAllEqual(multiple_sequence_result,
-                        [sequence, sequence, sequence])
+    self.assertRaggedEqual(multiple_sequence_result,
+                           [sequence, sequence, sequence])
 
   def test_sequence_in_exp_space_without_start_end_states_single_input(self):
     use_log_space = False
@@ -149,7 +150,7 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertAllEqual(single_result, [sequence])
+    self.assertRaggedEqual(single_result, [sequence])
 
   def test_sequence_in_exp_space_without_start_end_states_multi_input(self):
     use_log_space = False
@@ -187,8 +188,8 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertAllEqual(multiple_sequence_result,
-                        [sequence, sequence, sequence])
+    self.assertRaggedEqual(multiple_sequence_result,
+                           [sequence, sequence, sequence])
 
   def test_sequence_in_log_space_with_start_end_states_single_input(self):
     use_log_space = True
@@ -228,7 +229,7 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertAllEqual(single_result, [sequence])
+    self.assertRaggedEqual(single_result, [sequence])
 
   def test_sequence_in_log_space_with_start_end_states_multi_input(self):
     use_log_space = True
@@ -269,8 +270,8 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertAllEqual(multiple_sequence_result,
-                        [sequence, sequence, sequence])
+    self.assertRaggedEqual(multiple_sequence_result,
+                           [sequence, sequence, sequence])
 
   def test_sequence_in_log_space_without_start_end_states_single_input(self):
     use_log_space = True
@@ -307,7 +308,7 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertAllEqual(single_result, [sequence])
+    self.assertRaggedEqual(single_result, [sequence])
 
   def test_sequence_in_log_space_without_start_end_states_multi_input(self):
     use_log_space = True
@@ -345,8 +346,8 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertAllEqual(multiple_sequence_result,
-                        [sequence, sequence, sequence])
+    self.assertRaggedEqual(multiple_sequence_result,
+                           [sequence, sequence, sequence])
 
   def test_sequence_with_none_weights_single_input(self):
     use_log_space = True
@@ -383,7 +384,7 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertAllEqual(single_result, [sequence])
+    self.assertRaggedEqual(single_result, [sequence])
 
   def test_sequence_with_none_weights_multi_input(self):
     use_log_space = True
@@ -421,8 +422,8 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertAllEqual(multiple_sequence_result,
-                        [sequence, sequence, sequence])
+    self.assertRaggedEqual(multiple_sequence_result,
+                           [sequence, sequence, sequence])
 
   def test_sequence_with_none_permissions_single_input(self):
     use_log_space = True
@@ -453,7 +454,7 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
-    self.assertAllEqual(single_result, [sequence])
+    self.assertRaggedEqual(single_result, [sequence])
 
   def test_sequence_with_none_permissions_multi_input(self):
     use_log_space = True
@@ -485,8 +486,8 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertAllEqual(multiple_sequence_result,
-                        [sequence, sequence, sequence])
+    self.assertRaggedEqual(multiple_sequence_result,
+                           [sequence, sequence, sequence])
 
   def test_multi_input_sequence_with_implicit_lengths(self):
     use_log_space = True
@@ -518,8 +519,8 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     multiple_sequence_result = self.evaluate(multiple_sequence_op)
-    self.assertAllEqual(multiple_sequence_result,
-                        [sequence, sequence, sequence])
+    self.assertRaggedEqual(multiple_sequence_result,
+                           [sequence, sequence, sequence])
 
   def test_single_input_sequence_with_implicit_lengths(self):
     use_log_space = True
@@ -552,7 +553,7 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_sequence_result = self.evaluate(single_sequence_op)
-    self.assertAllEqual(single_sequence_result, [sequence])
+    self.assertRaggedEqual(single_sequence_result, [sequence])
 
   def test_ragged_input_sequence(self):
     use_log_space = True
@@ -592,7 +593,7 @@ class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_sequence_result = self.evaluate(single_sequence_op)
-    self.assertAllEqual(single_sequence_result, expected_sequence)
+    self.assertRaggedEqual(single_sequence_result, expected_sequence)
 
 
 if __name__ == '__main__':

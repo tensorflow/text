@@ -27,18 +27,20 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from tensorflow_text.python.ops import ragged_test_util
 from tensorflow_text.python.ops import sliding_window_op
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class SlidingWindowOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
+class SlidingWindowOpTest(ragged_test_util.RaggedTensorTestCase,
+                          parameterized.TestCase):
 
   # TODO(b/122967006): Update this to include *all* docstring examples.
   def testDocStringExamples(self):
     # Sliding window (width=3) across a sequence of tokens
     data = constant_op.constant(['one', 'two', 'three', 'four', 'five', 'six'])
     output = sliding_window_op.sliding_window(data=data, width=3, axis=0)
-    self.assertAllEqual(
+    self.assertRaggedEqual(
         output, [[b'one', b'two', b'three'], [b'two', b'three', b'four'],
                  [b'three', b'four', b'five'], [b'four', b'five', b'six']])
     self.assertEqual('Shape: %s -> %s' % (data.shape, output.shape),
@@ -50,7 +52,7 @@ class SlidingWindowOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                                         ['Down', 'under', 'water'],
                                         ['Away', 'to', 'outer', 'space']])
     output = sliding_window_op.sliding_window(data, width=2, axis=-1)
-    self.assertAllEqual(output, [
+    self.assertRaggedEqual(output, [
         [[b'Up', b'high'], [b'high', b'in'], [b'in', b'the'], [b'the', b'air']],
         [[b'Down', b'under'], [b'under', b'water']],
         [[b'Away', b'to'], [b'to', b'outer'], [b'outer', b'space']]
@@ -66,11 +68,11 @@ class SlidingWindowOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                                  [[1, 1, 2], [2, 2, 2], [3, 3, 2], [4, 4, 2],
                                   [5, 5, 2]]])
     output = sliding_window_op.sliding_window(data=data, width=2, axis=1)
-    self.assertAllEqual(output,
-                        [[[[1, 1, 1], [2, 2, 1]], [[2, 2, 1], [3, 3, 1]],
-                          [[3, 3, 1], [4, 4, 1]], [[4, 4, 1], [5, 5, 1]]],
-                         [[[1, 1, 2], [2, 2, 2]], [[2, 2, 2], [3, 3, 2]],
-                          [[3, 3, 2], [4, 4, 2]], [[4, 4, 2], [5, 5, 2]]]])
+    self.assertRaggedEqual(output,
+                           [[[[1, 1, 1], [2, 2, 1]], [[2, 2, 1], [3, 3, 1]],
+                             [[3, 3, 1], [4, 4, 1]], [[4, 4, 1], [5, 5, 1]]],
+                            [[[1, 1, 2], [2, 2, 2]], [[2, 2, 2], [3, 3, 2]],
+                             [[3, 3, 2], [4, 4, 2]], [[4, 4, 2], [5, 5, 2]]]])
     self.assertEqual('Shape: %s -> %s' % (data.shape, output.shape),
                      'Shape: (2, 5, 3) -> (2, 4, 2, 3)')
 
@@ -344,7 +346,7 @@ class SlidingWindowOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                        ragged_rank=None):
     data = ragged_factory_ops.constant(data, ragged_rank=ragged_rank)
     result = sliding_window_op.sliding_window(data, width, axis)
-    self.assertAllEqual(result, expected)
+    self.assertRaggedEqual(result, expected)
 
 
 if __name__ == '__main__':

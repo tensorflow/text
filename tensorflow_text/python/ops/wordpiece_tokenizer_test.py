@@ -23,12 +23,12 @@ from __future__ import print_function
 from absl.testing import parameterized
 from tensorflow.python.compat import compat
 from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from tensorflow_text.python.ops import ragged_test_util
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
 
 
@@ -160,7 +160,8 @@ def _GetTokensFromWordpieceOffsets(tokens, begin_indices, end_indices):
   return result
 
 
-class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
+class WordpieceOpTest(ragged_test_util.RaggedTensorTestCase,
+                      parameterized.TestCase):
   _FORWARD_COMPATIBILITY_HORIZONS = [
       (2019, 7, 1),
       (2019, 10, 10),
@@ -355,7 +356,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
             split_unknown_characters=split_unknown_characters,
         )
         subwords_t, begin_t, end_t = tokenizer.tokenize_with_offsets(tokens_t)
-        self.assertAllEqual(subwords_t, expected_subwords)
+        self.assertRaggedEqual(subwords_t, expected_subwords)
 
         # Verify the indices by performing the following:
         # - Extract subwords and join them together to form the original tokens.
@@ -367,10 +368,10 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
         # from the original 'tokens' input.
         if expected_start is None or expected_limit is None:
           extracted_tokens = _GetTokensFromWordpieceOffsets(tokens, begin, end)
-          self.assertAllEqual(extracted_tokens, tokens)
+          self.assertRaggedEqual(extracted_tokens, tokens)
         else:
-          self.assertAllEqual(begin, expected_start)
-          self.assertAllEqual(end, expected_limit)
+          self.assertRaggedEqual(begin, expected_start)
+          self.assertRaggedEqual(end, expected_limit)
 
   @parameterized.parameters([
       dict(
@@ -399,7 +400,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
       self.evaluate(vocab_table.initializer)
       tokenizer = WordpieceTokenizer(vocab_table, token_out_type=token_out_type)
       subwords = tokenizer.tokenize(ragged_tokens)
-      self.assertAllEqual(subwords, expected_subwords)
+      self.assertRaggedEqual(subwords, expected_subwords)
 
   def testWordPieceOpWithIdReturned(self):
     """Let the table determine how to do a lookup on unknown tokens."""
@@ -414,7 +415,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
         vocab_table, unknown_token=None, token_out_type=dtypes.int64)
     subwords, _, _ = tokenizer.tokenize_with_offsets(tokens)
 
-    self.assertAllEqual(subwords, [[[0, 1, 2], [3], [96], [46]]])
+    self.assertRaggedEqual(subwords, [[[0, 1, 2], [3], [96], [46]]])
     self.assertEqual(subwords.dtype, dtypes.int64)
 
   def testWordPieceOpWithInt32IdReturned(self):
@@ -430,7 +431,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
         vocab_table, unknown_token=None, token_out_type=dtypes.int32)
     subwords, _, _ = tokenizer.tokenize_with_offsets(tokens)
 
-    self.assertAllEqual(subwords, [[[0, 1, 2], [3], [96], [46]]])
+    self.assertRaggedEqual(subwords, [[[0, 1, 2], [3], [96], [46]]])
     self.assertEqual(subwords.dtype, dtypes.int32)
 
   @parameterized.parameters([
@@ -540,7 +541,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
         max_chars_per_token=max_chars_per_token,
     )
     subwords = tokenizer.tokenize(tokens)
-    self.assertAllEqual(subwords, expected_subwords)
+    self.assertRaggedEqual(subwords, expected_subwords)
 
 
 if __name__ == "__main__":

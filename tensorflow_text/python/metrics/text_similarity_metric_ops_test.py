@@ -23,10 +23,10 @@ from __future__ import print_function
 import re
 from absl.testing import parameterized
 from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.metrics import text_similarity_metric_ops
+from tensorflow_text.python.ops import ragged_test_util
 
 
 def _tokenize_whitespace(text):
@@ -85,7 +85,7 @@ _TEST_REFERENCES = (
     "wheel brake upon landing")
 
 
-class TextSimilarityMetricOpsTest(test_util.TensorFlowTestCase,
+class TextSimilarityMetricOpsTest(ragged_test_util.RaggedTensorTestCase,
                                   parameterized.TestCase):
 
   @parameterized.parameters([
