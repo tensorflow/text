@@ -593,38 +593,6 @@ py_test(
 )
 
 py_library(
-    name = "span_metrics",
-    srcs = ["python/metrics/span_metrics.py"],
-    deps = [
-        # python:array_ops tensorflow dep,
-        # python:control_flow_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:init_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:metrics tensorflow dep,
-        # python:sets tensorflow dep,
-        # python:sparse_ops tensorflow dep,
-        # python:sparse_tensor tensorflow dep,
-        # python:state_ops tensorflow dep,
-        # python/keras:engine tensorflow dep,
-        # python/ops/ragged:ragged_map_ops tensorflow dep,
-    ],
-)
-
-py_test(
-    name = "span_metrics_test",
-    srcs = ["python/metrics/span_metrics_test.py"],
-    srcs_version = "PY2AND3",
-    deps = [
-        ":span_metrics",
-        "@absl_py//absl/testing:parameterized",
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-    ],
-)
-
-py_library(
     name = "string_ops",
     srcs = ["python/ops/string_ops.py"],
     deps = [
