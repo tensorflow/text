@@ -105,12 +105,6 @@ class TfTextOps(tf.Module):
                                              dtype=tf.int64)
     (sentence_breaking, _, _, _) = text.sentence_fragments(
         sb_token_word, sb_token_starts, sb_token_ends, sb_token_properties)
-    # Sentence breaking version 2 (StateBasedSentenceBreaker)
-    sbv2_text_input = [['Welcome to the U.S.! Harry'],
-                       ['Wu Tang Clan; ain\'t nothing']]
-    sentence_breaker_v2 = text.StateBasedSentenceBreaker()
-    sbv2_fragment_text, _, _ = (
-        sentence_breaker_v2.break_sentences_with_offsets(sbv2_text_input))
     # Sentencepiece tokenizer
     sp_model_file = (
         'third_party/tensorflow_text/python/ops/test_data/test_oss_model.model')
@@ -125,26 +119,6 @@ class TfTextOps(tf.Module):
     sm_tokenizer = text.SplitMergeTokenizer()
     split_merge = sm_tokenizer.tokenize(b'IloveFlume!',
                                         [0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0])
-    # Split merge from logits tokenizer
-    smfl_tokenizer = text.SplitMergeFromLogitsTokenizer()
-    split_merge_from_logits = smfl_tokenizer.tokenize(
-        b'IloveFlume!',
-        # One pair of logits for each Unicode character from the text.  Each
-        # pair indicates a "split" action if the first component is greater than
-        # the second one, and a "merge" otherwise.
-        [
-            [2.7, -0.3],  # I: split
-            [4.1, 0.82],  # l: split
-            [-2.3, 4.3],  # o: merge
-            [3.1, 12.2],  # v: merge
-            [-3.0, 4.7],  # e: merge
-            [2.7, -0.7],  # F: split
-            [0.7, 15.0],  # l: merge
-            [1.6, 23.0],  # u: merge
-            [2.1, 11.0],  # m: merge
-            [0.0, 20.0],  # e: merge
-            [18.0, 0.7],  # !: split
-        ])
     # Confirm TF unicode_script op that requires ICU works
     tf_unicode_script = tf.strings.unicode_script(
         [ord('a'), 0x0411, 0x82b8, ord(',')])
@@ -176,12 +150,10 @@ class TfTextOps(tf.Module):
     regex_split_assert = assert_check(regex_split.to_tensor())
     rouge_l_assert = assert_check(rouge_l)
     sentence_breaking_assert = assert_check(sentence_breaking.to_tensor())
-    sentence_breaking_v2_assert = assert_check(sbv2_fragment_text.to_tensor())
     sentencepiece_assert = assert_check(sentencepiece.to_tensor())
     sentencepiece_id_assert = assert_check(sentencepiece_id)
     sentencepiece_size_assert = assert_check(sentencepiece_size)
     split_merge_assert = assert_check(split_merge)
-    split_merge_from_logits_assert = assert_check(split_merge_from_logits)
     tf_unicode_script_assert = assert_check(tf_unicode_script)
     unicode_script_assert = assert_check(unicode_script.to_tensor())
     whitespace_assert = assert_check(whitespace.to_tensor())
@@ -194,12 +166,10 @@ class TfTextOps(tf.Module):
                                   regex_split_assert,
                                   rouge_l_assert,
                                   sentence_breaking_assert,
-                                  sentence_breaking_v2_assert,
                                   sentencepiece_assert,
                                   sentencepiece_id_assert,
                                   sentencepiece_size_assert,
                                   split_merge_assert,
-                                  split_merge_from_logits_assert,
                                   tf_unicode_script_assert,
                                   unicode_script_assert,
                                   whitespace_assert,
