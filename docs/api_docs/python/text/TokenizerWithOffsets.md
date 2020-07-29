@@ -1,6 +1,7 @@
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.TokenizerWithOffsets" />
 <meta itemprop="path" content="Stable" />
+<meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="tokenize"/>
 <meta itemprop="property" content="tokenize_with_offsets"/>
 </div>
@@ -19,6 +20,12 @@ source</a>
 Base class for tokenizer implementations that return offsets.
 
 Inherits From: [`Tokenizer`](../text/Tokenizer.md)
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.TokenizerWithOffsets(
+    name=None
+)
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

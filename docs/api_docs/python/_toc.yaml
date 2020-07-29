@@ -34,6 +34,7 @@ toc:
   - title: SentencepieceTokenizer
     path: /text/api_docs/python/text/SentencepieceTokenizer
   - title: sentence_fragments
+    status: deprecated
     path: /text/api_docs/python/text/sentence_fragments
   - title: sliding_window
     path: /text/api_docs/python/text/sliding_window

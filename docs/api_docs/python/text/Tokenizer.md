@@ -1,6 +1,7 @@
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.Tokenizer" />
 <meta itemprop="path" content="Stable" />
+<meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="tokenize"/>
 </div>
 
@@ -16,6 +17,12 @@
 source</a>
 
 Base class for tokenizer implementations.
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>text.Tokenizer(
+    name=None
+)
+</code></pre>
 
 <!-- Placeholder for "Used in" -->
 

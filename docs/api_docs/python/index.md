@@ -1,5 +1,7 @@
 # All symbols in TensorFlow Text
 
+<!-- Insert buttons and diff -->
+
 ## Primary symbols
 
 *   <a href="./text.md"><code>text</code></a>

@@ -89,7 +89,8 @@ match a regex pattern.
 [`regex_split_with_offsets(...)`](./text/regex_split_with_offsets.md): Split
 `input` by delimiters that match a regex pattern; returns offsets.
 
-[`sentence_fragments(...)`](./text/sentence_fragments.md): Find the sentence fragments in a given text.
+[`sentence_fragments(...)`](./text/sentence_fragments.md): Find the sentence
+fragments in a given text. (deprecated)
 
 [`sliding_window(...)`](./text/sliding_window.md): Builds a sliding window for `data` with a specified width.
 
