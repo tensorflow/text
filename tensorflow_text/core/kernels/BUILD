@@ -221,10 +221,10 @@ cc_library(
     name = "regex_split",
     srcs = ["regex_split.cc"],
     hdrs = ["regex_split.h"],
-    deps = OSS_DEPS + [
+    deps = [
         # absl/strings dep
         "@com_google_re2//:re2",
-        # tf:lib tensorflow dep,
+        "@local_config_tf//:libtensorflow_framework",
     ],
 )
 
@@ -494,7 +494,7 @@ cc_library(
     name = "wordpiece_tokenizer",
     srcs = ["wordpiece_tokenizer.cc"],
     hdrs = ["wordpiece_tokenizer.h"],
-    deps = OSS_DEPS + [
+    deps = [
         # absl/strings dep
         "@icu//:common",
     ],
