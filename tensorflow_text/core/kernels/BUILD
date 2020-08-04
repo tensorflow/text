@@ -363,12 +363,20 @@ tf_kernel_library(
         # absl/types:span dep
         "@com_google_sentencepiece//src:sentencepiece_cc_proto",
         "@com_google_sentencepiece//src:sentencepiece_processor",
-        # tf:framework tensorflow dep,
-        # tf:framework_headers_lib tensorflow dep,
-        # tf:lib tensorflow dep,
-        # tf:protos_all_cc tensorflow dep,
-        # tf/kernels:tensor_flag_utils tensorflow dep,
-    ],
+    ] + select({
+        "//third_party/tensorflow:android": [
+            # tf:portable_tensorflow_lib_lite tensorflow dep,
+        ],
+        "//third_party/tensorflow:ios": [
+            # tf:portable_tensorflow_lib_lite tensorflow dep,
+        ],
+        "//conditions:default": [
+            # tf:framework tensorflow dep,
+            # tf:framework_headers_lib tensorflow dep,
+            # tf:lib tensorflow dep,
+            # tf:protos_all_cc tensorflow dep,
+        ],
+    }),
 )
 
 cc_library(
