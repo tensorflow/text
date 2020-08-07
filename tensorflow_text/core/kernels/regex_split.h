@@ -20,7 +20,6 @@
 
 #include "absl/strings/string_view.h"
 #include "re2/re2.h"
-#include "tensorflow/core/platform/types.h"
 
 namespace tensorflow {
 namespace text {
@@ -28,8 +27,8 @@ namespace text {
 void RegexSplit(absl::string_view input, const RE2& re2, bool include_delimiter,
                 const RE2& include_delim_regex,
                 std::vector<absl::string_view>* tokens,
-                std::vector<int64>* begin_offsets,
-                std::vector<int64>* end_offsets);
+                std::vector<long long>* begin_offsets,  // NOLINT
+                std::vector<long long>* end_offsets);  // NOLINT
 
 }  // namespace text
 }  // namespace tensorflow
