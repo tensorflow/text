@@ -4,7 +4,10 @@ load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
 
 # Visibility rules
 package(
-    default_visibility = ["//visibility:public"],
+    default_visibility = [
+        "//third_party/py/language:__subpackages__",
+        "//visibility:public",
+    ],
 )
 
 licenses(["notice"])
