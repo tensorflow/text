@@ -1,3 +1,5 @@
+load("//tools/build_defs/testing:bzl_library.bzl", "bzl_library")
+
 # [internal] load python3.bzl
 load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
 # [internal] load build_test.bzl
@@ -995,4 +997,11 @@ py_test(
         # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
     ],
+)
+
+bzl_library(
+    name = "tftext_bzl",
+    srcs = ["tftext.bzl"],
+    parse_tests = False,
+    visibility = ["//visibility:private"],
 )
