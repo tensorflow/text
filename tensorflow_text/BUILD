@@ -242,36 +242,6 @@ py_test(
 )
 
 py_library(
-    name = "segment_extractor_ops",
-    srcs = ["python/ops/segment_extractor_ops.py"],
-    deps = [
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:manip_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:platform tensorflow dep,
-        # python:random_ops tensorflow dep,
-        # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        # python/ops/ragged:ragged_map_ops tensorflow dep,
-        # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
-)
-
-py_test(
-    name = "segment_extractor_ops_test",
-    srcs = ["python/ops/segment_extractor_ops_test.py"],
-    srcs_version = "PY2AND3",
-    deps = [
-        ":segment_extractor_ops",
-        "@absl_py//absl/testing:parameterized",
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python/ops/ragged:ragged_factory_ops tensorflow dep,
-    ],
-)
-
-py_library(
     name = "ngrams_op",
     srcs = ["python/ops/ngrams_op.py"],
     deps = [
