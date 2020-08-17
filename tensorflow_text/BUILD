@@ -966,3 +966,50 @@ py_test(
         # python:framework_test_lib tensorflow dep,
     ],
 )
+
+##############
+# Benchmarks #
+##############
+
+# To run the benchmarks:
+#   bazel run -c opt benchmark_test_name -- --benchmarks=.
+
+# The --benchmarks flag specifies the list of benchmarks to run using a
+# regular expression that is matched against the benchmark methods' name.
+# e.g. --benchmarks="wordpiece" will run the Wordpiece Tokenizer benchmarks.
+
+py_library(
+    name = "benchmark_utils",
+    srcs = ["python/benchmarks/benchmark_utils.py"],
+    deps = [
+        #  numpy dep,
+        #  tensorflow datasets dep,
+        # python:dtypes tensorflow dep,
+        # python:platform tensorflow dep,
+        # python:session tensorflow dep,
+        # python/data/ops:dataset_ops tensorflow dep,
+        # python/eager:context tensorflow dep,
+        # python/eager:def_function tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "tokenizers_benchmarks",
+    size = "medium",
+    srcs = ["python/benchmarks/tokenizers_benchmarks.py"],
+    data = [
+        ":python/benchmarks/test_data/uncased_L-12_H-768_A-12/vocab.txt",
+        ":python/ops/test_data/segmenter_hub_module",
+        ":python/ops/test_data/test_oss_model.model",
+    ],
+    python_version = "PY3",
+    srcs_version = "PY2AND3",
+    deps = [
+        ":benchmark_utils",
+        ":ops",
+        "@absl_py//absl:app",
+        "@absl_py//absl/testing:parameterized",
+        # python:dtypes tensorflow dep,
+        # python:ops tensorflow dep,
+    ],
+)
