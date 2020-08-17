@@ -21,9 +21,15 @@ from __future__ import print_function
 from absl import app
 import six
 
+from tensorflow.python.client import session
+from tensorflow.python.eager import context
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import random_seed
+from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
+from tensorflow.python.ops import random_ops
+from tensorflow.python.ops.ragged import ragged_functional_ops
 from tensorflow.python.platform import benchmark
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
@@ -120,6 +126,59 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
     tokenizer = text_ops.SentencepieceTokenizer(model)
     self._run(tokenizer)
     # TODO(irinabejan): Add benchmark for detokenization
+
+  def _get_char_level_splits(self):
+    """Get splits that match inputs char level."""
+    char_tokenizer = text_ops.UnicodeCharTokenizer()
+    char_splits = array_ops.zeros_like(char_tokenizer.tokenize(self.input_data))
+
+    return char_splits
+
+  def benchmark_op_split_merge_tokenizer(self):
+    random_seed.set_seed(5)
+
+    char_splits = self._get_char_level_splits()
+    if not context.executing_eagerly():
+      # Evaluate splits as their shape cannot be infered in graph mode
+      # and are needed for mapping
+      with session.Session() as sess:
+        sess.run(self.iterator.initializer)
+        char_splits = sess.run(char_splits)
+
+    def randomize_splits(inputs):
+      return random_ops.random_uniform(
+          inputs.shape, maxval=2, dtype=dtypes.int32)
+
+    labels = ragged_functional_ops.map_flat_values(randomize_splits,
+                                                   char_splits)
+
+    if not context.executing_eagerly():
+      # Evaluate labels computation to exclude these steps from op benchmarking
+      with session.Session() as sess:
+        labels = sess.run(labels)
+
+    tokenizer = text_ops.SplitMergeTokenizer()
+    self._run(tokenizer, {"labels": labels})
+
+  def benchmark_op_split_merge_from_logits_tokenizer(self):
+    random_seed.set_seed(5)
+
+    char_splits = self._get_char_level_splits().to_tensor()
+    if not context.executing_eagerly():
+      with session.Session() as sess:
+        sess.run(self.iterator.initializer)
+        char_splits = sess.run(char_splits)
+
+    logits = random_ops.random_uniform(
+        char_splits.shape + (2,), minval=-6, maxval=6, dtype=dtypes.float32)
+
+    if not context.executing_eagerly():
+      # Evaluate logits computation to exclude these steps from op benchmarking
+      with session.Session() as sess:
+        logits = sess.run(logits)
+
+    tokenizer = text_ops.SplitMergeFromLogitsTokenizer()
+    self._run(tokenizer, {"logits": logits})
 
 
 if __name__ == "__main__":
