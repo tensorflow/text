@@ -982,6 +982,8 @@ py_library(
     name = "benchmark_utils",
     srcs = ["python/benchmarks/benchmark_utils.py"],
     deps = [
+        "//perftools/accelerators/xprof/api/python:xprof_session",
+        "//perftools/gputools/profiler:xprof_lib",
         #  numpy dep,
         #  tensorflow datasets dep,
         # python:dtypes tensorflow dep,
