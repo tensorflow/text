@@ -220,7 +220,7 @@ Status SentenceFragmenter::FindNextFragmentBoundary(
   FragmentBoundaryMatch current_match;
   FragmentBoundaryMatch previous_match;
 
-  for (int i = i_start; i < document_->tokens().size(); ++i) {
+  for (int i = i_start; i < static_cast<int>(document_->tokens().size()); ++i) {
     const auto &token = document_->tokens()[i];
     if (current_match.GotTerminalPunc() && i > i_start &&
         token.break_level() >= Token::SPACE_BREAK) {
