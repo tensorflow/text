@@ -127,6 +127,15 @@ http_archive(
     ],
 )
 
+http_archive(
+    name = "org_tensorflow_datasets",
+    sha256 = "c6ff4e2306387f0ca45d4f616d9a1c5e79e02ef16d0a8958230a8049ea07fc98",
+    strip_prefix = "datasets-3.2.0",
+    urls = [
+        "https://github.com/tensorflow/datasets/archive/v3.2.0.zip",
+    ],
+)
+
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
 
 tf_workspace(tf_repo_name="@org_tensorflow")
