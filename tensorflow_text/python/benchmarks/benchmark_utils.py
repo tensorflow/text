@@ -29,6 +29,7 @@ from tensorflow.python.eager import def_function
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import variables as variables_lib
 from tensorflow.python.platform import benchmark
+# [internal] import xprof_session
 
 
 class OpBenchmark(benchmark.Benchmark):
@@ -59,6 +60,7 @@ class OpBenchmark(benchmark.Benchmark):
                      burn_iters,
                      benchmark_name,
                      use_tf_function=False,
+                     xprof_enabled=False,
                      **kwargs):
     """Runs the benchmark and reports results.
 
@@ -70,6 +72,7 @@ class OpBenchmark(benchmark.Benchmark):
       use_tf_function: Bool, specifies whether the function should be wrapped in
         a @tf.function while running eagerly. By default 'False' and ignored in
         graph mode.
+      xprof_enabled: Enables xprof traces.
       **kwargs: Kwargs to the benchmarked function.
 
     Returns:
@@ -77,10 +80,10 @@ class OpBenchmark(benchmark.Benchmark):
     """
     if context.executing_eagerly():
       self._run_and_report_eagerly(fn, iters, burn_iters, benchmark_name,
-                                   use_tf_function, **kwargs)
+                                   use_tf_function, xprof_enabled, **kwargs)
     else:
       self._run_and_report_graphmode(fn, iters, burn_iters, benchmark_name,
-                                     **kwargs)
+                                     xprof_enabled, **kwargs)
 
   def _run_and_report_eagerly(self,
                               fn,
@@ -88,6 +91,7 @@ class OpBenchmark(benchmark.Benchmark):
                               burn_iters,
                               benchmark_name,
                               use_tf_function=False,
+                              xprof_enabled=False,
                               **kwargs):
     """Runs and reports benchmarks eagerly."""
     if self.input_data is None:
@@ -106,19 +110,46 @@ class OpBenchmark(benchmark.Benchmark):
     for _ in range(burn_iters):
       op()
 
-    total_time = 0
-    for _ in range(iters):
-      start = time.time()
-      op()
-      total_time += time.time() - start
+    def run_benchmark():
+      total_time = 0
+      for _ in range(iters):
+        start = time.time()
+        op()
+        total_time += time.time() - start
 
+      return total_time
+
+    total_time = run_benchmark()
     mean_time = total_time / iters
     benchmark_name += '_function' if use_tf_function else ''
+    extras = {'sec_per_batch': total_time / iters}
+
+    if xprof_enabled:
+      extras.update(self._run_with_xprof(run_benchmark))
+
     self.report_benchmark(
-        iters=iters, wall_time=mean_time, name=benchmark_name + '_eager')
+        iters=iters,
+        wall_time=mean_time,
+        name=benchmark_name + '_eager',
+        extras=extras)
+
+  def _run_with_xprof(self, benchmark_fn):
+    output = {}
+    xprof = xprof_session.XprofSession()
+    xprof.start_session(enable_python_tracer=True)
+    _ = benchmark_fn()
+    output['xprof link with python trace'] = xprof.end_session_and_get_url()
+
+    # Re-run with xprof but no python trace.
+    xprof = xprof_session.XprofSession()
+    xprof.start_session(enable_python_tracer=False)
+    _ = benchmark_fn()
+    output['xprof link'] = xprof.end_session_and_get_url()
+
+    return output
 
   def _run_and_report_graphmode(self, fn, iters, burn_iters, benchmark_name,
-                                **kwargs):
+                                xprof_enabled, **kwargs):
     """Runs and reports benchmarks in graph mode."""
     if self.input_data is None:
       raise ValueError(
@@ -137,9 +168,27 @@ class OpBenchmark(benchmark.Benchmark):
 
       inputs = sess.run(self.input_data)
       benchmark_op = fn(inputs, **kwargs)
-      self.run_op_benchmark(
-          sess,
-          benchmark_op,
-          min_iters=iters,
-          burn_iters=burn_iters,
-          name=benchmark_name + '_graph')
+
+      def run_benchmark():
+        for _ in range(burn_iters):
+          sess.run(benchmark_op)
+        total_time = 0
+        for _ in range(iters):
+          start_time = time.time()
+          sess.run(benchmark_op)
+          total_time += time.time() - start_time
+
+        return total_time
+
+      total_time = run_benchmark()
+      mean_time = total_time / iters
+      extras = {'sec_per_batch': mean_time}
+
+      if xprof_enabled:
+        extras.update(self._run_with_xprof(run_benchmark))
+
+      self.report_benchmark(
+          iters=iters,
+          wall_time=mean_time,
+          name=benchmark_name + '_graph',
+          extras=extras)

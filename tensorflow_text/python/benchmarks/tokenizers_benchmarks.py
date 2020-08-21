@@ -35,6 +35,7 @@ from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
 from tensorflow_text.python import ops as text_ops
 from tensorflow_text.python.benchmarks import benchmark_utils
+from tensorflow_text.python.ops.bert_tokenizer import BasicTokenizer
 
 _BERT_VOCAB_PATH = "third_party/tensorflow_text/python/benchmarks/test_data/uncased_L-12_H-768_A-12/vocab.txt"
 _HUB_MODULE_HANDLE = "third_party/tensorflow_text/python/ops/test_data/segmenter_hub_module"
@@ -44,6 +45,7 @@ _BURN_ITERS = 10
 _BATCH_SIZE = 32
 _EAGER_EXECUTION = True
 _USE_TF_FUNCTION = True
+_XPROF_TRACING = False
 
 
 class TokenizationBenchmark(
@@ -75,6 +77,7 @@ class TokenizationBenchmark(
       ("hub_module_tokenizer", text_ops.HubModuleTokenizer, {
           "hub_module_handle": _HUB_MODULE_HANDLE
       }),
+      ("basic_tokenizer", BasicTokenizer),
   ]
 
   def benchmark_op(self, tokenizer, kwargs=None):
@@ -88,7 +91,8 @@ class TokenizationBenchmark(
           _RUN_ITERS,
           _BURN_ITERS,
           benchmark_name,
-          use_tf_function=_USE_TF_FUNCTION)
+          use_tf_function=_USE_TF_FUNCTION,
+          xprof_enabled=_XPROF_TRACING)
 
 
 class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
@@ -110,6 +114,7 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
           _BURN_ITERS,
           benchmark_name,
           use_tf_function=_USE_TF_FUNCTION,
+          xprof_enabled=_XPROF_TRACING,
           **(kwargs or {}))
 
   def benchmark_op_wordpiece_tokenizer(self):
