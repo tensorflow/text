@@ -1,8 +1,8 @@
 # TensorFlow Text - Text processing in Tensorflow
 
 IMPORTANT: When installing TF Text with `pip install`, please note the version
-of TensorFlow you are running, as you should specify the corresponding version
-of TF Text.
+of TensorFlow you are running, as you should specify the corresponding minor
+version of TF Text (eg. for tensorflow==2.3.x use tensorflow_text==2.3.x).
 
 [![GitHub
 Issues](https://img.shields.io/github/issues/tensorflow/text.svg)](https://github.com/tensorflow/text/issues)
