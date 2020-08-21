@@ -3,7 +3,7 @@
 # [internal] load cc_proto_library.bzl
 load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_kernel_library")
 
-licenses(["notice"])  # Apache 2.0
+licenses(["notice"])
 
 # Visibility rules
 package(default_visibility = ["//visibility:public"])
