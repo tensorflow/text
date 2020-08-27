@@ -978,6 +978,8 @@ py_test(
 # regular expression that is matched against the benchmark methods' name.
 # e.g. --benchmarks="wordpiece" will run the Wordpiece Tokenizer benchmarks.
 
+py_library(name = "profiler_lib")
+
 py_library(
     name = "benchmark_utils",
     srcs = ["python/benchmarks/benchmark_utils.py"],

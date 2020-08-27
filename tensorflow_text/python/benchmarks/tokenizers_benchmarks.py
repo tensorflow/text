@@ -19,6 +19,7 @@ from __future__ import division
 from __future__ import print_function
 
 from absl import app
+from absl import flags
 import six
 
 from tensorflow.python.client import session
@@ -37,15 +38,23 @@ from tensorflow_text.python import ops as text_ops
 from tensorflow_text.python.benchmarks import benchmark_utils
 from tensorflow_text.python.ops.bert_tokenizer import BasicTokenizer
 
+FLAGS = flags.FLAGS
+flags.DEFINE_integer("run_iters", 1000, "Number of iterations to run")
+flags.DEFINE_integer("burn_iters", 10, "Number of warmup runs")
+flags.DEFINE_integer("batch_size", 32, "The size of a batch")
+flags.DEFINE_boolean("run_eagerly", True, "Run in eager mode")
+flags.DEFINE_boolean(
+    "use_tf_function", True,
+    "Wraps the op in a tf.function. Only works when eager mode is enabled")
+flags.DEFINE_boolean("xprof_tracing", False, "Enables xprof tracing")
+flags.DEFINE_boolean("with_offsets", False,
+                     "Runs the tokenize_with_offsets op instead of tokenize")
+
+# These are needed when generating the parameterized benchmarks and cannot use
+# absl FLAGS
 _BERT_VOCAB_PATH = "third_party/tensorflow_text/python/benchmarks/test_data/uncased_L-12_H-768_A-12/vocab.txt"
 _HUB_MODULE_HANDLE = "third_party/tensorflow_text/python/ops/test_data/segmenter_hub_module"
 _SENTENCEPIECE_MODEL_FILE = "third_party/tensorflow_text/python/ops/test_data/test_oss_model.model"
-_RUN_ITERS = 1000
-_BURN_ITERS = 10
-_BATCH_SIZE = 32
-_EAGER_EXECUTION = True
-_USE_TF_FUNCTION = True
-_XPROF_TRACING = False
 
 
 class TokenizationBenchmark(
@@ -54,7 +63,10 @@ class TokenizationBenchmark(
   """Benchmarks for tokenizers."""
 
   def __init__(self):
-    self.load_input_data(_BATCH_SIZE)
+    if not FLAGS.run_eagerly:
+      ops.disable_eager_execution()
+
+    self.load_input_data(FLAGS.batch_size)
 
   # Tokenizers to benchmark which do not require a special/extra input can be
   # added here as parameters to "_benchmark_parameters".
@@ -80,44 +92,46 @@ class TokenizationBenchmark(
       ("basic_tokenizer", BasicTokenizer),
   ]
 
-  def benchmark_op(self, tokenizer, kwargs=None):
+  def benchmark(self, tokenizer, kwargs=None):
 
     tokenizer = tokenizer(**(kwargs or {}))
+    op = tokenizer.tokenize_with_offsets if FLAGS.with_offsets else tokenizer.tokenize
 
-    for op in [tokenizer.tokenize, tokenizer.tokenize_with_offsets]:
-      benchmark_name = self._get_name() + "_" + op.__name__
-      self.run_and_report(
-          op,
-          _RUN_ITERS,
-          _BURN_ITERS,
-          benchmark_name,
-          use_tf_function=_USE_TF_FUNCTION,
-          xprof_enabled=_XPROF_TRACING)
+    self.run_and_report(
+        op,
+        FLAGS.run_iters,
+        FLAGS.burn_iters,
+        self._get_name(),
+        use_tf_function=FLAGS.use_tf_function,
+        xprof_enabled=FLAGS.xprof_tracing)
 
 
 class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
   """Benchmarks for tokenizers that require extra preprocessing or inputs."""
 
   def __init__(self):
-    self.load_input_data(_BATCH_SIZE)
+    if not FLAGS.run_eagerly:
+      ops.disable_eager_execution()
+
+    self.load_input_data(FLAGS.batch_size)
 
   def _create_table(self, vocab, num_oov=100):
     init = lookup_ops.TextFileIdTableInitializer(vocab)
     return lookup_ops.StaticVocabularyTableV1(init, num_oov)
 
   def _run(self, tokenizer, kwargs=None):
-    for op in [tokenizer.tokenize, tokenizer.tokenize_with_offsets]:
-      benchmark_name = self._get_name() + "_" + op.__name__
-      self.run_and_report(
-          op,
-          _RUN_ITERS,
-          _BURN_ITERS,
-          benchmark_name,
-          use_tf_function=_USE_TF_FUNCTION,
-          xprof_enabled=_XPROF_TRACING,
-          **(kwargs or {}))
+    op = tokenizer.tokenize_with_offsets if FLAGS.with_offsets else tokenizer.tokenize
 
-  def benchmark_op_wordpiece_tokenizer(self):
+    self.run_and_report(
+        op,
+        FLAGS.run_iters,
+        FLAGS.burn_iters,
+        self._get_name(),
+        use_tf_function=FLAGS.use_tf_function,
+        xprof_enabled=FLAGS.xprof_tracing,
+        **(kwargs or {}))
+
+  def benchmark_wordpiece_tokenizer(self):
     self.input_data = text_ops.WhitespaceTokenizer().tokenize(self.input_data)
 
     tokenizer = text_ops.WordpieceTokenizer(
@@ -126,7 +140,7 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
         token_out_type=dtypes.int64)
     self._run(tokenizer)
 
-  def benchmark_op_sentencepiece_tokenizer(self):
+  def benchmark_sentencepiece_tokenizer(self):
     model = gfile.GFile((_SENTENCEPIECE_MODEL_FILE), "rb").read()
     tokenizer = text_ops.SentencepieceTokenizer(model)
     self._run(tokenizer)
@@ -139,7 +153,7 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
 
     return char_splits
 
-  def benchmark_op_split_merge_tokenizer(self):
+  def benchmark_split_merge_tokenizer(self):
     random_seed.set_seed(5)
 
     char_splits = self._get_char_level_splits()
@@ -165,7 +179,7 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
     tokenizer = text_ops.SplitMergeTokenizer()
     self._run(tokenizer, {"labels": labels})
 
-  def benchmark_op_split_merge_from_logits_tokenizer(self):
+  def benchmark_split_merge_from_logits_tokenizer(self):
     random_seed.set_seed(5)
 
     char_splits = self._get_char_level_splits().to_tensor()
@@ -187,7 +201,4 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
 
 
 if __name__ == "__main__":
-  if not _EAGER_EXECUTION:
-    ops.disable_eager_execution()
-
   app.run(test.main())

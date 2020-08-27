@@ -121,17 +121,13 @@ class OpBenchmark(benchmark.Benchmark):
 
     total_time = run_benchmark()
     mean_time = total_time / iters
-    benchmark_name += '_function' if use_tf_function else ''
     extras = {'sec_per_batch': total_time / iters}
 
     if xprof_enabled:
       extras.update(self._run_with_xprof(run_benchmark))
 
     self.report_benchmark(
-        iters=iters,
-        wall_time=mean_time,
-        name=benchmark_name + '_eager',
-        extras=extras)
+        iters=iters, wall_time=mean_time, name=benchmark_name, extras=extras)
 
   def _run_with_xprof(self, benchmark_fn):
     output = {}
@@ -188,7 +184,4 @@ class OpBenchmark(benchmark.Benchmark):
         extras.update(self._run_with_xprof(run_benchmark))
 
       self.report_benchmark(
-          iters=iters,
-          wall_time=mean_time,
-          name=benchmark_name + '_graph',
-          extras=extras)
+          iters=iters, wall_time=mean_time, name=benchmark_name, extras=extras)
