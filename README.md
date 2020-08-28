@@ -10,6 +10,9 @@ Issues](https://img.shields.io/github/issues/tensorflow/text.svg)](https://githu
 welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
+**UPDATE (8/28/2020):** See [RFC 283](https://github.com/tensorflow/community/pull/283)
+for upcoming changes and new APIs in TF.Text.
+
 ## Introduction
 
 TensorFlow Text provides a collection of text related classes and ops ready to
