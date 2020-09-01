@@ -32,13 +32,12 @@ from tensorflow.python.platform import benchmark
 # [internal] import xprof_session
 
 
-class OpBenchmark(benchmark.Benchmark):
+class OpsBaseBenchmark(benchmark.Benchmark):
   """Base class for op benchmarks."""
 
   def __init__(self):
-    super(OpBenchmark, self).__init__()
+    super(OpsBaseBenchmark, self).__init__()
     self.input_data = None
-    self.iterator = None
 
   def load_input_data(self, batch_size):
     """Loads the IMDB dataset and sets up the input data to run the ops on."""
@@ -151,14 +150,11 @@ class OpBenchmark(benchmark.Benchmark):
       raise ValueError(
           'Input data is missing for {} benchmark'.format(benchmark_name))
 
-    if self.iterator is None:
-      raise ValueError(
-          'Input iterator is missing and could not be initialized for {}'
-          ' benchmark'.format(benchmark_name))
-
     # Uses the benchmark config to disable the static graph optimizations
     with session.Session(config=benchmark.benchmark_config()) as sess:
-      sess.run(self.iterator.initializer)
+      if hasattr(self, 'iterator'):
+        sess.run(self.iterator.initializer)
+
       sess.run(lookup_ops.tables_initializer())
       sess.run(variables_lib.global_variables_initializer())
 

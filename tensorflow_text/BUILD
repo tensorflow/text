@@ -1015,3 +1015,18 @@ py_test(
         # python:ops tensorflow dep,
     ],
 )
+
+py_test(
+    name = "ops_benchmarks",
+    size = "medium",
+    srcs = ["python/benchmarks/ops_benchmarks.py"],
+    python_version = "PY3",
+    srcs_version = "PY2AND3",
+    deps = [
+        ":benchmark_utils",
+        ":ops",
+        "@absl_py//absl:app",
+        "@absl_py//absl/testing:parameterized",
+        # python:ops tensorflow dep,
+    ],
+)

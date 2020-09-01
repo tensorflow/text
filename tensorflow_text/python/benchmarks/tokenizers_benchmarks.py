@@ -59,7 +59,7 @@ _SENTENCEPIECE_MODEL_FILE = "third_party/tensorflow_text/python/ops/test_data/te
 
 class TokenizationBenchmark(
     six.with_metaclass(benchmark.ParameterizedBenchmark,
-                       benchmark_utils.OpBenchmark)):
+                       benchmark_utils.OpsBaseBenchmark)):
   """Benchmarks for tokenizers."""
 
   def __init__(self):
@@ -106,7 +106,7 @@ class TokenizationBenchmark(
         xprof_enabled=FLAGS.xprof_tracing)
 
 
-class CustomInputTokenizationBenchmark(benchmark_utils.OpBenchmark):
+class CustomInputTokenizationBenchmark(benchmark_utils.OpsBaseBenchmark):
   """Benchmarks for tokenizers that require extra preprocessing or inputs."""
 
   def __init__(self):
