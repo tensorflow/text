@@ -200,5 +200,28 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpsBaseBenchmark):
     self._run(tokenizer, {"logits": logits})
 
 
+class RegexSplitOpsBenchmark(benchmark_utils.OpsBaseBenchmark):
+  """Benchmarks for regex split ops."""
+
+  def __init__(self):
+    if not FLAGS.run_eagerly:
+      ops.disable_eager_execution()
+
+    self.load_input_data(FLAGS.batch_size)
+
+  def benchmark_regex_split_ops(self):
+    op = text_ops.regex_split_with_offsets if FLAGS.with_offsets else text_ops.regex_split
+    kwargs = {"delim_regex_pattern": r"[\p{S}|\p{P}]+|\s"}
+
+    self.run_and_report(
+        op,
+        FLAGS.run_iters,
+        FLAGS.burn_iters,
+        self._get_name(),
+        use_tf_function=FLAGS.use_tf_function,
+        xprof_enabled=FLAGS.xprof_tracing,
+        **(kwargs or {}))
+
+
 if __name__ == "__main__":
   app.run(test.main())
