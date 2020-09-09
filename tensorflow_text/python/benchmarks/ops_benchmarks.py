@@ -55,7 +55,6 @@ class OpsBenchmark(benchmark_utils.OpsBaseBenchmark):
         op,
         FLAGS.run_iters,
         FLAGS.burn_iters,
-        self._get_name(),
         use_tf_function=FLAGS.use_tf_function,
         xprof_enabled=FLAGS.xprof_tracing,
         **(kwargs or {}))
@@ -144,7 +143,6 @@ class ConstrainedSequenceOpsBenchmark(benchmark_utils.OpsBaseBenchmark):
         op,
         FLAGS.run_iters,
         FLAGS.burn_iters,
-        self._get_name(),
         use_tf_function=FLAGS.use_tf_function,
         xprof_enabled=FLAGS.xprof_tracing,
         **(kwargs or {}))

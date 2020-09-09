@@ -30,6 +30,7 @@ from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import variables as variables_lib
 from tensorflow.python.platform import benchmark
 # [internal] import xprof_session
+from tensorflow.python.util import tf_inspect
 
 
 class OpsBaseBenchmark(benchmark.Benchmark):
@@ -38,6 +39,23 @@ class OpsBaseBenchmark(benchmark.Benchmark):
   def __init__(self):
     super(OpsBaseBenchmark, self).__init__()
     self.input_data = None
+
+  def _get_method_name(self):
+    """Returns the calling method name."""
+
+    # Find the caller method (outermost Benchmark class)
+    stack = tf_inspect.stack()
+    name = None
+    for frame in stack[::-1]:
+      f_locals = frame[0].f_locals
+      f_self = f_locals.get('self', None)
+      if isinstance(f_self, benchmark.Benchmark):
+        name = frame[3]
+        break
+    if name is None:
+      raise ValueError('Unable to determine the method name.')
+
+    return name
 
   def load_input_data(self, batch_size):
     """Loads the IMDB dataset and sets up the input data to run the ops on."""
@@ -57,7 +75,6 @@ class OpsBaseBenchmark(benchmark.Benchmark):
                      fn,
                      iters,
                      burn_iters,
-                     benchmark_name,
                      use_tf_function=False,
                      xprof_enabled=False,
                      **kwargs):
@@ -67,7 +84,6 @@ class OpsBaseBenchmark(benchmark.Benchmark):
       fn: Function to be benchmarked.
       iters: Number of iterations to run the benchmark.
       burn_iters: Number of warm-up iterations to run to reach a stable state.
-      benchmark_name: Name used for reporting the results.
       use_tf_function: Bool, specifies whether the function should be wrapped in
         a @tf.function while running eagerly. By default 'False' and ignored in
         graph mode.
@@ -77,6 +93,8 @@ class OpsBaseBenchmark(benchmark.Benchmark):
     Returns:
       Dict which contains the wall time report for the runned op.
     """
+    benchmark_name = self._get_method_name()
+
     if context.executing_eagerly():
       self._run_and_report_eagerly(fn, iters, burn_iters, benchmark_name,
                                    use_tf_function, xprof_enabled, **kwargs)
@@ -120,6 +138,8 @@ class OpsBaseBenchmark(benchmark.Benchmark):
 
     total_time = run_benchmark()
     mean_time = total_time / iters
+    benchmark_name = benchmark_name + ('_function'
+                                       if use_tf_function else '_eager')
     extras = {'sec_per_batch': total_time / iters}
 
     if xprof_enabled:
@@ -180,4 +200,7 @@ class OpsBaseBenchmark(benchmark.Benchmark):
         extras.update(self._run_with_xprof(run_benchmark))
 
       self.report_benchmark(
-          iters=iters, wall_time=mean_time, name=benchmark_name, extras=extras)
+          iters=iters,
+          wall_time=mean_time,
+          name=benchmark_name + '_graph',
+          extras=extras)

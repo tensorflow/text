@@ -38,6 +38,7 @@ from tensorflow_text.python import ops as text_ops
 from tensorflow_text.python.benchmarks import benchmark_utils
 from tensorflow_text.python.ops.bert_tokenizer import BasicTokenizer
 
+
 FLAGS = flags.FLAGS
 flags.DEFINE_integer("run_iters", 1000, "Number of iterations to run")
 flags.DEFINE_integer("burn_iters", 10, "Number of warmup runs")
@@ -101,7 +102,6 @@ class TokenizationBenchmark(
         op,
         FLAGS.run_iters,
         FLAGS.burn_iters,
-        self._get_name(),
         use_tf_function=FLAGS.use_tf_function,
         xprof_enabled=FLAGS.xprof_tracing)
 
@@ -126,7 +126,6 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpsBaseBenchmark):
         op,
         FLAGS.run_iters,
         FLAGS.burn_iters,
-        self._get_name(),
         use_tf_function=FLAGS.use_tf_function,
         xprof_enabled=FLAGS.xprof_tracing,
         **(kwargs or {}))
@@ -217,7 +216,6 @@ class RegexSplitOpsBenchmark(benchmark_utils.OpsBaseBenchmark):
         op,
         FLAGS.run_iters,
         FLAGS.burn_iters,
-        self._get_name(),
         use_tf_function=FLAGS.use_tf_function,
         xprof_enabled=FLAGS.xprof_tracing,
         **(kwargs or {}))
