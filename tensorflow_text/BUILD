@@ -1,4 +1,3 @@
-# [internal] load python3.bzl
 load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
 # [internal] load build_test.bzl
 
@@ -53,7 +52,7 @@ py_library(
         "python/numpy/__init__.py",
         "python/ops/__init__.py",
     ],
-    srcs_version = "PY2AND3",
+    srcs_version = "PY3",
     deps = [
         ":bert_tokenizer",
         ":create_feature_bitmask_op",
@@ -120,7 +119,8 @@ py_test(
     size = "small",
     timeout = "moderate",
     srcs = ["python/ops/bert_tokenizer_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":bert_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -169,7 +169,8 @@ py_test(
     name = "create_feature_bitmask_op_test",
     size = "small",
     srcs = ["python/ops/create_feature_bitmask_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":create_feature_bitmask_op",
         # python:array_ops tensorflow dep,
@@ -199,7 +200,8 @@ py_test(
     name = "greedy_constrained_sequence_op_test",
     size = "small",
     srcs = ["python/ops/greedy_constrained_sequence_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":greedy_constrained_sequence_op",
         #  numpy dep,
@@ -229,7 +231,8 @@ py_tf_text_library(
 py_test(
     name = "mst_ops_test",
     srcs = ["python/ops/mst_ops_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":mst_ops",
         # python:array_ops tensorflow dep,
@@ -260,7 +263,8 @@ py_test(
     name = "ngrams_op_test",
     size = "small",
     srcs = ["python/ops/ngrams_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":ngrams_op",
         # python:client_testlib tensorflow dep,
@@ -289,7 +293,8 @@ py_test(
     name = "normalize_ops_test",
     size = "small",
     srcs = ["python/ops/normalize_ops_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":normalize_ops",
         # python:client_testlib tensorflow dep,
@@ -316,7 +321,8 @@ py_test(
     name = "pad_along_dimension_op_test",
     size = "medium",
     srcs = ["python/ops/pad_along_dimension_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":pad_along_dimension_op",
         "@absl_py//absl/testing:parameterized",
@@ -352,7 +358,8 @@ py_library(
 py_test(
     name = "gather_with_default_op_test",
     srcs = ["python/ops/gather_with_default_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -368,7 +375,8 @@ py_test(
 py_test(
     name = "span_alignment_op_test",
     srcs = ["python/ops/span_alignment_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -381,7 +389,8 @@ py_test(
 py_test(
     name = "span_overlaps_op_test",
     srcs = ["python/ops/span_overlaps_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -410,7 +419,8 @@ py_test(
     name = "regex_split_ops_test",
     size = "small",
     srcs = ["python/ops/regex_split_ops_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":regex_split_ops",
         # python:client_testlib tensorflow dep,
@@ -437,7 +447,8 @@ py_test(
     name = "text_similarity_metric_ops_test",
     size = "small",
     srcs = ["python/metrics/text_similarity_metric_ops_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":text_similarity_metric_ops",
         "@absl_py//absl/testing:parameterized",
@@ -483,7 +494,8 @@ py_test(
     name = "sentence_breaking_ops_test",
     size = "small",
     srcs = ["python/ops/sentence_breaking_ops_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":sentence_breaking_ops",
         "@absl_py//absl/testing:parameterized",
@@ -523,7 +535,8 @@ py_test(
     name = "state_based_sentence_breaker_op_test",
     size = "medium",
     srcs = ["python/ops/state_based_sentence_breaker_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":state_based_sentence_breaker_op",
         "@absl_py//absl/testing:parameterized",
@@ -572,7 +585,8 @@ py_test(
     data = [
         ":python/ops/test_data/test_oss_model.model",
     ],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":sentencepiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -599,7 +613,8 @@ py_test(
     name = "sliding_window_op_test",
     size = "small",
     srcs = ["python/ops/sliding_window_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":sliding_window_op",
         "@absl_py//absl/testing:parameterized",
@@ -624,7 +639,8 @@ py_test(
     name = "coerce_to_valid_utf8_op_test",
     size = "small",
     srcs = ["python/ops/coerce_to_valid_utf8_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":string_ops",
         # python:client_testlib tensorflow dep,
@@ -650,8 +666,9 @@ py_test(
     name = "todense_test",
     size = "large",
     srcs = ["python/keras/layers/todense_test.py"],
+    python_version = "PY3",
     shard_count = 2,
-    srcs_version = "PY2AND3",
+    srcs_version = "PY3",
     deps = [
         ":todense_layer",
         "@absl_py//absl/testing:parameterized",
@@ -688,7 +705,8 @@ py_test(
     data = [
         ":python/ops/test_data/segmenter_hub_module",
     ],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":ops",
         # python:client_testlib tensorflow dep,
@@ -719,7 +737,8 @@ py_test(
     name = "split_merge_from_logits_tokenizer_test",
     size = "small",
     srcs = ["python/ops/split_merge_from_logits_tokenizer_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":split_merge_from_logits_tokenizer",
         # python:client_testlib tensorflow dep,
@@ -748,8 +767,9 @@ py_test(
     name = "unicode_char_tokenizer_test",
     size = "large",
     srcs = ["python/ops/unicode_char_tokenizer_test.py"],
+    python_version = "PY3",
     shard_count = 5,
-    srcs_version = "PY2AND3",
+    srcs_version = "PY3",
     deps = [
         ":unicode_char_tokenizer",
         # python:client_testlib tensorflow dep,
@@ -783,8 +803,9 @@ py_test(
     name = "unicode_script_tokenizer_test",
     size = "large",
     srcs = ["python/ops/unicode_script_tokenizer_test.py"],
+    python_version = "PY3",
     shard_count = 5,
-    srcs_version = "PY2AND3",
+    srcs_version = "PY3",
     deps = [
         ":unicode_script_tokenizer",
         # python:client_testlib tensorflow dep,
@@ -812,7 +833,8 @@ py_test(
     name = "viterbi_constrained_sequence_op_test",
     size = "small",
     srcs = ["python/ops/viterbi_constrained_sequence_op_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
@@ -835,7 +857,8 @@ py_test(
     name = "viterbi_decode_test",
     size = "small",
     srcs = ["python/numpy/viterbi_decode_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":viterbi_decode",
         "@absl_py//absl/testing:absltest",
@@ -867,8 +890,9 @@ py_test(
     name = "whitespace_tokenizer_test",
     size = "large",
     srcs = ["python/ops/whitespace_tokenizer_test.py"],
+    python_version = "PY3",
     shard_count = 4,
-    srcs_version = "PY2AND3",
+    srcs_version = "PY3",
     deps = [
         ":whitespace_tokenizer",
         # python:client_testlib tensorflow dep,
@@ -897,7 +921,8 @@ py_test(
     name = "split_merge_tokenizer_test",
     size = "small",
     srcs = ["python/ops/split_merge_tokenizer_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":split_merge_tokenizer",
         # python:client_testlib tensorflow dep,
@@ -929,7 +954,8 @@ py_test(
     name = "wordpiece_tokenizer_test",
     size = "small",
     srcs = ["python/ops/wordpiece_tokenizer_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":wordpiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -959,7 +985,8 @@ py_test(
     name = "wordshape_ops_test",
     size = "small",
     srcs = ["python/ops/wordshape_ops_test.py"],
-    srcs_version = "PY2AND3",
+    python_version = "PY3",
+    srcs_version = "PY3",
     deps = [
         ":wordshape_ops",
         # python:client_testlib tensorflow dep,
@@ -1005,7 +1032,7 @@ py_test(
         ":python/ops/test_data/test_oss_model.model",
     ],
     python_version = "PY3",
-    srcs_version = "PY2AND3",
+    srcs_version = "PY3",
     deps = [
         ":benchmark_utils",
         ":ops",
@@ -1021,7 +1048,7 @@ py_test(
     size = "medium",
     srcs = ["python/benchmarks/ops_benchmarks.py"],
     python_version = "PY3",
-    srcs_version = "PY2AND3",
+    srcs_version = "PY3",
     deps = [
         ":benchmark_utils",
         ":ops",
