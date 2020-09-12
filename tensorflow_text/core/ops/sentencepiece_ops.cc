@@ -146,5 +146,17 @@ REGISTER_OP("SentencepieceIdToStringOp")
       return Status::OK();
     });
 
+REGISTER_OP("SentencepieceStringToIdOp")
+    .Input("sp_handle: resource")
+    .Input("input: string")
+    .Output("values: int32")
+    .SetShapeFn([](InferenceContext* c) {
+      shape_inference::ShapeHandle unused;
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 0, &unused));
+      TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));
+      c->set_output(0, c->input(1));
+      return Status::OK();
+    });
+
 }  // namespace text
 }  // namespace tensorflow

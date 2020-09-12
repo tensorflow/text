@@ -586,5 +586,36 @@ class SentencepieceIdToStringOp : public OpKernel {
 REGISTER_KERNEL_BUILDER(Name("SentencepieceIdToStringOp").Device(DEVICE_CPU),
                         SentencepieceIdToStringOp);
 
+class SentencepieceStringToIdOp : public OpKernel {
+ public:
+  explicit SentencepieceStringToIdOp(OpKernelConstruction* ctx)
+      : OpKernel(ctx) {}
+
+  void Compute(OpKernelContext* ctx) override {
+    SentencepieceResource* sp;
+    const Tensor& resource_tensor = ctx->input(0);
+    ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
+    OP_REQUIRES_OK(
+        ctx, ctx->resource_manager()->Lookup<SentencepieceResource, true>(
+                 resource_handle.container(), resource_handle.name(), &sp));
+    core::ScopedUnref unref_me(sp);
+
+    const Tensor& input_tensor = ctx->input(1);
+    const auto input_tensor_flat = input_tensor.flat<tensorflow::tstring>();
+    Tensor* output_tensor;
+    OP_REQUIRES_OK(
+        ctx, ctx->allocate_output(0, input_tensor.shape(), &output_tensor));
+    auto output_tensor_flat = output_tensor->flat<int32>();
+
+    absl::ReaderMutexLock lock(&sp->mu);
+    for (int i = 0; i < input_tensor_flat.size(); ++i) {
+      output_tensor_flat(i) = sp->processor.PieceToId(input_tensor_flat(i));
+    }
+  }
+};
+
+REGISTER_KERNEL_BUILDER(Name("SentencepieceStringToIdOp").Device(DEVICE_CPU),
+                        SentencepieceStringToIdOp);
+
 }  // namespace text
 }  // namespace tensorflow

@@ -121,6 +121,7 @@ class TfTextOps(tf.Module):
     (sentencepiece, _, _) = sp_tokenizer.tokenize_with_offsets(sentencepiece)
     sentencepiece_size = sp_tokenizer.vocab_size()
     sentencepiece_id = sp_tokenizer.id_to_string(1)
+    sentencepiece_str = sp_tokenizer.string_to_id('<s>')
     # Split merge tokenizer
     sm_tokenizer = text.SplitMergeTokenizer()
     split_merge = sm_tokenizer.tokenize(b'IloveFlume!',
@@ -180,6 +181,7 @@ class TfTextOps(tf.Module):
     sentencepiece_assert = assert_check(sentencepiece.to_tensor())
     sentencepiece_id_assert = assert_check(sentencepiece_id)
     sentencepiece_size_assert = assert_check(sentencepiece_size)
+    sentencepiece_str_assert = assert_check(sentencepiece_str)
     split_merge_assert = assert_check(split_merge)
     split_merge_from_logits_assert = assert_check(split_merge_from_logits)
     tf_unicode_script_assert = assert_check(tf_unicode_script)
@@ -198,6 +200,7 @@ class TfTextOps(tf.Module):
                                   sentencepiece_assert,
                                   sentencepiece_id_assert,
                                   sentencepiece_size_assert,
+                                  sentencepiece_str_assert,
                                   split_merge_assert,
                                   split_merge_from_logits_assert,
                                   tf_unicode_script_assert,

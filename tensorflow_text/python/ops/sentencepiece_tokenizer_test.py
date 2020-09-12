@@ -132,6 +132,34 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
     result = sp.id_to_string(ragged_factory_ops.constant(ids, dtypes.int32))
     self.assertAllEqual(pieces, result)
 
+  def testStringToIdScalar(self):
+    sp = SentencepieceTokenizer(self.model)
+    result = sp.string_to_id('</s>')
+    self.assertAllEqual(2, result)
+
+  def testStringToIdVector(self):
+    sp = SentencepieceTokenizer(self.model)
+    pieces = _utf8([['▁I', '▁l', 'o', 've', '▁c', 'ar', 'pe', 't'],
+                    ['▁I', '▁l', 'o', 've', '▁desk', '.'],
+                    ['▁I', '▁l', 'o', 've', '▁l', 'amp', '.']])
+    ids = [[9, 169, 21, 125, 78, 48, 132, 15], [9, 169, 21, 125, 727, 6],
+           [9, 169, 21, 125, 169, 579, 6]]
+    result = sp.string_to_id(ragged_factory_ops.constant(pieces))
+    self.assertAllEqual(ids, result)
+
+  def testStringToIdRagged(self):
+    sp = SentencepieceTokenizer(self.model)
+    pieces = _utf8(
+        [[['▁I', '▁l', 'o', 've', '▁c', 'ar', 'pe', 't'],
+          ['▁I', '▁l', 'o', 've', '▁desk', '.'],
+          ['▁I', '▁l', 'o', 've', '▁l', 'amp', '.']],
+         [['▁', 'N', 'ever', '▁tell', '▁me', '▁the', '▁', 'o', 'd', 'd', 's']]])
+    ids = [[[9, 169, 21, 125, 78, 48, 132, 15], [9, 169, 21, 125, 727, 6],
+            [9, 169, 21, 125, 169, 579, 6]],
+           [[4, 199, 363, 310, 33, 7, 4, 21, 17, 17, 8]]]
+    result = sp.string_to_id(ragged_factory_ops.constant(pieces, dtypes.string))
+    self.assertAllEqual(ids, result)
+
   @parameterized.parameters([
       (False, False, False, dtypes.int32),
       (False, False, True, dtypes.int32),

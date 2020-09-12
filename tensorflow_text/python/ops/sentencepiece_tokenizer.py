@@ -279,3 +279,31 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
             array_ops.shape(input_tensor))
       return gen_sentencepiece_tokenizer.sentencepiece_id_to_string_op(
           self._model_resource.resource_handle, input)
+
+  def string_to_id(self, input, name=None):  # pylint: disable=redefined-builtin
+    """Converts token into a vocabulary id.
+
+    Args:
+      input: An arbitrary tensor of string tokens.
+      name: The name argument that is passed to the op function.
+
+    Returns:
+      A tensor of int32 representing the IDs with the same shape as input.
+    """
+    with ops.name_scope(name, "SentencepieceTokenizerStringToId",
+                        [self, input]):
+      input_tensor = ragged_tensor.convert_to_tensor_or_ragged_tensor(input)
+      if input_tensor.shape.ndims is None:
+        raise ValueError("Rank of input_tensor must be statically known.")
+      if input_tensor.shape.ndims == 0:
+        strings = self.string_to_id(array_ops.stack([input_tensor]))
+        return strings[0]
+      if ragged_tensor.is_ragged(input_tensor):
+        strings = self.string_to_id(input_tensor.flat_values)
+        return input_tensor.with_flat_values(strings)
+      if input_tensor.shape.ndims > 1:
+        return array_ops.reshape(
+            self.string_to_id(array_ops.reshape(input_tensor, [-1])),
+            array_ops.shape(input_tensor))
+      return gen_sentencepiece_tokenizer.sentencepiece_string_to_id_op(
+          self._model_resource.resource_handle, input)
