@@ -575,7 +575,16 @@ py_tf_text_library(
 
 # This is required for other external users to build tests using this model.
 exports_files(
-    glob(["python/ops/test_data/test_oss_model.*"]),
+    glob([
+        "python/ops/test_data/test_oss_model.*",
+    ]),
+)
+
+filegroup(
+    name = "test_data_segmenter_hub_module",
+    srcs = glob([
+        "python/ops/test_data/segmenter_hub_module/**",
+    ]),
 )
 
 py_test(
@@ -703,7 +712,7 @@ py_test(
     size = "large",
     srcs = ["python/ops/hub_module_tokenizer_test.py"],
     data = [
-        ":python/ops/test_data/segmenter_hub_module",
+        ":test_data_segmenter_hub_module",
     ],
     python_version = "PY3",
     srcs_version = "PY3",
@@ -1028,8 +1037,8 @@ py_test(
     srcs = ["python/benchmarks/tokenizers_benchmarks.py"],
     data = [
         ":python/benchmarks/test_data/uncased_L-12_H-768_A-12/vocab.txt",
-        ":python/ops/test_data/segmenter_hub_module",
         ":python/ops/test_data/test_oss_model.model",
+        ":test_data_segmenter_hub_module",
     ],
     python_version = "PY3",
     srcs_version = "PY3",
