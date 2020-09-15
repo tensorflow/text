@@ -689,7 +689,7 @@ py_test(
     size = "large",
     srcs = ["python/ops/hub_module_tokenizer_test.py"],
     data = [
-        ":python/ops/test_data/segmenter_hub_module",
+        ":test_data_segmenter_hub_module",
     ],
     srcs_version = "PY2AND3",
     deps = [
@@ -701,6 +701,13 @@ py_test(
         # python:variables tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
+)
+
+filegroup(
+    name = "test_data_segmenter_hub_module",
+    srcs = glob([
+        "python/ops/test_data/segmenter_hub_module/**",
+    ]),
 )
 
 py_tf_text_library(
