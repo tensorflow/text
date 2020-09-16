@@ -943,7 +943,6 @@ py_tf_text_library(
     srcs = ["python/ops/wordpiece_tokenizer.py"],
     cc_op_defs = ["core/ops/wordpiece_op.cc"],
     cc_op_kernels = [
-        "@com_google_absl//absl/strings",
         "//tensorflow_text/core/kernels:wordpiece_kernel",
     ],
     deps = [
