@@ -146,7 +146,7 @@ class OpsBaseBenchmark(benchmark.Benchmark):
       extras.update(self._run_with_xprof(run_benchmark))
 
     self.report_benchmark(
-        iters=iters, wall_time=mean_time, name=benchmark_name, extras=extras)
+        wall_time=mean_time, name=benchmark_name, extras=extras)
 
   def _run_with_xprof(self, benchmark_fn):
     output = {}
@@ -200,7 +200,6 @@ class OpsBaseBenchmark(benchmark.Benchmark):
         extras.update(self._run_with_xprof(run_benchmark))
 
       self.report_benchmark(
-          iters=iters,
           wall_time=mean_time,
           name=benchmark_name + '_graph',
           extras=extras)
