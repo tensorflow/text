@@ -18,12 +18,14 @@
 
 namespace tensorflow {
 namespace text {
+namespace {
 
-void RegexSplit(absl::string_view input, const RE2& re2, bool include_delimiter,
-                const RE2& include_delim_regex,
-                std::vector<absl::string_view>* tokens,
-                std::vector<long long>* begin_offsets,  // NOLINT
-                std::vector<long long>* end_offsets) {  // NOLINT
+template <typename T>
+void RegexSplitImpl(absl::string_view input, const RE2& re2,
+                    bool include_delimiter, const RE2& include_delim_regex,
+                    std::vector<absl::string_view>* tokens,
+                    std::vector<T>* begin_offsets,
+                    std::vector<T>* end_offsets) {
   absl::string_view leftover(input.data());
   absl::string_view last_end = leftover;
 
@@ -62,6 +64,26 @@ void RegexSplit(absl::string_view input, const RE2& re2, bool include_delimiter,
     begin_offsets->push_back(leftover.data() - input.begin());
     end_offsets->push_back(leftover.data() + leftover.length() - input.begin());
   }
+}
+
+}  // namespace
+
+void RegexSplit(absl::string_view input, const RE2& re2, bool include_delimiter,
+                const RE2& include_delim_regex,
+                std::vector<absl::string_view>* tokens,
+                std::vector<long>* begin_offsets,  // NOLINT
+                std::vector<long>* end_offsets) {  // NOLINT
+  RegexSplitImpl(input, re2, include_delimiter, include_delim_regex, tokens,
+                 begin_offsets, end_offsets);
+}
+
+void RegexSplit(absl::string_view input, const RE2& re2, bool include_delimiter,
+                const RE2& include_delim_regex,
+                std::vector<absl::string_view>* tokens,
+                std::vector<long long>* begin_offsets,  // NOLINT
+                std::vector<long long>* end_offsets) {  // NOLINT
+  RegexSplitImpl(input, re2, include_delimiter, include_delim_regex, tokens,
+                 begin_offsets, end_offsets);
 }
 
 }  // namespace text
