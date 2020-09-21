@@ -39,6 +39,8 @@ flags.DEFINE_boolean(
     "use_tf_function", True,
     "Wraps the op in a tf.function. Only works when eager mode is enabled")
 flags.DEFINE_boolean("xprof_tracing", False, "Enables xprof tracing")
+flags.DEFINE_boolean("with_offsets", False,
+                     "Runs the op with offsets additionally")
 
 
 class OpsBenchmark(benchmark_utils.OpsBaseBenchmark):
@@ -82,8 +84,9 @@ class OpsBenchmark(benchmark_utils.OpsBaseBenchmark):
     self._run(text_ops.normalize_utf8, {"normalization_form": "NFKC"})
 
   def benchmark_normalize_utf8_with_offsets(self):
-    self._run(text_ops.normalize_utf8_with_offsets_map,
-              {"normalization_form": "NFKC"})
+    if FLAGS.with_offsets:
+      self._run(text_ops.normalize_utf8_with_offsets_map,
+                {"normalization_form": "NFKC"})
 
   def benchmark_coerce_to_structurally_valid_utf8(self):
     # The input here is a valid UTF-8 input
