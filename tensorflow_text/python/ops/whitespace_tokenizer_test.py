@@ -48,6 +48,22 @@ class WhitespaceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase):
     self.assertRaggedEqual(starts, expected_offset_starts)
     self.assertRaggedEqual(limits, expected_offset_limits)
 
+  def testScalarWithSplit(self):
+    # Similar to testScalar, but using split() calls (instead of tokenize()).
+    # Should produce the same results as before.  This tests that a
+    # WhitespaceTokenizer is a valid Splitter.
+    test_value = constant_op.constant(b'I love Flume!')
+    expected_tokens = [b'I', b'love', b'Flume!']
+    expected_offset_starts = [0, 2, 7]
+    expected_offset_limits = [1, 6, 13]
+    tokens = self.whitespace_tokenizer.split(test_value)
+    self.assertAllEqual(tokens, expected_tokens)
+    (tokens, starts, limits) = (
+        self.whitespace_tokenizer.split_with_offsets(test_value))
+    self.assertAllEqual(tokens, expected_tokens)
+    self.assertAllEqual(starts, expected_offset_starts)
+    self.assertAllEqual(limits, expected_offset_limits)
+
   def testVectorSingleValue(self):
     test_value = constant_op.constant([b'I love Flume!'])
     expected_tokens = [[b'I', b'love', b'Flume!']]

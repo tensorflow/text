@@ -22,7 +22,8 @@ from tensorflow_text.python import metrics
 from tensorflow_text.python.ops import *
 
 
-# Public symbols in the "tensorflow_text" package.
+# Public symbols in the "tensorflow_text" package.  Symbols are sorted in
+# increasing order of their lowercase version.
 _allowed_symbols = [
     "BertTokenizer",
     "case_fold_utf8",
@@ -30,6 +31,7 @@ _allowed_symbols = [
     "Detokenizer",
     "gather_with_default",
     "greedy_constrained_sequence",
+    "HubModuleTokenizer",
     "keras",
     "max_spanning_tree",
     "max_spanning_tree_gradient",
@@ -37,14 +39,17 @@ _allowed_symbols = [
     "ngrams",
     "normalize_utf8",
     "pad_along_dimension",
+    "Reduction",
     "regex_split",
     "regex_split_with_offsets",
-    "Reduction",
     "sentence_fragments",
     "SentencepieceTokenizer",
     "sliding_window",
     "span_alignment",
     "span_overlaps",
+    "SplitMergeFromLogitsTokenizer",
+    "SplitMergeTokenizer",
+    "Splitter",
     "Tokenizer",
     "TokenizerWithOffsets",
     "UnicodeCharTokenizer",
@@ -54,9 +59,9 @@ _allowed_symbols = [
     "HubModuleTokenizer",
     "SplitMergeTokenizer",
     "SplitMergeFromLogitsTokenizer",
+    "WordpieceTokenizer",
     "wordshape",
     "WordShape",
-    "WordpieceTokenizer",
 ]
 
 remove_undocumented(__name__, _allowed_symbols)

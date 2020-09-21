@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Base classes (abstract class) for all tokenizers."""
+"""Abstract base classes for all tokenizers."""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -22,12 +22,12 @@ from __future__ import print_function
 import abc
 
 from tensorflow.python.module import module
+from tensorflow_text.python.ops.splitter import Splitter
+from tensorflow_text.python.ops.splitter import SplitterWithOffsets
 
 
-class Tokenizer(module.Module):
+class Tokenizer(Splitter):
   """Base class for tokenizer implementations."""
-
-  __metaclass__ = abc.ABCMeta
 
   @abc.abstractmethod
   def tokenize(self, input):  # pylint: disable=redefined-builtin
@@ -42,8 +42,11 @@ class Tokenizer(module.Module):
     """
     raise NotImplementedError("Abstract method")
 
+  def split(self, input):  # pylint: disable=redefined-builtin
+    return self.tokenize(input)
 
-class TokenizerWithOffsets(Tokenizer):
+
+class TokenizerWithOffsets(Tokenizer, SplitterWithOffsets):
   """Base class for tokenizer implementations that return offsets."""
 
   @abc.abstractmethod
@@ -67,6 +70,9 @@ class TokenizerWithOffsets(Tokenizer):
             (byte indices for input strings).
     """
     raise NotImplementedError("Abstract method")
+
+  def split_with_offsets(self, input):  # pylint: disable=redefined-builtin
+    return self.tokenize_with_offsets(input)
 
 
 class Detokenizer(module.Module):

@@ -69,6 +69,7 @@ py_library(
         ":sliding_window_op",
         ":split_merge_from_logits_tokenizer",
         ":split_merge_tokenizer",
+        ":splitter",
         ":string_ops",
         ":text_similarity_metric_ops",
         ":todense_layer",
@@ -466,6 +467,14 @@ py_test(
     ],
 )
 
+py_library(
+    name = "splitter",
+    srcs = ["python/ops/splitter.py"],
+    deps = [
+        # python/module tensorflow dep,
+    ],
+)
+
 py_tf_text_library(
     name = "text_similarity_metric_ops",
     srcs = ["python/metrics/text_similarity_metric_ops.py"],
@@ -502,6 +511,7 @@ py_library(
     name = "tokenization",
     srcs = ["python/ops/tokenization.py"],
     deps = [
+        ":splitter",
         # python/module tensorflow dep,
     ],
 )
