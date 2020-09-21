@@ -20,6 +20,7 @@ from __future__ import division
 from __future__ import print_function
 
 from tensorflow.python.compat import compat
+from tensorflow.python.eager import def_function
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
@@ -58,6 +59,8 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
                       build_whitespace_tokenizer_config())
     _tf_text_whitespace_tokenizer_op_create_counter.get_cell().increase_by(1)
 
+  @def_function.function(
+      experimental_implements='name: "tftext:WhitespaceTokenizer"')
   def tokenize(self, input):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings on whitespaces.
 
@@ -69,6 +72,8 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
     >>> WhitespaceTokenizer().tokenize("small medium large")
     <tf.Tensor: shape=(3,), dtype=string, numpy=array([b'small', b'medium',
     b'large'], dtype=object)>
+
+    This op can be converted to TF Lite.
 
     Args:
       input: A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
