@@ -64,6 +64,8 @@ class OpsBaseBenchmark(benchmark.Benchmark):
         'imdb_reviews/plain_text', split=tfds.Split.TRAIN).batch(batch_size)
     # The input data has shape [batch_size, data] and the op is run multiple
     # iterations over the first batch
+    self.batch_number = 1
+
     if context.executing_eagerly():
       self.iterator = data.as_numpy_iterator()
       self.input_data = [x['text'] for x in self.iterator][0]
@@ -141,6 +143,8 @@ class OpsBaseBenchmark(benchmark.Benchmark):
     benchmark_name = benchmark_name + ('_function'
                                        if use_tf_function else '_eager')
     extras = {'sec_per_batch': total_time / iters}
+    if hasattr(self, 'batch_number'):
+      extras.update({'batches_per_sec': self.batch_number / mean_time})
 
     if xprof_enabled:
       extras.update(self._run_with_xprof(run_benchmark))
@@ -195,6 +199,9 @@ class OpsBaseBenchmark(benchmark.Benchmark):
       total_time = run_benchmark()
       mean_time = total_time / iters
       extras = {'sec_per_batch': mean_time}
+
+      if hasattr(self, 'batch_number'):
+        extras.update({'batches_per_sec': self.batch_number / mean_time})
 
       if xprof_enabled:
         extras.update(self._run_with_xprof(run_benchmark))
