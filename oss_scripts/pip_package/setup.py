@@ -77,7 +77,9 @@ setup(
         'tensorflow_hub>=0.8.0',
     ],
     extras_require={
-        'tensorflow_gpu': ['tensorflow-gpu>=2.1.0, <2.2',],
+        'tensorflow_cpu': [
+            'tensorflow-cpu>=2.3.0, <2.4',
+        ],
         'tests': [
             'absl-py',
             'pytest',
