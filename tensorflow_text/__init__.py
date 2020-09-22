@@ -32,6 +32,7 @@ _allowed_symbols = [
     "find_source_offsets",
     "gather_with_default",
     "greedy_constrained_sequence",
+    "HubModuleSplitter",
     "HubModuleTokenizer",
     "keras",
     "max_spanning_tree",

@@ -287,7 +287,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
           # Explicitly specify the offsets here because the current way of
           # testing offsets would require '[UNK]' to be part of tokens.
           expected_start=[[[0, 3, 4], [0]]],
-          expected_limit=[[[3, 4, 5], [9]]],
+          expected_limit=[[[3, 4, 5], [5]]],
       ),
       # Test the token of death usecase.
       dict(

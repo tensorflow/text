@@ -222,11 +222,12 @@ LookupStatus WordpieceTokenize(
     begin_offset->push_back(0);
     *num_word_pieces = 1;
     if (use_unknown_token) {
+      end_offset->push_back(unknown_token.size());
       subwords->emplace_back(unknown_token);
     } else {
       subwords->emplace_back(token);
+      end_offset->push_back(token.size());
     }
-    end_offset->push_back(token_len);
     return LookupStatus::OK();
   }
   return TokenizeL2RGreedy(token, max_bytes_per_token, max_chars_per_subtoken,

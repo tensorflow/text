@@ -57,6 +57,7 @@ py_library(
         ":bert_tokenizer",
         ":create_feature_bitmask_op",
         ":greedy_constrained_sequence_op",
+        ":hub_module_splitter",
         ":hub_module_tokenizer",
         ":mst_ops",
         ":ngrams_op",
@@ -698,13 +699,42 @@ py_test(
 )
 
 py_library(
-    name = "hub_module_tokenizer",
-    srcs = ["python/ops/hub_module_tokenizer.py"],
+    name = "hub_module_splitter",
+    srcs = ["python/ops/hub_module_splitter.py"],
     deps = [
-        ":tokenization",
+        ":splitter",
         "@org_tensorflow_hub//tensorflow_hub",
         # python:array_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "hub_module_splitter_test",
+    size = "large",
+    srcs = ["python/ops/hub_module_splitter_test.py"],
+    data = [
+        ":test_data_segmenter_hub_module",
+    ],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":ops",
+        # python:client_testlib tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:lookup_ops tensorflow dep,
+        # python:variables tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "hub_module_tokenizer",
+    srcs = ["python/ops/hub_module_tokenizer.py"],
+    deps = [
+        ":hub_module_splitter",
+        ":tokenization",
     ],
 )
 
