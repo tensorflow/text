@@ -23,6 +23,7 @@ except ImportError:
 from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
 from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_bitmask
 from tensorflow_text.python.ops.greedy_constrained_sequence_op import greedy_constrained_sequence
+from tensorflow_text.python.ops.hub_module_splitter import HubModuleSplitter
 from tensorflow_text.python.ops.hub_module_tokenizer import HubModuleTokenizer
 from tensorflow_text.python.ops.mst_ops import max_spanning_tree
 from tensorflow_text.python.ops.mst_ops import max_spanning_tree_gradient

@@ -31,6 +31,7 @@ _allowed_symbols = [
     "Detokenizer",
     "gather_with_default",
     "greedy_constrained_sequence",
+    "HubModuleSplitter",
     "HubModuleTokenizer",
     "keras",
     "max_spanning_tree",
