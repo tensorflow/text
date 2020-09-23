@@ -55,6 +55,13 @@ class HubModuleSplitter(SplitterWithOffsets):
   * `output_dict['end']` is a rank-1 tensor of integers with the byte offsets
   right after the end of the tokens (relative to the beginning of the
   corresponding input string).
+
+  The output dictionary may contain other tensors (e.g., for debugging) but this
+  class is not using them.
+
+  Currently, this class also supports an older API, which uses slightly
+  different key names for the output dictionary.  For new Hub modules, please
+  use the API described above.
   """
 
   def __init__(self, hub_module_handle):
