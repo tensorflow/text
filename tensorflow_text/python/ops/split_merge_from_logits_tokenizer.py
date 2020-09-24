@@ -240,14 +240,14 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
         extra (padding) pairs of logits are ignored.
 
     Returns:
-      A tuple `(tokens, start_offsets, limit_offsets)` where:
+      A tuple `(tokens, start_offsets, end_offsets)` where:
         * `tokens` is a `RaggedTensor` of strings where `tokens[i, k]` is
           the string content of the `k-th` token in `strings[i]`
         * `start_offsets` is a `RaggedTensor` of int64s where
           `start_offsets[i, k]` is the byte offset for the start of the
           `k-th` token in `strings[i]`.
-        * `limit_offsets` is a `RaggedTensor` of int64s where
-          `limit_offsets[i, k]` is the byte offset immediately after the
+        * `end_offsets` is a `RaggedTensor` of int64s where
+          `end_offsets[i, k]` is the byte offset immediately after the
           end of the `k-th` token in `strings[i]`.
 
     Raises:
@@ -259,7 +259,7 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
     with ops.name_scope(name, 'TokenizerFromLogits', [strings, logits]):
       # Tokenize the strings into tokens.
       force_split = self._force_split_at_break_character
-      token_values, token_row_splits, start_values, limit_values = (
+      token_values, token_row_splits, start_values, end_values = (
           gen_split_merge_from_logits_tokenizer.tokenizer_from_logits(
               strings=strings,
               logits=logits,
@@ -272,5 +272,5 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
 
       tokens = put_token_info_into_ragged_tensor(token_values)
       start_offsets = put_token_info_into_ragged_tensor(start_values)
-      limit_offsets = put_token_info_into_ragged_tensor(limit_values)
-      return tokens, start_offsets, limit_offsets
+      end_offsets = put_token_info_into_ragged_tensor(end_values)
+      return tokens, start_offsets, end_offsets

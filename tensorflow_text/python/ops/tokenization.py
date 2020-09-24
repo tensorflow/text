@@ -58,14 +58,14 @@ class TokenizerWithOffsets(Tokenizer, SplitterWithOffsets):
         `RaggedTensor`.
 
     Returns:
-      A tuple `(tokens, start_offsets, limit_offsets)` where:
+      A tuple `(tokens, start_offsets, end_offsets)` where:
 
         * `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
             `RaggedTensor`.
         * `start_offsets` is an N+1-dimensional integer `Tensor` or
             `RaggedTensor` containing the starting indices of each token (byte
             indices for input strings).
-        * `limit_offsets` is an N+1-dimensional integer `Tensor` or
+        * `end_offsets` is an N+1-dimensional integer `Tensor` or
             `RaggedTensor` containing the exclusive ending indices of each token
             (byte indices for input strings).
     """

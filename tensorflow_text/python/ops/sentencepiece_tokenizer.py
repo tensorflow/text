@@ -157,28 +157,28 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       if ragged_tensor.is_ragged(input_tensor):
         # Recursively process the values of the ragged tensor
         (tokens, starts,
-         limits) = self.tokenize_with_offsets(input_tensor.flat_values)
+         ends) = self.tokenize_with_offsets(input_tensor.flat_values)
         tokens = input_tensor.with_flat_values(tokens)
         starts = input_tensor.with_flat_values(starts)
-        limits = input_tensor.with_flat_values(limits)
-        return (tokens, starts, limits)
+        ends = input_tensor.with_flat_values(ends)
+        return (tokens, starts, ends)
       else:
         if input_tensor.shape.ndims > 1:
           # Convert the input tensor to ragged and process it.
           return self.tokenize_with_offsets(
               ragged_conversion_ops.from_tensor(input_tensor))
         elif input_tensor.shape.ndims == 0:
-          (tokens, starts, limits) = self.tokenize_with_offsets(
+          (tokens, starts, ends) = self.tokenize_with_offsets(
               array_ops.stack([input_tensor]))
           tokens = tokens.values
           starts = starts.values
-          limits = limits.values
-          return (tokens, starts, limits)
+          ends = ends.values
+          return (tokens, starts, ends)
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
           # normal.
           (output_values, output_splits, output_offset_starts,
-           output_offset_limits) = (
+           output_offset_ends) = (
                gen_sentencepiece_tokenizer
                .sentencepiece_tokenize_with_offsets_op(
                    self._model_resource.resource_handle, input_tensor,
@@ -192,11 +192,11 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
               flat_values=output_offset_starts,
               nested_row_splits=[output_splits],
               validate=False)
-          limits = RaggedTensor.from_nested_row_splits(
-              flat_values=output_offset_limits,
+          ends = RaggedTensor.from_nested_row_splits(
+              flat_values=output_offset_ends,
               nested_row_splits=[output_splits],
               validate=False)
-          return (tokens, starts, limits)
+          return (tokens, starts, ends)
 
   def detokenize(self, input, name=None):  # pylint: disable=redefined-builtin
     """Detokenizes tokens into preprocessed text.

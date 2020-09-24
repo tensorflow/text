@@ -91,11 +91,11 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
       input: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 
     Returns:
-      A tuple `(tokens, start_offsets, limit_offsets)` where:
+      A tuple `(tokens, start_offsets, end_offsets)` where:
 
         * `tokens`: A `RaggedTensor` of tokenized text.
         * `start_offsets`: A `RaggedTensor` of the tokens' starting byte offset.
-        * `limit_offsets`: A `RaggedTensor` of the tokens' ending byte offset.
+        * `end_offsets`: A `RaggedTensor` of the tokens' ending byte offset.
     """
     name = None
     with ops.name_scope(name, "UnicodeScriptTokenize", [input]):
@@ -107,27 +107,27 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
           # If the flat_values of our ragged tensor is multi-dimensional, we can
           # process it separately and our output will have the same nested
           # splits as our input.
-          (tokens, starts, limits) = self.tokenize_with_offsets(
+          (tokens, starts, ends) = self.tokenize_with_offsets(
               input_tensor.flat_values)
           return (input_tensor.with_flat_values(tokens),
                   input_tensor.with_flat_values(starts),
-                  input_tensor.with_flat_values(limits))
+                  input_tensor.with_flat_values(ends))
         else:
           # Recursively process the values of the ragged tensor.
-          (tokens, starts, limits) = self.tokenize_with_offsets(
+          (tokens, starts, ends) = self.tokenize_with_offsets(
               input_tensor.values)
           return (input_tensor.with_values(tokens),
                   input_tensor.with_values(starts),
-                  input_tensor.with_values(limits))
+                  input_tensor.with_values(ends))
       else:
         if input_tensor.shape.ndims > 1:
           # Convert the input tensor to ragged and process it.
           return self.tokenize_with_offsets(
               ragged_conversion_ops.from_tensor(input_tensor))
         elif input_tensor.shape.ndims == 0:
-          (tokens, starts, limits) = self.tokenize_with_offsets(
+          (tokens, starts, ends) = self.tokenize_with_offsets(
               array_ops.stack([input_tensor]))
-          return tokens.values, starts.values, limits.values
+          return tokens.values, starts.values, ends.values
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
           # normal
@@ -146,7 +146,7 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
     # Decode the strings and get byte offsets
     (codepoints, byte_start_offsets) = (
         ragged_string_ops.unicode_decode_with_offsets(input_tensor, "UTF-8"))
-    byte_limit_offsets = array_ops.concat([
+    byte_end_offsets = array_ops.concat([
         byte_start_offsets[:, 1:],
         math_ops.cast(
             array_ops.expand_dims(string_ops.string_length(input_tensor), 1),
@@ -154,15 +154,15 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
     ], 1)
 
     # Tokenize
-    (codepoint_tokens, codepoint_start_offsets, codepoint_limit_offsets) = (
+    (codepoint_tokens, codepoint_start_offsets, codepoint_end_offsets) = (
         self._tokenize_codepoints_with_offsets(codepoints))
 
     # Encode the codepoints and translate the codepoint offsets to byte offsets.
     return (ragged_string_ops.unicode_encode(codepoint_tokens, "UTF-8"),
             array_ops.batch_gather(byte_start_offsets, codepoint_start_offsets),
             array_ops.batch_gather(
-                byte_limit_offsets,
-                math_ops.subtract(codepoint_limit_offsets, [1])))
+                byte_end_offsets,
+                math_ops.subtract(codepoint_end_offsets, [1])))
 
   def _tokenize_codepoints_with_offsets(self, codepoints_tensor):
     """Tokenizes a tensor of codepoints with rank of 1.
@@ -175,7 +175,7 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
       a shape of [num_strings, (num_tokens or num_offsets)].
     """
     (output_values, output_values_inner_splits, output_offset_starts,
-     output_offset_limits, output_outer_splits) = (
+     output_offset_ends, output_outer_splits) = (
          gen_unicode_script_tokenizer.unicode_script_tokenize_with_offsets(
              input_values=codepoints_tensor.flat_values,
              input_splits=codepoints_tensor.row_splits,
@@ -186,7 +186,7 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
     codepoint_offset_starts = RaggedTensor.from_nested_row_splits(
         flat_values=output_offset_starts,
         nested_row_splits=[output_outer_splits])
-    codepoint_offset_limits = RaggedTensor.from_nested_row_splits(
-        flat_values=output_offset_limits,
+    codepoint_offset_ends = RaggedTensor.from_nested_row_splits(
+        flat_values=output_offset_ends,
         nested_row_splits=[output_outer_splits])
-    return (codepoint_tokens, codepoint_offset_starts, codepoint_offset_limits)
+    return (codepoint_tokens, codepoint_offset_starts, codepoint_offset_ends)

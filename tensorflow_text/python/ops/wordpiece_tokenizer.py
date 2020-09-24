@@ -119,9 +119,9 @@ class WordpieceTokenizer(TokenizerWithOffsets):
     >>> result = tokenizer.tokenize_with_offsets(tokens)
     >>> result[0].to_list()  # subwords
     [[['they', "##'", '##re'], ['the'], ['great', '##est']]]
-    >>> result[1].to_list()  # offset starts
+    >>> result[1].to_list()  # start offsets
     [[[0, 4, 5], [0], [0, 5]]]
-    >>> result[2].to_list()  # offset limits
+    >>> result[2].to_list()  # end offsets
     [[[4, 5, 7], [3], [5, 8]]]
     ```
 
@@ -129,15 +129,16 @@ class WordpieceTokenizer(TokenizerWithOffsets):
       input: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 
     Returns:
-      A tuple `(tokens, start_offsets, limit_offsets)` where:
+      A tuple `(tokens, start_offsets, end_offsets)` where:
 
         * `tokens[i1...iN, j]` is a `RaggedTensor` of the string contents (or ID
           in the vocab_lookup_table representing that string) of the `jth` token
           in `input[i1...iN]`.
         * `start_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets
-          for the start of the `jth` token in `input[i1...iN]`.
-        * `limit_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets
-          for the end of the `jth` token in `input[i`...iN]`.
+          for the inclusive start of the `jth` token in `input[i1...iN]`.
+        * `end_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for
+          the exclusive end of the `jth` token in `input[i`...iN]` (exclusive,
+          i.e., first byte after the end of the token).
     """
     name = None
     if not isinstance(self._vocab_lookup_table, lookup_ops.LookupInterface):
@@ -152,22 +153,22 @@ class WordpieceTokenizer(TokenizerWithOffsets):
         raise ValueError('input must have a known rank.')
 
       if rank == 0:
-        wordpieces, starts, limits = self.tokenize_with_offsets(
+        wordpieces, starts, ends = self.tokenize_with_offsets(
             array_ops.stack([tokens]))
-        return wordpieces.values, starts.values, limits.values
+        return wordpieces.values, starts.values, ends.values
 
       elif rank > 1:
         if not ragged_tensor.is_ragged(tokens):
           tokens = ragged_tensor.RaggedTensor.from_tensor(
               tokens, ragged_rank=rank - 1)
-        wordpieces, starts, limits = self.tokenize_with_offsets(
+        wordpieces, starts, ends = self.tokenize_with_offsets(
             tokens.flat_values)
         wordpieces = wordpieces.with_row_splits_dtype(tokens.row_splits.dtype)
         starts = starts.with_row_splits_dtype(tokens.row_splits.dtype)
-        limits = limits.with_row_splits_dtype(tokens.row_splits.dtype)
+        ends = ends.with_row_splits_dtype(tokens.row_splits.dtype)
         return (tokens.with_flat_values(wordpieces),
                 tokens.with_flat_values(starts),
-                tokens.with_flat_values(limits))
+                tokens.with_flat_values(ends))
 
       if compat.forward_compatible(2019, 8, 25):
         kwargs = dict(output_row_partition_type='row_splits')
@@ -177,7 +178,7 @@ class WordpieceTokenizer(TokenizerWithOffsets):
         from_row_partition = RaggedTensor.from_row_lengths
 
       # Tokenize the tokens into subwords
-      values, row_splits, starts, limits = (
+      values, row_splits, starts, ends = (
           gen_wordpiece_tokenizer.wordpiece_tokenize_with_offsets(
               input_values=tokens,
               vocab_lookup_table=self._vocab_lookup_table.resource_handle,
@@ -201,6 +202,6 @@ class WordpieceTokenizer(TokenizerWithOffsets):
 
       wordpieces = from_row_partition(values, row_splits, validate=False)
       starts = from_row_partition(starts, row_splits, validate=False)
-      limits = from_row_partition(limits, row_splits, validate=False)
+      ends = from_row_partition(ends, row_splits, validate=False)
 
-      return wordpieces, starts, limits
+      return wordpieces, starts, ends

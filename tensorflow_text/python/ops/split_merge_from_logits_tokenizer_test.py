@@ -94,10 +94,10 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
             [18.0, 0.7],  # !: split
         ]])
     expected_tokens = [[b'I', b'love', b'Flume', b'!']]
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_strings, test_logits))
     self.assertAllEqual(expected_tokens, tokens)
-    extracted_tokens = _RaggedSubstr(test_strings, starts, limits)
+    extracted_tokens = _RaggedSubstr(test_strings, starts, ends)
     self.assertAllEqual(expected_tokens, extracted_tokens)
 
   def testVectorSingleValueTokenAcrossSpace(self):
@@ -134,12 +134,12 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
     # break character.
     expected_tokens = [[b'I', b'love', b'Flume', b'!']]
     expected_start_offsets = [[0, 2, 7, 12]]
-    expected_limit_offsets = [[1, 6, 12, 13]]
-    (tokens, starts, limits) = (
+    expected_end_offsets = [[1, 6, 12, 13]]
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_strings, test_logits))
     self.assertAllEqual(expected_tokens, tokens)
     self.assertAllEqual(expected_start_offsets, starts)
-    self.assertAllEqual(expected_limit_offsets, limits)
+    self.assertAllEqual(expected_end_offsets, ends)
 
     # Use the same arguments to test the tokenize() version, without offsets.
     tokens = self.tokenizer.tokenize(test_strings, test_logits)
@@ -150,22 +150,22 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
     # character.
     expected_tokens = [[b'I', b'loveFlume', b'!']]
     expected_start_offsets = [[0, 2, 12]]
-    expected_limit_offsets = [[1, 12, 13]]
+    expected_end_offsets = [[1, 12, 13]]
     # Assertions below clarify what the expected offsets mean:
     self.assertEqual(b'I', test_string[0:1])
 
-    # Notice that the original text between the [start, limit) offsets for the
+    # Notice that the original text between the [start, end) offsets for the
     # second token differs from the token text by an extra space: this is
     # by design, that space is not copied in the token.
     self.assertEqual(b'love Flume', test_string[2:12])
     self.assertEqual(b'!', test_string[12:13])
 
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.no_force_split_tokenizer.tokenize_with_offsets(
             test_strings, test_logits))
     self.assertAllEqual(expected_tokens, tokens)
     self.assertAllEqual(expected_start_offsets, starts)
-    self.assertAllEqual(expected_limit_offsets, limits)
+    self.assertAllEqual(expected_end_offsets, ends)
 
     # Use the same arguments to test the tokenize() version, without offsets.
     tokens = self.no_force_split_tokenizer.tokenize(test_strings, test_logits)
@@ -198,12 +198,12 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
     # break character.
     expected_tokens = [[
         _Utf8(u'我'), _Utf8(u'在'), _Utf8(u'谷歌'), _Utf8(u'写代码')]]
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_strings, test_logits))
     self.assertAllEqual(expected_tokens, tokens)
 
-    # Extract tokens according to the returned starts, limits.
-    tokens_by_offsets = _RaggedSubstr(test_strings, starts, limits)
+    # Extract tokens according to the returned starts, ends.
+    tokens_by_offsets = _RaggedSubstr(test_strings, starts, ends)
     self.assertAllEqual(expected_tokens, tokens_by_offsets)
 
     # Use the same arguments to test the tokenize() version, without offsets.
@@ -212,13 +212,13 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
 
     # Although force_split_at_break_character is set false we actually predict a
     # SPLIT at '写', so we still start a new token: '写代码'.
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.no_force_split_tokenizer.tokenize_with_offsets(
             test_strings, test_logits))
     self.assertAllEqual(expected_tokens, tokens)
 
-    # Extract tokens according to the returned starts, limits.
-    tokens_by_offsets = _RaggedSubstr(test_strings, starts, limits)
+    # Extract tokens according to the returned starts, ends.
+    tokens_by_offsets = _RaggedSubstr(test_strings, starts, ends)
     self.assertAllEqual(expected_tokens, tokens_by_offsets)
 
     # Use the same arguments to test the tokenize() version, without offsets.
@@ -272,14 +272,14 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
     expected_tokens = [[b'I', b'love', b'Flume', b'!'],
                        [b'and', b'tensorflow']]
     expected_starts = [[0, 1, 5, 10], [0, 4]]
-    expected_limits = [[1, 5, 10, 11], [3, 14]]
-    (tokens, starts, limits) = (
+    expected_ends = [[1, 5, 10, 11], [3, 14]]
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_strings, test_logits))
     self.assertAllEqual(expected_tokens, tokens)
-    tokens_by_offsets = _RaggedSubstr(test_strings, starts, limits)
+    tokens_by_offsets = _RaggedSubstr(test_strings, starts, ends)
     self.assertAllEqual(expected_tokens, tokens_by_offsets)
     self.assertAllEqual(expected_starts, starts)
-    self.assertAllEqual(expected_limits, limits)
+    self.assertAllEqual(expected_ends, ends)
 
     # Use the same arguments to test the tokenize() version, without offsets.
     tokens = self.tokenizer.tokenize(test_strings, test_logits)
@@ -388,10 +388,10 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
         ]])
     expected_tokens = [[b'I', b'love', b'Flume', b'!'],
                        [b'and', b'tensorflow']]
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_strings, test_logits))
     self.assertAllEqual(expected_tokens, tokens)
-    tokens_by_offsets = _RaggedSubstr(test_strings, starts, limits)
+    tokens_by_offsets = _RaggedSubstr(test_strings, starts, ends)
     self.assertAllEqual(expected_tokens, tokens_by_offsets)
 
     # Use the same arguments to test the tokenize() version, without offsets.

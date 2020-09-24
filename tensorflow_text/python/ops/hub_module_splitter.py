@@ -110,14 +110,14 @@ class HubModuleSplitter(SplitterWithOffsets):
       input_strs: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 
     Returns:
-      A tuple `(pieces, start_offsets, limit_offsets)` where:
+      A tuple `(pieces, start_offsets, end_offsets)` where:
         * `pieces` is a `RaggedTensor` of strings where `pieces[i1...iN, j]` is
           the string content of the `j-th` piece in `input_strs[i1...iN]`
         * `start_offsets` is a `RaggedTensor` of int64s where
           `start_offsets[i1...iN, j]` is the byte offset for the start of the
           `j-th` piece in `input_strs[i1...iN]`.
-        * `limit_offsets` is a `RaggedTensor` of int64s where
-          `limit_offsets[i1...iN, j]` is the byte offset immediately after the
+        * `end_offsets` is a `RaggedTensor` of int64s where
+          `end_offsets[i1...iN, j]` is the byte offset immediately after the
           end of the `j-th` piece in `input_strs[i...iN]`.
     """
     input_strs = ragged_tensor.convert_to_tensor_or_ragged_tensor(input_strs)
@@ -143,11 +143,11 @@ class HubModuleSplitter(SplitterWithOffsets):
             input_strs, ragged_rank=rank - 1)
 
       # [number strings, (number pieces)]
-      pieces, starts, limits = self._predict_pieces(input_strs.flat_values)
+      pieces, starts, ends = self._predict_pieces(input_strs.flat_values)
       pieces = input_strs.with_flat_values(pieces)
       starts = input_strs.with_flat_values(starts)
-      limits = input_strs.with_flat_values(limits)
-    return pieces, starts, limits
+      ends = input_strs.with_flat_values(ends)
+    return pieces, starts, ends
 
   def split(self, input_strs):
     """Splits a tensor of UTF-8 strings into pieces.

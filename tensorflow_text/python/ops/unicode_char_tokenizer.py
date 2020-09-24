@@ -74,11 +74,11 @@ class UnicodeCharTokenizer(TokenizerWithOffsets, Detokenizer):
       input: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 
     Returns:
-      A tuple `(tokens, start_offsets, limit_offsets)` where:
+      A tuple `(tokens, start_offsets, end_offsets)` where:
 
         * `tokens`: A `RaggedTensor` of codepoints (integer type).
         * `start_offsets`: A `RaggedTensor` of the tokens' starting byte offset.
-        * `limit_offsets`: A `RaggedTensor` of the tokens' ending byte offset.
+        * `end_offsets`: A `RaggedTensor` of the tokens' ending byte offset.
     """
     name = None
     with ops.name_scope(name, "UnicodeCharTokenize", [input]):
@@ -90,10 +90,10 @@ class UnicodeCharTokenizer(TokenizerWithOffsets, Detokenizer):
           dtypes.int64)
       # Adjust strlens to set 0-length strings to empty array (there will be no
       # tokens in this case).
-      final_limits = ragged_array_ops.boolean_mask(strlens, strlens > 0)
-      byte_limit_offsets = array_ops.concat(
-          [byte_start_offsets[..., 1:], final_limits], -1)
-      return codepoints, byte_start_offsets, byte_limit_offsets
+      final_ends = ragged_array_ops.boolean_mask(strlens, strlens > 0)
+      byte_end_offsets = array_ops.concat(
+          [byte_start_offsets[..., 1:], final_ends], -1)
+      return codepoints, byte_start_offsets, byte_end_offsets
 
   def detokenize(self, input, name=None):  # pylint: disable=redefined-builtin
     """Detokenizes input codepoints (integers) to UTF-8 strings.

@@ -307,19 +307,19 @@ class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
     sentence = 'I love lamp.'
     expected_tok = []
     expected_starts = [0, 1, 3, 4, 6, 8, 11]
-    expected_limits = [1, 3, 4, 6, 8, 11, 12]
+    expected_ends = [1, 3, 4, 6, 8, 11, 12]
     if out_type == dtypes.int32:
       expected_tok = [9, 169, 21, 125, 169, 579, 6]
     else:
       expected_tok = _utf8(['▁I', '▁l', 'o', 've', '▁l', 'amp', '.'])
     expected_tok = self.transformExpected(expected_tok)
     expected_starts = self.transformExpected(expected_starts, True)
-    expected_limits = self.transformExpected(expected_limits, True)
+    expected_ends = self.transformExpected(expected_ends, True)
     (tokens, starts,
-     limits) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentence))
+     ends) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentence))
     self.assertRaggedEqual(expected_tok, tokens)
     self.assertRaggedEqual(expected_starts, starts)
-    self.assertRaggedEqual(expected_limits, limits)
+    self.assertRaggedEqual(expected_ends, ends)
     detokenized = sp.detokenize(tokens)
     self.assertRaggedEqual(_utf8(sentence), detokenized)
 
@@ -329,12 +329,12 @@ class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
     expected_tokens = [['▁I', '▁l', 'o', 've', '▁l', 'amp', '.']]
     expected_tokens = _utf8(expected_tokens)
     expected_starts = [[0, 1, 3, 4, 6, 8, 11]]
-    expected_limits = [[1, 3, 4, 6, 8, 11, 12]]
+    expected_ends = [[1, 3, 4, 6, 8, 11, 12]]
     (tokens, starts,
-     limits) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
+     ends) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
     self.assertRaggedEqual(expected_tokens, tokens)
     self.assertRaggedEqual(expected_starts, starts)
-    self.assertRaggedEqual(expected_limits, limits)
+    self.assertRaggedEqual(expected_ends, ends)
     detokenized = sp.detokenize(tokens)
     self.assertRaggedEqual(_utf8(sentences), detokenized)
 
@@ -347,13 +347,13 @@ class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
     expected_tokens = _utf8(expected_tokens)
     expected_starts = [[0, 1, 3, 4, 6, 8, 10, 12, 13], [0, 1, 3, 4, 6, 11],
                        [0, 1, 3, 4, 6, 8, 11]]
-    expected_limits = [[1, 3, 4, 6, 8, 10, 12, 13, 14], [1, 3, 4, 6, 11, 12],
-                       [1, 3, 4, 6, 8, 11, 12]]
+    expected_ends = [[1, 3, 4, 6, 8, 10, 12, 13, 14], [1, 3, 4, 6, 11, 12],
+                     [1, 3, 4, 6, 8, 11, 12]]
     (tokens, starts,
-     limits) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
+     ends) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
     self.assertRaggedEqual(expected_tokens, tokens)
     self.assertRaggedEqual(expected_starts, starts)
-    self.assertRaggedEqual(expected_limits, limits)
+    self.assertRaggedEqual(expected_ends, ends)
     detokenized = sp.detokenize(tokens)
     self.assertRaggedEqual(_utf8(sentences), detokenized)
 
@@ -372,14 +372,14 @@ class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
     expected_starts = [[[0, 1, 3, 4, 6, 8, 10, 12, 13], [0, 1, 3, 4, 6, 11],
                         [0, 1, 3, 4, 6, 8, 11]],
                        [[0, 0, 1, 5, 10, 13, 17, 18, 19, 20, 21]]]
-    expected_limits = [[[1, 3, 4, 6, 8, 10, 12, 13, 14], [1, 3, 4, 6, 11, 12],
-                        [1, 3, 4, 6, 8, 11, 12]],
-                       [[0, 1, 5, 10, 13, 17, 18, 19, 20, 21, 22]]]
+    expected_ends = [[[1, 3, 4, 6, 8, 10, 12, 13, 14], [1, 3, 4, 6, 11, 12],
+                      [1, 3, 4, 6, 8, 11, 12]],
+                     [[0, 1, 5, 10, 13, 17, 18, 19, 20, 21, 22]]]
     (tokens, starts,
-     limits) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
+     ends) = sp.tokenize_with_offsets(ragged_factory_ops.constant(sentences))
     self.assertRaggedEqual(expected_tokens, tokens)
     self.assertRaggedEqual(expected_starts, starts)
-    self.assertRaggedEqual(expected_limits, limits)
+    self.assertRaggedEqual(expected_ends, ends)
     detokenized = sp.detokenize(tokens)
     self.assertRaggedEqual(_utf8(sentences), detokenized)
 
