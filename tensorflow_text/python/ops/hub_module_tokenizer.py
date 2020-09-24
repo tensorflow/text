@@ -50,14 +50,14 @@ class HubModuleTokenizer(TokenizerWithOffsets):
       input_strs: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 
     Returns:
-      A tuple `(tokens, start_offsets, limit_offsets)` where:
+      A tuple `(tokens, start_offsets, end_offsets)` where:
         * `tokens` is a `RaggedTensor` of strings where `tokens[i1...iN, j]` is
           the string content of the `j-th` token in `input_strs[i1...iN]`
         * `start_offsets` is a `RaggedTensor` of int64s where
           `start_offsets[i1...iN, j]` is the byte offset for the start of the
           `j-th` token in `input_strs[i1...iN]`.
-        * `limit_offsets` is a `RaggedTensor` of int64s where
-          `limit_offsets[i1...iN, j]` is the byte offset immediately after the
+        * `end_offsets` is a `RaggedTensor` of int64s where
+          `end_offsets[i1...iN, j]` is the byte offset immediately after the
           end of the `j-th` token in `input_strs[i...iN]`.
     """
     return self._splitter.split_with_offsets(input_strs)

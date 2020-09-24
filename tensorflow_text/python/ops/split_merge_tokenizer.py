@@ -197,14 +197,14 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
             ```
 
     Returns:
-      A tuple `(tokens, start_offsets, limit_offsets)` where:
+      A tuple `(tokens, start_offsets, end_offsets)` where:
         * `tokens` is a `RaggedTensor` of strings where `tokens[i1...iN, j]` is
           the string content of the `j-th` token in `input[i1...iN]`
         * `start_offsets` is a `RaggedTensor` of int64s where
           `start_offsets[i1...iN, j]` is the byte offset for the start of the
           `j-th` token in `input[i1...iN]`.
-        * `limit_offsets` is a `RaggedTensor` of int64s where
-          `limit_offsets[i1...iN, j]` is the byte offset immediately after the
+        * `end_offsets` is a `RaggedTensor` of int64s where
+          `end_offsets[i1...iN, j]` is the byte offset immediately after the
           end of the `j-th` token in `input[i...iN]`.
     """
     name = None
@@ -219,11 +219,11 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
         raise ValueError('input must have a known rank.')
 
       if rank == 0:
-        words, starts, limits = self.tokenize_with_offsets(
+        words, starts, ends = self.tokenize_with_offsets(
             array_ops.stack([tokens]),
             array_ops.stack([labels]),
             force_split_at_break_character)
-        return words.values, starts.values, limits.values
+        return words.values, starts.values, ends.values
 
       elif rank > 1:
         if not ragged_tensor.is_ragged(tokens):
@@ -239,16 +239,16 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
           labels_unpack = ragged_tensor.RaggedTensor.from_row_splits(
               values=labels.flat_values,
               row_splits=labels.nested_row_splits[-1])
-        words, starts, limits = self.tokenize_with_offsets(
+        words, starts, ends = self.tokenize_with_offsets(
             tokens.flat_values,
             labels_unpack,
             force_split_at_break_character)
         words = words.with_row_splits_dtype(tokens.row_splits.dtype)
         starts = starts.with_row_splits_dtype(tokens.row_splits.dtype)
-        limits = limits.with_row_splits_dtype(tokens.row_splits.dtype)
+        ends = ends.with_row_splits_dtype(tokens.row_splits.dtype)
         return (tokens.with_flat_values(words),
                 tokens.with_flat_values(starts),
-                tokens.with_flat_values(limits))
+                tokens.with_flat_values(ends))
 
       if not ragged_tensor.is_ragged(labels):
         ragged_labels = ragged_tensor.RaggedTensor.from_tensor(labels)
@@ -258,7 +258,7 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
       row_splits = math_ops.cast(ragged_labels.row_splits, dtypes.int32)
 
       # Tokenize the strings into tokens.
-      values, row_splits, starts, limits = (
+      values, row_splits, starts, ends = (
           gen_split_merge_tokenizer.split_merge_tokenize_with_offsets(
               input_values=tokens,
               labels=ragged_labels.flat_values,
@@ -267,5 +267,5 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
 
       words = RaggedTensor.from_row_splits(values, row_splits, validate=False)
       starts = RaggedTensor.from_row_splits(starts, row_splits, validate=False)
-      limits = RaggedTensor.from_row_splits(limits, row_splits, validate=False)
-      return words, starts, limits
+      ends = RaggedTensor.from_row_splits(ends, row_splits, validate=False)
+      return words, starts, ends

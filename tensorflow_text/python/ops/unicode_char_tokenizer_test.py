@@ -57,14 +57,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
         ord('!')
     ]
     expected_offset_starts = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    expected_offset_limits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    expected_offset_ends = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -73,14 +73,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
     test_value = constant_op.constant([b'I lov'])
     expected_tokens = [[ord('I'), ord(' '), ord('l'), ord('o'), ord('v')]]
     expected_offset_starts = [[0, 1, 2, 3, 4]]
-    expected_offset_limits = [[1, 2, 3, 4, 5]]
+    expected_offset_ends = [[1, 2, 3, 4, 5]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -90,14 +90,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
     expected_tokens = [[ord('1'), ord('2'), ord('3')],
                        [ord('4'), ord('5'), ord('6')]]
     expected_offset_starts = [[0, 1, 2], [0, 1, 2]]
-    expected_offset_limits = [[1, 2, 3], [1, 2, 3]]
+    expected_offset_ends = [[1, 2, 3], [1, 2, 3]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -109,14 +109,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
                                                ord('e')]],
                        [[ord('1'), ord('2')], [ord('3'), ord('4')]]]
     expected_offset_starts = [[[0, 1], [0, 1, 2]], [[0, 1], [0, 1]]]
-    expected_offset_limits = [[[1, 2], [1, 2, 3]], [[1, 2], [1, 2]]]
+    expected_offset_ends = [[[1, 2], [1, 2, 3]], [[1, 2], [1, 2]]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(
@@ -136,14 +136,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
         ord(u'∰')
     ]], [[ord('a')], [ord('b'), ord('c')]]]
     expected_offset_starts = [[[0, 1, 2, 3, 4, 5, 6, 7]], [[0], [0, 1]]]
-    expected_offset_limits = [[[1, 2, 3, 4, 5, 6, 7, 10]], [[1], [1, 2]]]
+    expected_offset_ends = [[[1, 2, 3, 4, 5, 6, 7, 10]], [[1], [1, 2]]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -169,16 +169,16 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
     expected_offset_starts = [[[[0, 1], [0, 1, 2, 3]], [[0, 1], [0, 1]]],
                               [[[0, 1], [0]], [[0, 1, 2, 3, 4], [0, 1, 2, 3,
                                                                  4]]]]
-    expected_offset_limits = [[[[1, 2], [1, 2, 3, 4]], [[1, 2], [1, 2]]],
-                              [[[1, 2], [1]], [[1, 2, 3, 4, 5], [1, 2, 3, 4,
-                                                                 5]]]]
+    expected_offset_ends = [[[[1, 2], [1, 2, 3, 4]], [[1, 2], [1, 2]]],
+                            [[[1, 2], [1]], [[1, 2, 3, 4, 5], [1, 2, 3, 4,
+                                                               5]]]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     print(detokenized)
@@ -197,15 +197,15 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
                                                 ord('!')]]]]
     expected_offset_starts = [[[[0, 1]], [[0, 1, 2], [0, 1]]],
                               [[[0, 1], [0, 1, 2]]]]
-    expected_offset_limits = [[[[1, 2]], [[1, 2, 3], [1, 2]]],
-                              [[[1, 2], [1, 2, 3]]]]
+    expected_offset_ends = [[[[1, 2]], [[1, 2, 3], [1, 2]]],
+                            [[[1, 2], [1, 2, 3]]]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -241,15 +241,15 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
                        ]]
     expected_offset_starts = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                               [0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]]
-    expected_offset_limits = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13],
-                              [2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13]]
+    expected_offset_ends = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13],
+                            [2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -258,14 +258,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
     test_value = constant_op.constant([b' ', b'   '])
     expected_tokens = [[ord(' ')], [ord(' '), ord(' '), ord(' ')]]
     expected_offset_starts = [[0], [0, 1, 2]]
-    expected_offset_limits = [[1], [1, 2, 3]]
+    expected_offset_ends = [[1], [1, 2, 3]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -282,14 +282,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
         ord('l')
     ]]
     expected_offset_starts = [[0, 1, 2, 3, 4, 5, 6]]
-    expected_offset_limits = [[1, 2, 3, 4, 5, 6, 7]]
+    expected_offset_ends = [[1, 2, 3, 4, 5, 6, 7]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -298,14 +298,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
     test_value = constant_op.constant([b''])
     expected_tokens = [[]]
     expected_offset_starts = [[]]
-    expected_offset_limits = [[]]
+    expected_offset_ends = [[]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -314,14 +314,14 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
     test_value = constant_op.constant([b'', b'I', b'', b'Oh', b''])
     expected_tokens = [[], [ord('I')], [], [ord('O'), ord('h')], []]
     expected_offset_starts = [[], [0], [], [0, 1], []]
-    expected_offset_limits = [[], [1], [], [1, 2], []]
+    expected_offset_ends = [[], [1], [], [1, 2], []]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)
@@ -334,15 +334,15 @@ class UnicodeCharTokenizerOpTest(test.TestCase):
                         [[ord('A')], [ord('a')]]]]
     expected_offset_starts = [[[[0, 1], [0]], []], [],
                               [[[0, 1], [0]], [[0], [0]]]]
-    expected_offset_limits = [[[[1, 2], [1]], []], [],
-                              [[[1, 2], [1]], [[1], [1]]]]
+    expected_offset_ends = [[[[1, 2], [1]], []], [],
+                            [[[1, 2], [1]], [[1], [1]]]]
     tokens = self.tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
     detokenized = self.tokenizer.detokenize(tokens)
     self.assertAllEqual(detokenized, test_value)

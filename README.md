@@ -148,17 +148,18 @@ print(tokens.to_list())
 When tokenizing strings, it is often desired to know where in the original
 string the token originated from. For this reason, each tokenizer which
 implements `TokenizerWithOffsets` has a *tokenize_with_offsets* method that will
-return the byte offsets along with the tokens. The offset_starts lists the bytes
-in the original string each token starts at, and the offset_limits lists the
-bytes where each token ends at.
+return the byte offsets along with the tokens. The start_offsets lists the bytes
+in the original string each token starts at (inclusive), and the end_offsets
+lists the bytes where each token ends at (exclusive, i.e., first byte *after*
+the token).
 
 ```python
 tokenizer = text.UnicodeScriptTokenizer()
-(tokens, offset_starts, offset_limits) = tokenizer.tokenize_with_offsets(
+(tokens, start_offsets, end_offsets) = tokenizer.tokenize_with_offsets(
     ['everything not saved will be lost.', u'Sad☹'.encode('UTF-8')])
 print(tokens.to_list())
-print(offset_starts.to_list())
-print(offset_limits.to_list())
+print(start_offsets.to_list())
+print(end_offsets.to_list())
 ```
 
 ```sh

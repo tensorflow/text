@@ -287,7 +287,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
           # Explicitly specify the offsets here because the current way of
           # testing offsets would require '[UNK]' to be part of tokens.
           expected_start=[[[0, 3, 4], [0]]],
-          expected_limit=[[[3, 4, 5], [5]]],
+          expected_end=[[[3, 4, 5], [5]]],
       ),
       # Test the token of death usecase.
       dict(
@@ -336,7 +336,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                                       expected_subwords,
                                       vocab,
                                       expected_start=None,
-                                      expected_limit=None,
+                                      expected_end=None,
                                       use_unknown_token=True,
                                       unknown_token="[UNK]",
                                       token_out_type=dtypes.string,
@@ -362,15 +362,15 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
         # - Then compare the extracted tokens and original tokens.
         begin, end = (self.evaluate((begin_t, end_t)))
 
-        # If expected start/limit offsets were provided, check them explicitly.
+        # If expected start/end offsets were provided, check them explicitly.
         # Otherwise test the offsets by extracting subwords using token offsets
         # from the original 'tokens' input.
-        if expected_start is None or expected_limit is None:
+        if expected_start is None or expected_end is None:
           extracted_tokens = _GetTokensFromWordpieceOffsets(tokens, begin, end)
           self.assertAllEqual(extracted_tokens, tokens)
         else:
           self.assertAllEqual(begin, expected_start)
-          self.assertAllEqual(end, expected_limit)
+          self.assertAllEqual(end, expected_end)
 
   @parameterized.parameters([
       dict(
@@ -389,7 +389,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                                             expected_subwords,
                                             vocab,
                                             expected_start=None,
-                                            expected_limit=None,
+                                            expected_end=None,
                                             use_unknown_token=True,
                                             token_out_type=dtypes.string):
     for row_splits_dtype in (dtypes.int32, dtypes.int64):
@@ -530,7 +530,7 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                   vocab,
                   max_chars_per_token=None,
                   expected_start=None,
-                  expected_limit=None,
+                  expected_end=None,
                   use_unknown_token=True,
                   token_out_type=dtypes.string):
     vocab_table = _CreateTable(vocab)

@@ -38,14 +38,14 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     test_value = constant_op.constant(b'I love Flume!')
     expected_tokens = [b'I', b'love', b'Flume!']
     expected_offset_starts = [0, 2, 7]
-    expected_offset_limits = [1, 6, 13]
+    expected_offset_ends = [1, 6, 13]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testScalarWithSplit(self):
     # Similar to testScalar, but using split() calls (instead of tokenize()).
@@ -54,40 +54,40 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     test_value = constant_op.constant(b'I love Flume!')
     expected_tokens = [b'I', b'love', b'Flume!']
     expected_offset_starts = [0, 2, 7]
-    expected_offset_limits = [1, 6, 13]
+    expected_offset_ends = [1, 6, 13]
     tokens = self.whitespace_tokenizer.split(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.split_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testVectorSingleValue(self):
     test_value = constant_op.constant([b'I love Flume!'])
     expected_tokens = [[b'I', b'love', b'Flume!']]
     expected_offset_starts = [[0, 2, 7]]
-    expected_offset_limits = [[1, 6, 13]]
+    expected_offset_ends = [[1, 6, 13]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testVector(self):
     test_value = constant_op.constant([b'I love Flume!', b'Good day'])
     expected_tokens = [[b'I', b'love', b'Flume!'], [b'Good', b'day']]
     expected_offset_starts = [[0, 2, 7], [0, 5]]
-    expected_offset_limits = [[1, 6, 13], [4, 8]]
+    expected_offset_ends = [[1, 6, 13], [4, 8]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testMatrix(self):
     test_value = constant_op.constant([[b'I love Flume!', b'Good day'],
@@ -95,14 +95,14 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     expected_tokens = [[[b'I', b'love', b'Flume!'], [b'Good', b'day']],
                        [[b'I', b'don\'t', b'want'], [b'no', b'scrubs']]]
     expected_offset_starts = [[[0, 2, 7], [0, 5]], [[0, 2, 8], [0, 3]]]
-    expected_offset_limits = [[[1, 6, 13], [4, 8]], [[1, 7, 12], [2, 9]]]
+    expected_offset_ends = [[[1, 6, 13], [4, 8]], [[1, 7, 12], [2, 9]]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testMatrixRagged(self):
     test_value = ragged_factory_ops.constant([[b'I love Flume!'],
@@ -110,14 +110,14 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     expected_tokens = [[[b'I', b'love', b'Flume!']],
                        [[b'I', b'don\'t', b'want'], [b'no', b'scrubs']]]
     expected_offset_starts = [[[0, 2, 7]], [[0, 2, 8], [0, 3]]]
-    expected_offset_limits = [[[1, 6, 13]], [[1, 7, 12], [2, 9]]]
+    expected_offset_ends = [[[1, 6, 13]], [[1, 7, 12], [2, 9]]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def test3DimMatrix(self):
     test_value = constant_op.constant([[[b'I love Flume!', b'Good day'],
@@ -130,15 +130,15 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
                         [[b'A', b'scrub', b'is'], [b'a', b'guy']]]]
     expected_offset_starts = [[[[0, 2, 7], [0, 5]], [[0, 2, 8], [0, 3]]],
                               [[[0, 2, 7], [0, 5]], [[0, 2, 8], [0, 2]]]]
-    expected_offset_limits = [[[[1, 6, 13], [4, 8]], [[1, 7, 12], [2, 9]]],
-                              [[[1, 6, 11], [4, 10]], [[1, 7, 10], [1, 5]]]]
+    expected_offset_ends = [[[[1, 6, 13], [4, 8]], [[1, 7, 12], [2, 9]]],
+                            [[[1, 6, 11], [4, 10]], [[1, 7, 10], [1, 5]]]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def test3DimMatrixRagged(self):
     test_value = ragged_factory_ops.constant([[[b'I love Flume!'],
@@ -151,15 +151,15 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
                        [[[b'I', b'love', b'Zhu!'], [b'Good', b'night']]]]
     expected_offset_starts = [[[[0, 2, 7]], [[0, 2, 8], [0, 3]]],
                               [[[0, 2, 7], [0, 5]]]]
-    expected_offset_limits = [[[[1, 6, 13]], [[1, 7, 12], [2, 9]]],
-                              [[[1, 6, 11], [4, 10]]]]
+    expected_offset_ends = [[[[1, 6, 13]], [[1, 7, 12], [2, 9]]],
+                            [[[1, 6, 11], [4, 10]]]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testInternationalization(self):
     test_value = constant_op.constant(
@@ -167,80 +167,80 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     expected_tokens = [[b'J\'adore', u'la灯'.encode('utf8')],
                        [u'¡Escríbeme!'.encode('utf8')]]
     expected_offset_starts = [[0, 8], [0]]
-    expected_offset_limits = [[7, 13], [13]]
+    expected_offset_ends = [[7, 13], [13]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testSpaceBoundaries(self):
     test_value = constant_op.constant([b' Hook em! ', b' .Ok.   Go  '])
     expected_tokens = [[b'Hook', b'em!'], [b'.Ok.', b'Go']]
     expected_offset_starts = [[1, 6], [1, 8]]
-    expected_offset_limits = [[5, 9], [5, 10]]
+    expected_offset_ends = [[5, 9], [5, 10]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testOnlySpaces(self):
     test_value = constant_op.constant([b' ', b'     ', b' \t\r\n'])
     expected_tokens = [[], [], []]
     expected_offset_starts = [[], [], []]
-    expected_offset_limits = [[], [], []]
+    expected_offset_ends = [[], [], []]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testWhitespaceCharacters(self):
     test_value = constant_op.constant([b'things:\tcarpet\rdesk\nlamp\r\nlove'])
     expected_tokens = [[b'things:', b'carpet', b'desk', b'lamp', b'love']]
     expected_offset_starts = [[0, 8, 15, 20, 26]]
-    expected_offset_limits = [[7, 14, 19, 24, 30]]
+    expected_offset_ends = [[7, 14, 19, 24, 30]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testEmptyStringSingle(self):
     test_value = constant_op.constant([b''])
     expected_tokens = [[]]
     expected_offset_starts = [[]]
-    expected_offset_limits = [[]]
+    expected_offset_ends = [[]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testEmptyString(self):
     test_value = constant_op.constant(
         [b'', b'I love Flume!', b'', b'O hai', b''])
     expected_tokens = [[], [b'I', b'love', b'Flume!'], [], [b'O', b'hai'], []]
     expected_offset_starts = [[], [0, 2, 7], [], [0, 2], []]
-    expected_offset_limits = [[], [1, 6, 13], [], [1, 5], []]
+    expected_offset_ends = [[], [1, 6, 13], [], [1, 5], []]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
   def testEmptyDimensions(self):
     test_value = ragged_factory_ops.constant(
@@ -252,15 +252,15 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
                         [[b'A', b'scrub', b'is'], [b'a', b'guy']]]]
     expected_offset_starts = [[[[0, 2, 7], [0, 5, 10, 12]], []], [],
                               [[[0, 2, 7], [0, 5]], [[0, 2, 8], [0, 2]]]]
-    expected_offset_limits = [[[[1, 6, 13], [4, 9, 11, 13]], []], [],
-                              [[[1, 6, 11], [4, 10]], [[1, 7, 10], [1, 5]]]]
+    expected_offset_ends = [[[[1, 6, 13], [4, 9, 11, 13]], []], [],
+                            [[[1, 6, 11], [4, 10]], [[1, 7, 10], [1, 5]]]]
     tokens = self.whitespace_tokenizer.tokenize(test_value)
     self.assertAllEqual(tokens, expected_tokens)
-    (tokens, starts, limits) = (
+    (tokens, starts, ends) = (
         self.whitespace_tokenizer.tokenize_with_offsets(test_value))
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
-    self.assertAllEqual(limits, expected_offset_limits)
+    self.assertAllEqual(ends, expected_offset_ends)
 
 
 if __name__ == '__main__':
