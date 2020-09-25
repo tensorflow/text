@@ -63,22 +63,14 @@ http_archive(
 )
 
 http_archive(
-    name = "com_google_re2",
-    sha256 = "d070e2ffc5476c496a6a872a6f246bfddce8e7797d6ba605a7c8d72866743bf9",
-    strip_prefix = "re2-506cfa4bffd060c06ec338ce50ea3468daa6c814",
-    urls = [
-        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/re2/archive/506cfa4bffd060c06ec338ce50ea3468daa6c814.tar.gz",
-        "https://github.com/google/re2/archive/506cfa4bffd060c06ec338ce50ea3468daa6c814.tar.gz",
-    ],
-)
-
-http_archive(
     name = "com_google_sentencepiece",
     strip_prefix = "sentencepiece-1.0.0",
     sha256 = "c05901f30a1d0ed64cbcf40eba08e48894e1b0e985777217b7c9036cac631346",
     urls = [
         "https://github.com/google/sentencepiece/archive/1.0.0.zip"
     ],
+    patches = ["//third_party/sentencepiece:processor.patch"],
+    patch_args = ["-p1", "-s"],
 )
 
 http_archive(
@@ -143,3 +135,9 @@ tf_workspace(tf_repo_name="@org_tensorflow")
 load("//third_party/tensorflow:tf_configure.bzl", "tf_configure")
 
 tf_configure(name = "local_config_tf")
+
+# Set up Android.
+load("@org_tensorflow//third_party/android:android_configure.bzl", "android_configure")
+android_configure(name="local_config_android")
+load("@local_config_android//:android.bzl", "android_workspace")
+android_workspace()

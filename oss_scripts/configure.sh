@@ -39,6 +39,25 @@ write_to_bazelrc "build -c opt"
 write_to_bazelrc "build --define=framework_shared_object=true"
 write_to_bazelrc "build --experimental_repo_remote_exec"
 
+# Config for Android build.
+write_to_bazelrc "build:android --crosstool_top=//external:android/crosstool"
+write_to_bazelrc "build:android --host_crosstool_top=@bazel_tools//tools/cpp:toolchain"
+write_to_bazelrc "build:android --action_env TF_HEADER_DIR=\"\""
+write_to_bazelrc "build:android --action_env TF_SHARED_LIBRARY_DIR=\"\""
+write_to_bazelrc "build:android --action_env TF_SHARED_LIBRARY_NAME=\"\""
+write_to_bazelrc "build:android_arm --config=android"
+write_to_bazelrc "build:android_arm --cpu=armeabi-v7a"
+write_to_bazelrc "build:android_arm --fat_apk_cpu=armeabi-v7a"
+write_to_bazelrc "build:android_arm64 --config=android"
+write_to_bazelrc "build:android_arm64 --cpu=arm64-v8a"
+write_to_bazelrc "build:android_arm64 --fat_apk_cpu=arm64-v8a"
+write_to_bazelrc "build:android_x86 --config=android"
+write_to_bazelrc "build:android_x86 --cpu=x86"
+write_to_bazelrc "build:android_x86 --fat_apk_cpu=x86"
+write_to_bazelrc "build:android_x86_64 --config=android"
+write_to_bazelrc "build:android_x86_64 --cpu=x86_64"
+write_to_bazelrc "build:android_x86_64 --fat_apk_cpu=x86_64"
+
 TF_CFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )
 TF_LFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
 TF_LFLAGS_2=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))' | awk '{print $2}') )

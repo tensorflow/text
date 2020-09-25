@@ -1,5 +1,7 @@
 load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
+
 # [internal] load build_test.bzl
+load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
 
 # Visibility rules
 package(
@@ -39,6 +41,11 @@ cc_library(
         ":whitespace_tokenizer_cc",
         ":wordpiece_tokenizer_cc",
     ],
+)
+
+tflite_cc_shared_object(
+    name = "libtftextops_for_testing.so",
+    deps = [":ops_lib"],
 )
 
 py_library(
