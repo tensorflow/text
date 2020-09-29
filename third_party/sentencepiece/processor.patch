@@ -31,11 +31,13 @@
  cc_library(
 --- a/src/common.h
 +++ b/src/common.h
-@@ -21,7 +21,12 @@
+@@ -21,7 +21,14 @@
  #include <utility>
  #include <vector>
  
-+#if defined(ANDROID) || defined(__ANDROID__) || defined(__APPLE__)
++#if defined(ANDROID) || defined(__ANDROID__)
++#include "tensorflow/core/platform/logging.h"
++#elif TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
 +#include "tensorflow/core/platform/logging.h"
 +#else
  #include <glog/logging.h>
