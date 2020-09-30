@@ -13,7 +13,7 @@ welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CO
 **UPDATE (8/28/2020):** See [RFC 283](https://github.com/tensorflow/community/pull/283)
 for upcoming changes and new APIs in TF.Text.
 
-## Introduction
+## INTRODUCTION
 
 TensorFlow Text provides a collection of text related classes and ops ready to
 use with TensorFlow 2.0. The library can perform the preprocessing regularly
@@ -25,7 +25,7 @@ in the TensorFlow graph. You do not need to worry about tokenization in
 training being different than the tokenization at inference, or managing
 preprocessing scripts.
 
-## Eager Execution
+## EAGER EXECUTION
 
 TensorFlow Text is compatible with both TensorFlow eager mode and graph mode.
 
@@ -35,7 +35,7 @@ import tensorflow_text as text
 tf.enable_eager_execution()
 ```
 
-## Unicode
+## UNICODE
 
 Most ops expect that the strings are in UTF-8. If you're using a different
 encoding, you can use the core tensorflow transcode op to transcode into UTF-8.
@@ -49,7 +49,7 @@ utf8_docs = tf.strings.unicode_transcode(docs, input_encoding='UTF-16-BE',
                                          output_encoding='UTF-8')
 ```
 
-## Normalization
+## NORMALIZATION
 
 When dealing with different sources of text, it's important that the same words
 are recognized to be identical. A common technique for case-insensitive matching
@@ -72,7 +72,7 @@ tf.Tensor(['\xc3\x84ffin'], shape=(1,), dtype=string)
 tf.Tensor(['A\xcc\x88ffin'], shape=(1,), dtype=string)
 ```
 
-## Tokenization
+## TOKENIZATION
 
 Tokenization is the process of breaking up a string into tokens. Commonly, these
 tokens are words, numbers, and/or punctuation.
@@ -89,7 +89,7 @@ tokens mapping to the original individual strings. As a result, the resulting
 shape's rank is increased by one. Please review the ragged tensor guide if you
 are unfamiliar with them. https://www.tensorflow.org/guide/ragged_tensors
 
-### WhitespaceTokenizer
+### WHITESPACE TOKENIZER
 
 This is a basic tokenizer that splits UTF-8 strings on ICU defined whitespace
 characters (eg. space, tab, new line).
@@ -104,7 +104,7 @@ print(tokens.to_list())
 [['everything', 'not', 'saved', 'will', 'be', 'lost.'], ['Sad\xe2\x98\xb9']]
 ```
 
-### UnicodeScriptTokenizer
+### UNICODE SCRIPT TOKENIZER
 
 This tokenizer splits UTF-8 strings based on Unicode script boundaries. The
 script codes used correspond to International Components for Unicode (ICU)
@@ -127,7 +127,7 @@ print(tokens.to_list())
  ['Sad', '\xe2\x98\xb9']]
 ```
 
-### Unicode split
+### UNICODE SPLIT
 
 When tokenizing languages without whitespace to segment words, it is common to
 just split by character, which can be accomplished using the
@@ -143,7 +143,7 @@ print(tokens.to_list())
 [['\xe4\xbb\x85', '\xe4\xbb\x8a', '\xe5\xb9\xb4', '\xe5\x89\x8d']]
 ```
 
-### Offsets
+### OFFSETS
 
 When tokenizing strings, it is often desired to know where in the original
 string the token originated from. For this reason, each tokenizer which
@@ -169,7 +169,7 @@ print(end_offsets.to_list())
 [[10, 14, 20, 25, 28, 33, 34], [3, 6]]
 ```
 
-### TF.Data Example
+### TF. DATASET API
 
 Tokenizers work as expected with the tf.data API. A simple example is provided
 below.
@@ -189,7 +189,7 @@ print(iterator.get_next().to_list())
 [["It's", 'a', 'trap!']]
 ```
 
-### Keras API
+### KERAS API
 
 When you use different tokenizers and ops to preprocess your data, the resulting
 outputs are Ragged Tensors. The Keras API makes it easy now to train a model
@@ -208,11 +208,11 @@ model = tf.keras.Sequential([
 ])
 ```
 
-## Other Text Ops
+## OTHER TEXT OPS
 
 TF.Text packages other useful preprocessing ops. We will review a couple below.
 
-### Wordshape
+### WORDSHAPE
 
 A common feature used in some natural language understanding models is to see
 if the text string has a certain property. For example, a sentence breaking
@@ -250,7 +250,7 @@ print(f4.to_list())
 [[False, False, False, False, False, False], [False]]
 ```
 
-### N-grams & Sliding Window
+### N-GRAMS & SLIDING WINDOW
 
 N-grams are sequential words given a sliding window size of *n*. When combining
 the tokens, there are three reduction mechanisms supported. For text, you would
@@ -276,9 +276,9 @@ print(bigrams.to_list())
 [['Everything not', 'not saved', 'saved will', 'will be', 'be lost.'], []]
 ```
 
-## Installation
+## INSTALLATION
 
-### Install using PIP
+### INSTALL USING PIP
 
 When installing TF Text with `pip install`, please note the version
 of TensorFlow you are running, as you should specify the corresponding version
@@ -289,7 +289,7 @@ Text, and if you're using TF 1.15, install the 1.15 version of TF Text.
 pip install -U tensorflow-text==<version>
 ```
 
-### Build from source steps:
+### BUILD FROM SOURCE STEPS:
 
 Note that TF Text needs to be built in the same environment as TensorFlow. Thus,
 if you manually build TF Text, it is highly recommended that you also build
