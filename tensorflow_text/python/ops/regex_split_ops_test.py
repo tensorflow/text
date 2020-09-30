@@ -22,6 +22,7 @@ from __future__ import print_function
 
 from absl.testing import parameterized
 
+from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import math_ops
@@ -43,7 +44,7 @@ def _ragged_substr(text_input, begin, end):
   if ragged_tensor.is_ragged(text_input):
     text_input_flat = text_input.flat_values
   else:
-    text_input_flat = text_input
+    text_input_flat = array_ops.reshape(text_input, [-1])
   broadcasted_text = array_ops.gather_v2(text_input_flat,
                                          begin.nested_value_rowids()[-1])
   size = math_ops.sub(end.flat_values, begin.flat_values)
@@ -55,67 +56,57 @@ def _ragged_substr(text_input, begin, end):
 class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
 
   @parameterized.parameters([
-      # Test doc string examples
       dict(
+          descr="Test doc string examples",
           text_input=[r"hello there"],
           delim_regex_pattern=r"\s",
           keep_delim_regex_pattern=r"\s",
           expected=[[b"hello", b" ", b"there"]],
       ),
-      # Test simple whitespace
       dict(
+          descr="Test simple whitespace",
           text_input=[r"hello there"],
           delim_regex_pattern=r"\s",
           expected=[[b"hello", b"there"]],
       ),
-      # Two delimiters in a row
       dict(
+          descr="Two delimiters in a row",
           text_input=[r"hello  there"],
           delim_regex_pattern=r"\s",
           expected=[[b"hello", b"there"]],
       ),
-      # Test Hiragana
       dict(
+          descr="Test Hiragana",
           text_input=[_utf8(u"では４日")],
           delim_regex_pattern=r"\p{Hiragana}",
           keep_delim_regex_pattern=r"\p{Hiragana}",
           expected=[[_utf8(u"で"), _utf8(u"は"),
                      _utf8(u"４日")]],
       ),
-      # Test symbols and punctuation
       dict(
+          descr="Test symbols and punctuation",
           text_input=[r"hello! (:$) there"],
           delim_regex_pattern=r"[\p{S}|\p{P}]+|\s",
           keep_delim_regex_pattern=r"[\p{S}|\p{P}]+",
           expected=[[b"hello", b"!", b"(:$)", b"there"]],
       ),
-      # Test numbers
       dict(
+          descr="Test numbers",
           text_input=[r"hello12345there"],
           delim_regex_pattern=r"\p{N}+",
           keep_delim_regex_pattern=r"\p{N}+",
           expected=[[b"hello", b"12345", b"there"]],
       ),
-      # Test numbers and symbols
       dict(
+          descr="Test numbers and symbols",
           text_input=[r"show me some $100 bills yo!"],
           delim_regex_pattern=r"\s|\p{S}",
           keep_delim_regex_pattern=r"\p{S}",
           expected=[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"]],
       ),
-      # Test input Tensor with shape = [2], rank = 1
       dict(
-          text_input=[
-              r"show me some $100 bills yo!",
-              r"hello there",
-          ],
-          delim_regex_pattern=r"\s|\p{S}",
-          keep_delim_regex_pattern=r"\p{S}",
-          expected=[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"],
-                    [b"hello", b"there"]],
-      ),
-      # Test input RaggedTensor with ragged ranks; shape = [2, (1, 2)]
-      dict(
+          descr="Test input RaggedTensor with ragged ranks; "
+          "shape = [2, (1, 2)]",
           text_input=[
               [b"show me some $100 bills yo!",
                _utf8(u"では４日")],
@@ -127,13 +118,75 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
                      [_utf8(u"で"), _utf8(u"は"),
                       _utf8(u"４日")]], [[b"hello", b"there"]]],
       ),
+      # Test inputs that are Tensors.
+      dict(
+          descr="Test input Tensor with shape = [2], rank = 1",
+          text_input=[
+              r"show me some $100 bills yo!",
+              r"hello there",
+          ],
+          delim_regex_pattern=r"\s|\p{S}",
+          keep_delim_regex_pattern=r"\p{S}",
+          expected=[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"],
+                    [b"hello", b"there"]],
+          input_is_dense=True,
+      ),
+      dict(
+          descr="Test input Tensor with shape = [2, 1], rank = 2",
+          text_input=[
+              [r"show me some $100 bills yo!"],
+              [r"hello there"],
+          ],
+          delim_regex_pattern=r"\s|\p{S}",
+          keep_delim_regex_pattern=r"\p{S}",
+          expected=[[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"]],
+                    [[b"hello", b"there"]]],
+          input_is_dense=True,
+      ),
+      dict(
+          descr="Test input Tensor with multiple ranks; shape = [2, 2]",
+          input_is_dense=True,
+          text_input=[
+              [b"show me some $100 bills yo!",
+               _utf8(u"では４日")],
+              [b"hello there", b"woot woot"],
+          ],
+          delim_regex_pattern=r"\s|\p{S}|\p{Hiragana}",
+          keep_delim_regex_pattern=r"\p{S}|\p{Hiragana}",
+          expected=[[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"],
+                     [_utf8(u"で"), _utf8(u"は"),
+                      _utf8(u"４日")]], [[b"hello", b"there"], [b"woot",
+                                                              b"woot"]]],
+      ),
+      dict(
+          descr="Test input Tensor with multiple; shape = [2, 2, 1]",
+          input_is_dense=True,
+          text_input=[
+              [[b"show me some $100 bills yo!"], [_utf8(u"では４日")]],
+              [[b"hello there"], [b"woot woot"]],
+          ],
+          delim_regex_pattern=r"\s|\p{S}|\p{Hiragana}",
+          keep_delim_regex_pattern=r"\p{S}|\p{Hiragana}",
+          # expected shape = [2, 2, 1, ]
+          expected=[[[[b"show", b"me", b"some", b"$", b"100", b"bills",
+                       b"yo!"]], [[_utf8(u"で"),
+                                   _utf8(u"は"),
+                                   _utf8(u"４日")]]],
+                    [[[b"hello", b"there"]], [[b"woot", b"woot"]]]],
+      ),
   ])
   def testRegexSplitOp(self,
                        text_input,
                        delim_regex_pattern,
                        expected,
-                       keep_delim_regex_pattern=r""):
-    text_input = ragged_factory_ops.constant(text_input)
+                       keep_delim_regex_pattern=r"",
+                       descr="",
+                       input_is_dense=False):
+    if input_is_dense:
+      text_input = constant_op.constant(text_input)
+    else:
+      text_input = ragged_factory_ops.constant(text_input)
+
     actual_tokens, start, end = regex_split_ops.regex_split_with_offsets(
         input=text_input,
         delim_regex_pattern=delim_regex_pattern,

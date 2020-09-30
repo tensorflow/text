@@ -18,26 +18,13 @@
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/framework/types.h"
+#include "tensorflow/core/platform/mutex.h"
 #include "tensorflow_text/core/kernels/regex_split.h"
 
 namespace tensorflow {
 namespace text {
 
 using ::tensorflow::Status;
-
-void GetRegexFromInput(tensorflow::OpKernelContext* ctx,
-                       const string& input_name, std::unique_ptr<RE2>* result) {
-  const Tensor* pattern_tensor;
-  OP_REQUIRES_OK(ctx, ctx->input(input_name, &pattern_tensor));
-  OP_REQUIRES(ctx, TensorShapeUtils::IsScalar(pattern_tensor->shape()),
-              errors::InvalidArgument("Pattern must be scalar, but received ",
-                                      pattern_tensor->shape().DebugString()));
-  const string regex_pattern = pattern_tensor->flat<tstring>()(0);
-  *result = absl::make_unique<RE2>(regex_pattern);
-  OP_REQUIRES(ctx, (*result)->ok(),
-              errors::InvalidArgument("Invalid pattern: ", regex_pattern,
-                                      ", error: ", (*result)->error()));
-}
 
 class RegexSplitOp : public tensorflow::OpKernel {
  public:
@@ -46,12 +33,9 @@ class RegexSplitOp : public tensorflow::OpKernel {
 
   void Compute(tensorflow::OpKernelContext* ctx) override {
     bool should_keep_delim;
-
-    std::unique_ptr<RE2> delim_re;
-    GetRegexFromInput(ctx, "delim_regex_pattern", &delim_re);
-
-    std::unique_ptr<RE2> keep_delim_re;
-    GetRegexFromInput(ctx, "keep_delim_regex_pattern", &keep_delim_re);
+    std::shared_ptr<RE2> delim_re;
+    std::shared_ptr<RE2> keep_delim_re;
+    GetRegexFromInput(ctx, &delim_re, &keep_delim_re);
     should_keep_delim = keep_delim_re->pattern().empty() ? false : true;
 
     const Tensor* input_tensor;
@@ -124,6 +108,88 @@ class RegexSplitOp : public tensorflow::OpKernel {
       output_row_splits(i) = row_splits[i];
     }
   }
+
+ private:
+  void GetRegexFromInput(tensorflow::OpKernelContext* ctx,
+                         std::shared_ptr<RE2>* delim_re,
+                         std::shared_ptr<RE2>* keep_delim_re) {
+    const Tensor* delim_regex_pattern_tensor;
+    OP_REQUIRES_OK(
+        ctx, ctx->input("delim_regex_pattern", &delim_regex_pattern_tensor));
+    OP_REQUIRES(ctx,
+                TensorShapeUtils::IsScalar(delim_regex_pattern_tensor->shape()),
+                errors::InvalidArgument(
+                    "Pattern must be scalar, but received ",
+                    delim_regex_pattern_tensor->shape().DebugString()));
+    const string delim_regex_pattern =
+        delim_regex_pattern_tensor->flat<tstring>()(0);
+    *delim_re = CachedDelimRE2(delim_regex_pattern);
+    OP_REQUIRES(
+        ctx, (*delim_re)->ok(),
+        errors::InvalidArgument("Invalid pattern: ", delim_regex_pattern,
+                                ", error: ", (*delim_re)->error()));
+
+    const Tensor* keep_delim_regex_pattern_tensor;
+    OP_REQUIRES_OK(ctx, ctx->input("keep_delim_regex_pattern",
+                                   &keep_delim_regex_pattern_tensor));
+    OP_REQUIRES(
+        ctx,
+        TensorShapeUtils::IsScalar(keep_delim_regex_pattern_tensor->shape()),
+        errors::InvalidArgument(
+            "Pattern must be scalar, but received ",
+            keep_delim_regex_pattern_tensor->shape().DebugString()));
+    const string keep_delim_regex_pattern =
+        keep_delim_regex_pattern_tensor->flat<tstring>()(0);
+    *keep_delim_re = CachedKeepDelimRE2(keep_delim_regex_pattern);
+    OP_REQUIRES(
+        ctx, (*keep_delim_re)->ok(),
+        errors::InvalidArgument("Invalid pattern: ", keep_delim_regex_pattern,
+                                ", error: ", (*keep_delim_re)->error()));
+  }
+
+  std::shared_ptr<RE2> CachedDelimRE2(const string& pattern) {
+    {
+      tf_shared_lock l(delim_mu_);
+      if (delim_re_ != nullptr && delim_re_->pattern() == pattern) {
+        return delim_re_;
+      }
+    }
+    // Construct the new RE2 object before acquiring the lock.
+    auto regex = std::make_shared<RE2>(pattern);
+    {
+      mutex_lock l(delim_mu_);
+      // Swap instead of assigning so that we destruct the old
+      // RE2 object (when necessary) after releasing the lock.
+      delim_re_.swap(regex);
+      return delim_re_;
+    }
+  }
+
+  std::shared_ptr<RE2> CachedKeepDelimRE2(const string& pattern) {
+    {
+      tf_shared_lock l(keep_delim_mu_);
+      if (keep_delim_re_ != nullptr && keep_delim_re_->pattern() == pattern) {
+        return keep_delim_re_;
+      }
+    }
+    // Construct the new RE2 object before acquiring the lock.
+    auto regex = std::make_shared<RE2>(pattern);
+    {
+      mutex_lock l(keep_delim_mu_);
+      // Swap instead of assigning so that we destruct the old
+      // RE2 object (when necessary) after releasing the lock.
+      keep_delim_re_.swap(regex);
+      return keep_delim_re_;
+    }
+  }
+
+  mutex delim_mu_;
+  std::shared_ptr<RE2> delim_re_ TF_GUARDED_BY(delim_mu_);
+
+  mutex keep_delim_mu_;
+  std::shared_ptr<RE2> keep_delim_re_ TF_GUARDED_BY(keep_delim_mu_);
+
+  TF_DISALLOW_COPY_AND_ASSIGN(RegexSplitOp);
 };
 
 REGISTER_KERNEL_BUILDER(

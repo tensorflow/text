@@ -238,6 +238,7 @@ tf_kernel_library(
         "@com_google_absl//absl/memory",
     ] + tf_deps(deps = [
         # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
     ]),
 )
 

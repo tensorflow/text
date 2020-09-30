@@ -426,7 +426,7 @@ py_tf_text_library(
 
 py_test(
     name = "regex_split_ops_test",
-    size = "small",
+    size = "medium",
     srcs = ["python/ops/regex_split_ops_test.py"],
     python_version = "PY3",
     srcs_version = "PY3",
