@@ -13,6 +13,25 @@ welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CO
 **UPDATE (8/28/2020):** See [RFC 283](https://github.com/tensorflow/community/pull/283)
 for upcoming changes and new APIs in TF.Text.
 
+## INDEX
+* [Introduction](https://github.com/tensorflow/text#introduction)
+* [Eager Execution](https://github.com/tensorflow/text#eager-execution)
+* [Unicode](https://github.com/tensorflow/text#unicode)
+* [Normalization](https://github.com/tensorflow/text#normalization)
+* [Tokenization](https://github.com/tensorflow/text#tokenization)
+  * [Whitespace Tokenizer](https://github.com/tensorflow/text#whitespacetokenizer)
+  * [UnicodeScript Tokenizer](https://github.com/tensorflow/text#unicodescripttokenizer)
+  * [Unicode split](https://github.com/tensorflow/text#unicode-split)
+  * [Offsets](https://github.com/tensorflow/text#offsets)
+  * [TF.Data Example](https://github.com/tensorflow/text#tfdata-example)
+  * [Keras API](https://github.com/tensorflow/text#keras-api)
+* [Other Text Ops](https://github.com/tensorflow/text#other-text-ops)
+  * [Wordshape](https://github.com/tensorflow/text#wordshape)
+  * [N-grams & Sliding Window](https://github.com/tensorflow/text#n-grams--sliding-window)
+* [Installation](https://github.com/tensorflow/text#installation)
+  * [Install using PIP](https://github.com/tensorflow/text#install-using-pip)
+  * [Build from source steps:](https://github.com/tensorflow/text#build-from-source-steps)
+
 ## Introduction
 
 TensorFlow Text provides a collection of text related classes and ops ready to
