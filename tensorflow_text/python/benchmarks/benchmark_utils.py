@@ -28,7 +28,9 @@ from tensorflow.python.eager import context
 from tensorflow.python.eager import def_function
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import variables as variables_lib
+from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.platform import benchmark
+from tensorflow_text.python import ops as text_ops
 # [internal] import xprof_session
 from tensorflow.python.util import tf_inspect
 
@@ -39,6 +41,8 @@ class OpsBaseBenchmark(benchmark.Benchmark):
   def __init__(self):
     super(OpsBaseBenchmark, self).__init__()
     self.input_data = None
+    self.batch_size = None
+    self.use_tf_function = False
 
   def _get_method_name(self):
     """Returns the calling method name."""
@@ -60,6 +64,7 @@ class OpsBaseBenchmark(benchmark.Benchmark):
   def load_input_data(self, batch_size):
     """Loads the IMDB dataset and sets up the input data to run the ops on."""
 
+    self.batch_size = batch_size
     data = tfds.load(
         'imdb_reviews/plain_text', split=tfds.Split.TRAIN).batch(batch_size)
     # The input data has shape [batch_size, data] and the op is run multiple
@@ -77,8 +82,8 @@ class OpsBaseBenchmark(benchmark.Benchmark):
                      fn,
                      iters,
                      burn_iters,
-                     use_tf_function=False,
                      xprof_enabled=False,
+                     benchmark_name=None,
                      **kwargs):
     """Runs the benchmark and reports results.
 
@@ -86,30 +91,64 @@ class OpsBaseBenchmark(benchmark.Benchmark):
       fn: Function to be benchmarked.
       iters: Number of iterations to run the benchmark.
       burn_iters: Number of warm-up iterations to run to reach a stable state.
-      use_tf_function: Bool, specifies whether the function should be wrapped in
-        a @tf.function while running eagerly. By default 'False' and ignored in
-        graph mode.
       xprof_enabled: Enables xprof traces.
+      benchmark_name: Overwrites the default name.
       **kwargs: Kwargs to the benchmarked function.
 
     Returns:
       Dict which contains the wall time report for the runned op.
     """
-    benchmark_name = self._get_method_name()
+    name = benchmark_name or self._get_method_name()
 
     if context.executing_eagerly():
-      self._run_and_report_eagerly(fn, iters, burn_iters, benchmark_name,
-                                   use_tf_function, xprof_enabled, **kwargs)
+      self._run_and_report_eagerly(fn, iters, burn_iters, name, xprof_enabled,
+                                   **kwargs)
     else:
-      self._run_and_report_graphmode(fn, iters, burn_iters, benchmark_name,
-                                     xprof_enabled, **kwargs)
+      self._run_and_report_graphmode(fn, iters, burn_iters, name, xprof_enabled,
+                                     **kwargs)
+
+  def _convert_to_ragged_inputs(self, inputs):
+    """Transforms the text batch inputs to a ragged shape."""
+    if isinstance(self.input_data, ragged_tensor.RaggedTensor):
+      return inputs
+
+    inputs = text_ops.WhitespaceTokenizer().tokenize(inputs)
+    return inputs
+
+  def run_and_report_ragged_vs_dense(self,
+                                     fn,
+                                     iters,
+                                     burn_iters,
+                                     xprof_enabled=False,
+                                     **kwargs):
+    """Runs the op on ragged inputs and on its dense counterpart for comparison."""
+    ragged_data = self._convert_to_ragged_inputs(self.input_data)
+
+    self.input_data = ragged_data
+    self.run_and_report(
+        fn,
+        iters,
+        burn_iters,
+        xprof_enabled,
+        benchmark_name=self._get_method_name() + '_ragged',
+        **kwargs)
+
+    self.input_data = ragged_data.to_tensor()
+    self.run_and_report(
+        fn,
+        iters,
+        burn_iters,
+        xprof_enabled,
+        benchmark_name=self._get_method_name() + '_dense',
+        **kwargs)
+
+    self.load_input_data(self.batch_size)
 
   def _run_and_report_eagerly(self,
                               fn,
                               iters,
                               burn_iters,
                               benchmark_name,
-                              use_tf_function=False,
                               xprof_enabled=False,
                               **kwargs):
     """Runs and reports benchmarks eagerly."""
@@ -124,7 +163,7 @@ class OpsBaseBenchmark(benchmark.Benchmark):
     def func():
       fn(self.input_data, **kwargs)
 
-    op = tf_func if use_tf_function else func
+    op = tf_func if self.use_tf_function else func
 
     for _ in range(burn_iters):
       op()
@@ -141,7 +180,7 @@ class OpsBaseBenchmark(benchmark.Benchmark):
     total_time = run_benchmark()
     mean_time = total_time / iters
     benchmark_name = benchmark_name + ('_function'
-                                       if use_tf_function else '_eager')
+                                       if self.use_tf_function else '_eager')
     extras = {'sec_per_batch': total_time / iters}
     if hasattr(self, 'batch_number'):
       extras.update({'batches_per_sec': self.batch_number / mean_time})

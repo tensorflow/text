@@ -47,6 +47,9 @@ flags.DEFINE_boolean("run_eagerly", True, "Run in eager mode")
 flags.DEFINE_boolean(
     "use_tf_function", True,
     "Wraps the op in a tf.function. Only works when eager mode is enabled")
+flags.DEFINE_boolean(
+    "ragged_vs_dense", False,
+    "Run the tokenizers using ragged inputs and its dense counterpart")
 flags.DEFINE_boolean("xprof_tracing", False, "Enables xprof tracing")
 flags.DEFINE_boolean("with_offsets", False,
                      "Runs the tokenize_with_offsets op instead of tokenize")
@@ -67,6 +70,7 @@ class TokenizationBenchmark(
     if not FLAGS.run_eagerly:
       ops.disable_eager_execution()
 
+    self.use_tf_function = FLAGS.use_tf_function
     self.load_input_data(FLAGS.batch_size)
 
   # Tokenizers to benchmark which do not require a special/extra input can be
@@ -94,15 +98,21 @@ class TokenizationBenchmark(
   ]
 
   def benchmark(self, tokenizer, kwargs=None):
-
     tokenizer = tokenizer(**(kwargs or {}))
     op = tokenizer.tokenize_with_offsets if FLAGS.with_offsets else tokenizer.tokenize
+
+    if FLAGS.ragged_vs_dense:
+      self.run_and_report_ragged_vs_dense(
+          op,
+          FLAGS.run_iters,
+          FLAGS.burn_iters,
+          xprof_enabled=FLAGS.xprof_tracing)
+      return
 
     self.run_and_report(
         op,
         FLAGS.run_iters,
         FLAGS.burn_iters,
-        use_tf_function=FLAGS.use_tf_function,
         xprof_enabled=FLAGS.xprof_tracing)
 
 
@@ -113,6 +123,7 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpsBaseBenchmark):
     if not FLAGS.run_eagerly:
       ops.disable_eager_execution()
 
+    self.use_tf_function = FLAGS.use_tf_function
     self.load_input_data(FLAGS.batch_size)
 
   def _create_table(self, vocab, num_oov=100):
@@ -122,11 +133,18 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpsBaseBenchmark):
   def _run(self, tokenizer, kwargs=None):
     op = tokenizer.tokenize_with_offsets if FLAGS.with_offsets else tokenizer.tokenize
 
+    if FLAGS.ragged_vs_dense:
+      self.run_and_report_ragged_vs_dense(
+          op,
+          FLAGS.run_iters,
+          FLAGS.burn_iters,
+          xprof_enabled=FLAGS.xprof_tracing,
+          **(kwargs or {}))
+
     self.run_and_report(
         op,
         FLAGS.run_iters,
         FLAGS.burn_iters,
-        use_tf_function=FLAGS.use_tf_function,
         xprof_enabled=FLAGS.xprof_tracing,
         **(kwargs or {}))
 
@@ -153,6 +171,9 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpsBaseBenchmark):
     return char_splits
 
   def benchmark_split_merge_tokenizer(self):
+    if FLAGS.ragged_vs_dense:
+      return
+
     random_seed.set_seed(5)
 
     char_splits = self._get_char_level_splits()
@@ -179,6 +200,9 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpsBaseBenchmark):
     self._run(tokenizer, {"labels": labels})
 
   def benchmark_split_merge_from_logits_tokenizer(self):
+    if FLAGS.ragged_vs_dense:
+      return
+
     random_seed.set_seed(5)
 
     char_splits = self._get_char_level_splits().to_tensor()
@@ -206,6 +230,7 @@ class RegexSplitOpsBenchmark(benchmark_utils.OpsBaseBenchmark):
     if not FLAGS.run_eagerly:
       ops.disable_eager_execution()
 
+    self.use_tf_function = FLAGS.use_tf_function
     self.load_input_data(FLAGS.batch_size)
 
   def benchmark_regex_split_ops(self):
@@ -216,7 +241,6 @@ class RegexSplitOpsBenchmark(benchmark_utils.OpsBaseBenchmark):
         op,
         FLAGS.run_iters,
         FLAGS.burn_iters,
-        use_tf_function=FLAGS.use_tf_function,
         xprof_enabled=FLAGS.xprof_tracing,
         **(kwargs or {}))
 
