@@ -13,6 +13,25 @@ welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CO
 **UPDATE (8/28/2020):** See [RFC 283](https://github.com/tensorflow/community/pull/283)
 for upcoming changes and new APIs in TF.Text.
 
+## INDEX
+* [Introduction](#introduction)
+* [Eager Execution](#eager-execution)
+* [Unicode](#unicode)
+* [Normalization](#normalization)
+* [Tokenization](#tokenization)
+  * [Whitespace Tokenizer](#whitespacetokenizer)
+  * [UnicodeScript Tokenizer](#unicodescripttokenizer)
+  * [Unicode split](#unicode-split)
+  * [Offsets](#offsets)
+  * [TF.Data Example](#tfdata-example)
+  * [Keras API](#keras-api)
+* [Other Text Ops](#other-text-ops)
+  * [Wordshape](#wordshape)
+  * [N-grams & Sliding Window](#n-grams--sliding-window)
+* [Installation](#installation)
+  * [Install using PIP](#install-using-pip)
+  * [Build from source steps:](#build-from-source-steps)
+
 ## Introduction
 
 TensorFlow Text provides a collection of text related classes and ops ready to
