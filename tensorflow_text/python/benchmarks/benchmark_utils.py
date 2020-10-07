@@ -181,28 +181,30 @@ class OpsBaseBenchmark(benchmark.Benchmark):
     mean_time = total_time / iters
     benchmark_name = benchmark_name + ('_function'
                                        if self.use_tf_function else '_eager')
+    metrics = []
     extras = {'sec_per_batch': total_time / iters}
     if hasattr(self, 'batch_number'):
       extras.update({'batches_per_sec': self.batch_number / mean_time})
+      metrics.append({
+          'name': 'batches_per_sec',
+          'value': self.batch_number / mean_time
+      })
 
     if xprof_enabled:
       extras.update(self._run_with_xprof(run_benchmark))
 
     self.report_benchmark(
-        wall_time=mean_time, name=benchmark_name, extras=extras)
+        wall_time=mean_time,
+        name=benchmark_name,
+        extras=extras,
+        metrics=metrics)
 
   def _run_with_xprof(self, benchmark_fn):
     output = {}
     xprof = xprof_session.XprofSession()
     xprof.start_session(enable_python_tracer=True)
     _ = benchmark_fn()
-    output['xprof link with python trace'] = xprof.end_session_and_get_url()
-
-    # Re-run with xprof but no python trace.
-    xprof = xprof_session.XprofSession()
-    xprof.start_session(enable_python_tracer=False)
-    _ = benchmark_fn()
-    output['xprof link'] = xprof.end_session_and_get_url()
+    output['xprof_link'] = xprof.end_session_and_get_url()
 
     return output
 
@@ -239,8 +241,13 @@ class OpsBaseBenchmark(benchmark.Benchmark):
       mean_time = total_time / iters
       extras = {'sec_per_batch': mean_time}
 
+      metrics = []
       if hasattr(self, 'batch_number'):
         extras.update({'batches_per_sec': self.batch_number / mean_time})
+        metrics.append({
+            'name': 'batches_per_sec',
+            'value': self.batch_number / mean_time
+        })
 
       if xprof_enabled:
         extras.update(self._run_with_xprof(run_benchmark))
@@ -248,4 +255,5 @@ class OpsBaseBenchmark(benchmark.Benchmark):
       self.report_benchmark(
           wall_time=mean_time,
           name=benchmark_name + '_graph',
-          extras=extras)
+          extras=extras,
+          metrics=metrics)
