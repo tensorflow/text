@@ -98,7 +98,7 @@ class SentencepieceTokenizerOpTest(ragged_test_util.RaggedTensorTestCase,
     super(SentencepieceTokenizerOpTest, self).setUp()
     sentencepiece_model_file = (
         'tensorflow_text/python/ops/test_data/test_oss_model.model')
-    self.model = gfile.GFile(sentencepiece_model_file, 'r').read()
+    self.model = gfile.GFile(sentencepiece_model_file, 'rb').read()
 
   def testGetVocabSize(self):
     sp = SentencepieceTokenizer(self.model)
