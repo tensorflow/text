@@ -23,7 +23,7 @@ import logging
 
 from absl.testing import absltest
 from absl.testing import parameterized
-from tensorflow_text.tools.wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
+from wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
 
 
 class ExtractCharTokensTest(parameterized.TestCase):

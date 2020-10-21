@@ -20,13 +20,15 @@ from __future__ import division
 from __future__ import print_function
 from absl import app
 from absl import flags
-from tensorflow_text.tools.wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
+from wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
 
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('input_path', None, 'Path to wordcount file.')
+flags.mark_flag_as_required('input_path', FLAGS)
 flags.DEFINE_string('output_path', None, 'Path to vocab file.')
+flags.mark_flag_as_required('output_path', FLAGS)
 
 flags.DEFINE_integer('upper_thresh', 10000000,
                      'Upper threshold for binary search.')
