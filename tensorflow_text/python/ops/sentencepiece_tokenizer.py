@@ -23,6 +23,9 @@ from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import control_flow_ops
+from tensorflow.python.ops import gen_math_ops
+from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
@@ -65,7 +68,8 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
                reverse=False,
                add_bos=False,
                add_eos=False,
-               name=None):
+               name=None,
+               oov_as_unk=False):
     """Creates & initializes a Sentencepiece processor.
 
     Args:
@@ -85,6 +89,8 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       add_eos: Add </s> to the result (Default = false) <s>/</s> is added after
         reversing (if enabled).
       name: The name argument that is passed to the op function.
+      oov_as_unk: Replace out-of-vocabulary input ids with that of the '<unk>'
+        token (Default = false); if false, oov inputs will raise exceptions.
 
     Returns:
       pieces: A SentencepieceTokenizer.
@@ -98,6 +104,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
     self.add_bos = add_bos
     self.add_eos = add_eos
     self._model_resource = _SentencepieceModelResource(model, name)
+    self.oov_as_unk = oov_as_unk
 
   def tokenize(self, input, name=None):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings.
@@ -215,6 +222,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
         raise ValueError("Rank of input_tensor must be statically known.")
       if input_tensor.shape.ndims == 0:
         raise ValueError("Rank of input_tensor must be at least 1.")
+      input_tensor = self._sanitize_inputs(input_tensor)
       if ragged_tensor.is_ragged(input_tensor):
         if input_tensor.flat_values.shape.ndims > 1:
           # If the flat_values of our ragged tensor is multi-dimensional, we can
@@ -238,6 +246,23 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
         else:
           tokens = self.detokenize(array_ops.stack([input_tensor]))
           return array_ops.reshape(tokens, [])
+
+  def _sanitize_inputs(self, input_tensor):
+    """Sanitizes piece-id inputs to de-tokenization methods."""
+    if input_tensor.dtype is dtypes.string:
+        return input_tensor
+    if isinstance(input_tensor, RaggedTensor):
+      values = self._sanitize_inputs(input_tensor.flat_values)
+      return input_tensor.with_flat_values(values)
+    is_oov = gen_math_ops.greater_equal(input_tensor, self.vocab_size())
+    if self.oov_as_unk:
+      id_unk = self.string_to_id('<unk>')
+      return array_ops.where_v2(is_oov, id_unk, input_tensor)
+    no_oovs = math_ops.logical_not(math_ops.reduce_any(is_oov))
+    message = ops.convert_to_tensor_v2('Found OOV ids in the inputs.')
+    control = control_flow_ops.Assert(no_oovs, [message])
+    with ops.control_dependencies([control]):
+      return input_tensor
 
   def vocab_size(self, name=None):
     """Returns the vocabulary size.
@@ -267,6 +292,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       input_tensor = ragged_tensor.convert_to_tensor_or_ragged_tensor(input)
       if input_tensor.shape.ndims is None:
         raise ValueError("Rank of input_tensor must be statically known.")
+      input_tensor = self._sanitize_inputs(input_tensor)
       if input_tensor.shape.ndims == 0:
         strings = self.id_to_string(array_ops.stack([input_tensor]))
         return strings[0]
