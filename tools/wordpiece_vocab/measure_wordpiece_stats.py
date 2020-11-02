@@ -42,21 +42,26 @@ import tempfile
 from absl import app
 from absl import flags
 import apache_beam as beam
-import tensorflow.compat.v1 as tf
+import tensorflow as tf  # tf
 import tensorflow_transform as tft
 import tensorflow_transform.beam as tft_beam
 from tensorflow_transform.tf_metadata import dataset_metadata
 from tensorflow_transform.tf_metadata import dataset_schema
-from wordpiece_vocab import utils
+from google3.pipeline.flume.py import runner
+from google3.pipeline.flume.py.io import recordio
+from tensorflow_text.google.tools import utils
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('input_file', None, 'Input RecordIO file.')
 flags.DEFINE_string('output_file', None,
                     'File in which to store calculated statistics.')
-flags.DEFINE_string('text_key', 'text', 'Text feature key in input examples.')
+flags.DEFINE_string('temp_dir', None, 'The path to store TFT temp files.')
+flags.DEFINE_string('text_key', 'text_a', 'Text feature key in input examples.')
 flags.DEFINE_string(
-    'language_code_key', 'language_code', 'Language code feature key.')
+    'language_code_key', None,
+    'Optional language code feature key. If not set, language of each '
+    'sample will be automatically detected.')
 flags.DEFINE_string('vocab_file', None, 'Wordpiece vocab file.')
 
 
@@ -66,8 +71,9 @@ def calculate_metrics():
   # Schema of input dataset.
   raw_metadata = dataset_metadata.DatasetMetadata(
       dataset_schema.from_feature_spec({
-          'text': tf.FixedLenFeature([], tf.string),
-          'language_code': tf.FixedLenFeature([], tf.string),
+          'label': tf.FixedLenFeature([], tf.string),
+          'text_a': tf.FixedLenFeature([], tf.string),
+          'guid': tf.FixedLenFeature([], tf.string),
       }))
 
   # Schema to format metrics as CSV.
@@ -91,46 +97,48 @@ def calculate_metrics():
              'unweighted_en_wp_overlap_percent',
              'weighted_en_wp_overlap_percent']
 
-  # Create pipeline.
-  pipeline = beam.Pipeline()
+  temp_dir = FLAGS.temp_dir if FLAGS.temp_dir else tempfile.mkdtemp()
 
-  with tft_beam.Context(temp_dir=tempfile.mkdtemp()):
-    example_converter = tft.coders.ExampleProtoCoder(
-        raw_metadata.schema, serialized=False)
-    csv_converter = tft.coders.CsvCoder(columns, csv_schema)
+  def pipeline(root):
+    """Creates a pipeline to measure wordpiece vocab metrics over a corpus."""
 
-    # Read raw data and convert to TF Transform encoded dict.
-    raw_data = (
-        pipeline
-        | 'ReadInputData' >> beam.io.tfrecordio.ReadFromTFRecord(
-            FLAGS.input_file, coder=beam.coders.ProtoCoder(tf.train.Example))
-        | 'DecodeInputData' >> beam.Map(example_converter.decode))
+    with tft_beam.Context(temp_dir=temp_dir):
+      example_converter = tft.coders.ExampleProtoCoder(
+          raw_metadata.schema, serialized=False)
+      csv_converter = tft.coders.CsvCoder(columns, csv_schema)
 
-    # Apply transform to wordpiece-tokenize input.
-    (transformed_data, _), _ = (
-        (raw_data, raw_metadata)
-        | 'WordpieceTokenizeInput' >> tft_beam.AnalyzeAndTransformDataset(
-            utils.metrics_preprocessing_fn(FLAGS.vocab_file,
-                                           FLAGS.text_key,
-                                           FLAGS.language_code_key)))
+      # Read raw data and convert to TF Transform encoded dict.
+      raw_data = (
+          root
+          | 'ReadInputData' >> recordio.ReadFromRecordIO(
+              FLAGS.input_file, coder=beam.coders.ProtoCoder(tf.train.Example))
+          | 'DecodeInputData' >> beam.Map(example_converter.decode))
 
-    # Aggregate values for each lang, calculate metrics, and write to output.
-    _ = (
-        transformed_data
-        | 'CompileTokenInfo' >> beam.ParDo(utils.CompileTokenizationInfo())
-        | 'CombineStatsForLang' >> beam.CombineGlobally(utils.AggregateLang())
-        | 'CalculateMetrics' >> beam.ParDo(utils.CalculateMetrics())
-        | 'EncodeMetrics' >> beam.Map(csv_converter.encode)
-        | 'WriteMetrics' >> beam.io.WriteToText(FLAGS.output_file,
-                                                shard_name_template='',
-                                                header=','.join(columns)))
+      # Apply transform to wordpiece-tokenize input.
+      (transformed_data, _), _ = (
+          (raw_data, raw_metadata)
+          | 'WordpieceTokenizeInput' >> tft_beam.AnalyzeAndTransformDataset(
+              utils.metrics_preprocessing_fn(FLAGS.vocab_file,
+                                             FLAGS.text_key,
+                                             FLAGS.language_code_key)))
+
+      # Aggregate values for each lang, calculate metrics, and write to output.
+      _ = (
+          transformed_data
+          | 'CompileTokenInfo' >> beam.ParDo(utils.CompileTokenizationInfo())
+          | 'CombineStatsForLang' >> beam.CombineGlobally(utils.AggregateLang())
+          | 'CalculateMetrics' >> beam.ParDo(utils.CalculateMetrics())
+          | 'EncodeMetrics' >> beam.Map(csv_converter.encode)
+          | 'WriteMetrics' >> beam.io.WriteToText(FLAGS.output_file,
+                                                  shard_name_template='',
+                                                  header=','.join(columns)))
 
   return pipeline
 
 
 def main(_):
   pipeline = calculate_metrics()
-  pipeline.run().wait_until_finish()
+  runner.FlumeRunner().run(pipeline).wait_until_finish()
 
 
 if __name__ == '__main__':

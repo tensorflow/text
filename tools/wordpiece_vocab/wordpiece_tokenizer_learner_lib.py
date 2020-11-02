@@ -13,12 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Lint as: python2, python3
 """Algorithm for learning wordpiece vocabulary."""
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import collections
+
+from absl import logging
+from six.moves import range
 
 Params = collections.namedtuple('Params', 'upper_thresh lower_thresh '
                                 'num_iterations max_input_tokens '
@@ -181,8 +185,10 @@ def get_allowed_chars(all_counts, max_unique_chars):
       char_counts[char] += count
 
   # Sort by count, then alphabetically.
-  sorted_counts = sorted(sorted(char_counts.items(), key=lambda x: x[0]),
-                         key=lambda x: x[1], reverse=True)
+  sorted_counts = sorted(
+      sorted(list(char_counts.items()), key=lambda x: x[0]),
+      key=lambda x: x[1],
+      reverse=True)
 
   allowed_chars = set()
   for i in range(min(len(sorted_counts), max_unique_chars)):
@@ -237,8 +243,10 @@ def generate_final_vocabulary(reserved_tokens, char_tokens, curr_tokens):
   vocab_char_arrays.extend(sorted_char_tokens)
 
   # Sort by count, then alphabetically.
-  sorted_tokens = sorted(sorted(curr_tokens.items(), key=lambda x: x[0]),
-                         key=lambda x: x[1], reverse=True)
+  sorted_tokens = sorted(
+      sorted(list(curr_tokens.items()), key=lambda x: x[0]),
+      key=lambda x: x[1],
+      reverse=True)
   for token, _ in sorted_tokens:
     vocab_char_arrays.append(token)
 
@@ -273,11 +281,12 @@ def learn_with_thresh(word_counts, thresh, params):
                                         params.joiner)
 
   for iteration in range(params.num_iterations):
+    logging.info('Iteration: %d of %d', iteration, params.num_iterations)
     subtokens = [dict() for _ in range(params.max_token_length + 1)]
     # Populate array with counts of each subtoken.
     for word, count in word_counts:
       if iteration == 0:
-        split_indices = range(1, len(word) + 1)
+        split_indices = list(range(1, len(word) + 1))
       else:
         split_indices = get_split_indices(word, curr_tokens,
                                           params.include_joiner_token,
@@ -358,6 +367,10 @@ def learn_binary_search(word_counts, lower, upper, params):
 
   is_within_slack = (current_vocab_size <= params.vocab_size) and (
       params.vocab_size - current_vocab_size <= slack_count)
+
+  logging.info('current vocab size = %d', current_vocab_size)
+  logging.info('target vocab size = %d', params.vocab_size)
+  logging.info('is_within_slack = %s', str(is_within_slack))
 
   # We've created a vocab within our goal range (or, ran out of search space).
   if is_within_slack or lower >= upper or thresh <= 1:

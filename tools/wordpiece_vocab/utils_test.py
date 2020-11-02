@@ -13,26 +13,114 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tests for tensorflow_text.python.tools.wordpiece_vocab.utils."""
+"""Tests for google3.third_party.tensorflow_text.google.tools.utils."""
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import collections
 import logging
 import tempfile
 
-from absl.testing import absltest
 import apache_beam as beam
 from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that
 from apache_beam.testing.util import equal_to
-import tensorflow.compat.v1 as tf
-from wordpiece_vocab import utils
+import six
+import tensorflow as tf  # tf
+from google3.testing.pybase import googletest
+from tensorflow_text.google.tools import utils
 
 
-class FilterTokensByLangTest(absltest.TestCase):
+class Document(object):
+
+  def __init__(self, content, language_code):
+    self.content = content
+    self.language_code = language_code
+
+
+class ConvertBatchedDataToNumpyTest(googletest.TestCase):
+
+  def setUp(self):
+    super(ConvertBatchedDataToNumpyTest, self).setUp()
+    self.sample_input = [{
+        'a': ['a', 'b', 'c'],
+        'b': 'en'
+    }, {
+        'a': ['d', 'e', 'f'],
+        'b': 'fr'
+    }]
+    self.expected_output = {
+        'a': [['a', 'b', 'c'], ['d', 'e', 'f']],
+        'b': ['en', 'fr']
+    }
+
+  def testBatchedDataConversion(self):
+    result = utils.convert_batched_data_to_numpy(self.sample_input)
+    self.assertSameElements(result.keys(), ['a', 'b'])
+    for i in ['a', 'b']:
+      self.assertListEqual(self.expected_output[i], result[i].tolist())
+
+
+class ConvertEagerTensorsIntoUnbatchedDataTest(googletest.TestCase):
+
+  def setUp(self):
+    super(ConvertEagerTensorsIntoUnbatchedDataTest, self).setUp()
+    self.sample_input = [{
+        'a': tf.constant([['a', 'b', 'c'], ['d', 'e', 'f']]),
+        'b': tf.constant(['en', 'fr'])
+    }]
+    self.expected_output = [{
+        'a': ['a', 'b', 'c'],
+        'b': 'en'
+    }, {
+        'a': ['d', 'e', 'f'],
+        'b': 'fr'
+    }]
+
+  def testTensorConversion(self):
+    with TestPipeline() as p:
+      result = (
+          p | beam.Create(self.sample_input)
+          | beam.ParDo(utils.ConvertEagerTensorsIntoUnbatchedData()))
+      assert_that(result, equal_to(self.expected_output))
+
+
+class ExtractTokensCTLTest(googletest.TestCase):
+
+  def setUp(self):
+    super(ExtractTokensCTLTest, self).setUp()
+    my_proto = Document(content='I like pie.', language_code='en')
+    self.sample_input = [my_proto]
+    self.expected_output = [{'lang': 'en',
+                             'tokens': ['I', 'like', 'pie', '.']}]
+
+  def testSimpleTokenization(self):
+    with TestPipeline() as p:
+      text = p | beam.Create(self.sample_input)
+      result = text | beam.ParDo(utils.ExtractTokensCTL('content',
+                                                        'language_code'))
+      assert_that(result, equal_to(self.expected_output))
+
+
+class ExtractTokensBasicBERTTest(googletest.TestCase):
+
+  def setUp(self):
+    super(ExtractTokensBasicBERTTest, self).setUp()
+    my_proto = Document(content='I like pie.', language_code='en')
+    self.sample_input = [my_proto]
+    self.expected_output = [{'lang': 'en',
+                             'tokens': ['I', 'like', 'pie', '.']}]
+
+  def testSimpleTokenization(self):
+    with TestPipeline() as p:
+      text = p | beam.Create(self.sample_input)
+      result = text | beam.ParDo(utils.ExtractTokensBasicBERT('content',
+                                                              'language_code'))
+      assert_that(result, equal_to(self.expected_output))
+
+
+class FilterTokensByLangTest(googletest.TestCase):
 
   def setUp(self):
     super(FilterTokensByLangTest, self).setUp()
@@ -70,7 +158,7 @@ class CompareValues(beam.DoFn):
     return [element['en'] < element['fr']]
 
 
-class CalculateCoefficientsTest(absltest.TestCase):
+class CalculateCoefficientsTest(googletest.TestCase):
 
   def setUp(self):
     super(CalculateCoefficientsTest, self).setUp()
@@ -99,7 +187,7 @@ class CalculateCoefficientsTest(absltest.TestCase):
       assert_that(result, equal_to([True]))
 
 
-class ExponentialSmoothingTest(absltest.TestCase):
+class ExponentialSmoothingTest(googletest.TestCase):
 
   def setUp(self):
     super(ExponentialSmoothingTest, self).setUp()
@@ -119,7 +207,7 @@ class ExponentialSmoothingTest(absltest.TestCase):
                                     ('Bonjour', 1.5), ('.', 1.5)]))
 
 
-class FilterByCountTest(absltest.TestCase):
+class FilterByCountTest(googletest.TestCase):
 
   def setUp(self):
     super(FilterByCountTest, self).setUp()
@@ -129,8 +217,9 @@ class FilterByCountTest(absltest.TestCase):
   def testBelowThreshold(self):
     with TestPipeline() as p:
       tokens = p | 'CreateInput' >> beam.Create(self.sample_input)
-      result = tokens | beam.ParDo(utils.FilterByCount(self.max_token_length,
-                                                       min_token_frequency=2))
+      result = tokens | beam.Filter(
+          utils.create_filter_by_count_fn(
+              self.max_token_length, min_token_frequency=2))
       assert_that(result, equal_to([('three', 3), ('four', 4)]))
 
   def testTokenTooLong(self):
@@ -140,12 +229,13 @@ class FilterByCountTest(absltest.TestCase):
 
     with TestPipeline() as p:
       tokens = p | 'CreateInput' >> beam.Create(sample_input)
-      result = tokens | beam.ParDo(utils.FilterByCount(self.max_token_length,
-                                                       min_token_frequency=2))
+      result = tokens | beam.Filter(
+          utils.create_filter_by_count_fn(
+              self.max_token_length, min_token_frequency=2))
       assert_that(result, equal_to([('three', 3), ('four', 4), ('blah', 20)]))
 
 
-class SortByCountTest(absltest.TestCase):
+class SortByCountTest(googletest.TestCase):
 
   def setUp(self):
     super(SortByCountTest, self).setUp()
@@ -158,48 +248,48 @@ class SortByCountTest(absltest.TestCase):
       assert_that(result, equal_to([[('c', 9), ('a', 5), ('d', 4), ('b', 2)]]))
 
 
-class CompileTokenizationInfoTest(absltest.TestCase):
+class CompileTokenizationInfoTest(googletest.TestCase):
 
   def setUp(self):
     super(CompileTokenizationInfoTest, self).setUp()
-    self.sample_input = [{'lang': 'en',
-                          'num_non_unk_wordpieces': 4,
-                          'num_dropped_chars': 2,
-                          'num_preserved_chars': 13,
-                          'wordpieces': ['the', 'app', '##le',
-                                         'sauce', '[UNK]']},
-                         {'lang': 'fr',
-                          'num_non_unk_wordpieces': 5,
-                          'num_dropped_chars': 0,
-                          'num_preserved_chars': 14,
-                          'wordpieces': ['bon', '##jour', 'bon', '##soir']}]
+    self.sample_input = [{
+        'lang': 'en',
+        'num_non_unk_wordpieces': 4,
+        'num_dropped_chars': 2,
+        'num_preserved_chars': 13,
+    }, {
+        'lang': 'fr',
+        'num_non_unk_wordpieces': 5,
+        'num_dropped_chars': 0,
+        'num_preserved_chars': 14,
+    }]
 
   def testTwoLangs(self):
     with TestPipeline() as p:
       tokens = p | 'CreateInput' >> beam.Create(self.sample_input)
       result = tokens | beam.ParDo(utils.CompileTokenizationInfo())
-      assert_that(result, equal_to([{
-          'lang': 'en',
-          'count': 1,
-          'num_preserved_chars': 13,
-          'num_dropped_chars': 2,
-          'num_non_unk_wordpieces': 4,
-          'preserved_ratio': [13/4],
-          'dropped_ratio': [2/15],
-          'wordpieces': collections.Counter(['the', 'app', '##le', 'sauce'])
-      }, {
-          'lang': 'fr',
-          'count': 1,
-          'num_preserved_chars': 14,
-          'num_dropped_chars': 0,
-          'num_non_unk_wordpieces': 5,
-          'preserved_ratio': [14/5],
-          'dropped_ratio': [0],
-          'wordpieces': collections.Counter(['bon', '##jour', 'bon', '##soir'])
-      }]))
+      assert_that(
+          result,
+          equal_to([{
+              'lang': 'en',
+              'count': 1,
+              'num_preserved_chars': 13,
+              'num_dropped_chars': 2,
+              'num_non_unk_wordpieces': 4,
+              'preserved_ratio_sum': 13 / 4.0,
+              'dropped_ratio_sum': 2.0 / 15,
+          }, {
+              'lang': 'fr',
+              'count': 1,
+              'num_preserved_chars': 14,
+              'num_dropped_chars': 0,
+              'num_non_unk_wordpieces': 5,
+              'preserved_ratio_sum': 14 / 5.0,
+              'dropped_ratio_sum': 0.0,
+          }]))
 
 
-class AggregateLangTest(absltest.TestCase):
+class AggregateLangTest(googletest.TestCase):
 
   def setUp(self):
     super(AggregateLangTest, self).setUp()
@@ -210,19 +300,17 @@ class AggregateLangTest(absltest.TestCase):
         'num_preserved_chars': 13,
         'num_dropped_chars': 2,
         'num_non_unk_wordpieces': 4,
-        'preserved_ratio': [13/4],
-        'dropped_ratio': [2/15],
-        'wordpieces': collections.Counter(['the', 'app', '##le', 'sauce'])
-        }, {
-            'lang': 'en',
-            'count': 1,
-            'num_preserved_chars': 11,
-            'num_dropped_chars': 0,
-            'num_non_unk_wordpieces': 4,
-            'preserved_ratio': [11/4],
-            'dropped_ratio': [0],
-            'wordpieces': collections.Counter(['the', 'app', 'st', '##ore'])
-            }]
+        'preserved_ratio_sum': 13 / 4.0,
+        'dropped_ratio_sum': 2 / 15.0,
+    }, {
+        'lang': 'en',
+        'count': 1,
+        'num_preserved_chars': 11,
+        'num_dropped_chars': 0,
+        'num_non_unk_wordpieces': 4,
+        'preserved_ratio_sum': 11.0 / 4,
+        'dropped_ratio_sum': 0.0,
+    }]
 
   def testMultiEntryOneLang(self):
     expected_output = self.aggregator.create_accumulator()
@@ -231,10 +319,9 @@ class AggregateLangTest(absltest.TestCase):
         'num_preserved_chars': 24,
         'num_dropped_chars': 2,
         'num_non_unk_wordpieces': 8,
-        'preserved_ratio': [13/4, 11/4],
-        'dropped_ratio': [2/15, 0],
-        'wordpieces': collections.Counter({'the': 2, 'app': 2, '##le': 1,
-                                           'sauce': 1, 'st': 1, '##ore': 1})}
+        'preserved_ratio_sum': 13 / 4.0 + 11.0 / 4,
+        'dropped_ratio_sum': 2 / 15.0,
+    }
     # Test create_accumulator.
     accumulator = self.aggregator.create_accumulator()
     # Test add_input.
@@ -248,7 +335,7 @@ class AggregateLangTest(absltest.TestCase):
     self.assertEqual(output, expected_output)
 
 
-class CalculateMetricsTest(absltest.TestCase):
+class CalculateMetricsTest(googletest.TestCase):
 
   def setUp(self):
     super(CalculateMetricsTest, self).setUp()
@@ -258,19 +345,18 @@ class CalculateMetricsTest(absltest.TestCase):
             'num_preserved_chars': 24,
             'num_dropped_chars': 2,
             'num_non_unk_wordpieces': 8,
-            'preserved_ratio': [2, 3],
-            'dropped_ratio': [0.5, 0],
-            'wordpieces': collections.Counter({'the': 2, 'le': 1, '##sson': 1,
-                                               'plan': 1, '##s': 1})},
+            'preserved_ratio_sum': 2 + 3,
+            'dropped_ratio_sum': 0.5 + 0,
+        },
         'fr': {
             'count': 2,
             'num_preserved_chars': 24,
             'num_dropped_chars': 2,
             'num_non_unk_wordpieces': 8,
-            'preserved_ratio': [5, 7],
-            'dropped_ratio': [0.4, 0.6],
-            'wordpieces': collections.Counter({'bon': 2, 'le': 2, 'jour': 1,
-                                               'soir': 1, 'homme': 1})}}
+            'preserved_ratio_sum': 5 + 7,
+            'dropped_ratio_sum': 0.4 + 0.6,
+        }
+    }
     self.metrics = utils.CalculateMetrics()
 
   def testListMean(self):
@@ -298,29 +384,13 @@ class CalculateMetricsTest(absltest.TestCase):
         self.info_dict['fr'])
     self.assertEqual(fr_macro_dropped_char, 50.0)
 
-  def testWordpieceOverlapFrench(self):
-    fr_wp_overlap = self.metrics._get_wordpiece_overlap_percent(
-        self.info_dict['fr']['wordpieces'], self.info_dict['en']['wordpieces'])
-    self.assertEqual(fr_wp_overlap, 20.0)
-
-  def testWordpieceOverlapFrenchWeighted(self):
-    fr_wp_overlap = self.metrics._get_wordpiece_overlap_percent(
-        self.info_dict['fr']['wordpieces'], self.info_dict['en']['wordpieces'],
-        weighted=True)
-    self.assertEqual(fr_wp_overlap, 200/7)
-
-  def testWordpieceOverlapEnglish(self):
-    en_wp_overlap = self.metrics._get_wordpiece_overlap_percent(
-        self.info_dict['en']['wordpieces'], self.info_dict['en']['wordpieces'])
-    self.assertEqual(en_wp_overlap, 100.0)
-
   def testFormatFloatOrNone(self):
     extra_digits = 0.12345
     self.assertEqual(self.metrics._format_float_or_none(extra_digits), '0.123')
     fewer_digits = 0.1
     self.assertEqual(self.metrics._format_float_or_none(fewer_digits), '0.100')
     non_float = ''
-    self.assertEqual(self.metrics._format_float_or_none(non_float), None)
+    self.assertIsNone(self.metrics._format_float_or_none(non_float))
 
 
 def _bytes_feature(value):
@@ -328,35 +398,55 @@ def _bytes_feature(value):
   return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
 
-class CountPreprocessingFnTest(absltest.TestCase):
+def _encode_strings(items):
+  """Encode all the strings in items with six.ensure_binary."""
+  return [six.ensure_binary(x) for x in items]
+
+
+class CountPreprocessingFnTest(googletest.TestCase):
 
   def setUp(self):
     super(CountPreprocessingFnTest, self).setUp()
     self.raw_data = {
+        'label': ['1'],
+        'text_a': ['The boy jumped into the air.'],
+        'guid': ['dev-0'],
+    }
+
+  def testDetectLang(self):
+    preprocessing_fn = utils.count_tokenizing_fn('text_a', None)
+    expected_tokens = ['The', 'boy', 'jumped', 'into', 'the', 'air', '.']
+    outputs = preprocessing_fn(self.raw_data)
+
+    self.assertEqual(outputs['lang'].numpy(), six.ensure_binary('en'))
+    self.assertSequenceAlmostEqual(outputs['tokens'].values,
+                                   _encode_strings(expected_tokens))
+
+  def testUseGivenLang(self):
+    preprocessing_fn = utils.count_tokenizing_fn('text', 'language_code')
+    raw_data = {
         'text': ['Let\'s make this Chinese even though it\'s English.'],
         'language_code': ['zh'],
     }
+    expected_tokens = [
+        'Let', '\'', 's', 'make', 'this', 'Chinese', 'even', 'though', 'it',
+        '\'', 's', 'English', '.'
+    ]
 
-  def testUseGivenLang(self):
-    preprocessing_fn = utils.count_preprocessing_fn('text', 'language_code')
-    with tf.Session() as sess:
-      expected_tokens = ['Let', '\'', 's', 'make', 'this', 'Chinese', 'even',
-                         'though', 'it', '\'', 's', 'English', '.']
-
-      outputs = preprocessing_fn(self.raw_data)
-      outputs = sess.run(outputs)
-      self.assertEqual(outputs['lang'], 'zh')
-      self.assertSequenceAlmostEqual(outputs['tokens'].values, expected_tokens)
+    outputs = preprocessing_fn(raw_data)
+    self.assertEqual(outputs['lang'].numpy(), six.ensure_binary('zh'))
+    self.assertSequenceAlmostEqual(outputs['tokens'].values.numpy(),
+                                   _encode_strings(expected_tokens))
 
 
-class MetricsPreprocessingFnTest(absltest.TestCase):
+class MetricsPreprocessingFnTest(googletest.TestCase):
 
   def setUp(self):
     super(MetricsPreprocessingFnTest, self).setUp()
     self.raw_data = {
         'label': ['1'],
         'text_a': ['The boy jumped into the air.'],
-        'lang': ['en'],
+        'guid': ['dev-0'],
     }
     self.vocab = ['The', 'jump', '##ed', 'in', '##to', 'the', 'air', '.', 'bo',
                   'jumped', 'to', 'cat', 'sat', 'on', 'a', 'h', '##at', 'c']
@@ -364,51 +454,47 @@ class MetricsPreprocessingFnTest(absltest.TestCase):
                                 'air', '.']
 
   def testSingleElement(self):
-    with tf.Session() as sess:
-      with tempfile.NamedTemporaryFile(mode='w+t', delete=False) as vocab:
-        vocab.writelines([word + '\n' for word in self.vocab])
-        vocab.flush()
-        preprocessing_fn = utils.metrics_preprocessing_fn(
-            vocab.name, 'text_a', 'lang')
-        outputs = preprocessing_fn(self.raw_data)
-        tf.tables_initializer().run()
-        outputs = sess.run(outputs)
+    with tempfile.NamedTemporaryFile(mode='w+t', delete=False) as vocab:
+      vocab.writelines([word + '\n' for word in self.vocab])
+      vocab.flush()
+      preprocessing_fn = utils.metrics_tokenizing_fn(vocab.name, 'text_a', None)
+      outputs = preprocessing_fn(self.raw_data)
 
-        self.assertEqual(outputs['lang'], 'en')
-        self.assertEqual(outputs['num_non_unk_wordpieces'], 7)
-        self.assertEqual(outputs['num_preserved_chars'], 20)
-        self.assertEqual(outputs['num_dropped_chars'], 3)
-        self.assertSequenceAlmostEqual(outputs['wordpieces'].values,
-                                       self.expected_wordpieces)
+      self.assertEqual(outputs['lang'].numpy(), six.ensure_binary('en'))
+      self.assertEqual(outputs['num_non_unk_wordpieces'].numpy(), 7)
+      self.assertEqual(outputs['num_preserved_chars'].numpy(), 20)
+      self.assertEqual(outputs['num_dropped_chars'].numpy(), 3)
+      self.assertSequenceAlmostEqual(outputs['wordpieces'].values,
+                                     _encode_strings(self.expected_wordpieces))
 
   def testLargerBatchSize(self):
-    with tf.Session() as sess:
-      with tempfile.NamedTemporaryFile(mode='w+t', delete=False) as vocab:
-        raw_data = {
-            'label': ['1', '2'],
-            'text_a': ['The boy jumped into the air.', 'The cat sat on a hat.'],
-            'lang': ['en', 'en'],
-        }
-        expected_wordpieces = ['The', '[UNK]', 'jumped', 'in', '##to', 'the',
-                               'air', '.', 'The', 'cat', 'sat', 'on', 'a', 'h',
-                               '##at', '.']
-        vocab.writelines([word + '\n' for word in self.vocab])
-        vocab.flush()
-        preprocessing_fn = utils.metrics_preprocessing_fn(
-            vocab.name, 'text_a', 'lang')
-        outputs = preprocessing_fn(raw_data)
-        tf.tables_initializer().run()
-        outputs = sess.run(outputs)
+    with tempfile.NamedTemporaryFile(mode='w+t', delete=False) as vocab:
+      raw_data = {
+          'label': ['1', '2'],
+          'text_a': ['The boy jumped into the air.', 'The cat sat on a hat.'],
+          'guid': ['dev-0', 'dev-0'],
+      }
+      expected_wordpieces = [
+          'The', '[UNK]', 'jumped', 'in', '##to', 'the', 'air', '.', 'The',
+          'cat', 'sat', 'on', 'a', 'h', '##at', '.'
+      ]
+      vocab.writelines([word + '\n' for word in self.vocab])
+      vocab.flush()
+      preprocessing_fn = utils.metrics_tokenizing_fn(vocab.name, 'text_a', None)
+      outputs = preprocessing_fn(raw_data)
 
-        self.assertSequenceAlmostEqual(outputs['lang'], ['en', 'en'])
-        self.assertSequenceAlmostEqual(outputs['num_preserved_chars'], [20, 16])
-        self.assertSequenceAlmostEqual(outputs['num_dropped_chars'], [3, 0])
-        self.assertSequenceAlmostEqual(outputs['wordpieces'].values,
-                                       expected_wordpieces)
-        self.assertSequenceAlmostEqual(outputs['num_non_unk_wordpieces'],
-                                       [7, 8])
+      self.assertSequenceAlmostEqual(outputs['lang'].numpy(),
+                                     _encode_strings(['en', 'en']))
+      self.assertSequenceAlmostEqual(outputs['num_preserved_chars'].numpy(),
+                                     [20, 16])
+      self.assertSequenceAlmostEqual(outputs['num_dropped_chars'].numpy(),
+                                     [3, 0])
+      self.assertSequenceAlmostEqual(outputs['wordpieces'].values.numpy(),
+                                     _encode_strings(expected_wordpieces))
+      self.assertSequenceAlmostEqual(outputs['num_non_unk_wordpieces'].numpy(),
+                                     [7, 8])
 
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  absltest.main()
+  googletest.main()

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tests for tensorflow_text.python.tools.wordpiece_vocab.wordpiece_tokenizer_learner_lib."""
+"""Tests for google3.third_party.tensorflow_text.google.tools.wordpiece_tokenizer_learner_lib."""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -21,9 +21,9 @@ from __future__ import print_function
 
 import logging
 
-from absl.testing import absltest
-from absl.testing import parameterized
-from wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
+from google3.testing.pybase import googletest
+from google3.testing.pybase import parameterized
+from tensorflow_text.google.tools import wordpiece_tokenizer_learner_lib as learner
 
 
 class ExtractCharTokensTest(parameterized.TestCase):
@@ -147,7 +147,7 @@ class FilterInputWordsTest(parameterized.TestCase):
     self.assertEqual(filtered_counts, expected_counts)
 
 
-class GenerateFinalVocabularyTest(absltest.TestCase):
+class GenerateFinalVocabularyTest(googletest.TestCase):
 
   def setUp(self):
     super(GenerateFinalVocabularyTest, self).setUp()
@@ -237,4 +237,4 @@ class LearnBinarySearchTest(parameterized.TestCase):
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  absltest.main()
+  googletest.main()
