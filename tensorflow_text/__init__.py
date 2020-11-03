@@ -25,6 +25,7 @@ from tensorflow_text.python.ops import *
 # Public symbols in the "tensorflow_text" package.  Symbols are sorted in
 # increasing order of their lowercase version.
 _allowed_symbols = [
+    "BertSplitter",
     "BertTokenizer",
     "case_fold_utf8",
     "coerce_to_structurally_valid_utf8",
