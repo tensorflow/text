@@ -95,6 +95,10 @@ class BasicTokenizer(TokenizerWithOffsets):
       self._keep_delim_regex_pattern = _KEEP_DELIM_NO_WHITESPACE_PATTERN
     else:
       self._keep_delim_regex_pattern = _DELIM_REGEX_PATTERN
+
+    if lower_case and normalization_form not in [None, "NFD"]:
+      raise ValueError("`lower_case` strips accents. When `lower_case` is set "
+                       "`normalization_form` is 'NFD'.")
     self._normalization_form = normalization_form
 
     if preserve_unused_token:

@@ -243,6 +243,8 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
                                b'formulario', b'y', b'tus', b'preguntas'
                            ]],
           lower_case=True,
+          # `lower_case` doesn't let you override the `normalization_form`
+          normalization_form=None,
       ),
       dict(
           text_inputs=[
