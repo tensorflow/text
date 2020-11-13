@@ -22,9 +22,7 @@ import copy
 
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import string_ops
 from tensorflow_text.python.ops import regex_split_ops
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
@@ -194,11 +192,6 @@ class BertTokenizer(TokenizerWithOffsets):
                preserve_unused_token=False):
     super(BertTokenizer, self).__init__()
     _tf_text_bert_tokenizer_op_create_counter.get_cell().increase_by(1)
-    if isinstance(vocab_lookup_table, str) or isinstance(
-        vocab_lookup_table, ops.Tensor):
-      init = lookup_ops.TextFileIdTableInitializer(vocab_lookup_table)
-      vocab_lookup_table = lookup_ops.StaticVocabularyTableV1(
-          init, num_oov_buckets=1, lookup_key_dtype=dtypes.string)
 
     self._basic_tokenizer = BasicTokenizer(lower_case, keep_whitespace,
                                            normalization_form,

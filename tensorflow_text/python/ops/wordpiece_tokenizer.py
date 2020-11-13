@@ -55,7 +55,8 @@ class WordpieceTokenizer(TokenizerWithOffsets):
 
     Args:
       vocab_lookup_table: A lookup table implementing the LookupInterface
-        containing the vocabulary of subwords.
+        containing the vocabulary of subwords or a string which is the file path
+        to the vocab.txt file.
       suffix_indicator: (optional) The characters prepended to a wordpiece to
         indicate that it is a suffix to another subword. Default is '##'.
       max_bytes_per_word: (optional) Max size of input token. Default is 100.
@@ -75,6 +76,18 @@ class WordpieceTokenizer(TokenizerWithOffsets):
     """
     super(WordpieceTokenizer, self).__init__()
     _tf_text_wordpiece_tokenizer_op_create_counter.get_cell().increase_by(1)
+
+    if isinstance(vocab_lookup_table, str) or (
+        isinstance(vocab_lookup_table, ops.Tensor) and
+        vocab_lookup_table.dtype == dtypes.string):
+      init = lookup_ops.TextFileIdTableInitializer(vocab_lookup_table)
+      vocab_lookup_table = lookup_ops.StaticVocabularyTableV1(
+          init, num_oov_buckets=1, lookup_key_dtype=dtypes.string)
+
+    if not isinstance(vocab_lookup_table, lookup_ops.LookupInterface):
+      raise TypeError(
+          'Unable to build a lookup table from {}'.format(vocab_lookup_table))
+
     self._vocab_lookup_table = vocab_lookup_table
     self._suffix_indicator = suffix_indicator
     self._max_bytes_per_word = max_bytes_per_word
