@@ -147,8 +147,16 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       name: The name argument that is passed to the op function.
 
     Returns:
-      A `RaggedTensor` of tokenized text. The returned shape is the shape of the
-      input tensor with an added ragged dimension for tokens of each string.
+      A tuple `(tokens, start_offsets, end_offsets)` where:
+
+        * `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
+            `RaggedTensor`.
+        * `start_offsets` is an N+1-dimensional integer `Tensor` or
+            `RaggedTensor` containing the starting indices of each token (byte
+            indices for input strings).
+        * `end_offsets` is an N+1-dimensional integer `Tensor` or
+            `RaggedTensor` containing the exclusive ending indices of each token
+            (byte indices for input strings).
     """
     with ops.name_scope(name, "SentenceTokenizer", [input, self]):
       input_tensor = ragged_tensor.convert_to_tensor_or_ragged_tensor(input)
