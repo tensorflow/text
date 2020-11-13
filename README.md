@@ -198,9 +198,8 @@ docs = tf.data.Dataset.from_tensor_slices([['Never tell me the odds.'],
                                            ["It's a trap!"]])
 tokenizer = text.WhitespaceTokenizer()
 tokenized_docs = docs.map(lambda x: tokenizer.tokenize(x))
-iterator = tokenized_docs.make_one_shot_iterator()
-print(iterator.get_next().to_list())
-print(iterator.get_next().to_list())
+for tokens in tokenized_docs:
+  print(tokens, tokens.to_list())
 ```
 
 ```sh
