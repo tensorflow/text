@@ -1,3 +1,5 @@
+description: Type of reduction to be done by the n-gram op.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.Reduction" />
 <meta itemprop="path" content="Stable" />
@@ -10,7 +12,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -30,8 +32,32 @@ The supported reductions are as follows:
 *   <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>:
     Join strings in the window.
 
-## Class Variables
+<!-- Tabular view -->
 
-*   `MEAN` <a id="MEAN"></a>
-*   `STRING_JOIN` <a id="STRING_JOIN"></a>
-*   `SUM` <a id="SUM"></a>
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Class Variables</h2></th></tr>
+
+<tr>
+<td>
+MEAN<a id="MEAN"></a>
+</td>
+<td>
+<a href="../text/Reduction.md"><code>text.Reduction</code></a>
+</td>
+</tr><tr>
+<td>
+STRING_JOIN<a id="STRING_JOIN"></a>
+</td>
+<td>
+<a href="../text/Reduction.md"><code>text.Reduction</code></a>
+</td>
+</tr><tr>
+<td>
+SUM<a id="SUM"></a>
+</td>
+<td>
+<a href="../text/Reduction.md"><code>text.Reduction</code></a>
+</td>
+</tr>
+</table>

@@ -1,3 +1,6 @@
+description: Normalizes each UTF-8 string in the input tensor using the
+specified rule.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.normalize_utf8" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +10,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 

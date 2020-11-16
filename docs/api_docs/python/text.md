@@ -1,3 +1,5 @@
+description: Various tensorflow ops related to text-processing.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +9,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -29,14 +31,29 @@ Various tensorflow ops related to text-processing.
 [`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
 implementations.
 
+[`class HubModuleSplitter`](./text/HubModuleSplitter.md): Splitter that uses a
+Hub module.
+
+[`class HubModuleTokenizer`](./text/HubModuleTokenizer.md): Tokenizer that uses
+a Hub module.
+
 [`class Reduction`](./text/Reduction.md): Type of reduction to be done by the
 n-gram op.
 
 [`class SentencepieceTokenizer`](./text/SentencepieceTokenizer.md): Tokenizes a
 tensor of UTF-8 strings.
 
+[`class SplitMergeFromLogitsTokenizer`](./text/SplitMergeFromLogitsTokenizer.md):
+Tokenizes a tensor of UTF-8 string into words according to logits.
+
 [`class SplitMergeTokenizer`](./text/SplitMergeTokenizer.md): Tokenizes a tensor
 of UTF-8 string into words according to labels.
+
+[`class Splitter`](./text/Splitter.md): An abstract base class for splitting
+text.
+
+[`class StateBasedSentenceBreaker`](./text/StateBasedSentenceBreaker.md): A
+`Splitter` that uses a state machine to determine sentence breaks.
 
 [`class Tokenizer`](./text/Tokenizer.md): Base class for tokenizer
 implementations.
@@ -66,6 +83,9 @@ UTF-8 string in the input.
 
 [`coerce_to_structurally_valid_utf8(...)`](./text/coerce_to_structurally_valid_utf8.md): Coerce UTF-8 input strings to structurally valid UTF-8.
 
+[`find_source_offsets(...)`](./text/find_source_offsets.md): Maps the input
+post-normalized string offsets to pre-normalized offsets.
+
 [`gather_with_default(...)`](./text/gather_with_default.md): Gather slices with `indices=-1` mapped to `default`.
 
 [`greedy_constrained_sequence(...)`](./text/greedy_constrained_sequence.md): Performs greedy constrained sequence on a batch of examples.
@@ -80,6 +100,9 @@ Returns a subgradient of the MaximumSpanningTree op.
 
 [`normalize_utf8(...)`](./text/normalize_utf8.md): Normalizes each UTF-8 string
 in the input tensor using the specified rule.
+
+[`normalize_utf8_with_offsets_map(...)`](./text/normalize_utf8_with_offsets_map.md):
+Normalizes each UTF-8 string in the input tensor using the specified rule.
 
 [`pad_along_dimension(...)`](./text/pad_along_dimension.md): Add padding to the beginning and end of data in a specific dimension.
 
