@@ -44,7 +44,7 @@ flags.DEFINE_float(
     'smoothing_exponent', 0.5,
     'Exponent used in calculating exponential smoothing coefficients.')
 flags.DEFINE_integer('max_word_length', 50,
-                     'Keep only words shorter than max_word_length.')
+                     'Discard words of length greater than max_word_length.')
 
 
 def word_count(input_path, output_path, raw_metadata, min_token_frequency=2):
