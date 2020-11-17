@@ -47,7 +47,7 @@ flags.DEFINE_float(
     'smoothing_exponent', 0.5,
     'Exponent used in calculating exponential smoothing coefficients.')
 flags.DEFINE_integer('max_word_length', 50,
-                     'Keep only words shorter than max_word_length.')
+                     'Discard words of length greater than max_word_length.')
 flags.DEFINE_integer('upper_thresh', 10000000,
                      'Upper threshold for binary search.')
 flags.DEFINE_integer('lower_thresh', 10, 'Lower threshold for binary search.')
