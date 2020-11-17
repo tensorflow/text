@@ -15,12 +15,26 @@ die() {
   exit 1
 }
 
-osname="$(uname -s)"
+osname="$(uname -s | tr 'A-Z' 'a-z')"
 echo $osname
-readlinkcmd=readlink
+
+function is_windows() {
+  # On windows, the shell script is actually running in msys
+  [[ "${osname}" =~ msys_nt*|mingw*|cygwin*|uwin* ]]
+}
+
+function is_macos() {
+  [[ "${osname}" == "darwin" ]]
+}
+
+function abspath() {
+  cd "$(dirname $1)"
+  echo "$PWD/$(basename $1)"
+  cd "$OLDPWD"
+}
+
 plat_name=""
-if [[ $osname == "Darwin" ]]; then
-  readlinkcmd=greadlink
+if is_macos; then
   plat_name="--plat-name macosx-10.9-x86_64"
 fi
 
@@ -31,7 +45,7 @@ main() {
     output_dir="/tmp/tensorflow_text_pkg"
   fi
   mkdir -p ${output_dir}
-  output_dir=$($readlinkcmd -f "${output_dir}")
+  output_dir=$(abspath "${output_dir}")
   echo "=== Destination directory: ${output_dir}"
 
   if [[ ! -d "bazel-bin/tensorflow_text" ]]; then
@@ -42,7 +56,11 @@ main() {
   trap "rm -rf ${temp_dir}" EXIT
   echo "=== Using tmpdir ${temp_dir}"
 
-  local runfiles="bazel-bin/oss_scripts/pip_package/build_pip_package.runfiles"
+  if is_windows; then
+    runfiles="bazel-bin/oss_scripts/pip_package/build_pip_package.exe.runfiles"
+  else
+    runfiles="bazel-bin/oss_scripts/pip_package/build_pip_package.runfiles"
+  fi
   cp -LR \
       "${runfiles}/org_tensorflow_text/tensorflow_text" \
       "${temp_dir}"

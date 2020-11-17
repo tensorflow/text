@@ -1,7 +1,6 @@
 load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
-
 # [internal] load build_test.bzl
-load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
+#load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
 
 # Visibility rules
 package(
@@ -21,6 +20,21 @@ alias(
     name = "tensorflow_text",
     actual = ":ops",
     visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "android",
+    constraint_values = ["@bazel_tools//platforms:android"],
+)
+
+config_setting(
+    name = "ios",
+    constraint_values = ["@bazel_tools//platforms:ios"],
+)
+
+config_setting(
+    name = "windows",
+    constraint_values = ["@bazel_tools//platforms:windows"],
 )
 
 cc_library(
@@ -43,10 +57,10 @@ cc_library(
     ],
 )
 
-tflite_cc_shared_object(
-    name = "libtftextops_for_testing.so",
-    deps = [":ops_lib"],
-)
+#tflite_cc_shared_object(
+#    name = "libtftextops_for_testing.so",
+#    deps = [":ops_lib"],
+#)
 
 py_library(
     name = "ops",

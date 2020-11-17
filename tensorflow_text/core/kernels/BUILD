@@ -1,7 +1,6 @@
 # Kernels for tf.text ops.
 
 # [internal] load cc_proto_library.bzl
-load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_kernel_library")
 load("//tensorflow_text:tftext.bzl", "tf_deps")
 
 licenses(["notice"])
@@ -31,7 +30,7 @@ cc_library(
     ]),
 )
 
-tf_kernel_library(
+cc_library(
     name = "constrained_sequence_kernel",
     srcs = ["constrained_sequence_kernel.cc"],
     deps = OSS_DEPS + [
@@ -142,7 +141,7 @@ cc_test(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "mst_op_kernels",
     srcs = ["mst_op_kernels.cc"],
     deps = OSS_DEPS + [
@@ -206,7 +205,7 @@ cc_proto_library(
     deps = [":edit_changes_proto"],
 )
 
-tf_kernel_library(
+cc_library(
     name = "normalize_kernels",
     srcs = ["normalize_kernels.cc"],
     deps = OSS_DEPS + [
@@ -230,7 +229,7 @@ cc_library(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "regex_split_kernels",
     srcs = ["regex_split_kernels.cc"],
     deps = OSS_DEPS + [
@@ -254,7 +253,7 @@ cc_test(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "rouge_l_kernel",
     srcs = ["rouge_l_kernel.cc"],
     deps = OSS_DEPS + [
@@ -280,7 +279,7 @@ cc_test(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "sentence_breaking_kernels",
     srcs = ["sentence_breaking_kernels.cc"],
     deps = OSS_DEPS + [
@@ -328,7 +327,7 @@ cc_library(
     ]),
 )
 
-tf_kernel_library(
+cc_library(
     name = "sentence_breaking_kernels_v2",
     srcs = ["sentence_breaking_kernels_v2.cc"],
     deps = OSS_DEPS + [
@@ -362,7 +361,7 @@ cc_test(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "sentencepiece_kernels",
     srcs = ["sentencepiece_kernels.cc"],
     deps = OSS_DEPS + [
@@ -403,7 +402,7 @@ cc_test(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "split_merge_tokenize_kernel",
     srcs = ["split_merge_tokenize_kernel.cc"],
     deps = OSS_DEPS + [
@@ -428,7 +427,7 @@ cc_library(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "unicode_script_tokenize_kernel",
     srcs = ["unicode_script_tokenize_kernel.cc"],
     deps = OSS_DEPS + [
@@ -454,7 +453,7 @@ cc_test(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "whitespace_tokenize_kernel",
     srcs = ["whitespace_tokenize_kernel.cc"],
     deps = OSS_DEPS + [
@@ -480,7 +479,7 @@ cc_test(
     ],
 )
 
-tf_kernel_library(
+cc_library(
     name = "wordpiece_kernel",
     srcs = ["wordpiece_kernel.cc"],
     deps = OSS_DEPS + [
@@ -492,7 +491,7 @@ tf_kernel_library(
     ]),
 )
 
-tf_kernel_library(
+cc_library(
     name = "tokenizer_from_logits_kernel",
     srcs = ["tokenizer_from_logits_kernel.cc"],
     deps = OSS_DEPS + [

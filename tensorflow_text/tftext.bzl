@@ -1,6 +1,7 @@
 """
 Build rule for open source tf.text libraries.
 """
+load("@local_config_tf//:build_defs.bzl", "D_GLIBCXX_USE_CXX11_ABI")
 
 def py_tf_text_library(
         name,
@@ -41,12 +42,6 @@ def py_tf_text_library(
         native.cc_library(
             name = library_name,
             srcs = cc_op_defs,
-            copts = select({
-                # Android supports pthread natively, -pthread is not needed.
-                "@org_tensorflow//tensorflow:android": [],
-                "@org_tensorflow//tensorflow:ios": [],
-                "//conditions:default": ["-pthread"],
-            }),
             alwayslink = 1,
             deps = cc_op_kernels + tf_deps(),
         )
@@ -54,9 +49,31 @@ def py_tf_text_library(
         native.cc_binary(
             name = binary_name,
             copts = select({
-                "@org_tensorflow//tensorflow:android": [],
-                "@org_tensorflow//tensorflow:ios": [],
-                "//conditions:default": ["-pthread"],
+                ":android": [],
+                ":ios": [],
+                ":windows": [
+                    "/DEIGEN_STRONG_INLINE=inline",
+                    "-DTENSORFLOW_MONOLITHIC_BUILD",
+                    "/D_USE_MATH_DEFINES",
+                    "/DPLATFORM_WINDOWS",
+                    "/DEIGEN_HAS_C99_MATH",
+                    "/DTENSORFLOW_USE_EIGEN_THREADPOOL",
+                    "/DEIGEN_AVOID_STL_ARRAY",
+                    "/Iexternal/gemmlowp",
+                    "/wd4018",
+                    "/wd4577",
+                    "/DNOGDI",
+                    "/UTF_COMPILE_LIBRARY",
+                ],
+                "//conditions:default": [
+                    "-pthread",
+                    "-std=c++11",
+                    D_GLIBCXX_USE_CXX11_ABI
+                ],
+            }),
+            features = select({
+                ":windows": ["windows_export_all_symbols"],
+                "//conditions:default": [],
             }),
             linkshared = 1,
             deps = [
@@ -68,7 +85,7 @@ def py_tf_text_library(
         native.py_library(
             name = name,
             srcs = srcs,
-            srcs_version = "PY2AND3",
+            srcs_version = "PY3",
             visibility = visibility,
             data = [":" + binary_name],
             deps = deps,
@@ -82,12 +99,12 @@ def tf_deps(deps = []):
       deps: Dependencies for linux build.
     """
     return select({
-        "@org_tensorflow//tensorflow:android": [
-            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
-        ],
-        "@org_tensorflow//tensorflow:ios": [
-            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
-        ],
+        #"@bazel_tools//platforms:android": [
+        #    "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+        #],
+        #"@bazel_tools//platforms:ios": [
+        #    "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+        #],
         "//conditions:default": [
             "@local_config_tf//:libtensorflow_framework",
             "@local_config_tf//:tf_header_lib",
