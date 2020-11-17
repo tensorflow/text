@@ -3,6 +3,48 @@ workspace(name = "org_tensorflow_text")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "six_archive",
+    sha256 = "30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259",
+    strip_prefix = "six-1.15.0",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/pypi.python.org/packages/source/s/six/six-1.15.0.tar.gz",
+        "https://pypi.python.org/packages/source/s/six/six-1.15.0.tar.gz",
+    ],
+    build_file = "//third_party:six.BUILD",
+)
+
+http_archive(
+    name = "zlib",
+    sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+    strip_prefix = "zlib-1.2.11",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/zlib.net/zlib-1.2.11.tar.gz",
+        "https://zlib.net/zlib-1.2.11.tar.gz",
+    ],
+    build_file = "//third_party:zlib.BUILD",
+)
+
+http_archive(
+    name = "com_googlesource_code_re2",
+    sha256 = "d070e2ffc5476c496a6a872a6f246bfddce8e7797d6ba605a7c8d72866743bf9",
+    strip_prefix = "re2-506cfa4bffd060c06ec338ce50ea3468daa6c814",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/re2/archive/506cfa4bffd060c06ec338ce50ea3468daa6c814.tar.gz",
+        "https://github.com/google/re2/archive/506cfa4bffd060c06ec338ce50ea3468daa6c814.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_gflags_gflags",
+    sha256 = "ae27cdbcd6a2f935baa78e4f21f675649271634c092b1be01469440495609d0e",
+    strip_prefix = "gflags-2.2.1",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/gflags/gflags/archive/v2.2.1.tar.gz",
+        "https://github.com/gflags/gflags/archive/v2.2.1.tar.gz",
+    ],
+)
+
+http_archive(
     name = "absl_py",
     sha256 = "280c76ec0c9ab7a1dff550cdc37b7c7cd28551103dc3955202760ea8e381aa9d",
     strip_prefix = "abseil-py-pypi-v0.8.0",
@@ -69,8 +111,8 @@ http_archive(
     urls = [
         "https://github.com/google/sentencepiece/archive/1.0.0.zip"
     ],
-    patches = ["//third_party/sentencepiece:processor.patch"],
-    patch_args = ["-p1", "-s"],
+    #patches = ["//third_party/sentencepiece:processor.patch"],
+    #patch_args = ["-p1", "-s"],
 )
 
 http_archive(
@@ -111,7 +153,7 @@ http_archive(
 )
 
 http_archive(
-    name = "org_tensorflow",
+    name = "org_tf",
     strip_prefix = "tensorflow-2.3.0",
     sha256 = "1a6f24d9e3b1cf5cc55ecfe076d3a61516701bc045925915b26a9d39f4084c34",
     urls = [
@@ -128,16 +170,12 @@ http_archive(
     ],
 )
 
-load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
-
-tf_workspace(tf_repo_name="@org_tensorflow")
-
 load("//third_party/tensorflow:tf_configure.bzl", "tf_configure")
 
 tf_configure(name = "local_config_tf")
 
 # Set up Android.
-load("@org_tensorflow//third_party/android:android_configure.bzl", "android_configure")
-android_configure(name="local_config_android")
-load("@local_config_android//:android.bzl", "android_workspace")
-android_workspace()
+#load("@org_tensorflow//third_party/android:android_configure.bzl", "android_configure")
+#android_configure(name="local_config_android")
+#load("@local_config_android//:android.bzl", "android_workspace")
+#android_workspace()
