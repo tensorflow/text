@@ -429,6 +429,19 @@ cc_library(
 )
 
 tf_kernel_library(
+    name = "tokenizer_from_logits_kernel",
+    srcs = ["tokenizer_from_logits_kernel.cc"],
+    deps = OSS_DEPS + [
+        "@icu//:common",
+        # absl/strings dep
+        "@com_google_absl//absl/base:core_headers",
+    ] + tf_deps(deps = [
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+    ]),
+)
+
+tf_kernel_library(
     name = "unicode_script_tokenize_kernel",
     srcs = ["unicode_script_tokenize_kernel.cc"],
     deps = OSS_DEPS + [
@@ -485,19 +498,6 @@ tf_kernel_library(
     srcs = ["wordpiece_kernel.cc"],
     deps = OSS_DEPS + [
         ":wordpiece_tokenizer",
-        "@com_google_absl//absl/base:core_headers",
-    ] + tf_deps(deps = [
-        # tf:framework tensorflow dep,
-        # tf:lib tensorflow dep,
-    ]),
-)
-
-tf_kernel_library(
-    name = "tokenizer_from_logits_kernel",
-    srcs = ["tokenizer_from_logits_kernel.cc"],
-    deps = OSS_DEPS + [
-        "@icu//:common",
-        # absl/strings dep
         "@com_google_absl//absl/base:core_headers",
     ] + tf_deps(deps = [
         # tf:framework tensorflow dep,
