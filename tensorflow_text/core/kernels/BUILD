@@ -15,7 +15,9 @@ exports_files(["LICENSE"])
 # It is meant to be empty and filled by copybara.
 OSS_DEPS = [
     "@com_google_absl//absl/container:inlined_vector",
+    "@com_google_absl//absl/functional:function_ref",
     "@com_google_absl//absl/strings",
+    "@com_google_absl//absl/strings:cord",
     "@com_google_absl//absl/types:optional",
     "@com_google_absl//absl/types:span",
 ]
