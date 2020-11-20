@@ -81,6 +81,15 @@ def tf_deps(deps = []):
     Args:
       deps: Dependencies for linux build.
     """
+    # These are "random" deps likely needed by each library (http://b/142433427)
+    oss_deps = [
+        "@com_google_absl//absl/container:inlined_vector",
+        "@com_google_absl//absl/functional:function_ref",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:cord",
+        "@com_google_absl//absl/types:optional",
+        "@com_google_absl//absl/types:span",
+    ]
     return select({
         "@org_tensorflow//tensorflow:android": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
@@ -91,5 +100,24 @@ def tf_deps(deps = []):
         "//conditions:default": [
             "@local_config_tf//:libtensorflow_framework",
             "@local_config_tf//:tf_header_lib",
-        ] + deps,
+        ] + deps + oss_deps,
     })
+
+# A rule to build a TensorFlow OpKernel.
+#
+# Just like cc_library, but adds alwayslink=1 by default, and passes
+# -DGOOGLE_CUDA=1 if we're building with --config=cuda.
+def tf_text_kernel_library(
+        name,
+        srcs = [],
+        hdrs = [],
+        deps = [],
+        copts = [],
+        alwayslink = 1):
+    native.cc_library(
+        name = name,
+        srcs = srcs,
+        hdrs = hdrs,
+        deps = deps,
+        copts = copts,
+        alwayslink = alwayslink)
