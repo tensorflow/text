@@ -140,7 +140,7 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
     for (Index target = 0; target < num_nodes_index; ++target) {
       for (Index source = 0; source < num_nodes_index; ++source) {
         const Score score = scores_bxmxm(problem, target, source);
-        if (!std::isfinite(score)) continue;
+        if (!std::isfinite(static_cast<double>(score))) continue;
         if (source == target) {  // root
           solver.AddRoot(target, score);
         } else {  // arc
