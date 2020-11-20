@@ -18,13 +18,17 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-import collections
 
-Params = collections.namedtuple('Params', 'upper_thresh lower_thresh '
-                                'num_iterations max_input_tokens '
-                                'max_token_length max_unique_chars vocab_size '
-                                'slack_ratio include_joiner_token joiner '
-                                'reserved_tokens')
+import collections
+from typing import List, Optional
+
+import numpy as np
+
+Params = collections.namedtuple('Params', [
+    'upper_thresh', 'lower_thresh', 'num_iterations', 'max_input_tokens',
+    'max_token_length', 'max_unique_chars', 'vocab_size', 'slack_ratio',
+    'include_joiner_token', 'joiner', 'reserved_tokens'
+])
 
 
 def extract_char_tokens(word_counts):
@@ -130,8 +134,15 @@ def get_search_threshs(word_counts, upper_thresh, lower_thresh):
   max_count = max(counts)
   min_count = min(counts)
 
-  upper_search = max_count if max_count < upper_thresh else upper_thresh
-  lower_search = min_count if min_count > lower_thresh else lower_thresh
+  if upper_thresh is None:
+    upper_search = max_count
+  else:
+    upper_search = max_count if max_count < upper_thresh else upper_thresh
+
+  if lower_thresh is None:
+    lower_search = min_count
+  else:
+    lower_search = min_count if min_count > lower_thresh else lower_thresh
 
   return upper_search, lower_search
 
@@ -201,7 +212,10 @@ def filter_input_words(all_counts, allowed_chars, max_input_tokens):
   Returns:
     list of (string, int) tuples of filtered wordcounts
   """
-
+  # Ensure that the input is sorted so that if `max_input_tokens` is reached
+  # the least common tokens are dropped.
+  all_counts = sorted(
+      all_counts, key=lambda word_and_count: word_and_count[1], reverse=True)
   filtered_counts = []
   for word, count in all_counts:
     if (max_input_tokens != -1 and
@@ -346,7 +360,6 @@ def learn_binary_search(word_counts, lower, upper, params):
   Returns:
     list of strings, vocab that is closest to target vocab_size
   """
-
   thresh = (upper + lower) // 2
   current_vocab = learn_with_thresh(word_counts, thresh, params)
   current_vocab_size = len(current_vocab)
@@ -372,16 +385,72 @@ def learn_binary_search(word_counts, lower, upper, params):
     return learn_binary_search(word_counts, lower, thresh - 1, params)
 
 
-def learn(word_counts, params):
+def count_words(iterable) -> collections.Counter:
+  """Converts a iterable of arrays of words into a `Counter` of word counts."""
+  counts = collections.Counter()
+  for words in iterable:
+    # Convert a RaggedTensor to a flat/dense Tensor.
+    words = getattr(words, 'flat_values', words)
+    # Flatten any dense tensor
+    words = np.reshape(words, [-1])
+    counts.update(words)
+
+  # Decode the words if necessary.
+  example_word = next(iter(counts.keys()))
+  if isinstance(example_word, bytes):
+    counts = collections.Counter(
+        {word.decode('utf-8'): count for word, count in counts.items()})
+
+  return counts
+
+
+def learn(word_counts,
+          vocab_size: int,
+          reserved_tokens: List[str],
+          upper_thresh: Optional[int] = int(1e7),
+          lower_thresh: Optional[int] = 10,
+          num_iterations: int = 4,
+          max_input_tokens: Optional[int] = int(5e6),
+          max_token_length: int = 50,
+          max_unique_chars: int = 1000,
+          slack_ratio: float = 0.05,
+          include_joiner_token: bool = True,
+          joiner: str = '##') -> List[str]:
   """Takes in wordcounts and returns wordpiece vocabulary.
 
   Args:
-    word_counts: list of (string, int) tuples
-    params: Params namedtuple, parameters for learning
+    word_counts: (word, count) pairs as a dictionary, or list of tuples.
+    vocab_size: The target vocabulary size. This is the maximum size.
+    reserved_tokens: A list of tokens that must be included in the vocabulary.
+    upper_thresh: Initial upper bound on the token frequency threshold.
+    lower_thresh: Initial lower bound on the token frequency threchold.
+    num_iterations: Number of iterations to run.
+    max_input_tokens: The maximum number of words in the initial vocabulary. The
+      words with the lowest counts are discarded. Use `None` or `-1` for "no
+      maximum".
+    max_token_length: The maximum token length. Counts for longer words are
+      discarded.
+    max_unique_chars: The maximum alphabet size. This prevents rare characters
+      from inflating the vocabulary. Counts for words containing characters
+      ouside of the selected alphabet are discarded.
+    slack_ratio: The maximum deviation acceptable from `vocab_size` for an
+      acceptable vocabulary. The acceptable range of vocabulary sizes is from
+      `vocab_size*(1-slack_ratio)` to `vocab_size`.
+    include_joiner_token: If true, include the `joiner` token in the output
+      vocabulary.
+    joiner: The prefix to include on suffix tokens in the output vocabulary.
+      Usually "##". For example 'places' could be tokenized as `['place',
+      '##s']`.
 
   Returns:
     string, final vocabulary with each word separated by newline
   """
+  if isinstance(word_counts, dict):
+    word_counts = word_counts.items()
+
+  params = Params(upper_thresh, lower_thresh, num_iterations, max_input_tokens,
+                  max_token_length, max_unique_chars, vocab_size, slack_ratio,
+                  include_joiner_token, joiner, reserved_tokens)
 
   upper_search, lower_search = get_search_threshs(word_counts,
                                                   params.upper_thresh,
@@ -389,6 +458,7 @@ def learn(word_counts, params):
   all_counts = get_input_words(word_counts, params.reserved_tokens,
                                params.max_token_length)
   allowed_chars = get_allowed_chars(all_counts, params.max_unique_chars)
+
   filtered_counts = filter_input_words(all_counts, allowed_chars,
                                        params.max_input_tokens)
 
