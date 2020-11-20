@@ -15,14 +15,16 @@
 
 """Tests for tensorflow_text.python.tools.wordpiece_vocab.wordpiece_tokenizer_learner_lib."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
+import collections
 import logging
 
 from absl.testing import absltest
 from absl.testing import parameterized
+
+import numpy as np
+
+from tensorflow.python.data.ops import dataset_ops
+from tensorflow.python.ops.ragged import ragged_string_ops
 from wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
 
 
@@ -131,13 +133,16 @@ class GetAllowedCharsTest(parameterized.TestCase):
 
 class FilterInputWordsTest(parameterized.TestCase):
   @parameterized.named_parameters(
-      {'testcase_name': 'TokenHasUnallowedChars',
-       'word_counts': [('bad', 1), ('had', 2), ('bag', 1), ('cat', 5)],
-       'expected_counts': [('bad', 1), ('had', 2), ('bag', 1)]},
-      {'testcase_name': 'TooManyInputTokens',
-       'word_counts': [('bad', 1), ('had', 2), ('bag', 1), ('bed', 5),
-                       ('head', 1)],
-       'expected_counts': [('bad', 1), ('had', 2), ('bag', 1), ('bed', 5)]})
+      {
+          'testcase_name': 'TokenHasUnallowedChars',
+          'word_counts': [('bad', 1), ('had', 2), ('bag', 1), ('cat', 5)],
+          'expected_counts': [('had', 2), ('bad', 1), ('bag', 1)]
+      }, {
+          'testcase_name': 'TooManyInputTokens',
+          'word_counts': [('bad', 1), ('had', 2), ('bag', 1), ('bed', 5),
+                          ('head', 7)],
+          'expected_counts': [('head', 7), ('bed', 5), ('had', 2), ('bad', 1)]
+      })
 
   def testFilterInputWords(self, word_counts, expected_counts):
     allowed_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'}
@@ -233,6 +238,34 @@ class LearnBinarySearchTest(parameterized.TestCase):
     self.assertAlmostEqual(len(vocab), params.vocab_size, delta=delta)
     self.assertLessEqual(len(vocab), params.vocab_size)
     self.assertEqual(vocab, expected_vocab)
+
+
+class CountWordsTest(parameterized.TestCase):
+
+  def test_count_lists(self):
+    data = [['aaa', 'bb', 'c'], ['aaa', 'aaa'], ['c']]
+    counts = learner.count_words(data)
+
+    self.assertEqual(counts, collections.Counter({'aaa': 3, 'bb': 1, 'c': 2}))
+
+  def test_count_numpy_gen(self):
+
+    def get_words():
+      yield np.array(['aaa', 'bb', 'c'])
+      yield np.array(['aaa', 'aaa'])
+      yield np.array(['c'])
+
+    counts = learner.count_words(get_words())
+
+    self.assertEqual(counts, collections.Counter({'aaa': 3, 'bb': 1, 'c': 2}))
+
+  def test_count_ragged_dataset(self):
+    ds = dataset_ops.DatasetV2.from_tensor_slices(['aaa bb c', 'aaa aaa', 'c'])
+    ds = ds.map(ragged_string_ops.string_split_v2)
+
+    counts = learner.count_words(ds)
+
+    self.assertEqual(counts, collections.Counter({'aaa': 3, 'bb': 1, 'c': 2}))
 
 
 if __name__ == '__main__':
