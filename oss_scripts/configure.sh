@@ -22,6 +22,18 @@ function write_action_env_to_bazelrc() {
   write_to_bazelrc "build --action_env $1=\"$2\""
 }
 
+osname="$(uname -s | tr 'A-Z' 'a-z')"
+echo $osname
+
+function is_windows() {
+  # On windows, the shell script is actually running in msys
+  [[ "${osname}" =~ msys_nt*|mingw*|cygwin*|uwin* ]]
+}
+
+function is_macos() {
+  [[ "${osname}" == "darwin" ]]
+}
+
 # Remove .bazelrc if it already exist
 [ -e .bazelrc ] && rm .bazelrc
 
@@ -58,13 +70,18 @@ write_to_bazelrc "build:android_x86_64 --config=android"
 write_to_bazelrc "build:android_x86_64 --cpu=x86_64"
 write_to_bazelrc "build:android_x86_64 --fat_apk_cpu=x86_64"
 
+if is_windows; then
+  write_to_bazelrc "build --copt=/experimental:preprocessor"
+  write_to_bazelrc "build --host_copt=/experimental:preprocessor"
+fi
+
 TF_CFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )
 TF_LFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
 TF_LFLAGS_2=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))' | awk '{print $2}') )
 
 SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
 SHARED_LIBRARY_NAME=$(echo $TF_LFLAGS_2 | rev | cut -d":" -f1 | rev)
-if [[ "$(uname)" == "Darwin" ]]; then
+if is_macos; then
   SHARED_LIBRARY_NAME="libtensorflow_framework.dylib"
 fi
 write_action_env_to_bazelrc "TF_HEADER_DIR" ${TF_CFLAGS:2}
