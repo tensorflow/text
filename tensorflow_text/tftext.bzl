@@ -1,6 +1,7 @@
 """
 Build rule for open source tf.text libraries.
 """
+load("@local_config_tf//:build_defs.bzl", "D_GLIBCXX_USE_CXX11_ABI")
 
 def py_tf_text_library(
         name,
@@ -45,6 +46,7 @@ def py_tf_text_library(
                 # Android supports pthread natively, -pthread is not needed.
                 "@org_tensorflow//tensorflow:android": [],
                 "@org_tensorflow//tensorflow:ios": [],
+                "@org_tensorflow//tensorflow:windows": [],
                 "//conditions:default": ["-pthread"],
             }),
             alwayslink = 1,
@@ -56,7 +58,29 @@ def py_tf_text_library(
             copts = select({
                 "@org_tensorflow//tensorflow:android": [],
                 "@org_tensorflow//tensorflow:ios": [],
-                "//conditions:default": ["-pthread"],
+                "@org_tensorflow//tensorflow:windows": [
+                    "/DEIGEN_STRONG_INLINE=inline",
+                    "-DTENSORFLOW_MONOLITHIC_BUILD",
+                    "/D_USE_MATH_DEFINES",
+                    "/DPLATFORM_WINDOWS",
+                    "/DEIGEN_HAS_C99_MATH",
+                    "/DTENSORFLOW_USE_EIGEN_THREADPOOL",
+                    "/DEIGEN_AVOID_STL_ARRAY",
+                    "/Iexternal/gemmlowp",
+                    "/wd4018",
+                    "/wd4577",
+                    "/DNOGDI",
+                    "/UTF_COMPILE_LIBRARY",
+                ],
+                "//conditions:default": [
+                    "-pthread",
+                    "-std=c++11",
+                    D_GLIBCXX_USE_CXX11_ABI
+                ],
+            }),
+            features = select({
+                "@org_tensorflow//tensorflow:windows": ["windows_export_all_symbols"],
+                "//conditions:default": [],
             }),
             linkshared = 1,
             deps = [
@@ -68,7 +92,7 @@ def py_tf_text_library(
         native.py_library(
             name = name,
             srcs = srcs,
-            srcs_version = "PY2AND3",
+            srcs_version = "PY3",
             visibility = visibility,
             data = [":" + binary_name],
             deps = deps,
