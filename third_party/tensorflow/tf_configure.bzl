@@ -172,7 +172,7 @@ def _symlink_genrule_for_dir(
             outs.append('        "' + dest_dir + dest_files[i] + '",')
     genrule = _genrule(
         genrule_name,
-        " && ".join(command),
+        ";\n".join(command),
         "\n".join(outs),
     )
     return genrule
@@ -189,6 +189,7 @@ def _tf_pip_impl(repository_ctx):
     tf_shared_library_dir = repository_ctx.os.environ[_TF_SHARED_LIBRARY_DIR]
     tf_shared_library_name = repository_ctx.os.environ[_TF_SHARED_LIBRARY_NAME]
     tf_shared_library_path = "%s/%s" % (tf_shared_library_dir, tf_shared_library_name)
+
     tf_shared_library_rule = _symlink_genrule_for_dir(
         repository_ctx,
         None,
