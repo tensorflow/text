@@ -44,6 +44,11 @@ else
   pip install tensorflow==2.3.0
 fi
 
+if is_windows; then
+  # ICU must be built as a static library, so the external data must be built in
+  sed -i -e 's/":headers",$/":headers", ":windows_static_link_data",/' third_party/icu/BUILD.bzl
+fi
+
 write_to_bazelrc "build:manylinux2010 --crosstool_top=@org_tensorflow//third_party/toolchains/preconfig/ubuntu16.04/gcc7_manylinux2010-nvcc-cuda10.1:toolchain"
 write_to_bazelrc "build --spawn_strategy=standalone"
 write_to_bazelrc "build --strategy=Genrule=standalone"

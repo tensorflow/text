@@ -81,6 +81,16 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "windows_static_link_data",
+    # Dynamic libraries currently not supported on Windows.
+    defines = ["U_STATIC_IMPLEMENTATION"],
+    linkopts = ["advapi32.lib"],
+    deps = [
+        "@org_tensorflow_text//third_party/icu/data:icu_normalization_data",
+    ],
+)
+
 config_setting(
     name = "android",
     values = {"crosstool_top": "//external:android/crosstool"},
