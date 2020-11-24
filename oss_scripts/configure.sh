@@ -75,15 +75,23 @@ if is_windows; then
   write_to_bazelrc "build --host_copt=/experimental:preprocessor"
 fi
 
-TF_CFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') )
-TF_LFLAGS=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))') )
-TF_LFLAGS_2=( $(python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_link_flags()))' | awk '{print $2}') )
+TF_CFLAGS=( $(python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_compile_flags()))" | awk '{print $1}') )
+TF_LFLAGS=( $(python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $1}') )
+TF_LFLAGS_2=( $(python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $2}') )
+TF_ABIFLAG=$(python -c "import tensorflow as tf; print(tf.sysconfig.CXX11_ABI_FLAG)")
 
+HEADER_DIR=${TF_CFLAGS:2}
 SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
 SHARED_LIBRARY_NAME=$(echo $TF_LFLAGS_2 | rev | cut -d":" -f1 | rev)
 if is_macos; then
   SHARED_LIBRARY_NAME="libtensorflow_framework.dylib"
 fi
-write_action_env_to_bazelrc "TF_HEADER_DIR" ${TF_CFLAGS:2}
+if is_windows; then
+  HEADER_DIR=$(echo "$HEADER_DIR" | tr '\\' '/')
+  SHARED_LIBRARY_DIR="${HEADER_DIR:0:-7}python"
+  SHARED_LIBRARY_NAME="_pywrap_tensorflow_internal.lib"
+fi
+write_action_env_to_bazelrc "TF_HEADER_DIR" ${HEADER_DIR}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${SHARED_LIBRARY_DIR}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_NAME" ${SHARED_LIBRARY_NAME}
+write_action_env_to_bazelrc "TF_CXX11_ABI_FLAG" ${TF_ABIFLAG}
