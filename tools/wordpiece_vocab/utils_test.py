@@ -29,7 +29,7 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that
 from apache_beam.testing.util import equal_to
 import tensorflow.compat.v1 as tf
-from wordpiece_vocab import utils
+from tensorflow_text.tools.wordpiece_vocab import utils
 
 
 class FilterTokensByLangTest(absltest.TestCase):

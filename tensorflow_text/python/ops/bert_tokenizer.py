@@ -27,6 +27,7 @@ from tensorflow.python.ops import string_ops
 from tensorflow_text.python.ops import regex_split_ops
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
+from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
 
@@ -137,7 +138,7 @@ class BasicTokenizer(TokenizerWithOffsets):
         "BertBasicTokenizer")
 
 
-class BertTokenizer(TokenizerWithOffsets):
+class BertTokenizer(TokenizerWithOffsets, Detokenizer):
   r"""Tokenizer used for BERT.
 
     This tokenizer applies an end-to-end, text string to wordpiece tokenization.
@@ -224,3 +225,29 @@ class BertTokenizer(TokenizerWithOffsets):
     """
     tokens = self._basic_tokenizer.tokenize(text_input)
     return self._wordpiece_tokenizer.tokenize(tokens)
+
+  def make_detokenizer(self):
+    """Returns a `BertDetokenizer` freated from this `BertTokenizer`.
+
+    To the extent possible the detokenizer attempts to convert the tokens back
+    to the original texts they represent.
+
+    ```
+    bert_tokenizer = BertTokenizer(...)
+    bert_detokenizer = bert_tokenizer.make_detokenizer()
+
+    tokens = bert_tokenizer.tokenize(texts)
+    recreated_texts = bert_detokenizer.detokenize(tokens)
+    """
+    return BertDetokenizer(self._wordpiece_tokenizer.make_detokenizer())
+
+
+class BertDetokenizer(Detokenizer):
+
+  def __init__(self, wordpiece_detokenizer):
+    self._wordpiece_detokenizer = wordpiece_detokenizer
+
+  def detokenize(self, token_ids):
+    words = self._wordpiece_detokenizer.detokenize(token_ids)
+    strings = string_ops.reduce_join_v2(words, separator=" ", axis=-1)
+    return strings

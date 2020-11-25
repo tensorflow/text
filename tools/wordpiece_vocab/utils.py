@@ -23,7 +23,7 @@ import apache_beam as beam
 import tensorflow.compat.v1 as tf
 from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
-from wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
+from tensorflow_text.tools.wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
 
 
 class FilterTokensByLang(beam.DoFn):

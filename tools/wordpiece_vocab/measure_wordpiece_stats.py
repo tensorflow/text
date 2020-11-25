@@ -47,7 +47,7 @@ import tensorflow_transform as tft
 import tensorflow_transform.beam as tft_beam
 from tensorflow_transform.tf_metadata import dataset_metadata
 from tensorflow_transform.tf_metadata import dataset_schema
-from wordpiece_vocab import utils
+from tensorflow_text.tools.wordpiece_vocab import utils
 
 FLAGS = flags.FLAGS
 

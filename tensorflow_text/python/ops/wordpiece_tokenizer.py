@@ -19,6 +19,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import re
+
 from tensorflow.python.compat import compat
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
@@ -26,8 +28,12 @@ from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import math_ops
+from tensorflow.python.ops import string_ops
+from tensorflow.python.ops.ragged import ragged_functional_ops
+from tensorflow.python.ops.ragged import ragged_string_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
+from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
 # pylint: disable=g-bad-import-order
@@ -218,3 +224,54 @@ class WordpieceTokenizer(TokenizerWithOffsets):
       ends = from_row_partition(ends, row_splits, validate=False)
 
       return wordpieces, starts, ends
+
+  def make_detokenizer(self):
+
+    vocab, ids = self._vocab_lookup_table._table.export()  # pylint: disable=protected-access
+    initializer = lookup_ops.KeyValueTensorInitializer(keys=ids, values=vocab)
+    inverse_vocab_table = lookup_ops.StaticHashTable(
+        initializer=initializer, default_value=self._unknown_token)
+
+    return WordpieceDetokenizer(
+        inverse_vocab_table, suffix_indicator=self._suffix_indicator)
+
+
+class WordpieceDetokenizer(Detokenizer):
+  """A detokenizer class. Converts a tensor of token IDs to strings."""
+
+  def __init__(self, inverse_vocab_table, suffix_indicator='##'):
+    """Initialize the detokenizer.
+
+    Args:
+      inverse_vocab_table: A `tf.lookup.StaticHashTable` srom token IDs to
+        strings.
+      suffix_indicator: The suffix-indicator prefix to strip from
+        wordpiece-suffix tokens.
+    """
+    self._inverse_vocab_table = inverse_vocab_table
+    self._suffix_indicator = suffix_indicator
+
+  def detokenize(self, token_ids):
+    """Convert a Tensor or RaggedTensor of wordpiece IDs to string-words.
+
+    Args:
+      token_ids: A `RaggedTensor` or `Tensor` with an int dtype. * A `Tensor`
+        should have dimensions `(batch, padded-text)`. * A `RaggedTensor` sould
+        have dimensions `(batch, ragged-wordpiece)` or `(batch, ragged-words,
+        ragged-wordpiece)`.
+
+    Returns:
+      A RaggedTensor with dtype `string` and shape `(batch, ragged-words)`
+
+    """
+    txt_tokens = ragged_functional_ops.map_flat_values(
+        self._inverse_vocab_table.lookup, token_ids)
+    words = string_ops.reduce_join_v2(txt_tokens, axis=-1, separator=' ')
+    words = string_ops.regex_replace(words,
+                                     ' ' + re.escape(self._suffix_indicator),
+                                     '')
+    words = string_ops.regex_replace(words, '^ +| +$', '')
+
+    if not isinstance(token_ids, RaggedTensor) or token_ids.ragged_rank < 2:
+      words = ragged_string_ops.string_split_v2(words, sep=' ')
+    return words

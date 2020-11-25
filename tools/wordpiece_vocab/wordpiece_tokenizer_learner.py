@@ -20,7 +20,7 @@ from __future__ import division
 from __future__ import print_function
 from absl import app
 from absl import flags
-from wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
+from tensorflow_text.tools.wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
 
 
 FLAGS = flags.FLAGS

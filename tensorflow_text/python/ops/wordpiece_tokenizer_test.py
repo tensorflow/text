@@ -22,6 +22,7 @@ from __future__ import print_function
 
 from absl.testing import parameterized
 from tensorflow.python.compat import compat
+
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
@@ -541,6 +542,41 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     )
     subwords = tokenizer.tokenize(tokens)
     self.assertAllEqual(subwords, expected_subwords)
+
+
+class WordpieceDetokenizerTest(test_util.TensorFlowTestCase):
+
+  @test_util.run_in_graph_and_eager_modes
+  def test_detokenize(self):
+    table = _CreateTable(_MIXED_LANG_VOCAB + [b""], 2)
+    self.evaluate(table.initializer)
+    default_value = len(_MIXED_LANG_VOCAB)
+
+    tokenizer = WordpieceTokenizer(table)
+    detokenizer = tokenizer.make_detokenizer()
+    self.evaluate(detokenizer._inverse_vocab_table._init_op)
+
+    words = ragged_factory_ops.constant(
+        [[b"hello", b"there", b"my", b"name", b"is", b"terry"],
+         [b"whatchamacallit?", b"you", b"said"],
+         [_Utf8(u"大"), _Utf8(u"易")]])
+
+    subwords_ids = tokenizer.tokenize(words)
+
+    # Detokeinzer input shape is (batch, ragged-text, ragged-word)
+    words_output = detokenizer.detokenize(subwords_ids)
+    self.assertAllEqual(words_output, words)
+
+    # Detokeinzer input shape is (batch, ragged-text)
+    subwords_id_seqs = subwords_ids.merge_dims(-2, -1)
+    words_output = detokenizer.detokenize(subwords_id_seqs)
+    self.assertAllEqual(words_output, words)
+
+    # Detokeinzer input shape is (batch, padded-text)
+    padded_tensor_ids = subwords_ids.merge_dims(
+        -2, -1).to_tensor(default_value=default_value)
+    words_output = detokenizer.detokenize(padded_tensor_ids)
+    self.assertAllEqual(words_output, words)
 
 
 if __name__ == "__main__":
