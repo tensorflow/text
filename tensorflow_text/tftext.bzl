@@ -105,8 +105,7 @@ def tf_deps(deps = []):
 
 # A rule to build a TensorFlow OpKernel.
 #
-# Just like cc_library, but adds alwayslink=1 by default, and passes
-# -DGOOGLE_CUDA=1 if we're building with --config=cuda.
+# Just like cc_library, but adds alwayslink=1 by default.
 def tf_text_kernel_library(
         name,
         srcs = [],
