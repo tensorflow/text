@@ -1,3 +1,5 @@
+diff --git a/src/BUILD b/src/BUILD
+index b4298d2..7ce779f 100644
 --- a/src/BUILD
 +++ b/src/BUILD
 @@ -71,9 +71,6 @@ cc_library(
