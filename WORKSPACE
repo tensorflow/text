@@ -50,7 +50,7 @@ http_archive(
         "https://github.com/google/sentencepiece/archive/1.0.0.zip"
     ],
     patches = ["//third_party/sentencepiece:processor.patch"],
-    patch_args = ["-p1", "-s"],
+    patch_args = ["-p1"],
 )
 
 http_archive(
@@ -63,7 +63,7 @@ http_archive(
     ],
     build_file = "//third_party/icu:BUILD.bzl",
     patches = ["//third_party/icu:udata.patch"],
-    patch_args = ["-p1", "-s"],
+    patch_args = ["-p1"],
 )
 
 http_archive(
