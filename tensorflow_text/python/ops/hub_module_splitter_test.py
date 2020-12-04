@@ -19,10 +19,12 @@
 from absl.testing import parameterized
 
 from tensorflow.python.framework import test_util
+from tensorflow.python.lib.io import file_io
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import variables as variables_lib
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from tensorflow.python.saved_model import save
 from tensorflow_text.python.ops import hub_module_splitter
 
 
@@ -107,6 +109,13 @@ class HubModuleSplitterTest(parameterized.TestCase, test.TestCase):
     self.assertAllEqual(expected_starts, starts)
     self.assertAllEqual(expected_ends, ends)
     self.assertAllEqual(expected_pieces, pieces_no_offset)
+
+  def exportSavedModel(self):
+    hub_module_handle = ("tensorflow_text/python/ops/test_data/"
+                         "segmenter_hub_module")
+    splitter = hub_module_splitter.HubModuleSplitter(hub_module_handle)
+    save.save(splitter, 'ram://saved_model')
+    self.assertEqual(file_io.file_exists_v2('ram://saved_model'), True)
 
 
 if __name__ == "__main__":
