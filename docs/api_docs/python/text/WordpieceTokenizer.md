@@ -1,7 +1,11 @@
+description: Tokenizes a tensor of UTF-8 string tokens into subword pieces.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.WordpieceTokenizer" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
+<meta itemprop="property" content="split"/>
+<meta itemprop="property" content="split_with_offsets"/>
 <meta itemprop="property" content="tokenize"/>
 <meta itemprop="property" content="tokenize_with_offsets"/>
 </div>
@@ -10,7 +14,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -19,7 +23,8 @@ source</a>
 
 Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 
-Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
+Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
+[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.WordpieceTokenizer(
@@ -42,7 +47,8 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md)
 </td>
 <td>
 A lookup table implementing the LookupInterface
-containing the vocabulary of subwords.
+containing the vocabulary of subwords or a string which is the file path
+to the vocab.txt file.
 </td>
 </tr><tr>
 <td>
@@ -101,6 +107,101 @@ characters will be treated as single unknown tokens.
 
 ## Methods
 
+<h3 id="split"><code>split</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>split(
+    input
+)
+</code></pre>
+
+Splits the strings from the input tensor.
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+`RaggedTensor`.
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
+For each string from the input tensor, the final, extra dimension contains
+the pieces that string was split into.
+</td>
+</tr>
+
+</table>
+
+<h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>split_with_offsets(
+    input
+)
+</code></pre>
+
+Splits the input tensor, returns the resulting pieces with offsets.
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+`RaggedTensor`.
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A tuple `(pieces, start_offsets, end_offsets)` where:
+
+*   `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
+    `RaggedTensor`.
+*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the starting indices of each piece (byte indices for input
+    strings).
+*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the exclusive ending indices of each piece (byte indices for
+    input strings). </td> </tr>
+
+</table>
+
 <h3 id="tokenize"><code>tokenize</code></h3>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
@@ -115,12 +216,14 @@ source</a>
 Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
 ### Example:
+
 ```python
->>> tokens = [["they're", "the", "greatest"]],
->>> tokenizer = WordpieceTokenizer(vocab, token_out_type=tf.string)
->>> tokenizer.tokenize(tokens)
-[[['they', "##'", '##re'], ['the'], ['great', '##est']]]
 ```
+
+> > > tokens = [["they're", "the", "greatest"]], tokenizer =
+> > > WordpieceTokenizer(vocab, token_out_type=tf.string)
+> > > tokenizer.tokenize(tokens) [[['they', "##'", '##re'], ['the'], ['great',
+> > > '##est']]] ` `
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -167,16 +270,14 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 ### Example:
 
 ```python
->>> tokens = [["they're", "the", "greatest"]],
->>> tokenizer = WordpieceTokenizer(vocab, token_out_type=tf.string)
->>> result = tokenizer.tokenize_with_offsets(tokens)
->>> result[0].to_list()  # subwords
-[[['they', "##'", '##re'], ['the'], ['great', '##est']]]
->>> result[1].to_list()  # offset starts
-[[[0, 4, 5], [0], [0, 5]]]
->>> result[2].to_list()  # offset limits
-[[[4, 5, 7], [3], [5, 8]]]
 ```
+
+> > > tokens = [["they're", "the", "greatest"]], tokenizer =
+> > > WordpieceTokenizer(vocab, token_out_type=tf.string) result =
+> > > tokenizer.tokenize_with_offsets(tokens) result[0].to_list() # subwords
+> > > [[['they', "##'", '##re'], ['the'], ['great', '##est']]]
+> > > result[1].to_list() # start offsets [[[0, 4, 5], [0], [0, 5]]]
+> > > result[2].to_list() # end offsets [[[4, 5, 7], [3], [5, 8]]] ` `
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -194,19 +295,21 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
-A tuple `(tokens, start_offsets, limit_offsets)` where:
+A tuple `(tokens, start_offsets, end_offsets)` where:
 
 *   `tokens[i1...iN, j]` is a `RaggedTensor` of the string contents (or ID in
     the vocab_lookup_table representing that string) of the `jth` token in
     `input[i1...iN]`.
 *   `start_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
-    start of the `jth` token in `input[i1...iN]`.
-*   `limit_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
-    end of the `jth` token in `input[i`...iN]`. </td> </tr>
+    inclusive start of the `jth` token in `input[i1...iN]`.
+*   `end_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
+    exclusive end of the `jth` token in `input[i`...iN]` (exclusive, i.e., first
+    byte after the end of the token). </td> </tr>
 
 </table>

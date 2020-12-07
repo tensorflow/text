@@ -1,3 +1,5 @@
+description: Gather slices with indices=-1 mapped to default.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.gather_with_default" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +9,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -28,9 +30,10 @@ This operation is similar to `tf.gather()`, except that any value of `-1`
 in `indices` will be mapped to `default`.  Example:
 
 ```python
->>> gather_with_default(['a', 'b', 'c', 'd'], [2, 0, -1, 2, -1], '_').eval()
-array(['c', 'a', '_', 'c', '_'], dtype=object)
 ```
+
+> > > gather_with_default(['a', 'b', 'c', 'd'], [2, 0, -1, 2, -1], '_').eval()
+> > > array(['c', 'a', '_', 'c', '_'], dtype=object) ` `
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">

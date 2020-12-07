@@ -1,3 +1,6 @@
+description: Return an alignment from a set of source spans to a set of target
+spans.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.span_alignment" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +10,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -154,23 +157,32 @@ returned tensor has shape `[source_size, (num_aligned_target_spans)].
   Given the following source and target spans (with no batch dimensions):
 
 ```python
-  >>> #         0    5    10   15   20   25   30   35   40   45   50   55   60
-  >>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
-  >>> # Source: [-0-]     [-1-] [2] [3]    [4][-5-][-6-][-7-][-8-][-9-]
-  >>> # Target: [-0-][-1-]     [-2-][-3-][-4-] [5] [6]    [7]  [-8-][-9-][10]
-  >>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
-  >>> source_start=[0, 10, 16, 20, 27, 30, 35, 40, 45, 50]
-  >>> source_limit=[5, 15, 19, 23, 30, 35, 40, 45, 50, 55]
-  >>> target_start=[0,  5, 15, 20, 25, 31, 35, 42, 47, 52, 57]
-  >>> target_limit=[5, 10, 20, 25, 30, 34, 38, 45, 52, 57, 61]
-
 ```
 
-> > > span_alignment_lists(source_starts, source_limits, target_starts,
-> > > target_limits) [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-> > > span_alignment_lists(source_starts, source_limits, ... target_starts,
-> > > target_limits, ... multivalent_result=True) [[0], [], [], [], [], [], [],
-> > > [], [], []] ```
+> > > # 0 5 10 15 20 25 30 35 40 45 50 55 60
+> > >
+> > > # |====|====|====|====|====|====|====|====|====|====|====|====|
+> > >
+> > > # Source: [-0-] [-1-] [2] [3] [4][-5-][-6-][-7-][-8-][-9-]
+> > >
+> > > # Target: [-0-][-1-] [-2-][-3-][-4-] [5] [6] [7] [-8-][-9-][10]
+> > >
+> > > # |====|====|====|====|====|====|====|====|====|====|====|====|
+> > >
+> > > source_start=[0, 10, 16, 20, 27, 30, 35, 40, 45, 50] source_limit=[5, 15,
+> > > 19, 23, 30, 35, 40, 45, 50, 55] target_start=[0, 5, 15, 20, 25, 31, 35,
+> > > 42, 47, 52, 57] target_limit=[5, 10, 20, 25, 30, 34, 38, 45, 52, 57, 61]
+> > > ```
+
+```
+  >>> span_alignment_lists(source_starts, source_limits,
+                           target_starts, target_limits)
+  [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+  >>> span_alignment_lists(source_starts, source_limits,
+  ...                      target_starts, target_limits,
+  ...                      multivalent_result=True)
+  [[0], [], [], [], [], [], [], [], [], []]
+```
 
 ```
   >>> span_alignment_lists(source_starts, source_limits,

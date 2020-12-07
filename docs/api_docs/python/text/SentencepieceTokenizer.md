@@ -1,9 +1,14 @@
+description: Tokenizes a tensor of UTF-8 strings.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.SentencepieceTokenizer" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="detokenize"/>
 <meta itemprop="property" content="id_to_string"/>
+<meta itemprop="property" content="split"/>
+<meta itemprop="property" content="split_with_offsets"/>
+<meta itemprop="property" content="string_to_id"/>
 <meta itemprop="property" content="tokenize"/>
 <meta itemprop="property" content="tokenize_with_offsets"/>
 <meta itemprop="property" content="vocab_size"/>
@@ -13,7 +18,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -23,6 +28,7 @@ source</a>
 Tokenizes a tensor of UTF-8 strings.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
+[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md),
 [`Detokenizer`](../text/Detokenizer.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -203,6 +209,150 @@ A tensor of string with the same shape as input.
 
 </table>
 
+<h3 id="split"><code>split</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>split(
+    input
+)
+</code></pre>
+
+Splits the strings from the input tensor.
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+`RaggedTensor`.
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
+For each string from the input tensor, the final, extra dimension contains
+the pieces that string was split into.
+</td>
+</tr>
+
+</table>
+
+<h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>split_with_offsets(
+    input
+)
+</code></pre>
+
+Splits the input tensor, returns the resulting pieces with offsets.
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`input`
+</td>
+<td>
+An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
+`RaggedTensor`.
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A tuple `(pieces, start_offsets, end_offsets)` where:
+
+*   `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
+    `RaggedTensor`.
+*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the starting indices of each piece (byte indices for input
+    strings).
+*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the exclusive ending indices of each piece (byte indices for
+    input strings). </td> </tr>
+
+</table>
+
+<h3 id="string_to_id"><code>string_to_id</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>string_to_id(
+    input, name=None
+)
+</code></pre>
+
+Converts token into a vocabulary id.
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`input`
+</td>
+<td>
+An arbitrary tensor of string tokens.
+</td>
+</tr><tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A tensor of int32 representing the IDs with the same shape as input.
+</td>
+</tr>
+
+</table>
+
 <h3 id="tokenize"><code>tokenize</code></h3>
 
 <a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentencepiece_tokenizer.py">View
@@ -287,15 +437,22 @@ The name argument that is passed to the op function.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
-A `RaggedTensor` of tokenized text. The returned shape is the shape of the
-input tensor with an added ragged dimension for tokens of each string.
-</td>
-</tr>
+A tuple `(tokens, start_offsets, end_offsets)` where:
+
+*   `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
+    `RaggedTensor`.
+*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the starting indices of each token (byte indices for input
+    strings).
+*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the exclusive ending indices of each token (byte indices for
+    input strings). </td> </tr>
 
 </table>
 

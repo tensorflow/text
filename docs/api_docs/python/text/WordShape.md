@@ -1,3 +1,5 @@
+description: Values for the 'pattern' arg of the wordshape op.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.WordShape" />
 <meta itemprop="path" content="Stable" />
@@ -39,7 +41,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -211,39 +213,235 @@ The supported wordshape identifiers are:
 *   <a href="../text/WordShape.md#IS_WHITESPACE"><code>WordShape.IS_WHITESPACE</code></a>:
     The input consists entirely of whitespace.
 
-## Class Variables
+<!-- Tabular view -->
 
-*   `BEGINS_WITH_OPEN_QUOTE` <a id="BEGINS_WITH_OPEN_QUOTE"></a>
-*   `BEGINS_WITH_PUNCT_OR_SYMBOL` <a id="BEGINS_WITH_PUNCT_OR_SYMBOL"></a>
-*   `ENDS_WITH_CLOSE_QUOTE` <a id="ENDS_WITH_CLOSE_QUOTE"></a>
-*   `ENDS_WITH_ELLIPSIS` <a id="ENDS_WITH_ELLIPSIS"></a>
-*   `ENDS_WITH_EMOTICON` <a id="ENDS_WITH_EMOTICON"></a>
-*   `ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL`
-    <a id="ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL"></a>
-*   `ENDS_WITH_MULTIPLE_TERMINAL_PUNCT`
-    <a id="ENDS_WITH_MULTIPLE_TERMINAL_PUNCT"></a>
-*   `ENDS_WITH_PUNCT_OR_SYMBOL` <a id="ENDS_WITH_PUNCT_OR_SYMBOL"></a>
-*   `ENDS_WITH_SENTENCE_TERMINAL` <a id="ENDS_WITH_SENTENCE_TERMINAL"></a>
-*   `ENDS_WITH_TERMINAL_PUNCT` <a id="ENDS_WITH_TERMINAL_PUNCT"></a>
-*   `HAS_CURRENCY_SYMBOL` <a id="HAS_CURRENCY_SYMBOL"></a>
-*   `HAS_EMOJI` <a id="HAS_EMOJI"></a>
-*   `HAS_MATH_SYMBOL` <a id="HAS_MATH_SYMBOL"></a>
-*   `HAS_MIXED_CASE` <a id="HAS_MIXED_CASE"></a>
-*   `HAS_NON_LETTER` <a id="HAS_NON_LETTER"></a>
-*   `HAS_NO_DIGITS` <a id="HAS_NO_DIGITS"></a>
-*   `HAS_NO_PUNCT_OR_SYMBOL` <a id="HAS_NO_PUNCT_OR_SYMBOL"></a>
-*   `HAS_NO_QUOTES` <a id="HAS_NO_QUOTES"></a>
-*   `HAS_ONLY_DIGITS` <a id="HAS_ONLY_DIGITS"></a>
-*   `HAS_PUNCTUATION_DASH` <a id="HAS_PUNCTUATION_DASH"></a>
-*   `HAS_QUOTE` <a id="HAS_QUOTE"></a>
-*   `HAS_SOME_DIGITS` <a id="HAS_SOME_DIGITS"></a>
-*   `HAS_SOME_PUNCT_OR_SYMBOL` <a id="HAS_SOME_PUNCT_OR_SYMBOL"></a>
-*   `HAS_TITLE_CASE` <a id="HAS_TITLE_CASE"></a>
-*   `IS_ACRONYM_WITH_PERIODS` <a id="IS_ACRONYM_WITH_PERIODS"></a>
-*   `IS_EMOTICON` <a id="IS_EMOTICON"></a>
-*   `IS_LOWERCASE` <a id="IS_LOWERCASE"></a>
-*   `IS_MIXED_CASE_LETTERS` <a id="IS_MIXED_CASE_LETTERS"></a>
-*   `IS_NUMERIC_VALUE` <a id="IS_NUMERIC_VALUE"></a>
-*   `IS_PUNCT_OR_SYMBOL` <a id="IS_PUNCT_OR_SYMBOL"></a>
-*   `IS_UPPERCASE` <a id="IS_UPPERCASE"></a>
-*   `IS_WHITESPACE` <a id="IS_WHITESPACE"></a>
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Class Variables</h2></th></tr>
+
+<tr>
+<td>
+BEGINS_WITH_OPEN_QUOTE<a id="BEGINS_WITH_OPEN_QUOTE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+BEGINS_WITH_PUNCT_OR_SYMBOL<a id="BEGINS_WITH_PUNCT_OR_SYMBOL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+ENDS_WITH_CLOSE_QUOTE<a id="ENDS_WITH_CLOSE_QUOTE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+ENDS_WITH_ELLIPSIS<a id="ENDS_WITH_ELLIPSIS"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+ENDS_WITH_EMOTICON<a id="ENDS_WITH_EMOTICON"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL<a id="ENDS_WITH_MULTIPLE_SENTENCE_TERMINAL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+ENDS_WITH_MULTIPLE_TERMINAL_PUNCT<a id="ENDS_WITH_MULTIPLE_TERMINAL_PUNCT"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+ENDS_WITH_PUNCT_OR_SYMBOL<a id="ENDS_WITH_PUNCT_OR_SYMBOL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+ENDS_WITH_SENTENCE_TERMINAL<a id="ENDS_WITH_SENTENCE_TERMINAL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+ENDS_WITH_TERMINAL_PUNCT<a id="ENDS_WITH_TERMINAL_PUNCT"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_CURRENCY_SYMBOL<a id="HAS_CURRENCY_SYMBOL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_EMOJI<a id="HAS_EMOJI"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_MATH_SYMBOL<a id="HAS_MATH_SYMBOL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_MIXED_CASE<a id="HAS_MIXED_CASE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_NON_LETTER<a id="HAS_NON_LETTER"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_NO_DIGITS<a id="HAS_NO_DIGITS"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_NO_PUNCT_OR_SYMBOL<a id="HAS_NO_PUNCT_OR_SYMBOL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_NO_QUOTES<a id="HAS_NO_QUOTES"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_ONLY_DIGITS<a id="HAS_ONLY_DIGITS"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_PUNCTUATION_DASH<a id="HAS_PUNCTUATION_DASH"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_QUOTE<a id="HAS_QUOTE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_SOME_DIGITS<a id="HAS_SOME_DIGITS"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_SOME_PUNCT_OR_SYMBOL<a id="HAS_SOME_PUNCT_OR_SYMBOL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+HAS_TITLE_CASE<a id="HAS_TITLE_CASE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+IS_ACRONYM_WITH_PERIODS<a id="IS_ACRONYM_WITH_PERIODS"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+IS_EMOTICON<a id="IS_EMOTICON"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+IS_LOWERCASE<a id="IS_LOWERCASE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+IS_MIXED_CASE_LETTERS<a id="IS_MIXED_CASE_LETTERS"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+IS_NUMERIC_VALUE<a id="IS_NUMERIC_VALUE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+IS_PUNCT_OR_SYMBOL<a id="IS_PUNCT_OR_SYMBOL"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+IS_UPPERCASE<a id="IS_UPPERCASE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr><tr>
+<td>
+IS_WHITESPACE<a id="IS_WHITESPACE"></a>
+</td>
+<td>
+<a href="../text/WordShape.md"><code>text.WordShape</code></a>
+</td>
+</tr>
+</table>

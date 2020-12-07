@@ -1,3 +1,6 @@
+description: Returns a boolean tensor indicating which source and target spans
+overlap.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.span_overlaps" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +10,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -149,17 +152,17 @@ If the span tensors are incompatible.
 #### Example:
   Given the following source and target spans (with no batch dimensions):
 
-  ```python
+```python
   #         0    5    10   15   20   25   30   35   40
   #         |====|====|====|====|====|====|====|====|
   # Source: [-0-]     [-1-] [2] [-3-][-4-][-5-]
   # Target: [-0-][-1-]     [-2-] [3]   [-4-][-5-]
   #         |====|====|====|====|====|====|====|====|
-  >>> source_start = [0, 10, 16, 20, 25, 30]
-  >>> source_limit = [5, 15, 19, 25, 30, 35]
-  >>> target_start = [0,  5, 15, 21, 27, 31]
-  >>> target_limit = [5, 10, 20, 24, 32, 37]
-  ```
+```
+
+> > > source_start = [0, 10, 16, 20, 25, 30] source_limit = [5, 15, 19, 25, 30,
+> > > 35] target_start = [0, 5, 15, 21, 27, 31] target_limit = [5, 10, 20, 24,
+> > > 32, 37] ` `
 
   `result[i, j]` will be true at the following locations:
 

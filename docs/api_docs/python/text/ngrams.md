@@ -1,3 +1,5 @@
+description: Create a tensor of n-grams based on the input data data.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.ngrams" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +9,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 

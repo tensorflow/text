@@ -1,3 +1,5 @@
+description: Applies case folding to every UTF-8 string in the input.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.case_fold_utf8" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +9,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -31,12 +33,11 @@ applied to the strings.
 #### For example:
 
 ```python
->>> case_fold_utf8(['The   Quick-Brown',
-...                 'CAT jumped over',
-...                 'the lazy dog  !!  ']
-tf.Tensor(['the   quick-brown' 'cat jumped over' 'the lazy dog  !!  '],
-          shape=(3,), dtype=string)
 ```
+
+> > > case_fold_utf8(['The Quick-Brown', ... 'CAT jumped over', ... 'the lazy
+> > > dog !! '] tf.Tensor(['the quick-brown' 'cat jumped over' 'the lazy dog !!
+> > > '], shape=(3,), dtype=string) ` `
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">

@@ -1,3 +1,5 @@
+description: Finds the maximum directed spanning tree of a digraph.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.max_spanning_tree" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +9,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 

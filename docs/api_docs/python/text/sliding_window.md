@@ -1,3 +1,5 @@
+description: Builds a sliding window for data with a specified width.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.sliding_window" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +9,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
@@ -101,57 +103,53 @@ A `K+1` dimensional tensor with the same dtype as `data`, where:
   Sliding window (width=3) across a sequence of tokens:
 
 ```python
-  >>> # input: <string>[sequence_length]
-  >>> input = tf.constant(["one", "two", "three", "four", "five", "six"])
-  >>> # output: <string>[sequence_length-2, 3]
-  >>> output = sliding_window(data=input, width=3, axis=0)
-  >>> print output.eval()
-  [["one", "two", "three"],
-   ["two", "three", "four"],
-   ["three", "four", "five"],
-   ["four", "five", "six"]]
-  >>> print("Shape: %s -> %s" % (input.shape, output.shape))
-  Shape: (6,) -> (4, 3)
 ```
+
+> > > # input: <string>[sequence_length]
+> > >
+> > > input = tf.constant(["one", "two", "three", "four", "five", "six"])
+> > >
+> > > # output: <string>[sequence_length-2, 3]
+> > >
+> > > output = sliding_window(data=input, width=3, axis=0) print output.eval()
+> > > [["one", "two", "three"], ["two", "three", "four"], ["three", "four",
+> > > "five"], ["four", "five", "six"]] print("Shape: %s -> %s" % (input.shape,
+> > > output.shape)) Shape: (6,) -> (4, 3) ` `
 
   Sliding window (width=2) across the inner dimension of a ragged matrix
   containing a batch of token sequences:
 
 ```python
-  >>> # input: <string>[num_sentences, (num_words)]
-  >>> input = tf.ragged.constant(
-  ...     [['Up', 'high', 'in', 'the', 'air'],
-  ...      ['Down', 'under', 'water'],
-  ...      ['Away', 'to', 'outer', 'space']]
-  >>> # output: <string>[num_sentences, (num_word-1), 2]
-  >>> output = sliding_window(input, width=2, axis=-1)
-  >>> print output.eval()
-  [[['Up', 'high'], ['high', 'in'], ['in', 'the'], ['the', 'air']],
-   [['Down', 'under'], ['under', 'water']],
-   [['Away', 'to'], ['to', 'outer'], ['outer', 'space']]]
-  >>> print("Shape: %s -> %s" % (input.shape, output.shape))
-  Shape: (3, ?) -> (3, ?, 2)
 ```
+
+> > > # input: <string>[num_sentences, (num_words)]
+> > >
+> > > input = tf.ragged.constant( ... [['Up', 'high', 'in', 'the', 'air'], ...
+> > > ['Down', 'under', 'water'], ... ['Away', 'to', 'outer', 'space']]
+> > >
+> > > # output: <string>[num_sentences, (num_word-1), 2]
+> > >
+> > > output = sliding_window(input, width=2, axis=-1) print output.eval()
+> > > [[['Up', 'high'], ['high', 'in'], ['in', 'the'], ['the', 'air']],
+> > > [['Down', 'under'], ['under', 'water']], [['Away', 'to'], ['to', 'outer'],
+> > > ['outer', 'space']]] print("Shape: %s -> %s" % (input.shape,
+> > > output.shape)) Shape: (3, ?) -> (3, ?, 2) ` `
 
   Sliding window across the second dimension of a 3-D tensor containing
   batches of sequences of embedding vectors:
 
 ```python
-  >>> # input: <int32>[num_sequences, sequence_length, embedding_size]
-  >>> input = tf.constant([
-  ...     [[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1], [5, 5, 1]],
-  ...     [[1, 1, 2], [2, 2, 2], [3, 3, 2], [4, 4, 2], [5, 5, 2]]])
-  >>> # output: <int32>[num_sequences, sequence_length-1, 2, embedding_size]
-  >>> output = sliding_window(data=input, width=2, axis=1)
-  >>> print output.eval()
-  [[[[1, 1, 1], [2, 2, 1]],
-    [[2, 2, 1], [3, 3, 1]],
-    [[3, 3, 1], [4, 4, 1]],
-    [[4, 4, 1], [5, 5, 1]]],
-   [[[1, 1, 2], [2, 2, 2]],
-    [[2, 2, 2], [3, 3, 2]],
-    [[3, 3, 2], [4, 4, 2]],
-    [[4, 4, 2], [5, 5, 2]]]]
-  >>> print("Shape: %s -> %s" % (input.shape, output.shape))
-  Shape: (2, 5, 3) -> (2, 4, 2, 3)
 ```
+
+> > > # input: <int32>[num_sequences, sequence_length, embedding_size]
+> > >
+> > > input = tf.constant([ ... [[1, 1, 1], [2, 2, 1], [3, 3, 1], [4, 4, 1], [5,
+> > > 5, 1]], ... [[1, 1, 2], [2, 2, 2], [3, 3, 2], [4, 4, 2], [5, 5, 2]]])
+> > >
+> > > # output: <int32>[num_sequences, sequence_length-1, 2, embedding_size]
+> > >
+> > > output = sliding_window(data=input, width=2, axis=1) print output.eval()
+> > > [[[[1, 1, 1], [2, 2, 1]], [[2, 2, 1], [3, 3, 1]], [[3, 3, 1], [4, 4, 1]],
+> > > [[4, 4, 1], [5, 5, 1]]], [[[1, 1, 2], [2, 2, 2]], [[2, 2, 2], [3, 3, 2]],
+> > > [[3, 3, 2], [4, 4, 2]], [[4, 4, 2], [5, 5, 2]]]] print("Shape: %s -> %s" %
+> > > (input.shape, output.shape)) Shape: (2, 5, 3) -> (2, 4, 2, 3) ` `

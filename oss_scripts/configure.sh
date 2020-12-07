@@ -41,7 +41,7 @@ if [[ $(pip show tensorflow) == *tensorflow* ]] || [[ $(pip show tf-nightly) == 
   echo 'Using installed tensorflow.'
 else
   echo 'Installing tensorflow.'
-  pip install tensorflow==2.3.0
+  pip install tensorflow==2.4.0rc3
 fi
 
 if is_windows; then

@@ -1,3 +1,6 @@
+description: Computes LCS-based similarity score between the hypotheses and
+references.
+
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
 <meta itemprop="name" content="text.metrics.rouge_l" />
 <meta itemprop="path" content="Stable" />
@@ -7,7 +10,7 @@
 
 <!-- Insert buttons and diff -->
 
-<table class="tfo-notebook-buttons tfo-api" align="left">
+<table class="tfo-notebook-buttons tfo-api nocontent" align="left">
 
 </table>
 
