@@ -20,8 +20,9 @@ Find the sentence fragments in a given text. (deprecated)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.sentence_fragments(
-    token_word, token_starts, token_ends, token_properties, input_encoding='UTF-8',
-    errors='replace', replacement_char=65533, replace_control_characters=False
+    token_word, token_starts, token_ends, token_properties,
+    input_encoding=&#x27;UTF-8&#x27;, errors=&#x27;replace&#x27;,
+    replacement_char=65533, replace_control_characters=False
 )
 </code></pre>
 
