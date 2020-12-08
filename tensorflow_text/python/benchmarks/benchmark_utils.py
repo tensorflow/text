@@ -87,7 +87,7 @@ class OpsBaseBenchmark(benchmark.Benchmark):
                      **kwargs):
     """Runs the benchmark and reports results.
 
-    Arguments:
+    Args:
       fn: Function to be benchmarked.
       iters: Number of iterations to run the benchmark.
       burn_iters: Number of warm-up iterations to run to reach a stable state.

@@ -53,7 +53,7 @@ class ToDense(Layer):   # pylint: disable=g-classes-have-attributes
    [[ 0,  0,  0,  0], [13, 14,  0,  0], [15, 16, 17, 18], [19,  0,  0,  0]]]
   ```
 
-  Arguments:
+  Args:
     pad_value: A value used to pad and fill in the missing values. Should be a
       meaningless value for the input data. Default is '0'.
     mask: A Boolean value representing whether to mask the padded values. If
