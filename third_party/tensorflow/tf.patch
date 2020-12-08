@@ -1,3 +1,25 @@
+diff --git a/tensorflow/core/framework/type_index.h b/tensorflow/core/framework/type_index.h
+index 7986904dd7a..d201b8f0da4 100644
+--- a/tensorflow/core/framework/type_index.h
++++ b/tensorflow/core/framework/type_index.h
+@@ -24,7 +24,7 @@ limitations under the License.
+ 
+ #include "tensorflow/core/platform/types.h"
+ 
+-#if defined(MACOS) || defined(TARGET_OS_MAC)
++#if defined(MACOS) || defined(TARGET_OS_MAC) || defined(PLATFORM_WINDOWS)
+ #include "tensorflow/core/platform/hash.h"
+ #endif  // defined(MACOS) || defined(TARGET_OS_MAC)
+ 
+@@ -62,7 +62,7 @@ class TypeIndex {
+ 
+ #if defined(__GXX_RTTI) || defined(_CPPRTTI)
+ 
+-#if defined(MACOS) || defined(TARGET_OS_MAC)
++#if defined(MACOS) || defined(TARGET_OS_MAC) || defined(PLATFORM_WINDOWS)
+     // Use a hash based on the type name to avoid issues due to RTLD_LOCAL on
+     // MacOS (b/156979412).
+     return TypeIndex(Hash64(typeid(T).name()), typeid(T).name());
 diff --git a/third_party/remote_config/common.bzl b/third_party/remote_config/common.bzl
 index d7e69326205..6f5a4f8c3e0 100644
 --- a/third_party/remote_config/common.bzl
