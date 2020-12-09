@@ -66,7 +66,6 @@ source</a>
 Splits the strings from the input tensor.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -83,7 +82,6 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -111,7 +109,6 @@ source</a>
 Splits the input tensor, returns the resulting pieces with offsets.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -128,7 +125,6 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -233,7 +229,6 @@ A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

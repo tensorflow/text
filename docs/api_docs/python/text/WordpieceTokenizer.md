@@ -28,9 +28,9 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.WordpieceTokenizer(
-    vocab_lookup_table, suffix_indicator='##', max_bytes_per_word=100,
-    max_chars_per_token=None, token_out_type=dtypes.int64, unknown_token='[UNK]',
-    split_unknown_characters=False
+    vocab_lookup_table, suffix_indicator=&#x27;##&#x27;, max_bytes_per_word=100,
+    max_chars_per_token=None, token_out_type=dtypes.int64,
+    unknown_token=&#x27;[UNK]&#x27;, split_unknown_characters=False
 )
 </code></pre>
 
@@ -121,7 +121,6 @@ source</a>
 Splits the strings from the input tensor.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -138,7 +137,6 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -166,7 +164,6 @@ source</a>
 Splits the input tensor, returns the resulting pieces with offsets.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -183,7 +180,6 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -295,7 +291,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

@@ -22,7 +22,7 @@ Split `input` by delimiters that match a regex pattern; returns offsets.
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.regex_split_with_offsets(
-    input, delim_regex_pattern, keep_delim_regex_pattern='', name=None
+    input, delim_regex_pattern, keep_delim_regex_pattern=&#x27;&#x27;, name=None
 )
 </code></pre>
 

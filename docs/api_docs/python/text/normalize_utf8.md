@@ -21,7 +21,7 @@ Normalizes each UTF-8 string in the input tensor using the specified rule.
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.normalize_utf8(
-    input, normalization_form='NFKC', name=None
+    input, normalization_form=&#x27;NFKC&#x27;, name=None
 )
 </code></pre>
 

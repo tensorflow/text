@@ -214,7 +214,6 @@ The supported wordshape identifiers are:
     The input consists entirely of whitespace.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Class Variables</h2></th></tr>
