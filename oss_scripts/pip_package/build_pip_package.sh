@@ -27,6 +27,10 @@ function is_macos() {
   [[ "${osname}" == "darwin" ]]
 }
 
+function is_nightly() {
+  [[ "$IS_NIGHTLY" == "nightly" ]]
+}
+
 function abspath() {
   cd "$(dirname $1)"
   echo "$PWD/$(basename $1)"
@@ -64,8 +68,13 @@ main() {
   cp -LR \
       "${runfiles}/org_tensorflow_text/tensorflow_text" \
       "${temp_dir}"
-  cp "${runfiles}/org_tensorflow_text/oss_scripts/pip_package/setup.py" \
-      "${temp_dir}"
+  if is_nightly; then
+    cp "${runfiles}/org_tensorflow_text/oss_scripts/pip_package/setup.nightly.py" \
+        "${temp_dir}"
+  else
+    cp "${runfiles}/org_tensorflow_text/oss_scripts/pip_package/setup.py" \
+        "${temp_dir}"
+  fi
   cp "${runfiles}/org_tensorflow_text/oss_scripts/pip_package/MANIFEST.in" \
       "${temp_dir}"
   cp "${runfiles}/org_tensorflow_text/oss_scripts/pip_package/LICENSE" \
@@ -74,7 +83,11 @@ main() {
   pushd "${temp_dir}" > /dev/null
 
   # Build pip package
-  python setup.py bdist_wheel --universal $plat_name
+  if is_nightly; then
+    python setup.nightly.py bdist_wheel --universal $plat_name
+  else
+    python setup.py bdist_wheel --universal $plat_name
+  fi
   cp dist/*.whl "${output_dir}"
 }
 
