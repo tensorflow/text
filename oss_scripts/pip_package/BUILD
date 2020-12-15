@@ -10,6 +10,7 @@ sh_binary(
     data = [
         "LICENSE",
         "MANIFEST.in",
+        "setup.nightly.py",
         "setup.py",
         "//tensorflow_text",
     ],
