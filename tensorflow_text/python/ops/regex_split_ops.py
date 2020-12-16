@@ -210,26 +210,25 @@ def regex_split(input,
 
 
 class RegexSplitter(splitter.SplitterWithOffsets):
-  """A `Splitter` that splits sentences separated by a newline.
+  """`RegexSplitter` splits text on the given regular expression.
 
-  `RegexSplitter` splits text when a newline character is detected.
-  The newline character is determined by a regex pattern. It also returns the
-  sentence beginning and ending byte offsets as well.
+  The default is a newline character pattern. It can also returns the beginning
+  and ending byte offsets as well.
   """
 
-  def __init__(self, new_sentence_regex=None):
+  def __init__(self, split_regex=None):
     r"""Creates an instance of `RegexSplitter`.
 
     Args:
-      new_sentence_regex: (optional) A string containing the regex pattern of a
-        new line sentence delimiter. Default is '\r?\n'.
+      split_regex: (optional) A string containing the regex pattern of a
+        delimiter to split on. Default is '\r?\n'.
     """
-    if not new_sentence_regex:
-      new_sentence_regex = "\r?\n"
-    self._new_sentence_regex = new_sentence_regex
+    if not split_regex:
+      split_regex = "\r?\n"
+    self._split_regex = split_regex
 
   def split(self, input):  # pylint: disable=redefined-builtin
-    return regex_split(input, self._new_sentence_regex)
+    return regex_split(input, self._split_regex)
 
   def split_with_offsets(self, input):  # pylint: disable=redefined-builtin
-    return regex_split_with_offsets(input, self._new_sentence_regex)
+    return regex_split_with_offsets(input, self._split_regex)
