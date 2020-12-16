@@ -15,10 +15,6 @@
 
 # Lint as: python3
 """This file contains the python libraries for the regex_split op."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import math_ops
@@ -26,6 +22,7 @@ from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_regex_split_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_regex_split_ops.so'))
+from tensorflow_text.python.ops import splitter
 
 
 # pylint: disable= redefined-builtin
@@ -210,3 +207,29 @@ def regex_split(input,
   tokens, _, _ = regex_split_with_offsets(input, delim_regex_pattern,
                                           keep_delim_regex_pattern, name)
   return tokens
+
+
+class RegexSplitter(splitter.SplitterWithOffsets):
+  """A `Splitter` that splits sentences separated by a newline.
+
+  `RegexSplitter` splits text when a newline character is detected.
+  The newline character is determined by a regex pattern. It also returns the
+  sentence beginning and ending byte offsets as well.
+  """
+
+  def __init__(self, new_sentence_regex=None):
+    r"""Creates an instance of `RegexSplitter`.
+
+    Args:
+      new_sentence_regex: (optional) A string containing the regex pattern of a
+        new line sentence delimiter. Default is '\r?\n'.
+    """
+    if not new_sentence_regex:
+      new_sentence_regex = "\r?\n"
+    self._new_sentence_regex = new_sentence_regex
+
+  def split(self, input):  # pylint: disable=redefined-builtin
+    return regex_split(input, self._new_sentence_regex)
+
+  def split_with_offsets(self, input):  # pylint: disable=redefined-builtin
+    return regex_split_with_offsets(input, self._new_sentence_regex)

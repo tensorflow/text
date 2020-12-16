@@ -66,12 +66,16 @@ py_library(
         ":greedy_constrained_sequence_op",
         ":hub_module_splitter",
         ":hub_module_tokenizer",
+        ":item_selector_ops",
+        ":masking_ops",
         ":mst_ops",
         ":ngrams_op",
         ":normalize_ops",
         ":pad_along_dimension_op",
+        ":pad_model_inputs_ops",
         ":pointer_ops",
         ":regex_split_ops",
+        ":segment_combiner_ops",
         ":sentence_breaking_ops",
         ":sentencepiece_tokenizer",
         ":sliding_window_op",
@@ -83,6 +87,7 @@ py_library(
         ":text_similarity_metric_ops",
         ":todense_layer",
         ":tokenization",
+        ":trimmer_ops",
         ":unicode_char_tokenizer",
         ":unicode_script_tokenizer",
         ":viterbi_constrained_sequence_op",
@@ -101,7 +106,6 @@ py_library(
 ##########################
 # Individual tf.text ops #
 ##########################
-
 # The py libraries are ordered alphabetically and are grouped with their corresponding tests.
 
 py_library(
@@ -220,6 +224,86 @@ py_test(
     ],
 )
 
+py_library(
+    name = "item_selector_ops",
+    srcs = ["python/ops/item_selector_ops.py"],
+    deps = [
+        # python:array_ops tensorflow dep,
+        # python:control_flow_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:lookup_ops tensorflow dep,
+        # python:map_fn tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:random_ops tensorflow dep,
+        # python:sort_ops tensorflow dep,
+        # python/ops/ragged:ragged_array_ops tensorflow dep,
+        # python/ops/ragged:ragged_batch_gather_ops tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/ops/ragged:ragged_functional_ops tensorflow dep,
+        # python/ops/ragged:ragged_map_ops tensorflow dep,
+        # python/ops/ragged:ragged_math_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/ops/ragged:ragged_tensor_shape tensorflow dep,
+        # python/ops/ragged:ragged_where_op tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "item_selector_ops_test",
+    size = "medium",
+    srcs = ["python/ops/item_selector_ops_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":item_selector_ops",
+        # python:array_ops tensorflow dep,
+        # python:client_testlib tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "masking_ops",
+    srcs = ["python/ops/masking_ops.py"],
+    deps = [
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:map_fn tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:random_ops tensorflow dep,
+        # python:sort_ops tensorflow dep,
+        # python/ops/ragged:ragged_batch_gather_ops tensorflow dep,
+        # python/ops/ragged:ragged_functional_ops tensorflow dep,
+        # python/ops/ragged:ragged_map_ops tensorflow dep,
+        # python/ops/ragged:ragged_math_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/ops/ragged:ragged_where_op tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "masking_ops_test",
+    size = "medium",
+    srcs = ["python/ops/masking_ops_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":item_selector_ops",
+        ":masking_ops",
+        "@absl_py//absl/testing:parameterized",
+        # python:array_ops tensorflow dep,
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
 py_tf_text_library(
     name = "mst_ops",
     srcs = ["python/ops/mst_ops.py"],
@@ -308,6 +392,37 @@ py_test(
         ":normalize_ops",
         # python:client_testlib tensorflow dep,
         # python:errors tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "pad_model_inputs_ops",
+    srcs = ["python/ops/pad_model_inputs_ops.py"],
+    deps = [
+        # python:array_ops tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:control_flow_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:tensor_array_ops tensorflow dep,
+        # python/ops/ragged:ragged_array_ops tensorflow dep,
+        # python/ops/ragged:ragged_map_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "pad_model_inputs_ops_test",
+    srcs = ["python/ops/pad_model_inputs_ops_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":pad_model_inputs_ops",
+        "@absl_py//absl/testing:parameterized",
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
@@ -420,6 +535,7 @@ py_tf_text_library(
     cc_op_defs = ["core/ops/regex_split_ops.cc"],
     cc_op_kernels = ["//tensorflow_text/core/kernels:regex_split_kernels"],
     deps = [
+        ":splitter",
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -443,6 +559,32 @@ py_library(
     srcs = ["python/ops/splitter.py"],
     deps = [
         # python/module tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "segment_combiner_ops",
+    srcs = ["python/ops/segment_combiner_ops.py"],
+    deps = [
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:math_ops tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "segment_combiner_ops_test",
+    srcs = ["python/ops/segment_combiner_ops_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":segment_combiner_ops",
+        "@absl_py//absl/testing:parameterized",
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
 )
 
@@ -701,6 +843,36 @@ py_test(
         # python/keras:backend tensorflow dep,
         # python/keras:base_layer tensorflow dep,
         # python/keras/layers tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "trimmer_ops",
+    srcs = ["python/ops/trimmer_ops.py"],
+    deps = [
+        ":item_selector_ops",
+        # python:array_ops tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:control_flow_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:functional_ops tensorflow dep,
+        # python/ops/ragged:ragged_map_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "trimmer_ops_test",
+    srcs = ["python/ops/trimmer_ops_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":trimmer_ops",
+        "@absl_py//absl/testing:parameterized",
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
     ],
 )

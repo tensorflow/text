@@ -21,7 +21,6 @@ from tensorflow.python.util import deprecation
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_sentence_breaking_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_sentence_breaking_ops.so'))
-from tensorflow_text.python.ops import regex_split_ops
 
 
 class SentenceBreaker(object):
@@ -64,35 +63,8 @@ class SentenceBreakerWithOffsets(SentenceBreaker):
     raise NotImplementedError()
 
 
-class RegexSentenceBreaker(SentenceBreakerWithOffsets):
-  """A `SentenceBreaker` that splits sentences separated by a newline.
-
-  `RegexSentenceBreaker` splits text when a newline character is detected.
-  The newline character is determined by a regex pattern. It also returns the
-  sentence beginning and ending byte offsets as well.
-  """
-
-  def __init__(self, new_sentence_regex=None):
-    r"""Creates an instance of `RegexSentenceBreaker`.
-
-    Args:
-      new_sentence_regex: (optional) A string containing the regex pattern of a
-        new line sentence delimiter. Default is '\r?\n'.
-    """
-    if not new_sentence_regex:
-      new_sentence_regex = '\r?\n'
-    self._new_sentence_regex = new_sentence_regex
-
-  def break_sentences(self, input):  # pylint: disable=redefined-builtin
-    return regex_split_ops.regex_split(input, self._new_sentence_regex)
-
-  def break_sentences_with_offsets(self, input):  # pylint: disable=redefined-builtin
-    return regex_split_ops.regex_split_with_offsets(input,
-                                                    self._new_sentence_regex)
-
-
-@deprecation.deprecated(
-    None, "Deprecated, use 'HeuristicBasedSentenceBreaker' instead.")
+@deprecation.deprecated(None,
+                        "Deprecated, use 'StateBasedSentenceBreaker' instead.")
 def sentence_fragments(token_word,
                        token_starts,
                        token_ends,
