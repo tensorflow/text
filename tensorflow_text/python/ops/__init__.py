@@ -25,6 +25,10 @@ from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_
 from tensorflow_text.python.ops.greedy_constrained_sequence_op import greedy_constrained_sequence
 from tensorflow_text.python.ops.hub_module_splitter import HubModuleSplitter
 from tensorflow_text.python.ops.hub_module_tokenizer import HubModuleTokenizer
+from tensorflow_text.python.ops.item_selector_ops import FirstNItemSelector
+from tensorflow_text.python.ops.item_selector_ops import RandomItemSelector
+from tensorflow_text.python.ops.masking_ops import mask_language_model
+from tensorflow_text.python.ops.masking_ops import MaskValuesChooser
 from tensorflow_text.python.ops.mst_ops import max_spanning_tree
 from tensorflow_text.python.ops.mst_ops import max_spanning_tree_gradient
 from tensorflow_text.python.ops.ngrams_op import ngrams
@@ -34,11 +38,14 @@ from tensorflow_text.python.ops.normalize_ops import find_source_offsets
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8_with_offsets_map
 from tensorflow_text.python.ops.pad_along_dimension_op import pad_along_dimension
+from tensorflow_text.python.ops.pad_model_inputs_ops import pad_model_inputs
 from tensorflow_text.python.ops.pointer_ops import gather_with_default
 from tensorflow_text.python.ops.pointer_ops import span_alignment
 from tensorflow_text.python.ops.pointer_ops import span_overlaps
 from tensorflow_text.python.ops.regex_split_ops import regex_split
 from tensorflow_text.python.ops.regex_split_ops import regex_split_with_offsets
+from tensorflow_text.python.ops.regex_split_ops import RegexSplitter
+from tensorflow_text.python.ops.segment_combiner_ops import combine_segments
 from tensorflow_text.python.ops.sentence_breaking_ops import sentence_fragments
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 from tensorflow_text.python.ops.sliding_window_op import sliding_window
@@ -50,6 +57,7 @@ from tensorflow_text.python.ops.string_ops import coerce_to_structurally_valid_u
 from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import Tokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
+from tensorflow_text.python.ops.trimmer_ops import WaterfallTrimmer
 from tensorflow_text.python.ops.unicode_char_tokenizer import UnicodeCharTokenizer
 from tensorflow_text.python.ops.unicode_script_tokenizer import UnicodeScriptTokenizer
 from tensorflow_text.python.ops.viterbi_constrained_sequence_op import viterbi_constrained_sequence

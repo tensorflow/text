@@ -16,10 +16,6 @@
 # encoding=utf-8
 # Lint as: python3
 """Tests for regex_split and regex_split_with_offsets ops."""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from absl.testing import parameterized
 
 from tensorflow.python.framework import constant_op
@@ -199,6 +195,49 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
     extracted_tokens = _ragged_substr(text_input, start, end)
     self.assertAllEqual(extracted_tokens, expected)
 
+
+@test_util.run_all_in_graph_and_eager_modes
+class RegexSplitterTestCases(test.TestCase, parameterized.TestCase):
+
+  @parameterized.parameters([
+      dict(
+          test_description="Split on new line",
+          text_input=[
+              b"Hi there.\nWhat time is it?\nIt is gametime.",
+              b"Who let the dogs out?\nWho?\nWho?\nWho?",
+          ],
+          expected=[[b"Hi there.", b"What time is it?", b"It is gametime."],
+                    [b"Who let the dogs out?", b"Who?", b"Who?", b"Who?"]],
+      ),
+      dict(
+          test_description="Test trailing \\n.",
+          text_input=[
+              b"Hi there.\nWhat time is it?\nIt is gametime.",
+              b"Who let the dogs out?\nWho?\nWho?\nWho?\n",
+          ],
+          expected=[[b"Hi there.", b"What time is it?", b"It is gametime."],
+                    [b"Who let the dogs out?", b"Who?", b"Who?", b"Who?"]],
+      ),
+      dict(
+          test_description="Custom regex.",
+          text_input=[
+              b"Hi there.\r\nWhat time is it?\r\nIt is gametime.",
+              b"Who let the dogs out?\r\nWho?\r\nWho?\r\nWho?",
+          ],
+          expected=[[b"Hi there.", b"What time is it?", b"It is gametime."],
+                    [b"Who let the dogs out?", b"Who?", b"Who?", b"Who?"]],
+          new_sentence_regex="\r\n",
+      ),
+  ])
+  def testRegexSplitter(self,
+                        test_description,
+                        text_input,
+                        expected,
+                        new_sentence_regex=None):
+    text_input = constant_op.constant(text_input)
+    sentence_breaker = regex_split_ops.RegexSplitter(new_sentence_regex)
+    actual = sentence_breaker.split(text_input)
+    self.assertAllEqual(actual, expected)
 
 if __name__ == "__main__":
   test.main()
