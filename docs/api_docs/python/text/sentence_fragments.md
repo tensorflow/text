@@ -29,8 +29,7 @@ Find the sentence fragments in a given text. (deprecated)
 <!-- Placeholder for "Used in" -->
 
 Warning: THIS FUNCTION IS DEPRECATED. It will be removed in a future version.
-Instructions for updating: Deprecated, use 'HeuristicBasedSentenceBreaker'
-instead.
+Instructions for updating: Deprecated, use 'StateBasedSentenceBreaker' instead.
 
 A sentence fragment is a potential next sentence determined using
 deterministic heuristics based on punctuation, capitalization, and similar
