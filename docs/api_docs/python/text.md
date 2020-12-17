@@ -31,14 +31,26 @@ Various tensorflow ops related to text-processing.
 [`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
 implementations.
 
+[`class FirstNItemSelector`](./text/FirstNItemSelector.md): An `ItemSelector`
+that selects the first `n` items in the batch.
+
 [`class HubModuleSplitter`](./text/HubModuleSplitter.md): Splitter that uses a
 Hub module.
 
 [`class HubModuleTokenizer`](./text/HubModuleTokenizer.md): Tokenizer that uses
 a Hub module.
 
+[`class MaskValuesChooser`](./text/MaskValuesChooser.md): Assigns values to the
+items chosen for masking.
+
+[`class RandomItemSelector`](./text/RandomItemSelector.md): An `ItemSelector`
+implementation that randomly selects items in a batch.
+
 [`class Reduction`](./text/Reduction.md): Type of reduction to be done by the
 n-gram op.
+
+[`class RegexSplitter`](./text/RegexSplitter.md): `RegexSplitter` splits text on
+the given regular expression.
 
 [`class SentencepieceTokenizer`](./text/SentencepieceTokenizer.md): Tokenizes a
 tensor of UTF-8 strings.
@@ -67,6 +79,9 @@ tensor of UTF-8 strings on Unicode character boundaries.
 [`class UnicodeScriptTokenizer`](./text/UnicodeScriptTokenizer.md): Tokenizes a
 tensor of UTF-8 strings on Unicode script boundaries.
 
+[`class WaterfallTrimmer`](./text/WaterfallTrimmer.md): A `Trimmer` that
+allocates a length budget to segments in order.
+
 [`class WhitespaceTokenizer`](./text/WhitespaceTokenizer.md): Tokenizes a tensor
 of UTF-8 strings on whitespaces.
 
@@ -83,12 +98,18 @@ UTF-8 string in the input.
 
 [`coerce_to_structurally_valid_utf8(...)`](./text/coerce_to_structurally_valid_utf8.md): Coerce UTF-8 input strings to structurally valid UTF-8.
 
+[`combine_segments(...)`](./text/combine_segments.md): Combine one or more input
+segments for a model's input sequence.
+
 [`find_source_offsets(...)`](./text/find_source_offsets.md): Maps the input
 post-normalized string offsets to pre-normalized offsets.
 
 [`gather_with_default(...)`](./text/gather_with_default.md): Gather slices with `indices=-1` mapped to `default`.
 
 [`greedy_constrained_sequence(...)`](./text/greedy_constrained_sequence.md): Performs greedy constrained sequence on a batch of examples.
+
+[`mask_language_model(...)`](./text/mask_language_model.md): Applies dynamic
+language model masking.
 
 [`max_spanning_tree(...)`](./text/max_spanning_tree.md): Finds the maximum
 directed spanning tree of a digraph.
@@ -105,6 +126,9 @@ in the input tensor using the specified rule.
 Normalizes each UTF-8 string in the input tensor using the specified rule.
 
 [`pad_along_dimension(...)`](./text/pad_along_dimension.md): Add padding to the beginning and end of data in a specific dimension.
+
+[`pad_model_inputs(...)`](./text/pad_model_inputs.md): Pad model input and
+generate corresponding input masks.
 
 [`regex_split(...)`](./text/regex_split.md): Split `input` by delimiters that
 match a regex pattern.
