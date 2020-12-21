@@ -74,7 +74,7 @@ allocates a length budget to segments in order.
 [`class WhitespaceTokenizer`](./text/WhitespaceTokenizer.md): Tokenizes a tensor
 of UTF-8 strings on whitespaces.
 
-[`class WordShape`](./text/WordShape.md): Values for the 'pattern' arg of the
+[`class WordShape`](./text/WordShape_cls.md): Values for the 'pattern' arg of the
 wordshape op.
 
 [`class WordpieceTokenizer`](./text/WordpieceTokenizer.md): Tokenizes a tensor

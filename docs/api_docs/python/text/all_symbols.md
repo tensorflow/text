@@ -24,7 +24,7 @@
 *  <a href="../text/UnicodeScriptTokenizer.md"><code>text.UnicodeScriptTokenizer</code></a>
 *  <a href="../text/WaterfallTrimmer.md"><code>text.WaterfallTrimmer</code></a>
 *  <a href="../text/WhitespaceTokenizer.md"><code>text.WhitespaceTokenizer</code></a>
-*  <a href="../text/WordShape.md"><code>text.WordShape</code></a>
+*  <a href="../text/WordShape_cls.md"><code>text.WordShape</code></a>
 *  <a href="../text/WordpieceTokenizer.md"><code>text.WordpieceTokenizer</code></a>
 *  <a href="../text/case_fold_utf8.md"><code>text.case_fold_utf8</code></a>
 *  <a href="../text/coerce_to_structurally_valid_utf8.md"><code>text.coerce_to_structurally_valid_utf8</code></a>
