@@ -87,7 +87,8 @@ class StateBasedSentenceBreaker(sentence_breaking_ops.SentenceBreakerWithOffsets
       end: A int64 `RaggedTensor` of shape [batch, (num_sentences)]
         where each entry is the exclusive ending byte offset of a sentence.
     """
-    if isinstance(doc, ragged_tensor.RaggedTensor):
+    if doc.shape.ndims > 1:
+      doc = ragged_tensor.RaggedTensor.from_tensor(doc)
       doc = doc.flat_values
 
     # Run sentence fragmenter op v2

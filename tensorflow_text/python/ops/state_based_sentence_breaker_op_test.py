@@ -45,6 +45,13 @@ class SentenceFragmenterTestCasesV2(test.TestCase, parameterized.TestCase):
           ], [b"I.B.M.", b"yo"]],
       ),
       dict(
+          test_description="Test when rank > 1.",
+          doc=[["Welcome to the U.S. don't be surprised."], ["I.B.M. yo"]],
+          expected_fragment_text=[[
+              b"Welcome to the U.S.", b"don't be surprised."
+          ], [b"I.B.M.", b"yo"]],
+      ),
+      dict(
           test_description="Test semicolons",
           doc=["Welcome to the US; don't be surprised."],
           expected_fragment_text=[[b"Welcome to the US; don't be surprised."]],
