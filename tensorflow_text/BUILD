@@ -1160,7 +1160,10 @@ py_test(
 py_tf_text_library(
     name = "wordpiece_tokenizer",
     srcs = ["python/ops/wordpiece_tokenizer.py"],
-    cc_op_defs = ["core/ops/wordpiece_op.cc"],
+    cc_op_defs = [
+        "core/ops/wordpiece_op.cc",
+        "//third_party/absl/strings",
+    ],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:wordpiece_kernel",
     ],

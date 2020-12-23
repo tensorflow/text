@@ -217,7 +217,7 @@ cc_library(
     deps = [
         # absl/strings dep
         "@com_googlesource_code_re2//:re2",
-    ] + tf_deps(),
+    ],
 )
 
 tf_text_kernel_library(
@@ -502,7 +502,7 @@ cc_library(
     deps = [
         # absl/strings dep
         "@icu//:common",
-    ] + tf_deps(),
+    ],
 )
 
 cc_test(
