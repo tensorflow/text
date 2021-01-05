@@ -83,72 +83,59 @@ def regex_split_with_offsets(input,
     where tokens is of type string, begin_offsets and end_offsets are of type
     int64.
   """
+  # Convert input to ragged or tensor
+  input = ragged_tensor.convert_to_tensor_or_ragged_tensor(
+      input, dtype=dtypes.string)
+
+  # Handle RaggedTensor inputs by recursively processing the `flat_values`.
+  if ragged_tensor.is_ragged(input):
+    # Split the `flat_values` of the input.
+    tokens, begin_offsets, end_offsets = regex_split_with_offsets(
+        input.flat_values, delim_regex_pattern, keep_delim_regex_pattern, name)
+    # Copy outer dimenion partitions from `input` to the output tensors.
+    tokens_rt = input.with_flat_values(tokens)
+    begin_offsets_rt = input.with_flat_values(begin_offsets)
+    end_offsets_rt = input.with_flat_values(end_offsets)
+    return tokens_rt, begin_offsets_rt, end_offsets_rt
+
   delim_regex_pattern = b"".join(
       [b"(", delim_regex_pattern.encode("utf-8"), b")"])
   keep_delim_regex_pattern = b"".join(
       [b"(", keep_delim_regex_pattern.encode("utf-8"), b")"])
 
-  # Convert input to ragged or tensor
-  input = ragged_tensor.convert_to_tensor_or_ragged_tensor(
-      input, dtype=dtypes.string)
+  # reshape to a flat Tensor (if not already)
+  input_shape = math_ops.cast(array_ops.shape(input), dtypes.int64)
+  input_reshaped = array_ops.reshape(input, [-1])
 
-  if ragged_tensor.is_ragged(input):
-    # send flat_values to regex_split op.
-    tokens, begin_offsets, end_offsets, row_splits = (
-        gen_regex_split_ops.regex_split_with_offsets(
-            input.flat_values,
-            delim_regex_pattern,
-            keep_delim_regex_pattern,
-            name=name))
+  # send flat_values to regex_split op.
+  tokens, begin_offsets, end_offsets, row_splits = (
+      gen_regex_split_ops.regex_split_with_offsets(input_reshaped,
+                                                   delim_regex_pattern,
+                                                   keep_delim_regex_pattern))
+  # Pack back into ragged tensors
+  tokens_rt = ragged_tensor.RaggedTensor.from_row_splits(
+      tokens, row_splits=row_splits)
+  begin_offsets_rt = ragged_tensor.RaggedTensor.from_row_splits(
+      begin_offsets,
+      row_splits=row_splits)
+  end_offsets_rt = ragged_tensor.RaggedTensor.from_row_splits(
+      end_offsets, row_splits=row_splits)
 
-    # Pack back into original ragged tensor
-    tokens_rt = ragged_tensor.RaggedTensor.from_row_splits(tokens, row_splits)
-    tokens_rt = ragged_tensor.RaggedTensor.from_row_splits(
-        tokens_rt, input.row_splits)
-    begin_offsets_rt = ragged_tensor.RaggedTensor.from_row_splits(
-        begin_offsets, row_splits)
-    begin_offsets_rt = ragged_tensor.RaggedTensor.from_row_splits(
-        begin_offsets_rt, input.row_splits)
-    end_offsets_rt = ragged_tensor.RaggedTensor.from_row_splits(
-        end_offsets, row_splits)
-    end_offsets_rt = ragged_tensor.RaggedTensor.from_row_splits(
-        end_offsets_rt, input.row_splits)
-    return tokens_rt, begin_offsets_rt, end_offsets_rt
-
-  else:
-    # reshape to a flat Tensor (if not already)
-    input_shape = math_ops.cast(array_ops.shape(input), dtypes.int64)
-    input_reshaped = array_ops.reshape(input, [-1])
-
-    # send flat_values to regex_split op.
-    tokens, begin_offsets, end_offsets, row_splits = (
-        gen_regex_split_ops.regex_split_with_offsets(input_reshaped,
-                                                     delim_regex_pattern,
-                                                     keep_delim_regex_pattern))
-    # Pack back into ragged tensors
-    tokens_rt = ragged_tensor.RaggedTensor.from_row_splits(
-        tokens, row_splits=row_splits)
-    begin_offsets_rt = ragged_tensor.RaggedTensor.from_row_splits(
-        begin_offsets,
-        row_splits=row_splits)
-    end_offsets_rt = ragged_tensor.RaggedTensor.from_row_splits(
-        end_offsets, row_splits=row_splits)
-
-    # If the original input was a multi-dimensional Tensor, add back the
-    # dimensions
-    static_rank = input.get_shape().ndims
-    if static_rank is not None and static_rank > 1:
-      i = array_ops.get_positive_axis(-1, input.get_shape().ndims)
-      for i in range(
-          array_ops.get_positive_axis(-1,
-                                      input.get_shape().ndims), 0, -1):
-        tokens_rt = ragged_tensor.RaggedTensor.from_uniform_row_length(
-            values=tokens_rt, uniform_row_length=input_shape[i])
-        begin_offsets_rt = ragged_tensor.RaggedTensor.from_uniform_row_length(
-            values=begin_offsets_rt, uniform_row_length=input_shape[i])
-        end_offsets_rt = ragged_tensor.RaggedTensor.from_uniform_row_length(
-            values=end_offsets_rt, uniform_row_length=input_shape[i])
-    return tokens_rt, begin_offsets_rt, end_offsets_rt
+  # If the original input was a multi-dimensional Tensor, add back the
+  # dimensions
+  static_rank = input.get_shape().ndims
+  if static_rank is not None and static_rank > 1:
+    i = array_ops.get_positive_axis(-1, input.get_shape().ndims)
+    for i in range(
+        array_ops.get_positive_axis(-1,
+                                    input.get_shape().ndims), 0, -1):
+      tokens_rt = ragged_tensor.RaggedTensor.from_uniform_row_length(
+          values=tokens_rt, uniform_row_length=input_shape[i])
+      begin_offsets_rt = ragged_tensor.RaggedTensor.from_uniform_row_length(
+          values=begin_offsets_rt, uniform_row_length=input_shape[i])
+      end_offsets_rt = ragged_tensor.RaggedTensor.from_uniform_row_length(
+          values=end_offsets_rt, uniform_row_length=input_shape[i])
+  return tokens_rt, begin_offsets_rt, end_offsets_rt
 
 
 # pylint: disable= redefined-builtin

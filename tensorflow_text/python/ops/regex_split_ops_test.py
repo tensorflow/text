@@ -21,7 +21,6 @@ from absl.testing import parameterized
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_tensor
@@ -35,16 +34,24 @@ def _utf8(char):
 
 # TODO(thuang513): It appears there isn't a Ragged version of substr; consider
 #               checking this into core TF.
-def _ragged_substr(text_input, begin, end):
-  text_input_flat = None
+def _ragged_substr(text_input, begin, size):
+  if not (isinstance(text_input, ragged_tensor.RaggedTensor) or
+          isinstance(begin, ragged_tensor.RaggedTensor) or
+          isinstance(size, ragged_tensor.RaggedTensor)):
+    return string_ops.substr_v2(text_input, begin, size)
+
+  # TODO(edloper) Update this to use ragged_tensor_shape.broadcast_dynamic_shape
+  # once it's been updated to handle uniform_row_lengths correctly.
   if ragged_tensor.is_ragged(text_input):
+    if text_input.ragged_rank != 1 or text_input.shape.rank != 2:
+      return None  # Test only works for `shape=[N, None]`
     text_input_flat = text_input.flat_values
   else:
     text_input_flat = array_ops.reshape(text_input, [-1])
   broadcasted_text = array_ops.gather_v2(text_input_flat,
                                          begin.nested_value_rowids()[-1])
-  size = math_ops.sub(end.flat_values, begin.flat_values)
-  new_tokens = string_ops.substr_v2(broadcasted_text, begin.flat_values, size)
+  new_tokens = string_ops.substr_v2(broadcasted_text, begin.flat_values,
+                                    size.flat_values)
   return begin.with_flat_values(new_tokens)
 
 
@@ -101,8 +108,8 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
           expected=[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"]],
       ),
       dict(
-          descr="Test input RaggedTensor with ragged ranks; "
-          "shape = [2, (1, 2)]",
+          descr="Test input RaggedTensor with ragged_rank=1; "
+          "shape = [2, (2, 1)]",
           text_input=[
               [b"show me some $100 bills yo!",
                _utf8(u"では４日")],
@@ -113,6 +120,32 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
           expected=[[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"],
                      [_utf8(u"で"), _utf8(u"は"),
                       _utf8(u"４日")]], [[b"hello", b"there"]]],
+      ),
+      dict(
+          descr="Test input 3D RaggedTensor with ragged_rank=2; "
+          "shape = [1, 2, (2, 1)]",
+          text_input=[[
+              [b"show me some $100 bills yo!",
+               _utf8(u"では４日")],
+              [b"hello there"],
+          ]],
+          delim_regex_pattern=r"\s|\p{S}|\p{Hiragana}",
+          keep_delim_regex_pattern=r"\p{S}|\p{Hiragana}",
+          expected=[[[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"],
+                      [_utf8(u"で"), _utf8(u"は"), _utf8(u"４日")]],
+                     [[b"hello", b"there"]]]],
+      ),
+      dict(
+          descr="Test input 3D RaggedTensor with ragged_rank=1; "
+          "shape = [2, (1, 2), 2]",
+          text_input=[
+              [[b"a b", b"c"], [b"d", b"e f g"]],
+              [[b"cat horse cow", b""]]],
+          ragged_rank=1,
+          delim_regex_pattern=r"\s",
+          expected=[
+              [[[b"a", b"b"], [b"c"]], [[b"d"], [b"e", b"f", b"g"]]],
+              [[[b"cat", b"horse", b"cow"], []]]],
       ),
       # Test inputs that are Tensors.
       dict(
@@ -177,11 +210,13 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
                        expected,
                        keep_delim_regex_pattern=r"",
                        descr="",
-                       input_is_dense=False):
+                       input_is_dense=False,
+                       ragged_rank=None):
     if input_is_dense:
       text_input = constant_op.constant(text_input)
     else:
-      text_input = ragged_factory_ops.constant(text_input)
+      text_input = ragged_factory_ops.constant(text_input,
+                                               ragged_rank=ragged_rank)
 
     actual_tokens, start, end = regex_split_ops.regex_split_with_offsets(
         input=text_input,
@@ -192,8 +227,10 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
 
     # Use the offsets to extract substrings and verify that the substrings match
     # up with the expected tokens
-    extracted_tokens = _ragged_substr(text_input, start, end)
-    self.assertAllEqual(extracted_tokens, expected)
+    extracted_tokens = _ragged_substr(array_ops.expand_dims(text_input, -1),
+                                      start, end - start)
+    if extracted_tokens is not None:
+      self.assertAllEqual(extracted_tokens, expected)
 
 
 @test_util.run_all_in_graph_and_eager_modes
