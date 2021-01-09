@@ -114,8 +114,8 @@ class HubModuleSplitterTest(parameterized.TestCase, test.TestCase):
     hub_module_handle = ("tensorflow_text/python/ops/test_data/"
                          "segmenter_hub_module")
     splitter = hub_module_splitter.HubModuleSplitter(hub_module_handle)
-    save.save(splitter, 'ram://saved_model')
-    self.assertEqual(file_io.file_exists_v2('ram://saved_model'), True)
+    save.save(splitter, "ram://saved_model")
+    self.assertEqual(file_io.file_exists_v2("ram://saved_model"), True)
 
 
 if __name__ == "__main__":
