@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/tensorflow/text/docs/include/tftext.png" width="60%"><br><br>
+  <img src="https://raw.githubusercontent.com/tensorflow/text/master/docs/include/tftext.png" width="60%"><br><br>
 </div>
 
 -----------------
@@ -8,8 +8,6 @@
 [![PyPI nightly version](https://img.shields.io/pypi/v/tensorflow-text-nightly?color=informational&label=pypi%20%40%20nightly)](https://badge.fury.io/py/tensorflow-text-nightly)
 [![PyPI Python version](https://img.shields.io/pypi/pyversions/tensorflow-text)](https://pypi.org/project/tensorflow-text/)
 [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://github.com/tensorflow/text/blob/master/docs/api_docs/python/index.md)
-[![GitHub
-Issues](https://img.shields.io/github/issues/tensorflow/text.svg)](https://github.com/tensorflow/text/issues)
 [![Contributions
 welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
