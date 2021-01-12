@@ -76,8 +76,8 @@ class HubModuleSplitter(SplitterWithOffsets):
     """
     super(HubModuleSplitter, self).__init__()
     empty_tags = set()
-    hub_module = hub.load(hub_module_handle, tags=empty_tags)
-    self._hub_module_signature = hub_module.signatures['default']
+    self._hub_module = hub.load(hub_module_handle, tags=empty_tags)
+    self._hub_module_signature = self._hub_module.signatures['default']
     _tf_text_hub_module_splitter_create_counter.get_cell().increase_by(1)
 
   def _predict_pieces(self, input_strs):
