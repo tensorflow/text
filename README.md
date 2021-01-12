@@ -1,21 +1,37 @@
-# TensorFlow Text - Text processing in Tensorflow
+<div align="center">
+  <img src="https://github.com/tensorflow/text/docs/include/tftext.png" width="60%"><br><br>
+</div>
 
-IMPORTANT: When installing TF Text with `pip install`, please note the version
-of TensorFlow you are running, as you should specify the corresponding minor
-version of TF Text (eg. for tensorflow==2.3.x use tensorflow_text==2.3.x).
+-----------------
 
+[![PyPI version](https://img.shields.io/pypi/v/tensorflow-text)](https://badge.fury.io/py/tensorflow-text)
+[![PyPI nightly version](https://img.shields.io/pypi/v/tensorflow-text-nightly?color=informational&label=pypi%20%40%20nightly)](https://badge.fury.io/py/tensorflow-text-nightly)
+[![PyPI Python version](https://img.shields.io/pypi/pyversions/tensorflow-text)](https://pypi.org/project/tensorflow-text/)
+[![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://github.com/tensorflow/text/blob/master/docs/api_docs/python/index.md)
 [![GitHub
 Issues](https://img.shields.io/github/issues/tensorflow/text.svg)](https://github.com/tensorflow/text/issues)
 [![Contributions
 welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-**UPDATE (8/28/2020):** See [RFC 283](https://github.com/tensorflow/community/pull/283)
-for upcoming changes and new APIs in TF.Text.
+<!-- TODO(broken):  Uncomment when badges are made public.
+### Continuous Integration Test Status
+
+| Build      | Status |
+| ---             | ---    |
+| **Linux**   | [![Status](https://storage.googleapis.com/tf-text-badges/ubuntu-gpu-py3.svg)] |
+| **MacOS**   | [![Status](https://storage.googleapis.com/tf-text-badges/ubuntu-gpu-py3.svg)] |
+| **Windows**   | [![Status](https://storage.googleapis.com/tf-text-badges/ubuntu-gpu-py3.svg)] |
+-->
+
+# TensorFlow Text - Text processing in Tensorflow
+
+IMPORTANT: When installing TF Text with `pip install`, please note the version
+of TensorFlow you are running, as you should specify the corresponding minor
+version of TF Text (eg. for tensorflow==2.3.x use tensorflow_text==2.3.x).
 
 ## INDEX
 * [Introduction](#introduction)
-* [Eager Execution](#eager-execution)
 * [Unicode](#unicode)
 * [Normalization](#normalization)
 * [Tokenization](#tokenization)
@@ -43,16 +59,6 @@ The benefit of using these ops in your text preprocessing is that they are done
 in the TensorFlow graph. You do not need to worry about tokenization in
 training being different than the tokenization at inference, or managing
 preprocessing scripts.
-
-## Eager Execution
-
-TensorFlow Text is compatible with both TensorFlow eager mode and graph mode.
-
-```python
-import tensorflow as tf
-import tensorflow_text as text
-tf.enable_eager_execution()
-```
 
 ## Unicode
 
