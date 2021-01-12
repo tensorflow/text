@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2020 TF.Text Authors.
+# Copyright 2021 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ class StateBasedSentenceBreaker(sentence_breaking_ops.SentenceBreakerWithOffsets
       end: A int64 `RaggedTensor` of shape [batch, (num_sentences)]
         where each entry is the exclusive ending byte offset of a sentence.
     """
+    doc = ragged_tensor.convert_to_tensor_or_ragged_tensor(doc)
     if doc.shape.ndims > 1:
       doc = ragged_tensor.RaggedTensor.from_tensor(doc)
       doc = doc.flat_values
