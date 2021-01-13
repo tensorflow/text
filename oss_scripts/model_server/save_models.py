@@ -129,22 +129,25 @@ class TfTextOps(tf.Module):
     # Split merge from logits tokenizer
     smfl_tokenizer = text.SplitMergeFromLogitsTokenizer()
     split_merge_from_logits = smfl_tokenizer.tokenize(
-        b'IloveFlume!',
-        # One pair of logits for each Unicode character from the text.  Each
-        # pair indicates a "split" action if the first component is greater than
-        # the second one, and a "merge" otherwise.
+        [b'IloveFlume!'],
+        # For each input text, one pair of logits for each Unicode character
+        # from that text.  Each pair indicates a "split" action if the first
+        # component is greater than the second one, and a "merge" otherwise.
         [
-            [2.7, -0.3],  # I: split
-            [4.1, 0.82],  # l: split
-            [-2.3, 4.3],  # o: merge
-            [3.1, 12.2],  # v: merge
-            [-3.0, 4.7],  # e: merge
-            [2.7, -0.7],  # F: split
-            [0.7, 15.0],  # l: merge
-            [1.6, 23.0],  # u: merge
-            [2.1, 11.0],  # m: merge
-            [0.0, 20.0],  # e: merge
-            [18.0, 0.7],  # !: split
+            # Logits for b'IloveFlume!':
+            [
+                [2.7, -0.3],  # I: split
+                [4.1, 0.82],  # l: split
+                [-2.3, 4.3],  # o: merge
+                [3.1, 12.2],  # v: merge
+                [-3.0, 4.7],  # e: merge
+                [2.7, -0.7],  # F: split
+                [0.7, 15.0],  # l: merge
+                [1.6, 23.0],  # u: merge
+                [2.1, 11.0],  # m: merge
+                [0.0, 20.0],  # e: merge
+                [18.0, 0.7],  # !: split
+            ]
         ])
     # Confirm TF unicode_script op that requires ICU works
     tf_unicode_script = tf.strings.unicode_script(
