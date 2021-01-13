@@ -92,15 +92,15 @@ Reverses the tokenized sequence (Default = false)
 `add_bos`
 </td>
 <td>
-Add <s> to the result (Default = false)
+Add beginning of sentence token to the result (Default = false)
 </td>
 </tr><tr>
 <td>
 `add_eos`
 </td>
 <td>
-Add </s> to the result (Default = false) <s>/</s> is added after
-reversing (if enabled).
+Add end of sentence token to the result (Default = false).
+When reverse=True beginning/end of sentence tokens are added after reversing.
 </td>
 </tr><tr>
 <td>

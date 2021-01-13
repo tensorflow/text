@@ -81,9 +81,9 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       alpha: A scalar for a smoothing parameter. Inverse temperature for
         probability rescaling.
       reverse: Reverses the tokenized sequence (Default = false)
-      add_bos: Add <s> to the result (Default = false)
-      add_eos: Add </s> to the result (Default = false) <s>/</s> is added after
-        reversing (if enabled).
+      add_bos: Add beginning of sentence token to the result (Default = false)
+      add_eos: Add end of sentence token to the result (Default = false). When
+        reverse=True beginning/end of sentence tokens are added after reversing.
       name: The name argument that is passed to the op function.
 
     Returns:
