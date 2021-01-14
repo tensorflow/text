@@ -180,7 +180,7 @@ class TfTextOps(tf.Module):
     regex_split_assert = assert_check(regex_split.to_tensor())
     rouge_l_assert = assert_check(rouge_l)
     sentence_breaking_assert = assert_check(sentence_breaking.to_tensor())
-    sentence_breaking_v2_assert = assert_check(sbv2_fragment_text.to_tensor())
+    sentence_breaking_v2_assert = assert_check(sbv2_fragment_text)
     sentencepiece_assert = assert_check(sentencepiece.to_tensor())
     sentencepiece_id_assert = assert_check(sentencepiece_id)
     sentencepiece_size_assert = assert_check(sentencepiece_size)
