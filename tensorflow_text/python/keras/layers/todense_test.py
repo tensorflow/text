@@ -115,6 +115,25 @@ class RaggedTensorsToDenseLayerTest(keras_parameterized.TestCase):
     self.assertIsNot(output._keras_mask, None)
     self.assertAllEqual(K.get_value(output._keras_mask), expected_mask)
 
+  def test_ragged_input_shape(self):
+    input_data = get_input_dataset(
+        ragged_factory_ops.constant([[1, 2, 3, 4, 5], [2, 3]]))
+    expected_output = np.array([[1, 2, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0, 0]])
+
+    layers = [ToDense(shape=[2, 7]), Final()]
+    model = testing_utils.get_model_from_layers(
+        layers,
+        input_shape=(None,),
+        input_ragged=True,
+        input_dtype=dtypes.int32)
+    model.compile(
+        optimizer="sgd",
+        loss="mse",
+        metrics=["accuracy"],
+        run_eagerly=testing_utils.should_run_eagerly())
+    output = model.predict(input_data)
+    self.assertAllEqual(output, expected_output)
+
   @parameterized.named_parameters(
       *test_util.generate_combinations_with_testcase_name(layer=[
           rnn_v1.SimpleRNN, rnn_v1.GRU, rnn_v1.LSTM, rnn_v2.GRU, rnn_v2.LSTM
@@ -203,6 +222,28 @@ class SparseTensorsToDenseLayerTest(keras_parameterized.TestCase):
     self.assertTrue(hasattr(output, "_keras_mask"))
     self.assertIsNot(output._keras_mask, None)
     self.assertAllEqual(K.get_value(output._keras_mask), expected_mask)
+
+  def test_sparse_input_shape(self):
+    input_data = get_input_dataset(
+        sparse_tensor.SparseTensor(
+            indices=[[0, 0], [1, 2]], values=[1, 2], dense_shape=[3, 4]))
+
+    expected_output = np.array([[1., 0., 0., 0.], [0., 0., 2., 0.],
+                                [0., 0., 0., 0.]])
+
+    layers = [ToDense(shape=[3, 4]), Final()]
+    model = testing_utils.get_model_from_layers(
+        layers,
+        input_shape=(None,),
+        input_sparse=True,
+        input_dtype=dtypes.int32)
+    model.compile(
+        optimizer="sgd",
+        loss="mse",
+        metrics=["accuracy"],
+        run_eagerly=testing_utils.should_run_eagerly())
+    output = model.predict(input_data)
+    self.assertAllEqual(output, expected_output)
 
 
 if __name__ == "__main__":

@@ -812,6 +812,7 @@ py_library(
     name = "todense_layer",
     srcs = ["python/keras/layers/todense.py"],
     deps = [
+        # python:check_ops tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python:sparse_ops tensorflow dep,
         # python:sparse_tensor tensorflow dep,
