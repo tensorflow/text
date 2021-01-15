@@ -16,9 +16,9 @@
 """Break sentence ops."""
 
 from tensorflow.python.framework import dtypes
+from tensorflow.python.ops import map_fn
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import string_ops
-from tensorflow.python.ops.ragged import ragged_map_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
@@ -69,13 +69,15 @@ class StateBasedSentenceBreaker(sentence_breaking_ops.SentenceBreakerWithOffsets
             012345678901234    01234567890123456789012345678901234567
       doc: 'Hello...foo bar', 'Welcome to the U.S. don't be surprised'
 
-      fragment_text: [['Hello...', 'foo bar'], ['Welcome to the U.S.' , 'don't
-      be surprised']]
+      fragment_text: [
+        ['Hello...', 'foo bar'],
+        ['Welcome to the U.S.' , 'don't be surprised']
+      ]
       start: [[0, 8],[0, 20]]
       end: [[8, 15],[19, 38]]
 
     Args:
-      doc: A string `Tensor` of shape [batch] with a batch of documents.
+      doc: A string `Tensor` of shape [batch] or [batch, 1].
 
     Returns:
       A tuple of (fragment_text, start, end) where:
@@ -88,12 +90,17 @@ class StateBasedSentenceBreaker(sentence_breaking_ops.SentenceBreakerWithOffsets
         where each entry is the exclusive ending byte offset of a sentence.
     """
     doc = ragged_tensor.convert_to_tensor_or_ragged_tensor(doc)
+
     if doc.shape.ndims > 1:
-      doc = ragged_tensor.RaggedTensor.from_tensor(doc)
-      doc = doc.flat_values
+      if not ragged_tensor.is_ragged(doc):
+        doc = ragged_tensor.RaggedTensor.from_tensor(doc)
+      doc_flat = doc.flat_values
+    else:
+      doc_flat = doc
 
     # Run sentence fragmenter op v2
-    fragment = gen_state_based_sentence_breaker_op.sentence_fragments_v2(doc)
+    fragment = gen_state_based_sentence_breaker_op.sentence_fragments_v2(
+        doc_flat)
     start, end, properties, terminal_punc_token, row_lengths = fragment
 
     # Pack and create `RaggedTensor`s
@@ -107,9 +114,29 @@ class StateBasedSentenceBreaker(sentence_breaking_ops.SentenceBreakerWithOffsets
       return string_ops.substr(s, pos, length)
 
     # Extract fragment text using offsets
-    fragment_text = ragged_map_ops.map_fn(
-        _substring, (doc, start, math_ops.subtract(end, start)),
+    fragment_text = map_fn.map_fn(
+        _substring, (doc_flat, start, math_ops.subtract(end, start)),
+        fn_output_signature=ragged_tensor.RaggedTensorSpec(
+            shape=[None], dtype=dtypes.string),
         infer_shape=False,
         dtype=dtypes.string)
 
-    return fragment_text, start, end
+    # Repack back into original shape (if necessary)
+    if doc.shape.ndims == 1:
+      return fragment_text, start, end
+
+    if ragged_tensor.is_ragged(doc):
+      fragment_text = ragged_tensor.RaggedTensor.from_row_lengths(
+          fragment_text, doc.row_lengths())
+      start = ragged_tensor.RaggedTensor.from_row_lengths(
+          start, doc.row_lengths())
+      end = ragged_tensor.RaggedTensor.from_row_lengths(end, doc.row_lengths())
+      return fragment_text, start, end
+    else:
+      fragment_text = ragged_tensor.RaggedTensor.from_uniform_row_length(
+          fragment_text, doc.shape[-1])
+      start = ragged_tensor.RaggedTensor.from_uniform_row_length(
+          start, doc.shape[-1])
+      end = ragged_tensor.RaggedTensor.from_uniform_row_length(
+          end, doc.shape[-1])
+      return fragment_text, start, end

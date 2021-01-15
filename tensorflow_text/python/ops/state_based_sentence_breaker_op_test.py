@@ -14,7 +14,6 @@
 # limitations under the License.
 
 """Tests for sentence_breaking_ops."""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -23,6 +22,7 @@ from absl.testing import parameterized
 
 from tensorflow.python.framework import constant_op
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import string_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import state_based_sentence_breaker_op
 
@@ -30,26 +30,29 @@ from tensorflow_text.python.ops import state_based_sentence_breaker_op
 class SentenceFragmenterTestCasesV2(test.TestCase, parameterized.TestCase):
 
   @parameterized.parameters([
+      # pyformat: disable
       dict(
           test_description="Test acronyms",
           doc=["Welcome to the U.S. don't be surprised."],
-          expected_fragment_text=[[
-              b"Welcome to the U.S.", b"don't be surprised."
-          ]],
+          expected_fragment_text=[
+              [b"Welcome to the U.S.", b"don't be surprised."]
+          ],
       ),
       dict(
           test_description="Test batch containing acronyms",
           doc=["Welcome to the U.S. don't be surprised.", "I.B.M. yo"],
-          expected_fragment_text=[[
-              b"Welcome to the U.S.", b"don't be surprised."
-          ], [b"I.B.M.", b"yo"]],
+          expected_fragment_text=[
+              [b"Welcome to the U.S.", b"don't be surprised."],
+              [b"I.B.M.", b"yo"]
+          ],
       ),
       dict(
           test_description="Test when rank > 1.",
           doc=[["Welcome to the U.S. don't be surprised."], ["I.B.M. yo"]],
-          expected_fragment_text=[[
-              b"Welcome to the U.S.", b"don't be surprised."
-          ], [b"I.B.M.", b"yo"]],
+          expected_fragment_text=[
+              [[b"Welcome to the U.S.", b"don't be surprised."]],
+              [[b"I.B.M.", b"yo"]]
+          ],
       ),
       dict(
           test_description="Test semicolons",
@@ -106,39 +109,36 @@ class SentenceFragmenterTestCasesV2(test.TestCase, parameterized.TestCase):
           doc=[":)", ":-\\", "(=^..^=)", "|-O"],
           expected_fragment_text=[[b":)"], [b":-\\"], [b"(=^..^=)"], [b"|-O"]],
       ),
+      dict(
+          test_description="Test tensor inputs w/ shape [2, 1]",
+          doc=[["Welcome to the U.S. don't be surprised. We like it here."],
+               ["I.B.M. yo"]],
+          expected_fragment_text=[
+              [[b"Welcome to the U.S.", b"don't be surprised.",
+                b"We like it here."]],
+              [[b"I.B.M.", b"yo"]]
+          ],
+      ),
+      # pyformat: enable
   ])
   def testStateBasedSentenceBreaker(self, test_description, doc,
                                     expected_fragment_text):
-
-    doc = constant_op.constant(doc)
+    input = constant_op.constant(doc)  # pylint: disable=redefined-builtin
     sentence_breaker = (
         state_based_sentence_breaker_op.StateBasedSentenceBreaker())
-    fragment_text, fragment_starts, fragment_ends = self.evaluate(
-        sentence_breaker.break_sentences_with_offsets(doc))
+    fragment_text, fragment_starts, fragment_ends = (
+        sentence_breaker.break_sentences_with_offsets(input))
 
-    # Reshape tensors for fragment extraction.
-    doc_reshape = array_ops.reshape(doc, [-1, 1])
-    doc_reshape = self.evaluate(doc_reshape)
-    fragment_starts = fragment_starts.to_list()
-    fragment_ends = fragment_ends.to_list()
-    offset_fragment_text = []
-
-    # Extract the fragments from doc based on the offsets obtained
-    for line, starts, ends in zip(doc_reshape, fragment_starts, fragment_ends):
-      temp_offset_fragment_text = []
-      for frag in line:
-        for start_index, end_index in zip(starts, ends):
-          if end_index < len(frag):
-            temp_offset_fragment_text.append(frag[start_index:end_index])
-          else:
-            temp_offset_fragment_text.append(frag[start_index:])
-      offset_fragment_text.append(temp_offset_fragment_text)
-
-    # Check that the expected_fragment_text matches both the fragments returned
-    # by the op and the fragments extracted from the doc using the offsets
-    # returned by the op.
-    self.assertAllEqual(expected_fragment_text, offset_fragment_text)
+    texts, starts, ends = self.evaluate(
+        (fragment_text, fragment_starts, fragment_ends))
     self.assertAllEqual(expected_fragment_text, fragment_text)
+    for d, text, start, end in zip(doc, texts.to_list(), starts.to_list(),
+                                   ends.to_list()):
+      # broadcast d to match start/end's shape
+      start = constant_op.constant(start)
+      end = constant_op.constant(end)
+      d = array_ops.broadcast_to(d, start.shape)
+      self.assertAllEqual(string_ops.substr(d, start, end - start), text)
 
 
 if __name__ == "__main__":
