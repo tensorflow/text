@@ -186,7 +186,8 @@ class TfTextOps(tf.Module):
     sentencepiece_size_assert = assert_check(sentencepiece_size)
     sentencepiece_str_assert = assert_check(sentencepiece_str)
     split_merge_assert = assert_check(split_merge)
-    split_merge_from_logits_assert = assert_check(split_merge_from_logits)
+    split_merge_from_logits_assert = assert_check(
+        split_merge_from_logits.to_tensor())
     tf_unicode_script_assert = assert_check(tf_unicode_script)
     unicode_script_assert = assert_check(unicode_script.to_tensor())
     whitespace_assert = assert_check(whitespace.to_tensor())
