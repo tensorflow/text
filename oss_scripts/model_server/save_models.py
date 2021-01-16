@@ -72,6 +72,13 @@ class TfTextOps(tf.Module):
         transition_weights=cs_transition_weights, use_log_space=True,
         use_start_and_end_states=True)
     op_deps.append(assert_check(constrained_sequence.to_tensor()))
+    # Find Source Offsets
+    _, fso_offsets_map = text.normalize_utf8_with_offsets_map(
+        [u'株式会社ＫＡＤＯＫＡＷＡ'], u'NFKC')
+    fso_post_offsets_ends = [[3, 6, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]]
+    fso_pre_offsets_ends = text.find_source_offsets(fso_offsets_map,
+                                                    fso_post_offsets_ends)
+    op_deps.append(assert_check(fso_pre_offsets_ends))
     # Max Spanning Tree
     mst_num_nodes = tf.constant([4, 3], tf.int32)
     mst_scores = tf.constant([[[0, 0, 0, 0],
