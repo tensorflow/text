@@ -140,7 +140,7 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
             [0.4, 5.0],  # o: merge
             [0.8, 6.0],  # w: merge
         ]]
-    >>> tokenizer = TokenizerFromLogits()
+    >>> tokenizer = SplitMergeFromLogitsTokenizer()
     >>> tokenizer.tokenize(strings, logits).to_list()
     [["I", "love", "Flume", "!"], ["and", "tensorflow"]]
     ```
@@ -216,7 +216,7 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
             [0.4, 5.0],  # o: merge
             [0.8, 6.0],  # w: merge
         ]]
-    >>> tokenizer = TokenizerFromLogits()
+    >>> tokenizer = SplitMergeFromLogitsTokenizer()
     >>> result = tokenizer.tokenize_with_offsets(strings, logits)
     >>> result[0].to_list()
     [["I", "love", "Flume", "!"], ["and", "tensorflow"]]
@@ -256,7 +256,8 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
         strings.
     """
     name = None
-    with ops.name_scope(name, 'TokenizerFromLogits', [strings, logits]):
+    with ops.name_scope(name, 'SplitMergeFromLogitsTokenizer',
+                        [strings, logits]):
       # Tokenize the strings into tokens.
       force_split = self._force_split_at_break_character
       token_values, token_row_splits, start_values, end_values = (
