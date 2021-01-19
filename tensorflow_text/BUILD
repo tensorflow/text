@@ -40,6 +40,7 @@ cc_library(
         ":unicode_script_tokenizer_cc",
         ":whitespace_tokenizer_cc",
         ":wordpiece_tokenizer_cc",
+        "//tensorflow_text/google:fast_wordpiece_tokenizer_cc",
     ],
 )
 
