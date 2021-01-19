@@ -72,8 +72,9 @@ class ItemSelector(object):
     if isinstance(unselectable_ids, list):
       self._unselectable_ids = unselectable_ids
     elif isinstance(unselectable_ids, ops.Tensor):
-      if unselectable_ids.rank != 1 or unselectable_ids.rank is not None:
-        raise ValueError("`unselectable_ids` must have a rank of 1 or None")
+      if unselectable_ids.shape.rank not in (1, None):
+        raise ValueError(f"`unselectable_ids` must have a rank of 1 or None, "
+                         f"but was: {unselectable_ids.shape.rank}")
       self._unselectable_ids = array_ops.unstack(unselectable_ids)
     else:
       raise ValueError("`unselectable_ids` must be either a list or " +
