@@ -27,6 +27,7 @@ from tensorflow.python.ops import string_ops
 from tensorflow_text.python.ops import regex_split_ops
 from tensorflow_text.python.ops.normalize_ops import case_fold_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8
+from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer
 
@@ -137,7 +138,7 @@ class BasicTokenizer(TokenizerWithOffsets):
         "BertBasicTokenizer")
 
 
-class BertTokenizer(TokenizerWithOffsets):
+class BertTokenizer(TokenizerWithOffsets, Detokenizer):
   r"""Tokenizer used for BERT.
 
     This tokenizer applies an end-to-end, text string to wordpiece tokenization.
@@ -224,3 +225,28 @@ class BertTokenizer(TokenizerWithOffsets):
     """
     tokens = self._basic_tokenizer.tokenize(text_input)
     return self._wordpiece_tokenizer.tokenize(tokens)
+
+  def detokenize(self, token_ids):
+    """Convert a `Tensor` or `RaggedTensor` of wordpiece IDs to string-words.
+
+    See `WordpieceTokenizer.detokenize` for details.
+
+    Note: `BertTokenizer.tokenize`/`BertTokenizer.detokenize` does not round
+    trip losslessly. The result of `detokenize` will not, in general, have the
+    same content or offsets as the input to `tokenize`. This is because the
+    "basic tokenization" step, that splits the strings into words before
+    applying the `WordpieceTokenizer`, includes irreversible
+    steps like lower-casing and splitting on punctuation. `WordpieceTokenizer`
+    on the other hand **is** reversible.
+
+    Note: This method assumes wordpiece IDs are dense on the interval
+    `[0, vocab_size)`.
+
+    Args:
+      token_ids: A `RaggedTensor` or `Tensor` with an int dtype.
+
+    Returns:
+      A `RaggedTensor` with dtype `string` and the same rank as the input
+      `token_ids`.
+    """
+    return self._wordpiece_tokenizer.detokenize(token_ids)

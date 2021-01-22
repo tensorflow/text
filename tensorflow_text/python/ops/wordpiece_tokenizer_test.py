@@ -22,7 +22,9 @@ from __future__ import print_function
 
 from absl.testing import parameterized
 from tensorflow.python.compat import compat
+
 from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import errors_impl
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
@@ -541,6 +543,61 @@ class WordpieceOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     )
     subwords = tokenizer.tokenize(tokens)
     self.assertAllEqual(subwords, expected_subwords)
+
+  @test_util.run_in_graph_and_eager_modes
+  def testDetokenizeIsReversable(self):
+
+    table = _CreateTable(_MIXED_LANG_VOCAB + [b""], 2)
+    self.evaluate(table.initializer)
+
+    tokenizer = WordpieceTokenizer(table)
+
+    word_lists = [
+        [b"hello", b"there", b"my", b"name", b"is", b"treadness"],
+        [b"whatchamacallit?", b"you", b"said"],
+        [_Utf8(u"大"), _Utf8(u"易")],
+    ]
+    words = ragged_factory_ops.constant(word_lists)
+
+    subwords_ids = tokenizer.tokenize(words)
+
+    # detokeinze input shape is (batch, ragged-words, ragged-wordpieces)
+    words_output = tokenizer.detokenize(subwords_ids)
+    words_output = array_ops.squeeze(words_output, axis=-1)
+
+    self.assertAllEqual(words_output, words)
+
+    # detokeinze input shape is (batch, ragged-wordpieces)
+    subwords_id_seqs = subwords_ids.merge_dims(-2, -1)
+    words_output = tokenizer.detokenize(subwords_id_seqs)
+    self.assertAllEqual(words_output, words)
+
+    # detokeinze input shape is a dense (batch, padded-wordpieces)
+    words_output = tokenizer.detokenize(
+        subwords_ids.merge_dims(-2, -1)
+        # len(_MIXED_LANG_VOCAB) is ""
+        .to_tensor(default_value=len(_MIXED_LANG_VOCAB)))
+
+    self.assertAllEqual(words_output, words)
+
+  @test_util.run_in_graph_and_eager_modes
+  def testDetokenizeFailsForSparseVocab(self):
+    vocab = ["a", "##b", "##c"]
+    ids = [0, 10, 20]
+    init = lookup_ops.KeyValueTensorInitializer(
+        vocab, ids, key_dtype=dtypes.string, value_dtype=dtypes.int64)
+    table = lookup_ops.StaticVocabularyTableV1(
+        init, num_oov_buckets=1, lookup_key_dtype=dtypes.string)
+    self.evaluate(table.initializer)
+
+    tokenizer = WordpieceTokenizer(table)
+    words = ragged_factory_ops.constant([["abb", "abc"], ["abcbc"]])
+    subwords_ids = tokenizer.tokenize(words)
+
+    with self.assertRaisesRegex(errors_impl.InvalidArgumentError,
+                                "detokenize.*?dense on the interval"):
+      result = tokenizer.detokenize(subwords_ids)
+      self.evaluate(result)
 
 
 if __name__ == "__main__":
