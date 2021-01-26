@@ -45,6 +45,7 @@ REGISTER_OP("SentencepieceTokenizeOp")
     .Input("reverse: bool")
     .Attr("out_type: {int32, string} = DT_INT32")
     .Attr("Tsplits: {int32, int64} = DT_INT64")
+    .Attr("return_nbest: bool = false")
     .Output("output_values: out_type")
     .Output("output_splits: Tsplits")
     .SetShapeFn([](InferenceContext* c) {
@@ -58,10 +59,14 @@ REGISTER_OP("SentencepieceTokenizeOp")
       TF_RETURN_IF_ERROR(c->WithRank(c->input(6), 0, &unused));
 
       c->set_output(0, c->Vector(InferenceContext::kUnknownDim));
-
-      shape_inference::DimensionHandle num_splits;
-      TF_RETURN_IF_ERROR(c->Add(c->NumElements(c->input(1)), 1, &num_splits));
-      c->set_output(1, c->Vector(num_splits));
+      bool return_nbest = false;
+      if (c->GetAttr("return_nbest", &return_nbest).ok() && return_nbest) {
+        c->set_output(1, c->Vector(c->UnknownDim()));
+      } else {
+        shape_inference::DimensionHandle num_splits;
+        TF_RETURN_IF_ERROR(c->Add(c->NumElements(c->input(1)), 1, &num_splits));
+        c->set_output(1, c->Vector(num_splits));
+      }
       return Status::OK();
     });
 
@@ -75,6 +80,7 @@ REGISTER_OP("SentencepieceTokenizeWithOffsetsOp")
     .Input("reverse: bool")
     .Attr("out_type: {int32, string} = DT_INT32")
     .Attr("Tsplits: {int32, int64} = DT_INT64")
+    .Attr("return_nbest: bool = false")
     .Output("output_values: out_type")
     .Output("output_splits: Tsplits")
     .Output("output_offset_starts: int64")
@@ -91,9 +97,14 @@ REGISTER_OP("SentencepieceTokenizeWithOffsetsOp")
 
       c->set_output(0, c->Vector(InferenceContext::kUnknownDim));
 
-      shape_inference::DimensionHandle num_splits;
-      TF_RETURN_IF_ERROR(c->Add(c->NumElements(c->input(1)), 1, &num_splits));
-      c->set_output(1, c->Vector(num_splits));
+      bool return_nbest = false;
+      if (c->GetAttr("return_nbest", &return_nbest).ok() && return_nbest) {
+        c->set_output(1, c->Vector(c->UnknownDim()));
+      } else {
+        shape_inference::DimensionHandle num_splits;
+        TF_RETURN_IF_ERROR(c->Add(c->NumElements(c->input(1)), 1, &num_splits));
+        c->set_output(1, c->Vector(num_splits));
+      }
       c->set_output(2, c->Vector(InferenceContext::kUnknownDim));
       c->set_output(3, c->Vector(InferenceContext::kUnknownDim));
       return Status::OK();

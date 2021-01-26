@@ -752,6 +752,7 @@ py_test(
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/ops/ragged:ragged_gather_ops tensorflow dep,
         # python/saved_model tensorflow dep,
     ],
 )

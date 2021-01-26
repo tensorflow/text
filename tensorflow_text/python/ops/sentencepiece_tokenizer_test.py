@@ -17,7 +17,9 @@
 
 import sys
 import tempfile
+
 from absl.testing import parameterized
+
 from tensorflow.python.data.ops import dataset_ops
 from tensorflow.python.eager import context
 from tensorflow.python.eager import def_function
@@ -29,6 +31,7 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.lib.io import file_io
 from tensorflow.python.module import module
 from tensorflow.python.ops.ragged import ragged_factory_ops
+from tensorflow.python.ops.ragged import ragged_gather_ops
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
 from tensorflow.python.saved_model import load
@@ -427,6 +430,29 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
     result = sp.tokenize(ragged_factory_ops.constant(sentences))
     detokenized = sp.detokenize(result)
     self.assertAllEqual(_utf8(sentences), detokenized)
+
+  def testReturnNbestAndDetokenize(self):
+    sp = SentencepieceTokenizer(
+        self.model, nbest_size=2, out_type=dtypes.int32, return_nbest=True)
+    sentences = ['I love carpet', 'Never tell me the odds']
+    result = sp.tokenize(ragged_factory_ops.constant(sentences))
+    detokenized = sp.detokenize(result)
+    self.assertAllEqual(
+        _utf8(sentences), ragged_gather_ops.gather(detokenized, [0, 2]))
+    self.assertAllEqual(
+        _utf8(sentences), ragged_gather_ops.gather(detokenized, [1, 3]))
+
+  def testReturnNbestAndDetokenizeWithOffsets(self):
+    sp = SentencepieceTokenizer(
+        self.model, nbest_size=2, out_type=dtypes.int32, return_nbest=True)
+    sentences = ['I love carpet', 'Never tell me the odds']
+    result, _, _ = sp.tokenize_with_offsets(
+        ragged_factory_ops.constant(sentences))
+    detokenized = sp.detokenize(result)
+    self.assertAllEqual(
+        _utf8(sentences), ragged_gather_ops.gather(detokenized, [0, 2]))
+    self.assertAllEqual(
+        _utf8(sentences), ragged_gather_ops.gather(detokenized, [1, 3]))
 
   def testSavedModel(self):
     sp = SentencepieceTokenizer(self.model)
