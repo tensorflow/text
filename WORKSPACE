@@ -76,11 +76,7 @@ http_archive(
     ],
 )
 
-# NOTE: according to
-# https://docs.bazel.build/versions/master/external.html#transitive-dependencies
-# we should list the transitive dependencies of @org_tensorflow_hub in this
-# WORKSPACE file.  Still, all of them are already listed by tf_workspace() which
-# is called later in this file.
+### TEST COMMENT - 2 (to trigger a new Kokoro run).
 http_archive(
     name = "org_tensorflow_hub",
     strip_prefix = "hub-0.8.0",
