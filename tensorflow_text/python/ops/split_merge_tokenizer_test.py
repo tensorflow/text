@@ -170,7 +170,14 @@ class SplitMergeTokenizerTest(test.TestCase):
     self.assertAllEqual(tokens, expected_tokens)
 
   def testVectorSingleValueTokenChinese(self):
-    test_value = constant_op.constant([_Utf8(u'我在谷歌　写代码')])
+    # TODO(salcianu): clean-up.  We used the Unicode string, but Windows may
+    # have problems with it, so we use the utf-8 bytes instead.
+    #
+    # test_value = constant_op.constant([_Utf8(u'我在谷歌　写代码')])
+    test_value = constant_op.constant([
+        b'\xe6\x88\x91\xe5\x9c\xa8\xe8\xb0\xb7\xe6\xad\x8c'
+        + b'\xe3\x80\x80\xe5\x86\x99\xe4\xbb\xa3\xe7\xa0\x81'
+    ])
     test_label = constant_op.constant([
         [
             # 我
@@ -179,7 +186,7 @@ class SplitMergeTokenizerTest(test.TestCase):
             0,
             # 谷歌
             0, 1,
-            # '　', note this is a full-width space which contains 3 bytes.
+            # '　', note this is a full-width space that contains 3 bytes.
             0,
             # 写代码
             0, 1, 1

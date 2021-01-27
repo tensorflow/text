@@ -172,7 +172,14 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
     self.assertAllEqual(expected_tokens, tokens)
 
   def testVectorSingleValueTokenChinese(self):
-    test_strings = constant_op.constant([_Utf8(u'我在谷歌　写代码')])
+    # TODO(salcianu): clean-up.  We used the Unicode string, but Windows may
+    # have problems with it, so we use the utf-8 bytes instead.
+    #
+    # test_strings = constant_op.constant([_Utf8(u'我在谷歌　写代码')])
+    test_strings = constant_op.constant([
+        b'\xe6\x88\x91\xe5\x9c\xa8\xe8\xb0\xb7\xe6\xad\x8c'
+        + b'\xe3\x80\x80\xe5\x86\x99\xe4\xbb\xa3\xe7\xa0\x81'
+    ])
 
     # Below, each pair of logits [l1, l2] indicates a "split" action
     # if l1 < l2 and a "merge" otherwise.
@@ -185,7 +192,7 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
             # 谷歌
             [5.0, 1.2],  # split
             [0.4, 3.0],  # merge
-            # '　', note this is a full-width space which contains 3 bytes.
+            # '　', note this is a full-width space that contains 3 bytes.
             [2.8, 0.0],  # split
             # 写代码
             [6.0, 2.1],  # split
