@@ -145,7 +145,7 @@ class NormalizeOpsTest(test.TestCase):
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class NormalizeWithOffsetsMapOpsTest(test.TestCase):
+class NormalizeWithOffsetsMapOpsTest(parameterized.TestCase, test.TestCase):
 
   def test_normalize_nfkc(self):
     txt = [
@@ -196,7 +196,7 @@ class NormalizeWithOffsetsMapOpsTest(test.TestCase):
   def test_unaccepted_normalization_form(self):
     with self.assertRaises(errors.InvalidArgumentError):
       bomb = normalize_ops.normalize_utf8_with_offsets_map(
-          ["cant readme", "wont read me"], "NFKD")
+          ["cant readme", "wont read me"], "CANTNORMALIZEME")
       self.evaluate(bomb)
 
 

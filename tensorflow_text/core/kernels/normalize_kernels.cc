@@ -65,7 +65,7 @@ class CaseFoldUTF8Op : public tensorflow::OpKernel {
       const auto& input = input_vec(i);
       nfkc_cf->normalizeUTF8(0, icu::StringPiece(input.data(), input.size()),
                              byte_sink, nullptr, icu_error);
-      OP_REQUIRES(context, !U_FAILURE(icu_error),
+      OP_REQUIRES(context, icu_error.isSuccess(),
                   errors::Internal("Could not normalize input string: " +
                                    input_vec(i)));
       output_vec(i) = output_text;
@@ -144,7 +144,7 @@ class NormalizeUTF8Op : public tensorflow::OpKernel {
       normalizer->normalizeUTF8(0, icu::StringPiece(input.data(), input.size()),
                                 byte_sink, nullptr, icu_error);
       OP_REQUIRES(
-          context, !U_FAILURE(icu_error),
+          context, icu_error.isSuccess(),
           errors::Internal(absl::StrCat(icu_error.errorName(),
                                         ": Could not normalize input string: ",
                                         absl::string_view(input_vec(i)))));
@@ -249,6 +249,18 @@ class NormalizeUTF8WithOffsetsMapOp : public tensorflow::OpKernel {
                   errors::Internal(
                       absl::StrCat(icu_error.errorName(),
                                    ": Could not retrieve ICU NFC normalizer")));
+    } else if (normalization_form_ == "NFD") {
+      normalizer = icu::Normalizer2::getNFDInstance(icu_error);
+      OP_REQUIRES(context, icu_error.isSuccess(),
+                  errors::Internal(
+                      absl::StrCat(icu_error.errorName(),
+                                   ": Could not retrieve ICU NFD normalizer")));
+    } else if (normalization_form_ == "NFKD") {
+      normalizer = icu::Normalizer2::getNFKDInstance(icu_error);
+      OP_REQUIRES(context, icu_error.isSuccess(),
+                  errors::Internal(absl::StrCat(
+                      icu_error.errorName(),
+                      ": Could not retrieve ICU NFKD normalizer")));
     } else {
       OP_REQUIRES(context, false,
                   errors::InvalidArgument(absl::StrCat(
@@ -265,7 +277,7 @@ class NormalizeUTF8WithOffsetsMapOp : public tensorflow::OpKernel {
       normalizer->normalizeUTF8(0, icu::StringPiece(input.data(), input.size()),
                                 byte_sink, &edits, icu_error);
       OP_REQUIRES(
-          context, !U_FAILURE(icu_error),
+          context, icu_error.isSuccess(),
           errors::Internal(absl::StrCat(icu_error.errorName(),
                                         ": Could not normalize input string: ",
                                         absl::string_view(input_vec(i)))));
