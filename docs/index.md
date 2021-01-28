@@ -1,6 +1,6 @@
 # tf.Text Overview
 
-<!--* freshness: { owner: 'broken' reviewed: '2019-07-11' } *-->
+<!--* freshness: { owner: 'broken' reviewed: '2021-01-21' } *-->
 
 ## What is tf.Text?
 
@@ -9,8 +9,7 @@ input in text form (meaning raw text strings or documents). The most important
 functionality of tf.Text is to extract powerful syntactic and semantic text
 features from inside the TF graph as input to your neural net.
 
-<img src="include/architecture-without-tf-text.png" alt="Architecture without tf.Text" height="300px"/>
-<img src="include/architecture-with-tf-text.png" alt="Architecture with tf.Text"  height="300px"/>
+<img src="include/architecture.gif" alt="Model Architectures"/>
 
 Integrating preprocessing with the graph...
 
