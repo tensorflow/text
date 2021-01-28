@@ -138,7 +138,7 @@ class TfTextOps(tf.Module):
     sentence_breaker_v2 = text.StateBasedSentenceBreaker()
     sbv2_fragment_text, _, _ = (
         sentence_breaker_v2.break_sentences_with_offsets(sbv2_text_input))
-    op_deps.append(assert_check(sbv2_fragment_text))
+    op_deps.append(assert_check(sbv2_fragment_text.to_tensor()))
     # Sentencepiece tokenizer
     sp_model_file = (
         'third_party/tensorflow_text/python/ops/test_data/test_oss_model.model')
