@@ -122,7 +122,7 @@ py_library(
         # python:array_ops tensorflow dep,
         # python:dtypes tensorflow dep,
         # python:string_ops tensorflow dep,
-        # python/eager:monitoring tensorflow dep,
+        # python/tools:monitoring tensorflow dep,
     ],
 )
 
@@ -1177,10 +1177,10 @@ py_tf_text_library(
         # python:sort_ops tensorflow dep,
         # python:string_ops tensorflow dep,
         # python/compat tensorflow dep,
-        # python/eager:monitoring tensorflow dep,
         # python/ops/ragged:ragged_functional_ops tensorflow dep,
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/tools:monitoring tensorflow dep,
     ],
 )
 

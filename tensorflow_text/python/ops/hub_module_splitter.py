@@ -16,9 +16,9 @@
 """Splitter that uses a Hub module."""
 
 import tensorflow_hub as hub
-from tensorflow.python.eager import monitoring
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.ragged import ragged_tensor
+from tensorflow.python.tools import monitoring
 from tensorflow_text.python.ops.splitter import SplitterWithOffsets
 
 _tf_text_hub_module_splitter_create_counter = monitoring.Counter(

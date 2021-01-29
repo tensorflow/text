@@ -15,7 +15,7 @@
 
 """Tokenizer that uses a Hub module."""
 
-from tensorflow.python.eager import monitoring
+from tensorflow.python.tools import monitoring
 from tensorflow_text.python.ops import hub_module_splitter
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 

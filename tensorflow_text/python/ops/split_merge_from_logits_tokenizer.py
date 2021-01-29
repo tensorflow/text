@@ -19,9 +19,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import ops
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
+from tensorflow.python.tools import monitoring
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
 # pylint: disable=g-bad-import-order
