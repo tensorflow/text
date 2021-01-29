@@ -15,5 +15,5 @@ fi
 ./oss_scripts/configure.sh
 
 # Build the pip package.
-bazel build oss_scripts/pip_package:build_pip_package
+bazel build --enable_runfiles oss_scripts/pip_package:build_pip_package
 ./bazel-bin/oss_scripts/pip_package/build_pip_package .
