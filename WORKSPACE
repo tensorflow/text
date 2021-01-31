@@ -32,6 +32,9 @@ http_archive(
     ],
 )
 
+# TODO(salcianu): try deleting the next stanza: we get it anyway from
+# tf_workspace() below.  Better to get it from one place, to avoid version
+# conflicts.
 http_archive(
     name = "com_google_protobuf",
     sha256 = "cfcba2df10feec52a84208693937c17a4b5df7775e1635c1e3baffc487b24c9b",
