@@ -76,8 +76,8 @@ write_to_bazelrc "build:android_x86_64 --cpu=x86_64"
 write_to_bazelrc "build:android_x86_64 --fat_apk_cpu=x86_64"
 
 if is_windows; then
-  write_to_bazelrc "build --copt=/experimental:preprocessor"
-  write_to_bazelrc "build --host_copt=/experimental:preprocessor"
+  write_to_bazelrc "build --copt=/Zc:preprocessor"
+  write_to_bazelrc "build --host_copt=/Zc:preprocessor"
 fi
 
 TF_CFLAGS=( $(python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_compile_flags()))" | awk '{print $1}') )
