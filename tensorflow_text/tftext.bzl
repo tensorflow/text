@@ -43,8 +43,7 @@ def py_tf_text_library(
             srcs = cc_op_defs,
             copts = select({
                 # Android supports pthread natively, -pthread is not needed.
-                "@org_tensorflow//tensorflow:android": [],
-                "@org_tensorflow//tensorflow:ios": [],
+                "@org_tensorflow//tensorflow:mobile": [],
                 "//conditions:default": ["-pthread"],
             }),
             alwayslink = 1,
@@ -54,8 +53,7 @@ def py_tf_text_library(
         native.cc_binary(
             name = binary_name,
             copts = select({
-                "@org_tensorflow//tensorflow:android": [],
-                "@org_tensorflow//tensorflow:ios": [],
+                "@org_tensorflow//tensorflow:mobile": [],
                 "//conditions:default": ["-pthread"],
             }),
             linkshared = 1,
@@ -91,10 +89,7 @@ def tf_deps(deps = []):
         "@com_google_absl//absl/types:span",
     ]
     return select({
-        "@org_tensorflow//tensorflow:android": [
-            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
-        ],
-        "@org_tensorflow//tensorflow:ios": [
+        "@org_tensorflow//tensorflow:mobile": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
         ],
         "//conditions:default": [
