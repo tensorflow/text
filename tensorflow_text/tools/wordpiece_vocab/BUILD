@@ -7,6 +7,16 @@ package(
 )
 
 py_library(
+    name = "wordpiece_vocab",
+    srcs = ["__init__.py"],
+    srcs_version = "PY3",
+    deps = [
+        ":bert_vocab_from_dataset",
+        ":wordpiece_tokenizer_learner_lib",
+    ],
+)
+
+py_library(
     name = "wordpiece_tokenizer_learner_lib",
     srcs = ["wordpiece_tokenizer_learner_lib.py"],
     srcs_version = "PY3",

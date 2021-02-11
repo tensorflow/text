@@ -97,8 +97,7 @@ py_library(
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python:util tensorflow dep,
-        "//tensorflow_text/tools/wordpiece_vocab:bert_vocab_from_dataset",
-        "//tensorflow_text/tools/wordpiece_vocab:wordpiece_tokenizer_learner_lib",
+        "//tensorflow_text/tools/wordpiece_vocab",
     ],
 )
 
