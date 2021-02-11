@@ -58,6 +58,7 @@ py_library(
         "python/metrics/__init__.py",
         "python/numpy/__init__.py",
         "python/ops/__init__.py",
+        "tools/__init__.py",
     ],
     srcs_version = "PY3",
     deps = [
@@ -96,6 +97,8 @@ py_library(
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python:util tensorflow dep,
+        "//tensorflow_text/tools/wordpiece_vocab:bert_vocab_from_dataset",
+        "//tensorflow_text/tools/wordpiece_vocab:wordpiece_tokenizer_learner_lib",
     ],
 )
 

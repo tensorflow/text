@@ -17,7 +17,7 @@
 from typing import List
 
 from tensorflow_text.python.ops import bert_tokenizer
-from wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
+from tensorflow_text.tools.wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
 
 
 def bert_vocab_from_dataset(dataset,

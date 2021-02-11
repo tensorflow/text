@@ -18,7 +18,7 @@
 from absl.testing import absltest
 import tensorflow as tf
 
-from wordpiece_vocab import bert_vocab_from_dataset
+from tensorflow_text.tools.wordpiece_vocab import bert_vocab_from_dataset
 
 
 class BertVocabFromDatasetTest(absltest.TestCase):

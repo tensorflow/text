@@ -1,5 +1,11 @@
 licenses(["notice"])
 
+package(
+    default_visibility = [
+        "//tensorflow_text:__subpackages__",
+    ],
+)
+
 py_library(
     name = "wordpiece_tokenizer_learner_lib",
     srcs = ["wordpiece_tokenizer_learner_lib.py"],

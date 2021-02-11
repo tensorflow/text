@@ -25,7 +25,7 @@ import numpy as np
 
 from tensorflow.python.data.ops import dataset_ops
 from tensorflow.python.ops.ragged import ragged_string_ops
-from wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
+from tensorflow_text.tools.wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
 
 
 class ExtractCharTokensTest(parameterized.TestCase):
