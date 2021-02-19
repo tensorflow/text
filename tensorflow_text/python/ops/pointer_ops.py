@@ -40,10 +40,8 @@ def gather_with_default(params, indices, default, name=None, axis=0):
   This operation is similar to `tf.gather()`, except that any value of `-1`
   in `indices` will be mapped to `default`.  Example:
 
-  ```python
   >>> gather_with_default(['a', 'b', 'c', 'd'], [2, 0, -1, 2, -1], '_').eval()
   array(['c', 'a', '_', 'c', '_'], dtype=object)
-  ```
 
   Args:
     params: The `Tensor` from which to gather values.  Must be at least rank
@@ -478,37 +476,36 @@ def span_alignment(source_start,
 
   #### Examples:
 
-    Given the following source and target spans (with no batch dimensions):
+  Given the following source and target spans (with no batch dimensions):
 
-    ```python
-    >>> #         0    5    10   15   20   25   30   35   40   45   50   55   60
-    >>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
-    >>> # Source: [-0-]     [-1-] [2] [3]    [4][-5-][-6-][-7-][-8-][-9-]
-    >>> # Target: [-0-][-1-]     [-2-][-3-][-4-] [5] [6]    [7]  [-8-][-9-][10]
-    >>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
-    >>> source_start=[0, 10, 16, 20, 27, 30, 35, 40, 45, 50]
-    >>> source_limit=[5, 15, 19, 23, 30, 35, 40, 45, 50, 55]
-    >>> target_start=[0,  5, 15, 20, 25, 31, 35, 42, 47, 52, 57]
-    >>> target_limit=[5, 10, 20, 25, 30, 34, 38, 45, 52, 57, 61]
+  >>> #         0    5    10   15   20   25   30   35   40   45   50   55   60
+  >>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
+  >>> # Source: [-0-]     [-1-] [2] [3]    [4][-5-][-6-][-7-][-8-][-9-]
+  >>> # Target: [-0-][-1-]     [-2-][-3-][-4-] [5] [6]    [7]  [-8-][-9-][10]
+  >>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
+  >>> source_start=[0, 10, 16, 20, 27, 30, 35, 40, 45, 50]
+  >>> source_limit=[5, 15, 19, 23, 30, 35, 40, 45, 50, 55]
+  >>> target_start=[0,  5, 15, 20, 25, 31, 35, 42, 47, 52, 57]
+  >>> target_limit=[5, 10, 20, 25, 30, 34, 38, 45, 52, 57, 61]
 
-    >>> span_alignment_lists(source_starts, source_limits,
-                             target_starts, target_limits)
-    [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-    >>> span_alignment_lists(source_starts, source_limits,
-    ...                      target_starts, target_limits,
-    ...                      multivalent_result=True)
-    [[0], [], [], [], [], [], [], [], [], []]
+  >>> span_alignment_lists(source_starts, source_limits,
+                           target_starts, target_limits)
+  [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+  >>> span_alignment_lists(source_starts, source_limits,
+  ...                      target_starts, target_limits,
+  ...                      multivalent_result=True)
+  [[0], [], [], [], [], [], [], [], [], []]
 
-    >>> span_alignment_lists(source_starts, source_limits,
-    ...                      target_starts, target_limits,
-    ...                      contains=True)
-    [ 0, -1, -1, -1, -1, 5, 6, 7, -1, -1]
+  >>> span_alignment_lists(source_starts, source_limits,
+  ...                      target_starts, target_limits,
+  ...                      contains=True)
+  [ 0, -1, -1, -1, -1, 5, 6, 7, -1, -1]
 
-    >>> span_alignment_lists(source_starts, source_limits,
-    ...                      target_starts, target_limits,
-    ...                      partial_overlap=True,
-    ...                      multivalent_result=True)
-    [[0], [], [2], [3], [4], [5], [6], [7], [8], [8, 9]]
+  >>> span_alignment_lists(source_starts, source_limits,
+  ...                      target_starts, target_limits,
+  ...                      partial_overlap=True,
+  ...                      multivalent_result=True)
+  [[0], [], [2], [3], [4], [5], [6], [7], [8], [8, 9]]
   """
   scope_tensors = [source_start, source_limit, target_start, target_limit]
   with ops.name_scope(name, 'SpanAlignment', scope_tensors):

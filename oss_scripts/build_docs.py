@@ -81,6 +81,7 @@ def _hide_layer_and_module_methods():
 def build_docs():
   """Build api docs for tensorflow_text."""
   _hide_layer_and_module_methods()
+  del text.keras  # keras is empty.
 
   doc_generator = generate_lib.DocGenerator(
       root_title="TensorFlow Text",

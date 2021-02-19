@@ -74,20 +74,22 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       out_type: output type. tf.int32 or tf.string (Default = tf.int32) Setting
         tf.int32 directly encodes the string into an id sequence.
       nbest_size: A scalar for sampling.
-                nbest_size = {0,1}: No sampling is performed. (default)
-                nbest_size > 1: samples from the nbest_size results.
-                nbest_size < 0: assuming that nbest_size is infinite and samples
-                  from the all hypothesis (lattice) using
-                  forward-filtering-and-backward-sampling algorithm.
+        * `nbest_size = {0,1}`: No sampling is performed. (default)
+        * `nbest_size > 1`: samples from the nbest_size results.
+        * `nbest_size < 0`: assuming that nbest_size is infinite and samples
+            from the all hypothesis (lattice) using
+            forward-filtering-and-backward-sampling algorithm.
       alpha: A scalar for a smoothing parameter. Inverse temperature for
         probability rescaling.
       reverse: Reverses the tokenized sequence (Default = false)
       add_bos: Add beginning of sentence token to the result (Default = false)
       add_eos: Add end of sentence token to the result (Default = false). When
-        reverse=True beginning/end of sentence tokens are added after reversing.
-      return_nbest: If True requires that nbest_size is a scalar and > 1.
-        Returns the nbest_size best tokenizations for each sentence instead of a
-        single one. The returned tensor has shape [batch * nbest, (tokens)].
+        `reverse=True` beginning/end of sentence tokens are added after
+        reversing.
+      return_nbest: If True requires that `nbest_size` is a scalar and `> 1`.
+        Returns the `nbest_size` best tokenizations for each sentence instead
+        of a single one. The returned tensor has shape
+        `[batch * nbest, (tokens)]`.
       name: The name argument that is passed to the op function.
 
     Returns:
@@ -154,14 +156,14 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
     Returns:
       A tuple `(tokens, start_offsets, end_offsets)` where:
 
-        * `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
-            `RaggedTensor`.
-        * `start_offsets` is an N+1-dimensional integer `Tensor` or
-            `RaggedTensor` containing the starting indices of each token (byte
-            indices for input strings).
-        * `end_offsets` is an N+1-dimensional integer `Tensor` or
-            `RaggedTensor` containing the exclusive ending indices of each token
-            (byte indices for input strings).
+      tokens: is an N+1-dimensional UTF-8 string or integer `Tensor` or
+        `RaggedTensor`.
+      start_offsets: is an N+1-dimensional integer `Tensor` or
+        `RaggedTensor` containing the starting indices of each token (byte
+        indices for input strings).
+      end_offsets: is an N+1-dimensional integer `Tensor` or
+        `RaggedTensor` containing the exclusive ending indices of each token
+        (byte indices for input strings).
     """
     with ops.name_scope(name, "SentenceTokenizer", [input, self]):
       input_tensor = ragged_tensor.convert_to_tensor_or_ragged_tensor(input)

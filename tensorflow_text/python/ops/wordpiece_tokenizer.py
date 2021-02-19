@@ -134,7 +134,7 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
     """Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
     ### Example:
-    ```python
+
     >>> tokens = [["they're", "the", "greatest"]],
     >>> tokenizer = WordpieceTokenizer(vocab, token_out_type=tf.string)
     >>> tokenizer.tokenize(tokens)
@@ -157,7 +157,6 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
     ### Example:
 
-    ```python
     >>> tokens = [["they're", "the", "greatest"]],
     >>> tokenizer = WordpieceTokenizer(vocab, token_out_type=tf.string)
     >>> result = tokenizer.tokenize_with_offsets(tokens)
@@ -167,7 +166,6 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
     [[[0, 4, 5], [0], [0, 5]]]
     >>> result[2].to_list()  # end offsets
     [[[4, 5, 7], [3], [5, 8]]]
-    ```
 
     Args:
       input: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
@@ -175,14 +173,14 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
     Returns:
       A tuple `(tokens, start_offsets, end_offsets)` where:
 
-        * `tokens[i1...iN, j]` is a `RaggedTensor` of the string contents (or ID
-          in the vocab_lookup_table representing that string) of the `jth` token
-          in `input[i1...iN]`.
-        * `start_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets
-          for the inclusive start of the `jth` token in `input[i1...iN]`.
-        * `end_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for
-          the exclusive end of the `jth` token in `input[i`...iN]` (exclusive,
-          i.e., first byte after the end of the token).
+      tokens[i1...iN, j]: is a `RaggedTensor` of the string contents (or ID
+        in the vocab_lookup_table representing that string) of the `jth` token
+        in `input[i1...iN]`.
+      start_offsets[i1...iN, j]: is a `RaggedTensor` of the byte offsets
+        for the inclusive start of the `jth` token in `input[i1...iN]`.
+      end_offsets[i1...iN, j]: is a `RaggedTensor` of the byte offsets for
+        the exclusive end of the `jth` token in `input[i`...iN]` (exclusive,
+        i.e., first byte after the end of the token).
     """
     name = None
     if not isinstance(self._vocab_lookup_table, lookup_ops.LookupInterface):

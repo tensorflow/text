@@ -48,7 +48,7 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
         of this parameter, we never include a whitespace into a token, and we
         always ignore the split/merge action for the whitespace character
         itself.  This parameter indicates what happens after a whitespace.
-         -if force_split_at_break_character is true, create a new word starting
+        * if force_split_at_break_character is true, create a new word starting
             at the first non-space character, regardless of the 0/1 label for
             that character, for instance:
 
@@ -68,7 +68,7 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
             logits=[[s, m, m, m, s, m, m, m]]
             output tokens=[["New", "York"]]
             ```
-         -otherwise, create a new word / continue the current one depending on
+        * otherwise, create a new word / continue the current one depending on
             the action for the first non-whitespace character.
 
             ```python
@@ -100,7 +100,7 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
     character.  For more info, see the doc for the logits argument below.
 
     ### Example:
-    ```python
+
     >>> strings = ["IloveFlume!", "and tensorflow"])
     >>> logits = [
         [
@@ -143,7 +143,6 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
     >>> tokenizer = SplitMergeFromLogitsTokenizer()
     >>> tokenizer.tokenize(strings, logits).to_list()
     [["I", "love", "Flume", "!"], ["and", "tensorflow"]]
-    ```
 
     Args:
       strings: a 1D `Tensor` of UTF-8 strings.
@@ -175,7 +174,6 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
 
     ### Example:
 
-    ```python
     >>> strings = ["IloveFlume!", "and tensorflow"])
     >>> logits = [
         [
@@ -224,7 +222,6 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
     >>> [[0, 1, 5, 10], [0, 4]]
     >>> result[2].to_list()
     >>> [[1, 5, 10, 11], [3, 14]]
-    ```
 
     Args:
       strings: A 1D `Tensor` of UTF-8 strings.

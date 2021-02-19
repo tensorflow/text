@@ -71,11 +71,10 @@ def create_feature_bitmask(tensor, dtype=dtypes.int32, name=None):
       supported integer type.
 
   Examples:
-    ```python
-    >>> assert create_feature_bitmask([True, False, False, True]) == 0b1001
-    >>> create_feature_bitmask([[True, False], [False, True], [True, True]])
-    [0b10, 0b01, 0b11]
-    ```
+
+  >>> assert create_feature_bitmask([True, False, False, True]) == 0b1001
+  >>> create_feature_bitmask([[True, False], [False, True], [True, True]])
+  [0b10, 0b01, 0b11]
   """
   with ops.name_scope(name, 'CreateFeatureBitmask', [tensor]):
     if (isinstance(tensor, (list, tuple)) and tensor and

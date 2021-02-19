@@ -41,13 +41,11 @@ def case_fold_utf8(input, name=None):
 
   For example:
 
-  ```python
   >>> case_fold_utf8(['The   Quick-Brown',
   ...                 'CAT jumped over',
   ...                 'the lazy dog  !!  ']
   tf.Tensor(['the   quick-brown' 'cat jumped over' 'the lazy dog  !!  '],
             shape=(3,), dtype=string)
-  ```
 
   Args:
     input: A `Tensor` or `RaggedTensor` of UTF-8 encoded strings.
@@ -145,7 +143,6 @@ def find_source_offsets(offsets_map, input_offsets, name=None):
 
   Example usage:
 
-  ```python
   >>> post_normalized_str, offsets_map = normalize_utf8_with_offsets_map(
   ...                                 ["株式会社",
   ...                                  "ＫＡＤＯＫＡＷＡ"])
@@ -153,7 +150,6 @@ def find_source_offsets(offsets_map, input_offsets, name=None):
   tf.Tensor([[0, 1, 2], [0, 3, 6]], shape=(2, 3), dtype=int64)
   >>> find_source_offsets(offsets_map[1], [[0, 1, 2]])  # indexed offsets_map
   tf.Tensor([[0, 3, 6]], shape=(1, 3), dtype=int64)
-  ```
 
   Args:
     offsets_map: A `Tensor` or `RaggedTensor` of type `variant`, used to map the
