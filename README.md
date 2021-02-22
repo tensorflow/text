@@ -26,7 +26,7 @@ welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CO
 
 IMPORTANT: When installing TF Text with `pip install`, please note the version
 of TensorFlow you are running, as you should specify the corresponding minor
-version of TF Text (eg. for tensorflow==2.3.x use tensorflow_text==2.3.x).
+version of TF Text (eg. for tensorflow==2.3.x use `pip install tensorflow-text==2.3.x`).
 
 ## INDEX
 * [Introduction](#introduction)
