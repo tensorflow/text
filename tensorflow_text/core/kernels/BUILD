@@ -6,7 +6,10 @@ load("//tensorflow_text:tftext.bzl", "tf_deps", "tf_text_kernel_library")
 licenses(["notice"])
 
 # Visibility rules
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = [
+    "//knowledge/cerebra/sense/text_classifier:__subpackages__",
+    "//visibility:public",
+])
 
 exports_files(["LICENSE"])
 
