@@ -342,7 +342,8 @@ class MaskValuesChooser(object):
               self._vocab_size, dtypes.float32))
       should_inject_random_flat = math_ops.logical_and(
           random_uniform.flat_values > self._mask_token_rate,
-          random_uniform.flat_values < self._random_token_rate)
+          random_uniform.flat_values <
+          self._mask_token_rate + self._random_token_rate)
       mask_values = mask_values.with_flat_values(
           ragged_where_op.where(
               should_inject_random_flat,
