@@ -23,6 +23,7 @@
 #include "src/sentencepiece.pb.h"
 #include "src/sentencepiece_processor.h"
 #include "tensorflow/core/framework/bounds_check.h"
+#include "tensorflow/core/framework/dataset_stateful_op_allowlist.h"
 #include "tensorflow/core/framework/device_base.h"
 #include "tensorflow/core/framework/node_def_util.h"
 #include "tensorflow/core/framework/op_kernel.h"
@@ -233,6 +234,8 @@ class SentencepieceOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("SentencepieceOp").Device(DEVICE_CPU),
                         tensorflow::text::SentencepieceOp);
+ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceOp");
+
 
 template <typename T, typename Tsplits>
 class SentencepieceTokenizeOp : public OpKernel {
@@ -372,6 +375,7 @@ REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                             .TypeConstraint<tensorflow::tstring>("out_type")
                             .TypeConstraint<int64>("Tsplits"),
                         SentencepieceTokenizeOp<tensorflow::tstring, int64>);
+ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceTokenizeOp");
 
 template <typename T, typename Tsplits>
 class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
@@ -522,6 +526,7 @@ REGISTER_KERNEL_BUILDER(
         .TypeConstraint<tensorflow::tstring>("out_type")
         .TypeConstraint<int64>("Tsplits"),
     SentencepieceTokenizeWithOffsetsOp<tensorflow::tstring, int64>);
+ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceTokenizeWithOffsetsOp");
 
 template <typename T, typename Tsplits>
 class SentencepieceDetokenizeOp : public OpKernel {
@@ -609,6 +614,7 @@ REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                             .TypeConstraint<tensorflow::tstring>("T")
                             .TypeConstraint<int64>("Tsplits"),
                         SentencepieceDetokenizeOp<tensorflow::tstring, int64>);
+ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceTokenizeWithOffsetsOp");
 
 class SentencepieceVocabSizeOp : public OpKernel {
  public:
@@ -632,6 +638,7 @@ class SentencepieceVocabSizeOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("SentencepieceVocabSizeOp").Device(DEVICE_CPU),
                         SentencepieceVocabSizeOp);
+ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceVocabSizeOp");
 
 class SentencepieceIdToStringOp : public OpKernel {
  public:
@@ -663,6 +670,7 @@ class SentencepieceIdToStringOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("SentencepieceIdToStringOp").Device(DEVICE_CPU),
                         SentencepieceIdToStringOp);
+ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceIdToStringOp");
 
 class SentencepieceStringToIdOp : public OpKernel {
  public:
@@ -694,6 +702,7 @@ class SentencepieceStringToIdOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("SentencepieceStringToIdOp").Device(DEVICE_CPU),
                         SentencepieceStringToIdOp);
+ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceStringToIdOp");
 
 }  // namespace text
 }  // namespace tensorflow
