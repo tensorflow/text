@@ -59,6 +59,11 @@ struct SentencepieceResource : public ResourceBase {
   string DebugString() const override { return "Sentencepiece Resource"; }
 
   int64 MemoryUsed() const override { return memory_used; }
+
+  bool SameOptions(bool add_bos, bool add_eos, bool reverse) const {
+    return (add_bos == this->add_bos) && (add_eos == this->add_eos) &&
+           (reverse == this->reverse);
+  }
 };
 
 // According to .../tensorflow/core/util/work_sharder.cc, this values determines
@@ -90,53 +95,53 @@ int32 GetPieceOrId<int32>(
 
 tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
                                       SentencepieceResource* sp) {
-  absl::WriterMutexLock lock(&sp->mu);
-  bool require_update = false;
   const Tensor* add_bos_tensor = nullptr;
   TF_RETURN_IF_ERROR(ctx->input("add_bos", &add_bos_tensor));
-  bool add_bos = add_bos_tensor->scalar<bool>()();
-  require_update |= add_bos != sp->add_bos;
-  sp->add_bos = add_bos;
+  const bool add_bos = add_bos_tensor->scalar<bool>()();
 
   const Tensor* add_eos_tensor = nullptr;
   TF_RETURN_IF_ERROR(ctx->input("add_eos", &add_eos_tensor));
-  bool add_eos = add_eos_tensor->scalar<bool>()();
-  require_update |= add_eos != sp->add_eos;
-  sp->add_eos = add_eos;
+  const bool add_eos = add_eos_tensor->scalar<bool>()();
 
   const Tensor* reverse_tensor = nullptr;
   TF_RETURN_IF_ERROR(ctx->input("reverse", &reverse_tensor));
-  bool reverse = reverse_tensor->scalar<bool>()();
-  require_update |= reverse != sp->reverse;
-  sp->reverse = reverse;
+  const bool reverse = reverse_tensor->scalar<bool>()();
 
-  if (require_update) {
-    string options("");
-    bool first = true;
-    if (sp->add_bos) {
-      absl::StrAppend(&options, "bos");
-      first = false;
+  {
+    // Because we expect most of the time no change in these options, we grab
+    // the reader lock once and do a quick check first.
+    absl::ReaderMutexLock l(&sp->mu);
+    if (sp->SameOptions(add_bos, add_eos, reverse)) {
+      return Status::OK();
     }
-    if (sp->add_eos) {
-      if (!first) {
-        absl::StrAppend(&options, ":");
-      }
-      absl::StrAppend(&options, "eos");
-      first = false;
-    }
-    if (sp->reverse) {
-      if (!first) {
-        absl::StrAppend(&options, ":");
-      }
-      absl::StrAppend(&options, "reverse");
-      first = false;
-    }
-
-    TF_RETURN_IF_ERROR(
-        ToTFStatus(sp->processor.SetEncodeExtraOptions(options)));
-    TF_RETURN_IF_ERROR(
-        ToTFStatus(sp->processor.SetDecodeExtraOptions(options)));
   }
+
+  absl::WriterMutexLock lock(&sp->mu);
+  if (sp->SameOptions(add_bos, add_eos, reverse)) {
+    return Status::OK();
+  }
+  string options;
+  sp->add_bos = add_bos;
+  if (sp->add_bos) {
+    absl::StrAppend(&options, "bos");
+  }
+  sp->add_eos = add_eos;
+  if (sp->add_eos) {
+    if (!options.empty()) {
+      absl::StrAppend(&options, ":");
+    }
+    absl::StrAppend(&options, "eos");
+  }
+  sp->reverse = reverse;
+  if (sp->reverse) {
+    if (!options.empty()) {
+      absl::StrAppend(&options, ":");
+    }
+    absl::StrAppend(&options, "reverse");
+  }
+
+  TF_RETURN_IF_ERROR(ToTFStatus(sp->processor.SetEncodeExtraOptions(options)));
+  TF_RETURN_IF_ERROR(ToTFStatus(sp->processor.SetDecodeExtraOptions(options)));
 
   return Status::OK();
 }
