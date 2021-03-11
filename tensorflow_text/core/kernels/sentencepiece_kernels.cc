@@ -17,6 +17,7 @@
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/meta/type_traits.h"
+#include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/span.h"
@@ -72,7 +73,7 @@ struct SentencepieceResource : public ResourceBase {
 // TODO(broken) Determine a medium cost of a call to the SentencePiece processor
 constexpr int64 kCostPerUnit = 10000;
 
-::tensorflow::Status ToTFStatus(const ::util::Status& s) {
+::tensorflow::Status ToTFStatus(const absl::Status& s) {
   if (s.ok()) return ::tensorflow::Status();
   return ::tensorflow::Status(static_cast<::tensorflow::error::Code>(s.code()),
                               ::tensorflow::string(s.message()));
