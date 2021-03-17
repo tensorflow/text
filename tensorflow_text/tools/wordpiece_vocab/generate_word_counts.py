@@ -26,7 +26,7 @@ import tensorflow.compat.v1 as tf
 import tensorflow_transform as tft
 import tensorflow_transform.beam as tft_beam
 from tensorflow_transform.tf_metadata import dataset_metadata
-from tensorflow_transform.tf_metadata import dataset_schema
+from tensorflow_transform.tf_metadata import schema_utils
 from tensorflow_text.tools.wordpiece_vocab import utils
 
 FLAGS = flags.FLAGS
@@ -111,7 +111,7 @@ def word_count(input_path, output_path, raw_metadata, min_token_frequency=2):
 def main(_):
   # Generate schema of input data.
   raw_metadata = dataset_metadata.DatasetMetadata(
-      dataset_schema.from_feature_spec({
+      schema_utils.schema_from_feature_spec({
           'text': tf.FixedLenFeature([], tf.string),
           'language_code': tf.FixedLenFeature([], tf.string),
       }))

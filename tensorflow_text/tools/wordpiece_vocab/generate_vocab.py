@@ -26,7 +26,7 @@ import tensorflow.compat.v1 as tf
 import tensorflow_transform as tft
 import tensorflow_transform.beam as tft_beam
 from tensorflow_transform.tf_metadata import dataset_metadata
-from tensorflow_transform.tf_metadata import dataset_schema
+from tensorflow_transform.tf_metadata import schema_utils
 from tensorflow_text.tools.wordpiece_vocab import utils
 from tensorflow_text.tools.wordpiece_vocab import wordpiece_tokenizer_learner_lib as learner
 
@@ -90,7 +90,7 @@ def generate_vocab(data_file, vocab_file, metrics_file, raw_metadata, params,
   lang_set = set(FLAGS.lang_set.split(','))
 
   # Schema to format metrics as CSV.
-  csv_schema = dataset_schema.from_feature_spec({
+  csv_schema = schema_utils.schema_from_feature_spec({
       'lang': tf.FixedLenFeature([], tf.string),
       'sample_count': tf.FixedLenFeature([], tf.int64),
       'micro_drop_char_percent': tf.FixedLenFeature([], tf.string),
@@ -204,7 +204,7 @@ def generate_vocab(data_file, vocab_file, metrics_file, raw_metadata, params,
 def main(_):
   # Define schema.
   raw_metadata = dataset_metadata.DatasetMetadata(
-      dataset_schema.from_feature_spec({
+      schema_utils.schema_from_feature_spec({
           'text': tf.FixedLenFeature([], tf.string),
           'language_code': tf.FixedLenFeature([], tf.string),
       }))
