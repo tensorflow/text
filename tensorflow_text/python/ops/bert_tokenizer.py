@@ -20,6 +20,7 @@ from __future__ import print_function
 
 import copy
 
+
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import array_ops
@@ -123,9 +124,7 @@ class BasicTokenizer(TokenizerWithOffsets):
     """
     # lowercase and strip accents (if option is set)
     if self._lower_case:
-      text_input = case_fold_utf8(text_input)
-      text_input = normalize_utf8(text_input, "NFD")
-      text_input = string_ops.regex_replace(text_input, r"\p{Mn}", "")
+      text_input = self.lower_case(text_input)
     else:
       # utf8 normalization
       if self._normalization_form is not None:
@@ -136,6 +135,23 @@ class BasicTokenizer(TokenizerWithOffsets):
     return regex_split_ops.regex_split_with_offsets(
         text_input, self._delim_regex_pattern, self._keep_delim_regex_pattern,
         "BertBasicTokenizer")
+
+  def lower_case(self, text_input):
+    """Lower-cases the `text_input'."""
+    text_input = case_fold_utf8(text_input)
+    text_input = normalize_utf8(text_input, "NFD")
+    text_input = string_ops.regex_replace(text_input, r"\p{Mn}", "")
+    return text_input
+
+
+class AccentPreservingBasicTokenizer(BasicTokenizer):
+  """I18n-friendly tokenizer that keeps accent characters during lowercasing."""
+
+  def __init__(self, *args, **kwargs):
+    super(AccentPreservingBasicTokenizer, self).__init__(*args, **kwargs)
+
+  def lower_case(self, text_input):
+    return string_ops.string_lower(text_input, encoding="utf-8")
 
 
 class BertTokenizer(TokenizerWithOffsets, Detokenizer):
@@ -177,6 +193,7 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
     preserve_unused_token: If true, text in the regex format `\\[unused\\d+\\]`
       will be treated as a token and thus remain preserved as is to be looked up
       in the vocabulary.
+    basic_tokenizer_class: If set, the class to use instead of BasicTokenizer
   """
 
   def __init__(self,
@@ -190,13 +207,13 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
                lower_case=False,
                keep_whitespace=False,
                normalization_form=None,
-               preserve_unused_token=False):
+               preserve_unused_token=False,
+               basic_tokenizer_class=BasicTokenizer):
     super(BertTokenizer, self).__init__()
     _tf_text_bert_tokenizer_op_create_counter.get_cell().increase_by(1)
 
-    self._basic_tokenizer = BasicTokenizer(lower_case, keep_whitespace,
-                                           normalization_form,
-                                           preserve_unused_token)
+    self._basic_tokenizer = basic_tokenizer_class(
+        lower_case, keep_whitespace, normalization_form, preserve_unused_token)
     self._wordpiece_tokenizer = WordpieceTokenizer(
         vocab_lookup_table, suffix_indicator, max_bytes_per_word,
         max_chars_per_token, token_out_type, unknown_token,
