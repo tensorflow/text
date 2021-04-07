@@ -34,7 +34,7 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.SentencepieceTokenizer(
     model=None, out_type=dtypes.int32, nbest_size=0, alpha=1.0, reverse=False,
-    add_bos=False, add_eos=False, name=None
+    add_bos=False, add_eos=False, return_nbest=False, name=None
 )
 </code></pre>
 
@@ -66,9 +66,9 @@ tf.int32 directly encodes the string into an id sequence.
 </td>
 <td>
 A scalar for sampling.
-nbest_size = {0,1}: No sampling is performed. (default)
-nbest_size > 1: samples from the nbest_size results.
-nbest_size < 0: assuming that nbest_size is infinite and samples
+* `nbest_size = {0,1}`: No sampling is performed. (default)
+* `nbest_size > 1`: samples from the nbest_size results.
+* `nbest_size < 0`: assuming that nbest_size is infinite and samples
 from the all hypothesis (lattice) using
 forward-filtering-and-backward-sampling algorithm.
 </td>
@@ -99,8 +99,19 @@ Add beginning of sentence token to the result (Default = false)
 `add_eos`
 </td>
 <td>
-Add end of sentence token to the result (Default = false).
-When reverse=True beginning/end of sentence tokens are added after reversing.
+Add end of sentence token to the result (Default = false). When
+`reverse=True` beginning/end of sentence tokens are added after
+reversing.
+</td>
+</tr><tr>
+<td>
+`return_nbest`
+</td>
+<td>
+If True requires that `nbest_size` is a scalar and `> 1`.
+Returns the `nbest_size` best tokenizations for each sentence instead
+of a single one. The returned tensor has shape
+`[batch * nbest, (tokens)]`.
 </td>
 </tr><tr>
 <td>
@@ -431,22 +442,42 @@ The name argument that is passed to the op function.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
 A tuple `(tokens, start_offsets, end_offsets)` where:
-
-*   `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
-    `RaggedTensor`.
-*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the starting indices of each token (byte indices for input
-    strings).
-*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the exclusive ending indices of each token (byte indices for
-    input strings). </td> </tr>
-
+</td>
+</tr>
+<tr>
+<td>
+`tokens`
+</td>
+<td>
+is an N+1-dimensional UTF-8 string or integer `Tensor` or
+`RaggedTensor`.
+</td>
+</tr><tr>
+<td>
+`start_offsets`
+</td>
+<td>
+is an N+1-dimensional integer `Tensor` or
+`RaggedTensor` containing the starting indices of each token (byte
+indices for input strings).
+</td>
+</tr><tr>
+<td>
+`end_offsets`
+</td>
+<td>
+is an N+1-dimensional integer `Tensor` or
+`RaggedTensor` containing the exclusive ending indices of each token
+(byte indices for input strings).
+</td>
+</tr>
 </table>
 
 <h3 id="vocab_size"><code>vocab_size</code></h3>

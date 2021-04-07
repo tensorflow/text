@@ -4,6 +4,7 @@ description: Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 <meta itemprop="name" content="text.WordpieceTokenizer" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
+<meta itemprop="property" content="detokenize"/>
 <meta itemprop="property" content="split"/>
 <meta itemprop="property" content="split_with_offsets"/>
 <meta itemprop="property" content="tokenize"/>
@@ -24,7 +25,8 @@ source</a>
 Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
-[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md)
+[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md),
+[`Detokenizer`](../text/Detokenizer.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.WordpieceTokenizer(
@@ -106,6 +108,74 @@ characters will be treated as single unknown tokens.
 </table>
 
 ## Methods
+
+<h3 id="detokenize"><code>detokenize</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>detokenize(
+    token_ids
+)
+</code></pre>
+
+Convert a `Tensor` or `RaggedTensor` of wordpiece IDs to string-words.
+
+```
+>>> import pathlib
+>>> pathlib.Path('vocab.txt').write_text(
+...     "a b c ##a ##b ##c".replace(' ', '\n'))
+>>> wordpiece = text.WordpieceTokenizer('vocab.txt')
+>>> token_ids = [[0, 4, 5, 2, 5, 5, 5]]
+>>> wordpiece.detokenize(token_ids)
+<tf.RaggedTensor [[b'ab', b'cccc']]>
+```
+
+The word pieces are joined along the innermost axis to make words. So the result
+has the same rank as the input, but the innermost axis of the result indexes
+words instead of word pieces.
+
+The shape transformation is: `[..., wordpieces] => [..., words]`
+
+When the input shape is `[..., words, wordpieces]` (like the output of
+<a href="../text/WordpieceTokenizer.md#tokenize"><code>WordpieceTokenizer.tokenize</code></a>)
+the result's shape is `[..., words, 1]`. The additional ragged axis can be
+removed using `words.merge_dims(-2, -1)`.
+
+Note: This method assumes wordpiece IDs are dense on the interval `[0,
+vocab_size)`.
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`token_ids`
+</td>
+<td>
+A `RaggedTensor` or `Tensor` with an int dtype. Must have
+`ndims >= 2`
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A `RaggedTensor` with dtype `string` and the rank as the input
+`token_ids`.
+</td>
+</tr>
+
+</table>
 
 <h3 id="split"><code>split</code></h3>
 
@@ -213,13 +283,14 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
 ### Example:
 
-```python
+```
+>>> tokens = [["they're", "the", "greatest"]],
+>>> tokenizer = WordpieceTokenizer(vocab, token_out_type=tf.string)
+>>> tokenizer.tokenize(tokens)
+[[['they', "##'", '##re'], ['the'], ['great', '##est']]]
 ```
 
-> > > tokens = [["they're", "the", "greatest"]], tokenizer =
-> > > WordpieceTokenizer(vocab, token_out_type=tf.string)
-> > > tokenizer.tokenize(tokens) [[['they', "##'", '##re'], ['the'], ['great',
-> > > '##est']]] ` `
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -236,6 +307,8 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </tr>
 </table>
 
+
+
 <!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
@@ -250,10 +323,11 @@ of the `jth` token in `input[i1...iN]`
 
 </table>
 
+
+
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
-source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>tokenize_with_offsets(
@@ -265,7 +339,6 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
 ### Example:
 
-```python
 ```
 
 > > > tokens = [["they're", "the", "greatest"]], tokenizer =
@@ -273,7 +346,7 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 > > > tokenizer.tokenize_with_offsets(tokens) result[0].to_list() # subwords
 > > > [[['they', "##'", '##re'], ['the'], ['great', '##est']]]
 > > > result[1].to_list() # start offsets [[[0, 4, 5], [0], [0, 5]]]
-> > > result[2].to_list() # end offsets [[[4, 5, 7], [3], [5, 8]]] ` `
+> > > result[2].to_list() # end offsets [[[4, 5, 7], [3], [5, 8]]] ```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -298,13 +371,12 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 <td colspan="2">
 A tuple `(tokens, start_offsets, end_offsets)` where:
 
-*   `tokens[i1...iN, j]` is a `RaggedTensor` of the string contents (or ID in
-    the vocab_lookup_table representing that string) of the `jth` token in
-    `input[i1...iN]`.
-*   `start_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
-    inclusive start of the `jth` token in `input[i1...iN]`.
-*   `end_offsets[i1...iN, j]` is a `RaggedTensor` of the byte offsets for the
-    exclusive end of the `jth` token in `input[i`...iN]` (exclusive, i.e., first
-    byte after the end of the token). </td> </tr>
+tokens[i1...iN, j]: is a `RaggedTensor` of the string contents (or ID in the
+vocab_lookup_table representing that string) of the `jth` token in
+`input[i1...iN]`. start_offsets[i1...iN, j]: is a `RaggedTensor` of the byte
+offsets for the inclusive start of the `jth` token in `input[i1...iN]`.
+end_offsets[i1...iN, j]: is a `RaggedTensor` of the byte offsets for the
+exclusive end of the `jth` token in `input[i`...iN]` (exclusive, i.e., first
+byte after the end of the token). </td> </tr>
 
 </table>

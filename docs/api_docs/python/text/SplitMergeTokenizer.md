@@ -141,13 +141,14 @@ Tokenizes a tensor of UTF-8 strings according to labels.
 
 ### Example:
 
-```python
 ```
-
-> > > strings = ["HelloMonday", "DearFriday"], labels = [[0, 1, 1, 1, 1, 0, 1,
-> > > 1, 1, 1, 1], [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]] tokenizer =
-> > > SplitMergeTokenizer() tokenizer.tokenize(strings, labels) [['Hello',
-> > > 'Monday'], ['Dear', 'Friday']] ` `
+>>> strings = ["HelloMonday", "DearFriday"],
+>>> labels = [[0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+              [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
+>>> tokenizer = SplitMergeTokenizer()
+>>> tokenizer.tokenize(strings, labels)
+[['Hello', 'Monday'], ['Dear', 'Friday']]
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -156,15 +157,16 @@ Tokenizes a tensor of UTF-8 strings according to labels.
 
 <tr> <td> `input` </td> <td> An N-dimensional `Tensor` or `RaggedTensor` of
 UTF-8 strings. </td> </tr><tr> <td> `labels` </td> <td> An (N+1)-dimensional
-`Tensor` or `RaggedTensor` of int32, with labels[i1...iN, j] being the
-split(0)/merge(1) label of the j-th character for input[i1...iN]. Here split
+`Tensor` or `RaggedTensor` of `int32`, with `labels[i1...iN, j]` being the
+split(0)/merge(1) label of the j-th character for `input[i1...iN]`. Here split
 means create a new word with this character and merge means adding this
 character to the previous word. </td> </tr><tr> <td>
 `force_split_at_break_character` </td> <td> bool indicates whether to force
 start a new word after seeing a ICU defined whitespace character. When seeing
-one or more ICU defined whitespace character: -if force_split_at_break_character
-is set true, then create a new word at the first non-space character, regardless
-of the label of that character, for instance:
+one or more ICU defined whitespace character: * if
+`force_split_at_break_character` is set true, then create a new word at the
+first non-space character, regardless of the label of that character, for
+instance:
 
 ```python
 input="New York"
@@ -183,8 +185,9 @@ input="New York",
 labels=[0, 1, 1, 1, 0, 1, 1, 1]
 output tokens=["New", "York"]
 ```
--otherwise, whether to create a new word or not for the first non-space
-character depends on the label of that character, for instance:
+
+*   otherwise, whether to create a new word or not for the first non-space
+    character depends on the label of that character, for instance:
 
 ```python
 input="New York",
@@ -235,15 +238,19 @@ Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
 
 ### Example:
 
-```python
 ```
-
-> > > strings = ["HelloMonday", "DearFriday"], labels = [[0, 1, 1, 1, 1, 0, 1,
-> > > 1, 1, 1, 1], [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]] tokenizer =
-> > > SplitMergeTokenizer() result = tokenizer.tokenize_with_offsets(strings,
-> > > labels) result[0].to_list() [['Hello', 'Monday'], ['Dear', 'Friday']]
-> > > result[1].to_list() [[0, 5], [0, 4]] result[2].to_list() [[5, 11], [4,
-> > > 10]] ` `
+>>> strings = ["HelloMonday", "DearFriday"],
+>>> labels = [[0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+              [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
+>>> tokenizer = SplitMergeTokenizer()
+>>> result = tokenizer.tokenize_with_offsets(strings, labels)
+>>> result[0].to_list()
+[['Hello', 'Monday'], ['Dear', 'Friday']]
+>>> result[1].to_list()
+>>> [[0, 5], [0, 4]]
+>>> result[2].to_list()
+>>> [[5, 11], [4, 10]]
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -258,9 +265,10 @@ means create a new word with this character and merge means adding this
 character to the previous word. </td> </tr><tr> <td>
 `force_split_at_break_character` </td> <td> bool indicates whether to force
 start a new word after seeing a ICU defined whitespace character. When seeing
-one or more ICU defined whitespace character: -if force_split_at_break_character
-is set true, then create a new word at the first non-space character, regardless
-of the label of that character, for instance:
+one or more ICU defined whitespace character: * if
+`force_split_at_break_character` is set true, then create a new word at the
+first non-space character, regardless of the label of that character, for
+instance:
 
 ```python
 input="New York"
@@ -279,8 +287,9 @@ input="New York",
 labels=[0, 1, 1, 1, 0, 1, 1, 1]
 output tokens=["New", "York"]
 ```
--otherwise, whether to create a new word or not for the first non-space
-character depends on the label of that character, for instance:
+
+*   otherwise, whether to create a new word or not for the first non-space
+    character depends on the label of that character, for instance:
 
 ```python
 input="New York",
@@ -304,21 +313,40 @@ output tokens=["New", "York"]
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
 A tuple `(tokens, start_offsets, end_offsets)` where:
-* `tokens` is a `RaggedTensor` of strings where `tokens[i1...iN, j]` is
+</td>
+</tr>
+<tr>
+<td>
+`tokens`
+</td>
+<td>
+is a `RaggedTensor` of strings where `tokens[i1...iN, j]` is
 the string content of the `j-th` token in `input[i1...iN]`
-* `start_offsets` is a `RaggedTensor` of int64s where
+</td>
+</tr><tr>
+<td>
+`start_offsets`
+</td>
+<td>
+is a `RaggedTensor` of int64s where
 `start_offsets[i1...iN, j]` is the byte offset for the start of the
 `j-th` token in `input[i1...iN]`.
-* `end_offsets` is a `RaggedTensor` of int64s where
+</td>
+</tr><tr>
+<td>
+`end_offsets`
+</td>
+<td>
+is a `RaggedTensor` of int64s where
 `end_offsets[i1...iN, j]` is the byte offset immediately after the
 end of the `j-th` token in `input[i...iN]`.
 </td>
 </tr>
-
 </table>
