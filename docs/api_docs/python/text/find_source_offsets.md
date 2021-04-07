@@ -38,7 +38,6 @@ sliced along with the input_offsets.
 
 
 
-```python
 ```
 >>> post_normalized_str, offsets_map = normalize_utf8_with_offsets_map(
 ...                                 ["株式会社",
@@ -47,7 +46,6 @@ sliced along with the input_offsets.
 tf.Tensor([[0, 1, 2], [0, 3, 6]], shape=(2, 3), dtype=int64)
 >>> find_source_offsets(offsets_map[1], [[0, 1, 2]])  # indexed offsets_map
 tf.Tensor([[0, 3, 6]], shape=(1, 3), dtype=int64)
-```
 ```
 
 <!-- Tabular view -->

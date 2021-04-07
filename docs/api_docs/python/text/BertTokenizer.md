@@ -4,6 +4,7 @@ description: Tokenizer used for BERT.
 <meta itemprop="name" content="text.BertTokenizer" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
+<meta itemprop="property" content="detokenize"/>
 <meta itemprop="property" content="split"/>
 <meta itemprop="property" content="split_with_offsets"/>
 <meta itemprop="property" content="tokenize"/>
@@ -24,7 +25,8 @@ source</a>
 Tokenizer used for BERT.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
-[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md)
+[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md),
+[`Detokenizer`](../text/Detokenizer.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.BertTokenizer(
@@ -32,7 +34,7 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
     max_chars_per_token=None, token_out_type=dtypes.int64,
     unknown_token=&#x27;[UNK]&#x27;, split_unknown_characters=False,
     lower_case=False, keep_whitespace=False, normalization_form=None,
-    preserve_unused_token=False
+    preserve_unused_token=False, basic_tokenizer_class=BasicTokenizer
 )
 </code></pre>
 
@@ -143,10 +145,76 @@ If true, text in the regex format `\\[unused\\d+\\]`
 will be treated as a token and thus remain preserved as is to be looked up
 in the vocabulary.
 </td>
+</tr><tr>
+<td>
+`basic_tokenizer_class`
+</td>
+<td>
+If set, the class to use instead of BasicTokenizer
+</td>
 </tr>
 </table>
 
 ## Methods
+
+<h3 id="detokenize"><code>detokenize</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>detokenize(
+    token_ids
+)
+</code></pre>
+
+Convert a `Tensor` or `RaggedTensor` of wordpiece IDs to string-words.
+
+See
+<a href="../text/WordpieceTokenizer.md#detokenize"><code>WordpieceTokenizer.detokenize</code></a>
+for details.
+
+Note:
+<a href="../text/BertTokenizer.md#tokenize"><code>BertTokenizer.tokenize</code></a>/<a href="../text/BertTokenizer.md#detokenize"><code>BertTokenizer.detokenize</code></a>
+does not round trip losslessly. The result of `detokenize` will not, in general,
+have the same content or offsets as the input to `tokenize`. This is because the
+"basic tokenization" step, that splits the strings into words before applying
+the `WordpieceTokenizer`, includes irreversible steps like lower-casing and
+splitting on punctuation. `WordpieceTokenizer` on the other hand **is**
+reversible.
+
+Note: This method assumes wordpiece IDs are dense on the interval `[0,
+vocab_size)`.
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`token_ids`
+</td>
+<td>
+A `RaggedTensor` or `Tensor` with an int dtype.
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A `RaggedTensor` with dtype `string` and the same rank as the input
+`token_ids`.
+</td>
+</tr>
+
+</table>
 
 <h3 id="split"><code>split</code></h3>
 

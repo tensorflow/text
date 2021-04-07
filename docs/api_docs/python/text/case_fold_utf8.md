@@ -32,12 +32,13 @@ applied to the strings.
 
 #### For example:
 
-```python
 ```
-
-> > > case_fold_utf8(['The Quick-Brown', ... 'CAT jumped over', ... 'the lazy
-> > > dog !! '] tf.Tensor(['the quick-brown' 'cat jumped over' 'the lazy dog !!
-> > > '], shape=(3,), dtype=string) ` `
+>>> case_fold_utf8(['The   Quick-Brown',
+...                 'CAT jumped over',
+...                 'the lazy dog  !!  ']
+tf.Tensor(['the   quick-brown' 'cat jumped over' 'the lazy dog  !!  '],
+          shape=(3,), dtype=string)
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">

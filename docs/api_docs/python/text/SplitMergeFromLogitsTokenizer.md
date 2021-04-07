@@ -42,19 +42,14 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md), [`Toke
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-<tr>
-<td>
-`force_split_at_break_character`
-</td>
-<td>
-a bool that indicates whether to force
-start a new word after an ICU-defined whitespace character.  Regardless
-of this parameter, we never include a whitespace into a token, and we
-always ignore the split/merge action for the whitespace character
-itself.  This parameter indicates what happens after a whitespace.
--if force_split_at_break_character is true, create a new word starting
-at the first non-space character, regardless of the 0/1 label for
-that character, for instance:
+<tr> <td> `force_split_at_break_character` </td> <td> a bool that indicates
+whether to force start a new word after an ICU-defined whitespace character.
+Regardless of this parameter, we never include a whitespace into a token, and we
+always ignore the split/merge action for the whitespace character itself. This
+parameter indicates what happens after a whitespace. * if
+force_split_at_break_character is true, create a new word starting at the first
+non-space character, regardless of the 0/1 label for that character, for
+instance:
 
 ```python
 s = [2.0, 1.0]  # sample pair of logits indicating a split action
@@ -72,8 +67,9 @@ strings=["New York"],
 logits=[[s, m, m, m, s, m, m, m]]
 output tokens=[["New", "York"]]
 ```
--otherwise, create a new word / continue the current one depending on
-the action for the first non-whitespace character.
+
+*   otherwise, create a new word / continue the current one depending on the
+    action for the first non-whitespace character.
 
 ```python
 s = [2.0, 1.0]  # sample pair of logits indicating a split action
@@ -216,7 +212,7 @@ The logits refer to the split / merge action we should take for each
 character.  For more info, see the doc for the logits argument below.
 
 ### Example:
-```python
+
 ```
 >>> strings = ["IloveFlume!", "and tensorflow"])
 >>> logits = [
@@ -257,10 +253,9 @@ character.  For more info, see the doc for the logits argument below.
         [0.4, 5.0],  # o: merge
         [0.8, 6.0],  # w: merge
     ]]
->>> tokenizer = TokenizerFromLogits()
+>>> tokenizer = SplitMergeFromLogitsTokenizer()
 >>> tokenizer.tokenize(strings, logits).to_list()
 [["I", "love", "Flume", "!"], ["and", "tensorflow"]]
-```
 ```
 
 <!-- Tabular view -->
@@ -344,7 +339,6 @@ Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
 
 ### Example:
 
-```python
 ```
 >>> strings = ["IloveFlume!", "and tensorflow"])
 >>> logits = [
@@ -386,7 +380,7 @@ Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
         [0.4, 5.0],  # o: merge
         [0.8, 6.0],  # w: merge
     ]]
->>> tokenizer = TokenizerFromLogits()
+>>> tokenizer = SplitMergeFromLogitsTokenizer()
 >>> result = tokenizer.tokenize_with_offsets(strings, logits)
 >>> result[0].to_list()
 [["I", "love", "Flume", "!"], ["and", "tensorflow"]]
@@ -394,7 +388,6 @@ Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
 >>> [[0, 1, 5, 10], [0, 4]]
 >>> result[2].to_list()
 >>> [[1, 5, 10, 11], [3, 14]]
-```
 ```
 
 <!-- Tabular view -->

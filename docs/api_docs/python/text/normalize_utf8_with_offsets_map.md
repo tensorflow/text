@@ -45,8 +45,10 @@ See http://unicode.org/reports/tr15/
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of type string. (Must be UTF-8.)
-normalization_form: One of the following string values ('NFC', 'NFKC').
-Default is 'NFKC'.
+normalization_form: One of the following string values ('NFC', 'NFKC',
+'NFD', 'NFKD'). Default is 'NFKC'. NOTE: `NFD` and `NFKD` for
+`normalize_utf8_with_offsets_map` will not be available until the tf.text
+release w/ ICU 69 (scheduled after 4/2021).
 </td>
 </tr><tr>
 <td>
@@ -57,8 +59,6 @@ The name for this op (optional).
 </td>
 </tr>
 </table>
-
-
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
