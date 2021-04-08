@@ -90,6 +90,7 @@ def build_docs():
       search_hints=True,
       code_url_prefix=FLAGS.code_url_prefix,
       site_path="text/api_docs/python",
+      gen_report=FLAGS.gen_report,
       callbacks=[public_api.explicit_package_contents_filter])
   doc_generator.build(FLAGS.output_dir)
 
