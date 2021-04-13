@@ -1153,6 +1153,8 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":split_merge_tokenizer",
+        ":whitespace_tokenizer",
+        ":wordshape_ops",
         # python:client_testlib tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,

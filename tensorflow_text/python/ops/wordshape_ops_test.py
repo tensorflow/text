@@ -80,12 +80,13 @@ class Utf8CharsOpTest(test.TestCase):
   def SKIP_testWhitespace(self):
     test_string = [
         u" ", u"\v", u"\r\n", u"\u3000".encode("utf-8"), u" a", u"abc", u"a\nb",
-        u"\u3000 \n".encode("utf-8")
+        u"\u3000 \n".encode("utf-8"), u"　".encode("utf-8")
     ]
     shapes = wordshape_ops.wordshape(test_string,
                                      wordshape_ops.WordShape.IS_WHITESPACE)
     self.assertAllEqual(shapes,
-                        [True, True, True, True, False, False, False, True])
+                        [True, True, True, True, False, False, False, True,
+                         True])
 
   def testNoPunct(self):
     test_string = [u"abc", u"a;m".encode("utf-8")]

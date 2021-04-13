@@ -392,7 +392,8 @@ def wordshape(input_tensor, pattern, name=None):
     return string_ops.regex_full_match(input_tensor, pattern.value, name)
   elif (isinstance(pattern, (list, tuple)) and
         all(isinstance(s, WordShape) for s in pattern)):
-    with ops.name_scope(name, "Wordshape", input_tensor):
+    with ops.name_scope(name, "WordshapeNew", input_tensor):
+      # change to trigger tests
       return array_ops.stack([wordshape(input_tensor, s) for s in pattern],
                              axis=-1)
   else:

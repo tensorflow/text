@@ -47,6 +47,12 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     self.assertAllEqual(starts, expected_offset_starts)
     self.assertAllEqual(ends, expected_offset_ends)
 
+  def testScalarFixed(self):
+    test_value = constant_op.constant(u'I　love　Flume!'.encode('utf-8'))
+    expected_tokens = [b'I', b'love', b'Flume!']
+    tokens = self.whitespace_tokenizer.tokenize(test_value)
+    self.assertAllEqual(tokens, expected_tokens)
+
   def testScalarWithSplit(self):
     # Similar to testScalar, but using split() calls (instead of tokenize()).
     # Should produce the same results as before.  This tests that a

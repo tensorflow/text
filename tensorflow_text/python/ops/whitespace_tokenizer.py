@@ -83,7 +83,8 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
         * `end_offsets`: A `RaggedTensor` of the tokens' ending byte offset.
     """
     name = None
-    with ops.name_scope(name, "WhitespaceTokenize", [input]):
+    with ops.name_scope(name, "WhitespaceTokenizeNew", [input]):
+      # change to trigger tests
       input_tensor = ragged_tensor.convert_to_tensor_or_ragged_tensor(input)
       if input_tensor.shape.ndims is None:
         raise ValueError("Rank of input_tensor must be statically known.")

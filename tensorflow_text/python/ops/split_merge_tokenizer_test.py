@@ -29,7 +29,9 @@ from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.platform import test
+from tensorflow_text.python.ops import wordshape_ops
 from tensorflow_text.python.ops.split_merge_tokenizer import SplitMergeTokenizer
+from tensorflow_text.python.ops.whitespace_tokenizer import WhitespaceTokenizer
 
 
 def _Utf8(char):
@@ -66,6 +68,24 @@ class SplitMergeTokenizerTest(test.TestCase):
   def setUp(self):
     super(SplitMergeTokenizerTest, self).setUp()
     self.tokenizer = SplitMergeTokenizer()
+
+  def testWhitespace(self):
+    test_string = [
+        u' ', u'\v', u'\r\n', u'\u3000'.encode('utf-8'), u' a', u'abc', u'a\nb',
+        u'\u3000 \n'.encode('utf-8'), u'　'.encode('utf-8')
+    ]
+    shapes = wordshape_ops.wordshape(test_string,
+                                     wordshape_ops.WordShape.IS_WHITESPACE)
+    self.assertAllEqual(shapes,
+                        [True, True, True, True, False, False, False, True,
+                         True, True])
+
+  def testScalarFixed(self):
+    test_value = constant_op.constant(u'I　love　Flume!'.encode('utf-8'))
+    expected_tokens = [b'I', b'love', b'Flume!']
+    whitespace_tokenizer = WhitespaceTokenizer()
+    tokens = whitespace_tokenizer.tokenize(test_value)
+    self.assertAllEqual(tokens, expected_tokens)
 
   def testScalarValueSplitMerge(self):
     test_value = b'IloveFlume!'
@@ -163,6 +183,105 @@ class SplitMergeTokenizerTest(test.TestCase):
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
     self.assertAllEqual(ends, expected_offset_ends)
+
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(
+        test_value, test_label, force_split_at_break_character=False)
+    self.assertAllEqual(tokens, expected_tokens)
+
+  def testFullWidth1(self):
+    # TODO(salcianu): clean-up.  We used the Unicode string, but Windows may
+    # have problems with it, so we use the utf-8 bytes instead.
+    #
+    test_value = constant_op.constant([_Utf8(u'a　b')])
+    test_label = constant_op.constant([
+        [
+            # a
+            0,
+            # '　', note this is a full-width space that contains 3 bytes.
+            0,
+            # b
+            0
+        ]])
+
+    # By default force_split_at_break_character is set True, so we start new
+    # tokens after break characters regardless of the SPLIT/MERGE label of the
+    # break character.
+    expected_tokens = [[b'a', b'b']]
+    (tokens, _, _) = (
+        self.tokenizer.tokenize_with_offsets(test_value, test_label))
+    self.assertAllEqual(tokens, expected_tokens)
+
+  def testFullWidth2(self):
+    # TODO(salcianu): clean-up.  We used the Unicode string, but Windows may
+    # have problems with it, so we use the utf-8 bytes instead.
+    #
+    test_value = constant_op.constant([_Utf8(u'a　b')])
+    test_label = constant_op.constant([
+        [
+            # a
+            0,
+            # '　', note this is a full-width space that contains 3 bytes.
+            0,
+            # b
+            0
+        ]])
+
+    # By default force_split_at_break_character is set True, so we start new
+    # tokens after break characters regardless of the SPLIT/MERGE label of the
+    # break character.
+    expected_tokens = [[b'a', b'b']]
+
+    # Use the same arguments to test the tokenize() version, without offsets.
+    tokens = self.tokenizer.tokenize(test_value, test_label)
+    self.assertAllEqual(tokens, expected_tokens)
+
+  def testFullWidth3(self):
+    # TODO(salcianu): clean-up.  We used the Unicode string, but Windows may
+    # have problems with it, so we use the utf-8 bytes instead.
+    #
+    test_value = constant_op.constant([_Utf8(u'a　b')])
+    test_label = constant_op.constant([
+        [
+            # a
+            0,
+            # '　', note this is a full-width space that contains 3 bytes.
+            0,
+            # b
+            0
+        ]])
+
+    # By default force_split_at_break_character is set True, so we start new
+    # tokens after break characters regardless of the SPLIT/MERGE label of the
+    # break character.
+    expected_tokens = [[b'a', b'b']]
+
+    # Although force_split_at_break_character is set false we actually predict a
+    # SPLIT at '写', so we still start a new token: '写代码'.
+    (tokens, _, _) = (
+        self.tokenizer.tokenize_with_offsets(
+            test_value, test_label, force_split_at_break_character=False))
+    self.assertAllEqual(tokens, expected_tokens)
+
+  def testFullWidth4(self):
+    # TODO(salcianu): clean-up.  We used the Unicode string, but Windows may
+    # have problems with it, so we use the utf-8 bytes instead.
+    #
+    test_value = constant_op.constant([_Utf8(u'a　b')])
+    test_label = constant_op.constant([
+        [
+            # a
+            0,
+            # '　', note this is a full-width space that contains 3 bytes.
+            0,
+            # b
+            0
+        ]])
+
+    # By default force_split_at_break_character is set True, so we start new
+    # tokens after break characters regardless of the SPLIT/MERGE label of the
+    # break character.
+    expected_tokens = [[b'a', b'b']]
 
     # Use the same arguments to test the tokenize() version, without offsets.
     tokens = self.tokenizer.tokenize(

@@ -20,10 +20,13 @@
 #include "absl/strings/str_cat.h"
 #include "icu4c/source/common/unicode/unistr.h"
 #include "icu4c/source/common/unicode/uchar.h"
+#include "icu4c/source/common/unicode/umachine.h"
+#include "icu4c/source/common/unicode/utf8.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/lib/core/status.h"
+#include "tensorflow/core/platform/logging.h"
 
 namespace tensorflow {
 namespace text {
@@ -57,8 +60,13 @@ bool GetUTF8Chars(absl::string_view text,
 }
 
 bool IsBreakChar(absl::string_view text) {
-  icu::UnicodeString ustr(text.data(), text.length());
-  return ustr.length() == 1 && u_isUWhiteSpace(ustr[0]);
+  // icu::UnicodeString ustr(text.data(), text.length());
+  UChar32 c;
+  int position = 0;
+  U8_NEXT_OR_FFFD(text.data(), position, text.length(), c);
+  LOG(INFO) << "Break?: '" << text << "' = " << text.length() << ", "
+      << (u_isUWhiteSpace(c) ? "T" : "F");
+  return u_isUWhiteSpace(c);
 }
 
 Status TokenizeByLabel(const absl::string_view& text,
@@ -67,12 +75,13 @@ Status TokenizeByLabel(const absl::string_view& text,
                        std::vector<std::string>* tokens,
                        std::vector<int>* begin_offset,
                        std::vector<int>* end_offset, int* num_tokens) {
+  LOG(INFO) << "Tokenizing: " << text;
   std::vector<absl::string_view> chars;
   if (!GetUTF8Chars(text, &chars)) {
     return Status(error::Code::INVALID_ARGUMENT,
                   absl::StrCat("Input string is not utf8 valid: ", text));
   }
-
+  LOG(INFO) << "Chars size: " << chars.size();
   if (chars.size() > labels_tensor.dim_size(0)) {
     return Status(error::Code::INVALID_ARGUMENT,
                   absl::StrCat("Number of labels ", labels_tensor.dim_size(0),
@@ -140,6 +149,7 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
     // Iterate through all the values and tokenize them.
     const auto& values_vec = input_values->flat<tstring>();
     const auto& row_splits_vec = row_splits->flat<int32>();
+    LOG(INFO) << "Values size: " << values_vec.size();
     for (int i = 0; i < values_vec.size(); ++i) {
       // Tokenize into tokens and record the offset locations.
       int num_tokens = 0;
