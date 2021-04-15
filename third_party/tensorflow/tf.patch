@@ -1,0 +1,34 @@
+diff --git a/third_party/remote_config/common.bzl b/third_party/remote_config/common.bzl
+index 7a3cb974509..ea174a3df5d 100644
+--- a/third_party/remote_config/common.bzl
++++ b/third_party/remote_config/common.bzl
+@@ -52,17 +52,17 @@ def get_python_bin(repository_ctx):
+       The python bin path.
+     """
+     python_bin = get_host_environ(repository_ctx, PYTHON_BIN_PATH)
+-    if python_bin != None:
++    if python_bin:
+         return python_bin
+ 
+     # First check for an explicit "python3"
+     python_bin = which(repository_ctx, "python3", True)
+-    if python_bin != None:
++    if python_bin:
+         return python_bin
+ 
+     # Some systems just call pythone3 "python"
+     python_bin = which(repository_ctx, "python", True)
+-    if python_bin != None:
++    if python_bin:
+         return python_bin
+ 
+     auto_config_fail("Cannot find python in PATH, please make sure " +
+@@ -226,7 +226,7 @@ def execute(
+       The result of repository_ctx.execute(cmdline)
+     """
+     result = raw_exec(repository_ctx, cmdline)
+-    if result.stderr or not (empty_stdout_fine or result.stdout):
++    if (result.stderr or not result.stdout) and not empty_stdout_fine:
+         fail(
+             "\n".join([
+                 error_msg.strip() if error_msg else "Repository command failed",
