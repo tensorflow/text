@@ -290,8 +290,6 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 [[['they', "##'", '##re'], ['the'], ['great', '##est']]]
 ```
 
-```
-
 <!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
@@ -306,8 +304,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </td>
 </tr>
 </table>
-
-
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -346,7 +342,8 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 > > > tokenizer.tokenize_with_offsets(tokens) result[0].to_list() # subwords
 > > > [[['they', "##'", '##re'], ['the'], ['great', '##est']]]
 > > > result[1].to_list() # start offsets [[[0, 4, 5], [0], [0, 5]]]
-> > > result[2].to_list() # end offsets [[[4, 5, 7], [3], [5, 8]]] ```
+> > > result[2].to_list() # end offsets [[[4, 5, 7], [3], [5, 8]]
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
