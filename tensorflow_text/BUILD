@@ -61,6 +61,7 @@ py_library(
         "tools/__init__.py",
     ],
     srcs_version = "PY3",
+    visibility = ["//intelligence/cloud/recommendation/preprocess/input:__pkg__"],
     deps = [
         ":bert_tokenizer",
         ":create_feature_bitmask_op",
