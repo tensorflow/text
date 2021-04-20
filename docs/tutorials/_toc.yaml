@@ -1,0 +1,24 @@
+toc:
+- title: "Generate Text with RNNs"
+  path: /text/tutorials/text_generation
+
+- heading: Text Classification
+  style: divider
+- title: "Text classification with BERT"
+  path: /text/tutorials/classify_text_with_bert
+- title: "Compute Similarity Metrics"
+  path: /text/tutorials/text_similarity
+
+- heading: Text Translation
+  style: divider
+- title: "Translate text with seq2seq models"
+  path: /text/tutorials/nmt_with_attention
+- title: "Translate text with transformer models"
+  path: /text/tutorials/transformer
+
+- heading: NLP with BERT
+  style: divider
+# - title: "Fine tune BERT"
+#   path: /text/tutorials/fine_tune_bert
+- title: "Fine tune BERT with GLUE"
+  path: /text/tutorials/bert_glue
