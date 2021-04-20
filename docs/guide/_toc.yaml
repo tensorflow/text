@@ -1,0 +1,11 @@
+toc:
+- title: "Get started with TF-Text"
+  path: /text/guide/tf_text_intro
+- title: "Work with Unicode"
+  path: /text/guide/unicode
+- title: "Tokenize strings"
+  path: /text/guide/tokenizers
+- title: "Word embeddings"
+  path: /text/guide/word_embeddings
+# - title: "Subword Tokenization"
+#   path: /text/guide/subwords_tokenizer
