@@ -7,5 +7,5 @@ toc:
   path: /text/guide/tokenizers
 - title: "Word embeddings"
   path: /text/guide/word_embeddings
-# - title: "Subword Tokenization"
-#   path: /text/guide/subwords_tokenizer
+- title: "Subword Tokenization"
+  path: /text/guide/subwords_tokenizer
