@@ -24,7 +24,7 @@ from tensorflow_text.python.ops import trimmer_ops
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class TrimmerOpsTest(test.TestCase, parameterized.TestCase):
+class WaterfallTrimmerOpsTest(test.TestCase, parameterized.TestCase):
 
   @parameterized.parameters([
       # pyformat: disable
@@ -207,6 +207,111 @@ class TrimmerOpsTest(test.TestCase, parameterized.TestCase):
                                 descr=None):
     max_seq_length = constant_op.constant(max_seq_length)
     trimmer = trimmer_ops.WaterfallTrimmer(max_seq_length, axis=axis)
+    segments = [ragged_factory_ops.constant(seg) for seg in segments]
+    expected = [ragged_factory_ops.constant(exp) for exp in expected]
+    actual = trimmer.trim(segments)
+    for expected_seg, actual_seg in zip(expected, actual):
+      self.assertAllEqual(expected_seg, actual_seg)
+
+
+@test_util.run_all_in_graph_and_eager_modes
+class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
+
+  @parameterized.parameters([
+      # pyformat: disable
+      dict(
+          segments=[
+              # segment 1
+              [[1, 2, 3], [4, 5], [6]],
+              # segment 2
+              [[10], [20], [30, 40, 50]]
+          ],
+          expected=[
+              # segment 1
+              [[True, False, False], [True, False], [True]],
+              # Segment 2
+              [[True], [True], [True, False, False]]
+          ],
+          max_seq_length=2,
+      ),
+      # pyformat: enable
+  ])
+  def testGenerateMask(self,
+                       segments,
+                       max_seq_length,
+                       expected,
+                       axis=-1,
+                       descr=None):
+    max_seq_length = constant_op.constant(max_seq_length)
+    segments = [ragged_factory_ops.constant(i) for i in segments]
+    expected = [ragged_factory_ops.constant(i) for i in expected]
+    trimmer = trimmer_ops.RoundRobinTrimmer(max_seq_length, axis=axis)
+    actual = trimmer.generate_mask(segments)
+    for expected_mask, actual_mask in zip(expected, actual):
+      self.assertAllEqual(actual_mask, expected_mask)
+
+  @parameterized.parameters([
+      dict(
+          descr="Basic test w/ segments of rank 2",
+          segments=[
+              # first segment
+              [[b"hello", b"there"], [b"name", b"is"],
+               [b"what", b"time", b"is", b"it", b"?"]],
+              # second segment
+              [[b"whodis", b"?"], [b"bond", b",", b"james", b"bond"],
+               [b"5:30", b"AM"]],
+          ],
+          max_seq_length=2,
+          expected=[
+              # Expected first segment has shape [3, (1, 2, 4)]
+              [[b"hello"], [b"name"], [b"what"]],
+              # Expected second segment has shape [3, (0, 1, 0)]
+              [[b"whodis"], [b"bond"], [b"5:30"]],
+          ]),
+      dict(
+          descr="Basic test w/ segments of rank 3",
+          segments=[
+              # first segment
+              [[[b"hello"], [b"there"]], [[b"name"], [b"is"]],
+               [[b"what", b"time"], [b"is"], [b"it", b"?"]]],
+              # second segment
+              [[[b"whodis"], [b"?"]], [[b"bond"], [b","], [b"james"],
+                                       [b"bond"]], [[b"5:30"], [b"AM"]]],
+          ],
+          max_seq_length=2,
+          expected=[
+              # Expected first segment has shape [3, (1, 2, 4), 1]
+              [[[b"hello"], []], [[b"name"], []], [[b"what"], [], []]],
+              # Expected second segment has shape [3, (0, 1, 0)]
+              [[[b"whodis"], []], [[b"bond"], [], [], []], [[b"5:30"], []]],
+          ]),
+      dict(
+          descr="Basic test w/ segments of rank 3 on axis=-2",
+          segments=[
+              # first segment
+              [[[b"hello"], [b"there"]], [[b"name"], [b"is"]],
+               [[b"what", b"time"], [b"is"], [b"it", b"?"]]],
+              # second segment
+              [[[b"whodis"], [b"?"]], [[b"bond"], [b","], [b"james"],
+                                       [b"bond"]], [[b"5:30"], [b"AM"]]],
+          ],
+          max_seq_length=2,
+          axis=-2,
+          expected=[
+              # Expected first segment has shape [3, (1, 2, 4), 1]
+              [[[b"hello"]], [[b"name"]], [[b"what", b"time"]]],
+              # Expected second segment has shape [3, (0, 1, 0)]
+              [[[b"whodis"]], [[b"bond"]], [[b"5:30"]]],
+          ]),
+  ])
+  def testPerBatchBudgetTrimmer(self,
+                                max_seq_length,
+                                segments,
+                                expected,
+                                axis=-1,
+                                descr=None):
+    max_seq_length = constant_op.constant(max_seq_length)
+    trimmer = trimmer_ops.RoundRobinTrimmer(max_seq_length, axis=axis)
     segments = [ragged_factory_ops.constant(seg) for seg in segments]
     expected = [ragged_factory_ops.constant(exp) for exp in expected]
     actual = trimmer.trim(segments)

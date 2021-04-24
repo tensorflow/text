@@ -34,6 +34,7 @@ _allowed_symbols = [
     "RandomItemSelector",
     "Reduction",
     "RegexSplitter",
+    "RoundRobinTrimmer",
     "SentencepieceTokenizer",
     "SplitMergeFromLogitsTokenizer",
     "SplitMergeTokenizer",
