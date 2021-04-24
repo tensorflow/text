@@ -157,3 +157,84 @@ class WaterfallTrimmer(Trimmer):
           i.get_selectable(s, self._axis)
           for s, i in zip(segments, item_selectors)
       ]
+
+
+class RoundRobinTrimmer(Trimmer):
+  """A `Trimmer` that allocates a length budget to segments via round robin.
+
+  A `Trimmer` that allocates a length budget to segments using a round robin
+  strategy, then drops elements outside of the segment's allocated budget.
+  See `generate_mask()` for more details.
+  """
+
+  def __init__(self, max_seq_length, axis=-1):
+    """Creates an instance of `RoundRobinTrimmer`.
+
+    Args:
+      max_seq_length: a scalar `Tensor` int32 that describes the number max
+        number of elements allowed in a batch.
+      axis: Axis to apply trimming on.
+    """
+    self._max_seq_length = max_seq_length
+    self._axis = axis
+
+  def generate_mask(self, segments):
+    """Calculates a truncation mask given a per-batch budget.
+
+    Calculate a truncation mask given a budget of the max number of items for
+    each or all batch row. The allocation of the budget is done using a
+    'round robin' algorithm. This algorithm allocates quota in each bucket,
+    left-to-right repeatedly until all the buckets are filled.
+
+    For example if the budget of [5] and we have segments of size
+    [3, 4, 2], the truncate budget will be allocated as [2, 2, 1].
+
+    Args:
+      segments: A list of `RaggedTensor` each w/ a shape of [num_batch,
+        (num_items)].
+
+    Returns:
+      a list with len(segments) of `RaggedTensor`s, see superclass for details.
+    """
+    with ops.name_scope("RoundRobinTrimmer/generate_mask"):
+      segment_row_lengths = [_get_row_lengths(s, self._axis) for s in segments]
+      segment_row_lengths = array_ops.stack(segment_row_lengths, axis=-1)
+
+      # Broadcast budget to match the rank of segments[0]
+      budget = ops.convert_to_tensor(self._max_seq_length)
+      for _ in range(segments[0].shape.ndims - budget.shape.ndims):
+        budget = array_ops.expand_dims(budget, -1)
+
+      # Compute the min, equal quota amount to distribute to all segments
+      min_row_length = array_ops.expand_dims(
+          math_ops.reduce_min(segment_row_lengths, axis=-1), -1)
+      broadcast_type = math_ops.cast(0 * min_row_length, dtypes.int32)
+      budget = math_ops.cast(budget / len(segments),
+                             dtypes.int32) + broadcast_type
+      budget = math_ops.cast(budget, dtypes.int64)
+      socialism = math_ops.minimum(min_row_length, budget)
+
+      leftover_segment_lengths = segment_row_lengths - socialism
+      budget = budget - len(segments) * socialism
+
+      # The leftover can be distributed using a left-to-right, waterfall
+      # algorithm.
+      segment_row_lengths = leftover_segment_lengths
+      segment_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
+      budget = math_ops.cast(budget, dtypes.int32)
+      leftover_budget = math_ops.cumsum(
+          -1 * segment_lengths, exclusive=False, axis=-1) + budget
+      leftover_budget = segment_lengths + math_ops.minimum(leftover_budget, 0)
+      results = math_ops.maximum(leftover_budget, 0)
+      results = results + math_ops.cast(socialism, dtypes.int32)
+
+      # Translate the results into boolean masks that match the shape of each
+      # segment
+      results = array_ops.unstack(results, axis=-1)
+      item_selectors = [
+          item_selector_ops.FirstNItemSelector(i) for i in results
+      ]
+      return [
+          i.get_selectable(s, self._axis)
+          for s, i in zip(segments, item_selectors)
+      ]
