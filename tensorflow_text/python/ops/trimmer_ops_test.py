@@ -234,6 +234,24 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
           ],
           max_seq_length=2,
       ),
+      dict(
+          descr="Basic test w/ segments of rank 3 on axis=-1",
+          segments=[
+              # first segment
+              # [batch, num_tokens, num_wordpieces]
+              [[[b"hello", b"123"], [b"there"]]],
+              # second segment
+              [[[b"whodis", b"233"], [b"?"]]],
+          ],
+          max_seq_length=2,
+          axis=-1,
+          expected=[
+              # segment 1
+              [[[True, False], [False]]],
+              # Segment 2
+              [[[True, False], [False]]]
+          ],
+      ),
       # pyformat: enable
   ])
   def testGenerateMask(self,
@@ -251,6 +269,49 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
       self.assertAllEqual(actual_mask, expected_mask)
 
   @parameterized.parameters([
+      # pyformat: disable
+      dict(
+          descr="Test w/ segments of rank 3 on axis=-1",
+          segments=[
+              # first segment
+              [[[b"hello", b"123"], [b"there"]]],
+              # second segment
+              [[[b"whodis", b"233"], [b"?"]]],
+          ],
+          max_seq_length=2,
+          axis=-1,
+          expected=[
+              [[[b"hello"], []]],
+              [[[b"whodis"], []]],
+          ]),
+      dict(
+          descr="Test wordpiece trimming across 2 segments",
+          segments=[
+              # first segment
+              [[[b"hello", b"123"], [b"there"]]],
+              # second segment
+              [[[b"whodis", b"233"], [b"?"]]],
+          ],
+          max_seq_length=3,
+          axis=-1,
+          expected=[
+              [[[b"hello", b"123"], []]],
+              [[[b"whodis"], []]],
+          ]),
+      dict(
+          descr="Test whole word trimming across 2 segments",
+          segments=[
+              # first segment
+              [[[b"hello", b"123"], [b"there"]]],
+              # second segment
+              [[[b"whodis", b"233"], [b"?"]]],
+          ],
+          max_seq_length=3,
+          axis=-2,
+          expected=[
+              [[[b"hello", b"123"], [b"there"]]],
+              [[[b"whodis", b"233"]]],
+          ]),
       dict(
           descr="Basic test w/ segments of rank 2",
           segments=[
@@ -303,6 +364,7 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               # Expected second segment has shape [3, (0, 1, 0)]
               [[[b"whodis"]], [[b"bond"]], [[b"5:30"]]],
           ]),
+      # pyformat: enable
   ])
   def testPerBatchBudgetTrimmer(self,
                                 max_seq_length,

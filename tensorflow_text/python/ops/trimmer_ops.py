@@ -200,26 +200,30 @@ class RoundRobinTrimmer(Trimmer):
       segment_row_lengths = [_get_row_lengths(s, self._axis) for s in segments]
       segment_row_lengths = array_ops.stack(segment_row_lengths, axis=-1)
 
-      # Broadcast budget to match the rank of segments[0]
       budget = ops.convert_to_tensor(self._max_seq_length)
-      for _ in range(segments[0].shape.ndims - budget.shape.ndims):
-        budget = array_ops.expand_dims(budget, -1)
+      # Broadcast and make `budget` match the shape of `segment_row_lengths`
+      budget = budget + math_ops.cast(0 * segment_row_lengths, dtypes.int32)
 
-      # Compute the min, equal quota amount to distribute to all segments
-      min_row_length = array_ops.expand_dims(
-          math_ops.reduce_min(segment_row_lengths, axis=-1), -1)
-      broadcast_type = math_ops.cast(0 * min_row_length, dtypes.int32)
-      budget = math_ops.cast(budget / len(segments),
-                             dtypes.int32) + broadcast_type
-      budget = math_ops.cast(budget, dtypes.int64)
-      socialism = math_ops.minimum(min_row_length, budget)
+      # Take the budget and equally distribute it among all the segments.
+      budget_per_segment = math_ops.cast(budget / len(segments), dtypes.int32)
+      budget_per_segment = math_ops.cast(budget_per_segment, dtypes.int64)
 
+      # Figure out the min num of elements per segment
+      min_row_length = math_ops.reduce_min(segment_row_lengths, axis=-1)
+      for _ in range(segment_row_lengths.shape.ndims -
+                     min_row_length.shape.ndims):
+        min_row_length = array_ops.expand_dims(min_row_length, -1)
+
+      # We either deduct the min across a row, or the equally distributed budget
+      socialism = math_ops.minimum(min_row_length, budget_per_segment)
       leftover_segment_lengths = segment_row_lengths - socialism
-      budget = budget - len(segments) * socialism
 
-      # The leftover can be distributed using a left-to-right, waterfall
-      # algorithm.
+      # Update the new budget w/ everyone's equal share removed
+      budget = budget - math_ops.cast(socialism * len(segments), dtypes.int32)
       segment_row_lengths = leftover_segment_lengths
+
+      # Compute the remaining allocation for each segment using a `waterfall`
+      # algorithm
       segment_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
       budget = math_ops.cast(budget, dtypes.int32)
       leftover_budget = math_ops.cumsum(
@@ -227,10 +231,10 @@ class RoundRobinTrimmer(Trimmer):
       leftover_budget = segment_lengths + math_ops.minimum(leftover_budget, 0)
       results = math_ops.maximum(leftover_budget, 0)
       results = results + math_ops.cast(socialism, dtypes.int32)
-
       # Translate the results into boolean masks that match the shape of each
       # segment
       results = array_ops.unstack(results, axis=-1)
+
       item_selectors = [
           item_selector_ops.FirstNItemSelector(i) for i in results
       ]
