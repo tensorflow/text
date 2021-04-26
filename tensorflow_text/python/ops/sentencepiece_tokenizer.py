@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Whitespace tokenizer for string tensors."""
+"""Sentencepiece tokenizer for string tensors."""
 
 from __future__ import absolute_import
 from __future__ import division
