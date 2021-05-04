@@ -101,48 +101,48 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
 
     ### Example:
 
-    >>> strings = ["IloveFlume!", "and tensorflow"])
+    >>> strings = ['IloveFlume!', 'and tensorflow']
     >>> logits = [
-        [
-            # "I"
-            [5.0, -3.2],  # I: split
-            # "love"
-            [2.2, -1.0],  # l: split
-            [0.2, 12.0],  # o: merge
-            [0.0, 11.0],  # v: merge
-            [-3.0, 3.0],  # e: merge
-            # "Flume"
-            [10.0, 0.0],  # F: split
-            [0.0, 11.0],  # l: merge
-            [0.0, 11.0],  # u: merge
-            [0.0, 12.0],  # m: merge
-            [0.0, 12.0],  # e: merge
-            # "!"
-            [5.2, -7.0],  # !: split
-            # padding:
-            [1.0, 0.0], [1.0, 1.0], [1.0, 0.0],
-        ], [
-            # "and"
-            [2.0, 0.7],  # a: split
-            [0.2, 1.5],  # n: merge
-            [0.5, 2.3],  # d: merge
-            # " "
-            [1.7, 7.0],  # <space>: merge
-            # "tensorflow"
-            [2.2, 0.1],  # t: split
-            [0.2, 3.1],  # e: merge
-            [1.1, 2.5],  # n: merge
-            [0.7, 0.9],  # s: merge
-            [0.6, 1.0],  # o: merge
-            [0.3, 1.0],  # r: merge
-            [0.2, 2.2],  # f: merge
-            [0.7, 3.1],  # l: merge
-            [0.4, 5.0],  # o: merge
-            [0.8, 6.0],  # w: merge
-        ]]
+    ... [
+    ...     # 'I'
+    ...     [5.0, -3.2],  # I: split
+    ...     # 'love'
+    ...     [2.2, -1.0],  # l: split
+    ...     [0.2, 12.0],  # o: merge
+    ...     [0.0, 11.0],  # v: merge
+    ...     [-3.0, 3.0],  # e: merge
+    ...     # 'Flume'
+    ...     [10.0, 0.0],  # F: split
+    ...     [0.0, 11.0],  # l: merge
+    ...     [0.0, 11.0],  # u: merge
+    ...     [0.0, 12.0],  # m: merge
+    ...     [0.0, 12.0],  # e: merge
+    ...     # '!'
+    ...     [5.2, -7.0],  # !: split
+    ...     # padding:
+    ...     [1.0, 0.0], [1.0, 1.0], [1.0, 0.0],
+    ... ], [
+    ...     # 'and'
+    ...     [2.0, 0.7],  # a: split
+    ...     [0.2, 1.5],  # n: merge
+    ...     [0.5, 2.3],  # d: merge
+    ...     # ' '
+    ...     [1.7, 7.0],  # <space>: merge
+    ...     # 'tensorflow'
+    ...     [2.2, 0.1],  # t: split
+    ...     [0.2, 3.1],  # e: merge
+    ...     [1.1, 2.5],  # n: merge
+    ...     [0.7, 0.9],  # s: merge
+    ...     [0.6, 1.0],  # o: merge
+    ...     [0.3, 1.0],  # r: merge
+    ...     [0.2, 2.2],  # f: merge
+    ...     [0.7, 3.1],  # l: merge
+    ...     [0.4, 5.0],  # o: merge
+    ...     [0.8, 6.0],  # w: merge
+    ... ]]
     >>> tokenizer = SplitMergeFromLogitsTokenizer()
-    >>> tokenizer.tokenize(strings, logits).to_list()
-    [["I", "love", "Flume", "!"], ["and", "tensorflow"]]
+    >>> tokenizer.tokenize(strings, logits)
+    <tf.RaggedTensor [[b'I', b'love', b'Flume', b'!'], [b'and', b'tensorflow']]>
 
     Args:
       strings: a 1D `Tensor` of UTF-8 strings.
@@ -174,54 +174,53 @@ class SplitMergeFromLogitsTokenizer(TokenizerWithOffsets):
 
     ### Example:
 
-    >>> strings = ["IloveFlume!", "and tensorflow"])
+    >>> strings = ['IloveFlume!', 'and tensorflow']
     >>> logits = [
-        [
-        [
-            # "I"
-            [5.0, -3.2],  # I: split
-            # "love"
-            [2.2, -1.0],  # l: split
-            [0.2, 12.0],  # o: merge
-            [0.0, 11.0],  # v: merge
-            [-3.0, 3.0],  # e: merge
-            # "Flume"
-            [10.0, 0.0],  # F: split
-            [0.0, 11.0],  # l: merge
-            [0.0, 11.0],  # u: merge
-            [0.0, 12.0],  # m: merge
-            [0.0, 12.0],  # e: merge
-            # "!"
-            [5.2, -7.0],  # !: split
-            # padding:
-            [1.0, 0.0], [1.0, 1.0], [1.0, 0.0],
-        ], [
-            # "and"
-            [2.0, 0.7],  # a: split
-            [0.2, 1.5],  # n: merge
-            [0.5, 2.3],  # d: merge
-            # " "
-            [1.7, 7.0],  # <space>: merge
-            # "tensorflow"
-            [2.2, 0.1],  # t: split
-            [0.2, 3.1],  # e: merge
-            [1.1, 2.5],  # n: merge
-            [0.7, 0.9],  # s: merge
-            [0.6, 1.0],  # o: merge
-            [0.3, 1.0],  # r: merge
-            [0.2, 2.2],  # f: merge
-            [0.7, 3.1],  # l: merge
-            [0.4, 5.0],  # o: merge
-            [0.8, 6.0],  # w: merge
-        ]]
+    ... [
+    ...     # 'I'
+    ...     [5.0, -3.2],  # I: split
+    ...     # 'love'
+    ...     [2.2, -1.0],  # l: split
+    ...     [0.2, 12.0],  # o: merge
+    ...     [0.0, 11.0],  # v: merge
+    ...     [-3.0, 3.0],  # e: merge
+    ...     # 'Flume'
+    ...     [10.0, 0.0],  # F: split
+    ...     [0.0, 11.0],  # l: merge
+    ...     [0.0, 11.0],  # u: merge
+    ...     [0.0, 12.0],  # m: merge
+    ...     [0.0, 12.0],  # e: merge
+    ...     # '!'
+    ...     [5.2, -7.0],  # !: split
+    ...     # padding:
+    ...     [1.0, 0.0], [1.0, 1.0], [1.0, 0.0],
+    ... ], [
+    ...     # 'and'
+    ...     [2.0, 0.7],  # a: split
+    ...     [0.2, 1.5],  # n: merge
+    ...     [0.5, 2.3],  # d: merge
+    ...     # ' '
+    ...     [1.7, 7.0],  # <space>: merge
+    ...     # 'tensorflow'
+    ...     [2.2, 0.1],  # t: split
+    ...     [0.2, 3.1],  # e: merge
+    ...     [1.1, 2.5],  # n: merge
+    ...     [0.7, 0.9],  # s: merge
+    ...     [0.6, 1.0],  # o: merge
+    ...     [0.3, 1.0],  # r: merge
+    ...     [0.2, 2.2],  # f: merge
+    ...     [0.7, 3.1],  # l: merge
+    ...     [0.4, 5.0],  # o: merge
+    ...     [0.8, 6.0],  # w: merge
+    ... ]]
     >>> tokenizer = SplitMergeFromLogitsTokenizer()
-    >>> result = tokenizer.tokenize_with_offsets(strings, logits)
-    >>> result[0].to_list()
-    [["I", "love", "Flume", "!"], ["and", "tensorflow"]]
-    >>> result[1].to_list()
-    >>> [[0, 1, 5, 10], [0, 4]]
-    >>> result[2].to_list()
-    >>> [[1, 5, 10, 11], [3, 14]]
+    >>> tokens, starts, ends = tokenizer.tokenize_with_offsets(strings, logits)
+    >>> tokens
+    <tf.RaggedTensor [[b'I', b'love', b'Flume', b'!'], [b'and', b'tensorflow']]>
+    >>> starts
+    <tf.RaggedTensor [[0, 1, 5, 10], [0, 4]]>
+    >>> ends
+    <tf.RaggedTensor [[1, 5, 10, 11], [3, 14]]>
 
     Args:
       strings: A 1D `Tensor` of UTF-8 strings.

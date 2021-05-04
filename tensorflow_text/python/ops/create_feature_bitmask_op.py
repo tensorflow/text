@@ -74,7 +74,7 @@ def create_feature_bitmask(tensor, dtype=dtypes.int32, name=None):
 
   >>> assert create_feature_bitmask([True, False, False, True]) == 0b1001
   >>> create_feature_bitmask([[True, False], [False, True], [True, True]])
-  [0b10, 0b01, 0b11]
+  <tf.Tensor: shape=(3,), dtype=int32, numpy=array([2, 1, 3], dtype=int32)>
   """
   with ops.name_scope(name, 'CreateFeatureBitmask', [tensor]):
     if (isinstance(tensor, (list, tuple)) and tensor and

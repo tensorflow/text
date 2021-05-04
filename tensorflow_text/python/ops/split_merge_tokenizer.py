@@ -55,12 +55,12 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
 
     ### Example:
 
-    >>> strings = ["HelloMonday", "DearFriday"],
+    >>> strings = ["HelloMonday", "DearFriday"]
     >>> labels = [[0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
-                  [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
+    ...           [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
     >>> tokenizer = SplitMergeTokenizer()
     >>> tokenizer.tokenize(strings, labels)
-    [['Hello', 'Monday'], ['Dear', 'Friday']]
+    <tf.RaggedTensor [[b'Hello', b'Monday'], [b'Dear', b'Friday']]>
 
     Args:
       input: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
@@ -131,17 +131,17 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
 
     ### Example:
 
-    >>> strings = ["HelloMonday", "DearFriday"],
+    >>> strings = ["HelloMonday", "DearFriday"]
     >>> labels = [[0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
-                  [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
+    ...           [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
     >>> tokenizer = SplitMergeTokenizer()
-    >>> result = tokenizer.tokenize_with_offsets(strings, labels)
-    >>> result[0].to_list()
-    [['Hello', 'Monday'], ['Dear', 'Friday']]
-    >>> result[1].to_list()
-    >>> [[0, 5], [0, 4]]
-    >>> result[2].to_list()
-    >>> [[5, 11], [4, 10]]
+    >>> tokens, starts, ends = tokenizer.tokenize_with_offsets(strings, labels)
+    >>> tokens
+    <tf.RaggedTensor [[b'Hello', b'Monday'], [b'Dear', b'Friday']]>
+    >>> starts
+    <tf.RaggedTensor [[0, 5], [0, 4]]>
+    >>> ends
+    <tf.RaggedTensor [[5, 11], [4, 10]]>
 
     Args:
       input: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
