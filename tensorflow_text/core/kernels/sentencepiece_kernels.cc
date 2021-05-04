@@ -151,17 +151,16 @@ tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
 class SentencepieceOp : public OpKernel {
  public:
   explicit SentencepieceOp(OpKernelConstruction* ctx)
-      : OpKernel(ctx), handle_set_(false) {
-    OP_REQUIRES_OK(ctx, ctx->allocate_persistent(tensorflow::DT_STRING,
-                                                 tensorflow::TensorShape({2}),
-                                                 &sp_handle_, nullptr));
+      : OpKernel(ctx), sp_set_(false) {
+    OP_REQUIRES_OK(ctx, ctx->allocate_temp(tensorflow::DT_STRING,
+                                           tensorflow::TensorShape({2}), &sp_));
     OP_REQUIRES_OK(
         ctx, ctx->GetAttr("use_node_name_sharing", &use_node_name_sharing_));
   }
 
   ~SentencepieceOp() override {
     // If the table object was not shared, delete it.
-    if (handle_set_ && cinfo_.resource_is_private_to_kernel()) {
+    if (sp_set_ && cinfo_.resource_is_private_to_kernel()) {
       if (!cinfo_.resource_manager()
                ->template Delete<SentencepieceResource>(cinfo_.container(),
                                                         cinfo_.name())
@@ -174,7 +173,7 @@ class SentencepieceOp : public OpKernel {
   void Compute(OpKernelContext* ctx) override {
     absl::MutexLock lock(&mu_);
 
-    if (!handle_set_) {
+    if (!sp_set_) {
       OP_REQUIRES_OK(ctx, cinfo_.Init(ctx->resource_manager(), def(),
                                       use_node_name_sharing_));
     }
@@ -225,13 +224,13 @@ class SentencepieceOp : public OpKernel {
     handle->scalar<ResourceHandle>()() =
         MakeResourceHandle<SentencepieceResource>(ctx, cinfo_.container(),
                                                   cinfo_.name());
-    handle_set_ = true;
+    sp_set_ = true;
   }
 
  private:
   absl::Mutex mu_;
-  PersistentTensor sp_handle_ ABSL_GUARDED_BY(mu_);
-  bool handle_set_ ABSL_GUARDED_BY(mu_);
+  Tensor sp_ ABSL_GUARDED_BY(mu_);
+  bool sp_set_ ABSL_GUARDED_BY(mu_);
   ContainerInfo cinfo_;
   bool use_node_name_sharing_;
   TF_DISALLOW_COPY_AND_ASSIGN(SentencepieceOp);
@@ -240,7 +239,6 @@ class SentencepieceOp : public OpKernel {
 REGISTER_KERNEL_BUILDER(Name("SentencepieceOp").Device(DEVICE_CPU),
                         tensorflow::text::SentencepieceOp);
 ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceOp");
-
 
 template <typename T, typename Tsplits>
 class SentencepieceTokenizeOp : public OpKernel {
@@ -563,39 +561,36 @@ class SentencepieceDetokenizeOp : public OpKernel {
 
     const auto& worker_threads =
         *(ctx->device()->tensorflow_cpu_worker_threads());
-    ::tensorflow::Shard(worker_threads.num_threads,  // max parallelism
-                        worker_threads.workers,      // thread pool
-                        num_of_sentences,  // total number of data to process.
-                        kCostPerUnit,
-                        [ctx, sp, &input_values_flat, &input_splits_flat,
-                         &output_flat](int64 start, int64 limit) {
-                          absl::ReaderMutexLock lock(&sp->mu);
-                          for (int i = start; i < limit; ++i) {
-                            if (i + 1 >= input_splits_flat.size()) {
-                              ctx->CtxFailure(
-                                  errors::OutOfRange("Invalid splits; ", i));
-                              return;
-                            }
-                            if (input_splits_flat(i) >
-                                input_values_flat.size()) {
-                              ctx->CtxFailure(errors::OutOfRange(
-                                  "Splits and values do not match; split ",
-                                  input_splits_flat(i), "but values size is ",
-                                  input_values_flat.size()));
-                              return;
-                            }
-                            const std::vector<typename std::conditional<
-                                std::is_same<T, tstring>::value, std::string,
-                                T>::type>
-                                pieces(&input_values_flat(input_splits_flat(i)),
-                                       &input_values_flat(
-                                           input_splits_flat(i + 1)));
-                            std::string output_flat_str;
-                            OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Decode(
-                                                    pieces, &output_flat_str)));
-                            output_flat(i) = output_flat_str;
-                          }
-                        });
+    ::tensorflow::Shard(
+        worker_threads.num_threads,  // max parallelism
+        worker_threads.workers,      // thread pool
+        num_of_sentences,            // total number of data to process.
+        kCostPerUnit,
+        [ctx, sp, &input_values_flat, &input_splits_flat, &output_flat](
+            int64 start, int64 limit) {
+          absl::ReaderMutexLock lock(&sp->mu);
+          for (int i = start; i < limit; ++i) {
+            if (i + 1 >= input_splits_flat.size()) {
+              ctx->CtxFailure(errors::OutOfRange("Invalid splits; ", i));
+              return;
+            }
+            if (input_splits_flat(i) > input_values_flat.size()) {
+              ctx->CtxFailure(errors::OutOfRange(
+                  "Splits and values do not match; split ",
+                  input_splits_flat(i), "but values size is ",
+                  input_values_flat.size()));
+              return;
+            }
+            const std::vector<typename std::conditional<
+                std::is_same<T, tstring>::value, std::string, T>::type>
+                pieces(&input_values_flat(input_splits_flat(i)),
+                       &input_values_flat(input_splits_flat(i + 1)));
+            std::string output_flat_str;
+            OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Decode(
+                                    pieces, &output_flat_str)));
+            output_flat(i) = output_flat_str;
+          }
+        });
   }
 };
 
