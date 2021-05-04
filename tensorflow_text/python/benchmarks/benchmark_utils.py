@@ -224,15 +224,18 @@ class OpsBaseBenchmark(benchmark.Benchmark):
       sess.run(variables_lib.global_variables_initializer())
 
       inputs = sess.run(self.input_data)
-      benchmark_op = fn(inputs, **kwargs)
+
+      @def_function.function
+      def benchmark_op(data):
+        return fn(data, **kwargs)
 
       def run_benchmark():
         for _ in range(burn_iters):
-          sess.run(benchmark_op)
+          sess.run(benchmark_op(inputs))
         total_time = 0
         for _ in range(iters):
           start_time = time.time()
-          sess.run(benchmark_op)
+          sess.run(benchmark_op(inputs))
           total_time += time.time() - start_time
 
         return total_time
