@@ -18,7 +18,7 @@ toc:
 
 - heading: NLP with BERT
   style: divider
-# - title: "Fine tune BERT"
-#   path: /text/tutorials/fine_tune_bert
+- title: "Fine tune BERT"
+  path: /text/tutorials/fine_tune_bert
 - title: "Fine tune BERT with GLUE"
   path: /text/tutorials/bert_glue

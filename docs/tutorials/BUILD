@@ -59,3 +59,14 @@ tf_org_notebook_test(
         "//third_party/py/tensorflow_text",
     ],
 )
+
+tf_org_notebook_test(
+    name = "fine_tune_bert",
+    ipynb = "fine_tune_bert.ipynb",
+    deps = [
+        "//third_party/py/matplotlib",
+        #  numpy dep,
+        #  tensorflow datasets dep,
+        "@org_tensorflow_hub//tensorflow_hub",
+    ],
+)

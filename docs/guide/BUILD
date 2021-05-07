@@ -24,3 +24,15 @@ tf_org_notebook_test(
     ipynb = "word_embeddings.ipynb",
     deps = [],
 )
+
+tf_org_notebook_test(
+    name = "subwords_tokenizer",
+    ipynb = "subwords_tokenizer.ipynb",
+    deps = [
+        "//third_party/py/matplotlib",
+        #  numpy dep,
+        #  tensorflow datasets dep,
+        "//third_party/py/tensorflow_text",
+        "//tensorflow_text/tools/wordpiece_vocab:bert_vocab_from_dataset",
+    ],
+)
