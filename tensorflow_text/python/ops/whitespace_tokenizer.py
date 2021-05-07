@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from tensorflow.python.eager import def_function
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
@@ -50,11 +51,15 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
     super(WhitespaceTokenizer, self).__init__()
     _tf_text_whitespace_tokenizer_op_create_counter.get_cell().increase_by(1)
 
+  @def_function.function(
+      experimental_implements='name: "tftext:WhitespaceTokenizer"')
   def tokenize(self, input):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings on whitespaces.
 
     The strings are split on ICU defined whitespace characters. These
     whitespace characters are dropped.
+
+    This op can be converted to TF.Lite.
 
     Args:
       input: A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
