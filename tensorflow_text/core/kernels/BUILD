@@ -406,6 +406,15 @@ tf_text_kernel_library(
     ]),
 )
 
+cc_test(
+    name = "split_merge_tokenize_kernel_test",
+    srcs = ["split_merge_tokenize_kernel_test.cc"],
+    deps = [
+        "@com_google_googletest//:gtest_main",
+        "@icu//:common",
+    ],
+)
+
 cc_library(
     name = "text_kernels_test_util",
     testonly = 1,
