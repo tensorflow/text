@@ -220,6 +220,7 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
   @parameterized.parameters([
       # pyformat: disable
       dict(
+          descr="Basic test on rank 2 RTs",
           segments=[
               # segment 1
               [[1, 2, 3], [4, 5], [6]],
@@ -233,6 +234,22 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               [[True], [True], [True, False, False]]
           ],
           max_seq_length=2,
+      ),
+      dict(
+          descr="Test where no truncation is needed",
+          segments=[
+              # segment 1
+              [[1, 2, 3], [4, 5], [6]],
+              # segment 2
+              [[10], [20], [30, 40, 50]]
+          ],
+          expected=[
+              # segment 1
+              [[True, True, True], [True, True], [True]],
+              # Segment 2
+              [[True], [True], [True, True, True]]
+          ],
+          max_seq_length=100,
       ),
       dict(
           descr="Basic test w/ segments of rank 3 on axis=-1",
@@ -250,6 +267,42 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               [[[True, False], [False]]],
               # Segment 2
               [[[True, False], [False]]]
+          ],
+      ),
+      dict(
+          descr="Test 4 segments",
+          segments=[
+              # first segment
+              [[b"a", b"b"]],
+              # second segment
+              [[b"one", b"two"]],
+              # third segment
+              [[b"un", b"deux", b"trois", b"quatre", b"cinque"]],
+              # fourth segment
+              [[b"unos", b"dos", b"tres", b"quatro", b"cincos"]],
+          ],
+          max_seq_length=10,
+          expected=[
+              # first segment
+              [[True, True]],
+              # second segment
+              [[True, True]],
+              # third segment
+              [[True, True, True, False, False]],
+              # fourth segment
+              [[True, True, True, False, False]],
+          ],
+      ),
+      dict(
+          descr="Test rank 3 RTs, single batch",
+          segments=[
+              [[[3897], [4702]]],
+              [[[[4248], [2829], [4419]]]],
+          ],
+          max_seq_length=7,
+          expected=[
+              [[[True], [True]]],
+              [[[[True], [True], [True]]]],
           ],
       ),
       # pyformat: enable
@@ -364,6 +417,51 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               # Expected second segment has shape [3, (0, 1, 0)]
               [[[b"whodis"]], [[b"bond"]], [[b"5:30"]]],
           ]),
+      dict(
+          descr="Test 4 segments",
+          segments=[
+              # first segment
+              [[b"a", b"b"]],
+              # second segment
+              [[b"one", b"two"]],
+              # third segment
+              [[b"un", b"deux", b"trois", b"quatre", b"cinque"]],
+              # fourth segment
+              [[b"unos", b"dos", b"tres", b"quatro", b"cincos"]],
+          ],
+          max_seq_length=10,
+          expected=[
+              [[b"a", b"b"]],
+              [[b"one", b"two"]],
+              [[b"un", b"deux", b"trois"]],
+              [[b"unos", b"dos", b"tres"]],
+          ],
+      ),
+      dict(
+          descr="Test 4 segments of rank 3 on axis=-1",
+          segments=[
+              # first segment
+              [[[b"a", b"b"], [b"c", b"d"]]],
+              # second segment
+              [[[b"one", b"two"], [b"three", b"four"]]],
+              # third segment
+              [[[b"un", b"deux", b"trois", b"quatre", b"cinque"], [b"six"]]],
+              # fourth segment
+              [[[b"unos", b"dos", b"tres", b"quatro", b"cincos"], [b"seis"]]],
+          ],
+          max_seq_length=10,
+          axis=-1,
+          expected=[
+              # first segment
+              [[[b"a", b"b"], [b"c"]]],
+              # second segment
+              [[[b"one", b"two"], [b"three"]]],
+              # third segment
+              [[[b"un", b"deux"], []]],
+              # fourth segment
+              [[[b"unos", b"dos"], []]],
+          ],
+      ),
       # pyformat: enable
   ])
   def testPerBatchBudgetTrimmer(self,
