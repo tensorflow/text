@@ -27,7 +27,7 @@ from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow_text.python.ops import item_selector_ops
 
 
-class Trimmer(object):
+class Trimmer(metaclass=abc.ABCMeta):
   """Truncates a list of segments using a pre-determined truncation strategy.
   """
 
@@ -35,7 +35,7 @@ class Trimmer(object):
     """Truncate the list of `segments`.
 
     Truncate the list of `segments` using the truncation strategy defined by
-    `generate_masks`.
+    `generate_mask`.
 
     Args:
       segments: A list of `RaggedTensor`s w/ shape [num_batch, (num_items)].
@@ -58,10 +58,10 @@ class Trimmer(object):
       return truncated_segments
 
   @abc.abstractmethod
-  def generate_masks(self, segments):
+  def generate_mask(self, segments):
     """Generates a boolean mask specifying which portions of `segments` to drop.
 
-    Users should be able to use the results of generate_masks() to drop items
+    Users should be able to use the results of generate_mask() to drop items
     in segments using `tf.ragged.boolean_mask(seg, mask)`.
 
     Args:
@@ -91,10 +91,23 @@ def _get_row_lengths(segments, axis=-1):
 class WaterfallTrimmer(Trimmer):
   """A `Trimmer` that allocates a length budget to segments in order.
 
-  A `Trimmer` that allocates a length budget to segments in order, then
-  truncates large sequences using a waterfall strategy, then drops elements in a
-  sequence according to a max sequence length budget. See `generate_mask()`
-  for more details.
+  A `Trimmer` that allocates a length budget to segments in order. It selects
+  elements to drop, according to a max sequence length budget, and then applies
+  this mask to actually drop the elements. See `generate_mask()` for more
+  details.
+
+  Example:
+
+  >>> a = tf.ragged.constant([['a', 'b', 'c'], [], ['d']])
+  >>> b = tf.ragged.constant([['1', '2', '3'], [], ['4', '5', '6', '7']])
+  >>> trimmer = tf_text.WaterfallTrimmer(4)
+  >>> trimmer.trim([a, b])
+  [<tf.RaggedTensor [[b'a', b'b', b'c'], [], [b'd']]>,
+   <tf.RaggedTensor [[b'1'], [], [b'4', b'5', b'6']]>]
+
+  Here, for the first pair of elements, `['a', 'b', 'c']` and `['1', '2', '3']`,
+  the `'2'` and `'3'` are dropped to fit the sequence within the max sequence
+  length budget.
   """
 
   def __init__(self, max_seq_length, axis=-1):
@@ -125,6 +138,15 @@ class WaterfallTrimmer(Trimmer):
     and applied to all batch rows. It can also be a 1D `Tensor` of size
     `batch_size`, in which each batch row i will have a budget corresponding to
     `per_batch_quota[i]`.
+
+    Example:
+
+    >>> a = tf.ragged.constant([['a', 'b', 'c'], [], ['d']])
+    >>> b = tf.ragged.constant([['1', '2', '3'], [], ['4', '5', '6', '7']])
+    >>> trimmer = tf_text.WaterfallTrimmer(4)
+    >>> trimmer.generate_mask([a, b])
+    [<tf.RaggedTensor [[True, True, True], [], [True]]>,
+     <tf.RaggedTensor [[True, False, False], [], [True, True, True, False]]>]
 
     Args:
       segments: A list of `RaggedTensor` each w/ a shape of [num_batch,
