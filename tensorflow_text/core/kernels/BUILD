@@ -363,6 +363,7 @@ tf_text_kernel_library(
         # absl/strings dep
         # absl/types:span dep
         "@com_google_sentencepiece//src:sentencepiece_cc_proto",
+        "@com_google_sentencepiece//src:sentencepiece_model_cc_proto",
         "@com_google_sentencepiece//src:sentencepiece_processor",
     ] + tf_deps(deps = [
         # tf:framework tensorflow dep,

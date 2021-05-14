@@ -20,6 +20,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/span.h"
+#include "src/sentencepiece_model.pb.h"
 #include "src/sentencepiece.pb.h"
 #include "src/sentencepiece_processor.h"
 #include "tensorflow/core/framework/bounds_check.h"
@@ -32,6 +33,7 @@
 #include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/framework/types.h"
 #include "tensorflow/core/framework/types.pb.h"
+#include "tensorflow/core/graph/graph_def_builder.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/refcount.h"
 #include "tensorflow/core/lib/core/status.h"
@@ -54,7 +56,7 @@ struct SentencepieceResource : public ResourceBase {
   bool add_bos = false;
   bool add_eos = false;
   bool reverse = false;
-  absl::Mutex mu;
+  mutable absl::Mutex mu;
 
   string DebugString() const override { return "Sentencepiece Resource"; }
 
@@ -63,6 +65,25 @@ struct SentencepieceResource : public ResourceBase {
   bool SameOptions(bool add_bos, bool add_eos, bool reverse) const {
     return (add_bos == this->add_bos) && (add_eos == this->add_eos) &&
            (reverse == this->reverse);
+  }
+
+  Status AsGraphDef(GraphDefBuilder* builder, Node** out) const override {
+    absl::ReaderMutexLock l(&mu);
+    // We set use_node_name_sharing with a unique node name so that the resource
+    // can outlive the kernel. This means that the lifetime of the re-created
+    // resource will be tied to the lifetime of the resource manager it is
+    // created in.
+    static std::atomic<int64> counter(0);
+    std::string unique_node_name = strings::StrCat(
+        "SentencepieceResourceFromGraphDef", "/", counter.fetch_add(1));
+    std::string model = processor.model_proto().SerializeAsString();
+    *out = ops::SourceOp(
+        "SentencepieceOp",
+        builder->opts()
+            .WithName(unique_node_name)
+            .WithAttr("model", model)
+            .WithAttr("use_node_name_sharing", true));
+    return Status::OK();
   }
 };
 
