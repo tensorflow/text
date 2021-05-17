@@ -72,6 +72,7 @@ class Tokenizer(Splitter):
     raise NotImplementedError("Abstract method")
 
   def split(self, input):  # pylint: disable=redefined-builtin
+    """Alias for `Tokenizer.tokenize`."""
     return self.tokenize(input)
 
 
@@ -145,6 +146,7 @@ class TokenizerWithOffsets(Tokenizer, SplitterWithOffsets):
     raise NotImplementedError("Abstract method")
 
   def split_with_offsets(self, input):  # pylint: disable=redefined-builtin
+    """Alias for `TokenizerWithOffsets.tokenize_with_offsets`."""
     return self.tokenize_with_offsets(input)
 
 
