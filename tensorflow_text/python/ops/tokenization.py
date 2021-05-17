@@ -96,7 +96,7 @@ class TokenizerWithOffsets(Tokenizer, SplitterWithOffsets):
 
   Example:
 
-  >>> class CharTokenizer(tf_text.TokenizerWithOffsets):
+  >>> class CharTokenizer(TokenizerWithOffsets):
   ...   def tokenize_with_offsets(self, input):
   ...     chars, starts = tf.strings.unicode_split_with_offsets(input, 'UTF-8')
   ...     lengths = tf.expand_dims(tf.strings.length(input), -1)
@@ -104,7 +104,7 @@ class TokenizerWithOffsets(Tokenizer, SplitterWithOffsets):
   ...     return chars, starts, ends
   ...   def tokenize(self, input):
   ...     return self.tokenize_with_offsets(input)[0]
-  >>> pieces, starts, ends = CharSplitter().split_with_offsets("a😊c")
+  >>> pieces, starts, ends = CharTokenizer().split_with_offsets("a😊c")
   >>> print(pieces.numpy(), starts.numpy(), ends.numpy())
   [b'a' b'\xf0\x9f\x98\x8a' b'c'] [0 1 5] [1 5 6]
 
