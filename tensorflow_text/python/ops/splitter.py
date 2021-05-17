@@ -76,7 +76,7 @@ class SplitterWithOffsets(Splitter):
   method, which returns a tuple containing both the pieces and the offsets where
   those pieces occurred in the input string.  E.g.:
 
-  >>> class CharSplitter(tf_text.SplitterWithOffsets):
+  >>> class CharSplitter(SplitterWithOffsets):
   ...   def split_with_offsets(self, input):
   ...     chars, starts = tf.strings.unicode_split_with_offsets(input, 'UTF-8')
   ...     lengths = tf.expand_dims(tf.strings.length(input), -1)
