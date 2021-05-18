@@ -127,7 +127,7 @@ def mask_language_model(
   [b"[MASK]", b"##vel", b"A", b"##ven", b"##gers"]]
   ```
 
-  Or with random token inserted
+  Or with random token inserted:
 
   ```
   [[b"[MASK]", b"##onge", b"bob", b"Sq", b"[MASK]", b"##pants" ],
@@ -160,7 +160,7 @@ def mask_language_model(
    [[b"[MASK]", "[MASK]"], [b"A", b"##ven", b"##gers"]]]
   ```
 
-   or insert randoms items in spans:
+   or insert random items in spans:
 
   ```
    [[[b"Mar", "##ama"], [b"bob"], [b"Sq", b"##uare", b"##pants"]],
