@@ -49,7 +49,60 @@ _tf_text_wordpiece_tokenizer_op_create_counter = monitoring.Counter(
 
 
 class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
-  """Tokenizes a tensor of UTF-8 string tokens into subword pieces."""
+  r"""Tokenizes a tensor of UTF-8 string tokens into subword pieces.
+
+  Each UTF-8 string token in the input is split into its corresponding
+  wordpieces, drawing from the list in the file `vocab_lookup_table`.
+
+  Algorithm summary: For each token, the longest token prefix that is in the
+  vocabulary is split off. Any part of the token that remains is prefixed using
+  the `suffix_indicator`, and the process of removing the longest token prefix
+  continues. The `unknown_token` (UNK) is used when what remains of the token is
+  not in the vocabulary, or if the token is too long.
+
+  When `token_out_type` is tf.string, the output tensor contains strings
+  in the vocabulary (or UNK). When it is an integer type, the output tensor
+  contains indices into the vocabulary list (with UNK being after the last
+  entry).
+
+  Example:
+  >>> import pathlib
+  >>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+  ...   "they ##' ##re the great ##est".replace(' ', '\n'))
+  >>> tokenizer = WordpieceTokenizer('/tmp/tok_vocab.txt',
+  ...   token_out_type=tf.string)
+
+  >>> tokenizer.tokenize(["they're", "the", "greatest"])
+  <tf.RaggedTensor [[b'they', b"##'", b'##re'], [b'the'], [b'great', b'##est']]>
+
+  >>> tokenizer.tokenize(["they", "are", "great"])
+  <tf.RaggedTensor [[b'they'], [b'[UNK]'], [b'great']]>
+
+  >>> int_tokenizer = WordpieceTokenizer('/tmp/tok_vocab.txt',
+  ...   token_out_type=tf.int32)
+
+  >>> int_tokenizer.tokenize(["the", "greatest"])
+  <tf.RaggedTensor [[3], [4, 5]]>
+
+  >>> int_tokenizer.tokenize(["really", "the", "greatest"])
+  <tf.RaggedTensor [[6], [3], [4, 5]]>
+
+  Tensor or ragged tensor inputs result in ragged tensor outputs. Scalar
+  inputs (which are just a single token) result in tensor outputs.
+
+  >>> tokenizer.tokenize("they're")
+  <tf.Tensor: shape=(3,), dtype=string, numpy=array([b'they', b"##'", b'##re'],
+  dtype=object)>
+  >>> tokenizer.tokenize(["they're"])
+  <tf.RaggedTensor [[b'they', b"##'", b'##re']]>
+  >>> tokenizer.tokenize(tf.ragged.constant([["they're"]]))
+  <tf.RaggedTensor [[[b'they', b"##'", b'##re']]]>
+
+  Empty strings are tokenized into empty (ragged) tensors.
+
+  >>> tokenizer.tokenize([""])
+  <tf.RaggedTensor [[]]>
+  """
 
   def __init__(self,
                vocab_lookup_table,
