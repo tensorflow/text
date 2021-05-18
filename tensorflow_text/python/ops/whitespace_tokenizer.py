@@ -56,6 +56,12 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
     The strings are split on ICU defined whitespace characters. These
     whitespace characters are dropped.
 
+    Example:
+
+    >>> WhitespaceTokenizer().tokenize("small medium large")
+    <tf.Tensor: shape=(3,), dtype=string, numpy=array([b'small', b'medium',
+    b'large'], dtype=object)>
+
     Args:
       input: A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
 
@@ -71,6 +77,13 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
 
     The strings are split on ICU defined whitespace characters. These
     whitespace characters are dropped.
+
+    Example:
+
+    >>> splitter = WhitespaceTokenizer()
+    >>> pieces, starts, ends = splitter.tokenize_with_offsets("a bb ccc")
+    >>> print(pieces.numpy(), starts.numpy(), ends.numpy())
+    [b'a' b'bb' b'ccc'] [0 2 5] [1 4 8]
 
     Args:
       input: A `RaggedTensor`or `Tensor` of UTF-8 strings with any shape.
