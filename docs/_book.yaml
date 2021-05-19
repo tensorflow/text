@@ -10,20 +10,20 @@ upper_tabs:
   lower_tabs:
     # Subsite tabs
     other:
-    - name: Guide
-      contents:
-      - include: /text/guide/_toc.yaml
-
     - name: Tutorials
       contents:
       - include: /text/tutorials/_toc.yaml
+
+    - name: Guide
+      contents:
+      - include: /text/guide/_toc.yaml
 
     - name: API
       skip_translation: true
       contents:
       - heading: TensorFlow Text
-      - include: /api_docs/python/text/_toc.yaml
+      - include: /text/api_docs/python/text/_toc.yaml
 #     - heading: TensorFlow NLP Modeling
-#     - include: /api_docs/python/tfnlp/_toc.yaml
+#     - include: /text/api_docs/python/tfnlp/_toc.yaml
 
 - include: /_upper_tabs_right.yaml

@@ -7,7 +7,9 @@ tf_org_notebook_test(
     execute = False,
     ipynb = "bert_glue.ipynb",
     tpu = True,
-    deps = [],
+    deps = [
+        "//third_party/py/tensorflow_text",
+    ],
 )
 
 tf_org_notebook_test(
@@ -57,5 +59,38 @@ tf_org_notebook_test(
         #  numpy dep,
         #  tensorflow datasets dep,
         "//third_party/py/tensorflow_text",
+    ],
+)
+
+tf_org_notebook_test(
+    name = "fine_tune_bert",
+    execute = False,
+    ipynb = "fine_tune_bert.ipynb",
+    deps = [
+        "//third_party/py/matplotlib",
+        #  numpy dep,
+        #  tensorflow datasets dep,
+        "@org_tensorflow_hub//tensorflow_hub",
+    ],
+)
+
+tf_org_notebook_test(
+    name = "uncertainty_quantification_with_sngp_bert",
+    execute = False,
+    ipynb = "uncertainty_quantification_with_sngp_bert.ipynb",
+    deps = [
+        "//third_party/py/matplotlib",
+        #  numpy dep,
+        "//third_party/py/sklearn",
+    ],
+)
+
+tf_org_notebook_test(
+    name = "text_classification_rnn",
+    ipynb = "text_classification_rnn.ipynb",
+    deps = [
+        "//third_party/py/matplotlib",
+        #  numpy dep,
+        #  tensorflow datasets dep,
     ],
 )
