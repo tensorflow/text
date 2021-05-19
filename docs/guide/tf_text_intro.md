@@ -28,10 +28,17 @@ you manually build TF Text, it is highly recommended that you also build
 TensorFlow.
 
 If building on MacOS, you must have coreutils installed. It is probably easiest
-to do with Homebrew.
+to do with Homebrew. First, build TensorFlow
+[from source](https://www.tensorflow.org/install/source).
 
-1.  Build TensorFlow from source
-2.  Clone the TF Text repo `shell git clone
-    https://github.com/tensorflow/text.git`
-3.  Run the build script to create a pip package `shell
-    ./oss_scripts/run_build.sh`
+Clone the TF Text repo.
+
+```shell
+git clone  https://github.com/tensorflow/text.git
+```
+
+Finally, run the build script to create a pip package.
+
+```shell
+./oss_scripts/run_build.sh
+```
