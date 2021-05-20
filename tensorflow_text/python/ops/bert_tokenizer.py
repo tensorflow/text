@@ -72,6 +72,13 @@ class BasicTokenizer(TokenizerWithOffsets):
   - For Chinese, Japanese, and Korean characters, this tokenizer will split on
       Unicode characters.
 
+  Example:
+  >>> text_inputs =  [b'taste the rustisc indiefrost']
+  >>> tokenizer = BasicTokenizer(
+  ...     lower_case=False, normalization_form='NFC')
+  >>> tokenizer.tokenize(text_inputs)
+  <tf.RaggedTensor [[b'taste', b'the', b'rustisc', b'indiefrost']]>
+
   Attributes:
     lower_case: bool - If true, a preprocessing step is added to lowercase the
       text, apply NFD normalization, and strip accents characters.
@@ -161,7 +168,7 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
     It first applies basic tokenization, and then followed by wordpiece
     tokenization.
 
-    See BasicTokenizer and WordpieceTokenizer for their respective details.
+    See `WordpieceTokenizer` for details on the subword tokenization.
 
   Attributes:
     vocab_lookup_table: A lookup table implementing the LookupInterface
@@ -220,6 +227,31 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
         split_unknown_characters)
 
   def tokenize_with_offsets(self, text_input):
+    r"""Tokenizes a tensor of string tokens into subword tokens for BERT.
+
+    Example:
+    >>> import pathlib
+    >>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+    ...     "they ##' ##re the great ##est".replace(' ', '\n'))
+    >>> tokenizer = BertTokenizer(
+    ...     vocab_lookup_table='/tmp/tok_vocab.txt')
+    >>> text_inputs = tf.constant(['greatest'.encode('utf-8')])
+    >>> tokenizer.tokenize_with_offsets(text_inputs)
+    (<tf.RaggedTensor [[[4, 5]]]>,
+     <tf.RaggedTensor [[[0, 5]]]>,
+     <tf.RaggedTensor [[[5, 8]]]>)
+
+    Args:
+      text_input: input: A `Tensor` or `RaggedTensor` of untokenized UTF-8
+        strings.
+
+    Returns:
+      A tuple of `RaggedTensor`s where the first element is the tokens where
+      `tokens[i1...iN, j]`, the second element is the starting offsets, the
+      third element is the end offset. (Please look at `tokenize` for details
+      on tokens.)
+
+    """
     tokens, begin, _ = self._basic_tokenizer.tokenize_with_offsets(text_input)
     wordpieces, wp_begin, wp_end = (
         self._wordpiece_tokenizer.tokenize_with_offsets(tokens))
@@ -229,7 +261,17 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
     return wordpieces, final_begin, final_end
 
   def tokenize(self, text_input):
-    """Performs untokenized text to wordpiece tokenization for BERT.
+    r"""Tokenizes a tensor of string tokens into subword tokens for BERT.
+
+    Example:
+    >>> import pathlib
+    >>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+    ...     "they ##' ##re the great ##est".replace(' ', '\n'))
+    >>> tokenizer = BertTokenizer(
+    ...     vocab_lookup_table='/tmp/tok_vocab.txt')
+    >>> text_inputs = tf.constant(['greatest'.encode('utf-8') ])
+    >>> tokenizer.tokenize(text_inputs)
+    <tf.RaggedTensor [[[4, 5]]]>
 
     Args:
       text_input: input: A `Tensor` or `RaggedTensor` of untokenized UTF-8
@@ -244,7 +286,7 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
     return self._wordpiece_tokenizer.tokenize(tokens)
 
   def detokenize(self, token_ids):
-    """Convert a `Tensor` or `RaggedTensor` of wordpiece IDs to string-words.
+    r"""Convert a `Tensor` or `RaggedTensor` of wordpiece IDs to string-words.
 
     See `WordpieceTokenizer.detokenize` for details.
 
@@ -258,6 +300,16 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
 
     Note: This method assumes wordpiece IDs are dense on the interval
     `[0, vocab_size)`.
+
+    Example:
+    >>> import pathlib
+    >>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+    ...    "they ##' ##re the great ##est".replace(' ', '\n'))
+    >>> tokenizer = BertTokenizer(
+    ...    vocab_lookup_table='/tmp/tok_vocab.txt')
+    >>> text_inputs = tf.constant(['greatest'.encode('utf-8')])
+    >>> tokenizer.detokenize([[4, 5]])
+    <tf.RaggedTensor [[b'greatest']]>
 
     Args:
       token_ids: A `RaggedTensor` or `Tensor` with an int dtype.
