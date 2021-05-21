@@ -55,7 +55,19 @@ class _SentencepieceModelResource(tracking.TrackableResource):
 
 
 class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
-  """Tokenizes a tensor of UTF-8 strings."""
+  r"""Tokenizes a tensor of UTF-8 strings.
+
+  SentencePiece is an unsupervised text tokenizer and detokenizer. It is used
+  mainly for Neural Network-based text generation systems where the vocabulary
+  size is predetermined prior to the neural model training. SentencePiece
+  implements subword units with the extension of direct training from raw
+  sentences.
+
+  Before using the tokenizer, you will need to train a vocabulary and build a
+  model configuration for it. Please visit the [Sentencepiece
+  repository](https://github.com/google/sentencepiece#train-sentencepiece-model)
+  for the most up-to-date instructions on this process.
+  """
 
   def __init__(self,
                model=None,
@@ -149,6 +161,10 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
   def tokenize_with_offsets(self, input, name=None):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings.
 
+      This function returns a tuple containing the tokens along with
+      start and end byte offsets that mark where in the original string each
+      token was located.
+
     Args:
       input: A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
       name: The name argument that is passed to the op function.
@@ -216,6 +232,9 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
   def detokenize(self, input, name=None):  # pylint: disable=redefined-builtin
     """Detokenizes tokens into preprocessed text.
 
+      This function accepts tokenized text, and reforms it back into
+      sentences.
+
     Args:
       input: A `RaggedTensor` or `Tensor` of UTF-8 string tokens with a rank of
         at least 1.
@@ -257,6 +276,9 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
   def vocab_size(self, name=None):
     """Returns the vocabulary size.
 
+      The number of tokens from within the Sentencepiece vocabulary provided at
+      the time of initialization.
+
     Args:
       name: The name argument that is passed to the op function.
 
@@ -297,6 +319,9 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
   def string_to_id(self, input, name=None):  # pylint: disable=redefined-builtin
     """Converts token into a vocabulary id.
+
+    This function is particularly helpful for determining the IDs for any
+    special tokens whose ID could not be determined through normal tokenization.
 
     Args:
       input: An arbitrary tensor of string tokens.
