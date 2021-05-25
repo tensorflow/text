@@ -25,11 +25,12 @@ tf_org_notebook_test(
 
 tf_org_notebook_test(
     name = "nmt_with_attention",
+    execute = False,
     ipynb = "nmt_with_attention.ipynb",
     deps = [
         "//third_party/py/matplotlib",
         #  numpy dep,
-        "//third_party/py/sklearn",
+        "//third_party/py/tensorflow_text",
     ],
 )
 
