@@ -45,29 +45,6 @@ def sliding_window(data, width, axis=-1, name=None):
   `pad_along_dimension` to add `width - 1` padding elements before calling
   this op.
 
-  Args:
-    data: `<dtype> [O1...ON, A, I1...IM]`
-      A potentially ragged K-dimensional tensor with outer dimensions of size
-      `O1...ON`; axis dimension of size `A`; and inner dimensions of size
-      `I1...IM`.  I.e. `K = N + 1 + M`, where `N>=0` and `M>=0`.
-
-    width: An integer constant specifying the width of the window. Must be
-      greater than zero.
-
-    axis: An integer constant specifying the axis along which sliding window
-      is computed. Negative axis values from `-K` to `-1` are supported.
-
-    name: The name for this op (optional).
-
-  Returns:
-    A `K+1` dimensional tensor with the same dtype as `data`, where:
-
-    * `result[i1..iaxis, a]` = `data[i1..iaxis, a:a+width]`
-    * `result.shape[:axis]` = `data.shape[:axis]`
-    * `result.shape[axis]` = `data.shape[axis] - (width - 1)`
-    * `result.shape[axis + 1]` = `width`
-    * `result.shape[axis + 2:]` = `data.shape[axis + 1:]`
-
   #### Examples:
 
   Sliding window (width=3) across a sequence of tokens:
@@ -125,6 +102,28 @@ def sliding_window(data, width, axis=-1, name=None):
               [[4, 4, 2],
                [5, 5, 2]]]], dtype=int32)>
 
+  Args:
+    data: `<dtype> [O1...ON, A, I1...IM]`
+      A potentially ragged K-dimensional tensor with outer dimensions of size
+      `O1...ON`; axis dimension of size `A`; and inner dimensions of size
+      `I1...IM`.  I.e. `K = N + 1 + M`, where `N>=0` and `M>=0`.
+
+    width: An integer constant specifying the width of the window. Must be
+      greater than zero.
+
+    axis: An integer constant specifying the axis along which sliding window
+      is computed. Negative axis values from `-K` to `-1` are supported.
+
+    name: The name for this op (optional).
+
+  Returns:
+    A `K+1` dimensional tensor with the same dtype as `data`, where:
+
+    * `result[i1..iaxis, a]` = `data[i1..iaxis, a:a+width]`
+    * `result.shape[:axis]` = `data.shape[:axis]`
+    * `result.shape[axis]` = `data.shape[axis] - (width - 1)`
+    * `result.shape[axis + 1]` = `width`
+    * `result.shape[axis + 2:]` = `data.shape[axis + 1:]`
   """
   with ops.name_scope(name, "SlidingWindow", [data, axis]):
     data = ragged_tensor.convert_to_tensor_or_ragged_tensor(data, name="data")

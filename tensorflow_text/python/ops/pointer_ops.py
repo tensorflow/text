@@ -139,6 +139,28 @@ def span_overlaps(source_start,
     * `partial_overlap` is true, and there is a non-zero overlap between the
       source span and the target span.
 
+  #### Example:
+    Given the following source and target spans (with no batch dimensions):
+
+    >>>  #         0    5    10   15   20   25   30   35   40
+    >>>  #         |====|====|====|====|====|====|====|====|
+    >>>  # Source: [-0-]     [-1-] [2] [-3-][-4-][-5-]
+    >>>  # Target: [-0-][-1-]     [-2-] [3]   [-4-][-5-]
+    >>>  #         |====|====|====|====|====|====|====|====|
+    >>> source_start = [0, 10, 16, 20, 25, 30]
+    >>> source_limit = [5, 15, 19, 25, 30, 35]
+    >>> target_start = [0,  5, 15, 21, 27, 31]
+    >>> target_limit = [5, 10, 20, 24, 32, 37]
+
+    `result[i, j]` will be true at the following locations:
+
+      * `[0, 0]` (always)
+      * `[2, 2]` (if contained_by=True or partial_overlaps=True)
+      * `[3, 3]` (if contains=True or partial_overlaps=True)
+      * `[4, 4]` (if partial_overlaps=True)
+      * `[5, 4]` (if partial_overlaps=True)
+      * `[5, 5]` (if partial_overlaps=True)
+
   Args:
     source_start: A B+1 dimensional potentially ragged tensor with shape
       `[D1...DB, source_size]`: the start offset of each source span.
@@ -162,29 +184,6 @@ def span_overlaps(source_start,
 
   Raises:
     ValueError: If the span tensors are incompatible.
-
-  #### Example:
-    Given the following source and target spans (with no batch dimensions):
-
-    >>>  #         0    5    10   15   20   25   30   35   40
-    >>>  #         |====|====|====|====|====|====|====|====|
-    >>>  # Source: [-0-]     [-1-] [2] [-3-][-4-][-5-]
-    >>>  # Target: [-0-][-1-]     [-2-] [3]   [-4-][-5-]
-    >>>  #         |====|====|====|====|====|====|====|====|
-    >>> source_start = [0, 10, 16, 20, 25, 30]
-    >>> source_limit = [5, 15, 19, 25, 30, 35]
-    >>> target_start = [0,  5, 15, 21, 27, 31]
-    >>> target_limit = [5, 10, 20, 24, 32, 37]
-
-    `result[i, j]` will be true at the following locations:
-
-      * `[0, 0]` (always)
-      * `[2, 2]` (if contained_by=True or partial_overlaps=True)
-      * `[3, 3]` (if contains=True or partial_overlaps=True)
-      * `[4, 4]` (if partial_overlaps=True)
-      * `[5, 4]` (if partial_overlaps=True)
-      * `[5, 5]` (if partial_overlaps=True)
-
   """
   _check_type(contains, 'contains', bool)
   _check_type(contained_by, 'contained_by', bool)
@@ -447,33 +446,6 @@ def span_alignment(source_start,
 
   For a definition of span overlap, see the docstring for `span_overlaps()`.
 
-  Args:
-    source_start: A B+1 dimensional potentially ragged tensor with shape
-      `[D1...DB, source_size]`: the start offset of each source span.
-    source_limit: A B+1 dimensional potentially ragged tensor with shape
-      `[D1...DB, source_size]`: the limit offset of each source span.
-    target_start: A B+1 dimensional potentially ragged tensor with shape
-      `[D1...DB, target_size]`: the start offset of each target span.
-    target_limit: A B+1 dimensional potentially ragged tensor with shape
-      `[D1...DB, target_size]`: the limit offset of each target span.
-    contains: If true, then a source span is considered to overlap a target span
-      when the source span contains the target span.
-    contained_by: If true, then a source span is considered to overlap a target
-      span when the source span is contained by the target span.
-    partial_overlap: If true, then a source span is considered to overlap a
-      target span when the source span partially overlaps the target span.
-    multivalent_result: Whether the result should contain a single target span
-      index (if `multivalent_result=False`) or a list of target span indices (if
-      `multivalent_result=True`) for each source span.
-    name: A name for the operation (optional).
-
-  Returns:
-    An int64 tensor with values in the range: `-1 <= result < target_size`.
-    If `multivalent_result=False`, then the returned tensor has shape
-      `[source_size]`, where `source_size` is the length of the `source_start`
-      and `source_limit` input tensors.  If `multivalent_result=True`, then the
-      returned tensor has shape `[source_size, (num_aligned_target_spans)].
-
   #### Examples:
 
   Given the following source and target spans (with no batch dimensions):
@@ -500,6 +472,33 @@ def span_alignment(source_start,
   >>> span_alignment(source_starts, source_limits, target_starts, target_limits,
   ...                 partial_overlap=True, multivalent_result=True)
   <tf.RaggedTensor [[0], [], [2], [3], [4], [5], [6], [7], [8], [8, 9]]>
+
+  Args:
+    source_start: A B+1 dimensional potentially ragged tensor with shape
+      `[D1...DB, source_size]`: the start offset of each source span.
+    source_limit: A B+1 dimensional potentially ragged tensor with shape
+      `[D1...DB, source_size]`: the limit offset of each source span.
+    target_start: A B+1 dimensional potentially ragged tensor with shape
+      `[D1...DB, target_size]`: the start offset of each target span.
+    target_limit: A B+1 dimensional potentially ragged tensor with shape
+      `[D1...DB, target_size]`: the limit offset of each target span.
+    contains: If true, then a source span is considered to overlap a target span
+      when the source span contains the target span.
+    contained_by: If true, then a source span is considered to overlap a target
+      span when the source span is contained by the target span.
+    partial_overlap: If true, then a source span is considered to overlap a
+      target span when the source span partially overlaps the target span.
+    multivalent_result: Whether the result should contain a single target span
+      index (if `multivalent_result=False`) or a list of target span indices (if
+      `multivalent_result=True`) for each source span.
+    name: A name for the operation (optional).
+
+  Returns:
+    An int64 tensor with values in the range: `-1 <= result < target_size`.
+    If `multivalent_result=False`, then the returned tensor has shape
+      `[source_size]`, where `source_size` is the length of the `source_start`
+      and `source_limit` input tensors.  If `multivalent_result=True`, then the
+      returned tensor has shape `[source_size, (num_aligned_target_spans)].
   """
   scope_tensors = [source_start, source_limit, target_start, target_limit]
   with ops.name_scope(name, 'SpanAlignment', scope_tensors):
