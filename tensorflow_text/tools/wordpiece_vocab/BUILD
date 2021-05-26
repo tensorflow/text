@@ -58,6 +58,6 @@ py_test(
         ":wordpiece_tokenizer_learner_lib",
         "@absl_py//absl/testing:absltest",
         #  numpy dep,
-        "//third_party/py/tensorflow",
+        # tensorflow package dep,
     ],
 )

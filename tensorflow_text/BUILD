@@ -813,14 +813,7 @@ py_library(
     name = "todense_layer",
     srcs = ["python/keras/layers/todense.py"],
     deps = [
-        # python:check_ops tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:sparse_ops tensorflow dep,
-        # python:sparse_tensor tensorflow dep,
-        # python/keras tensorflow dep,  # fixdeps: keep
-        # python/keras:base_layer tensorflow dep,
-        # python/keras/layers tensorflow dep,
-        # python/ops/ragged:ragged_tensor tensorflow dep,
+        # tensorflow package dep,
     ],
 )
 
@@ -835,17 +828,10 @@ py_test(
         ":todense_layer",
         "@absl_py//absl/testing:parameterized",
         #  numpy dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
+        # tensorflow package dep,
         # python:framework_test_lib tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:sparse_tensor tensorflow dep,
-        # python/data/ops:dataset_ops tensorflow dep,
         # python/keras tensorflow dep,
-        # python/keras:backend tensorflow dep,
-        # python/keras:base_layer tensorflow dep,
-        # python/keras/layers tensorflow dep,
-        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/keras:testing_utils tensorflow dep,
     ],
 )
 
