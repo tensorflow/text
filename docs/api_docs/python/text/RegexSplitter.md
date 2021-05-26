@@ -34,8 +34,26 @@ Inherits From: [`Splitter`](../text/Splitter.md)
 
 <!-- Placeholder for "Used in" -->
 
-The default is a newline character pattern. It can also returns the beginning
-and ending byte offsets as well.
+The default is a newline character pattern. It can also return the beginning and
+ending byte offsets as well.
+
+By default, this splitter will break on newlines, ignoring any trailing ones.
+```
+
+> > > splitter = RegexSplitter() text_input=[ ... b"Hi there.\nWhat time is
+> > > it?\nIt is gametime.", ... b"Who let the dogs out?\nWho?\nWho?\nWho?\n\n",
+> > > ... ] splitter.split(text_input)
+> > > <tf.RaggedTensor [[b'Hi there.', b'What time is it?', b'It is gametime.'], [b'Who let the dogs out?', b'Who?', b'Who?', b'Who?']]>
+> > > ```
+
+The splitter can be passed a custom split pattern, as well. The pattern can be
+any string, but we're using a single character (tab) in this example. ```
+
+> > > splitter = RegexSplitter(split_regex='\t') text_input=[ ... b"Hi
+> > > there.\tWhat time is it?\tIt is gametime.", ... b"Who let the dogs
+> > > out?\tWho?\tWho?\tWho?\t\t", ... ] splitter.split(text_input)
+> > > <tf.RaggedTensor [[b'Hi there.', b'What time is it?', b'It is gametime.'], [b'Who let the dogs out?', b'Who?', b'Who?', b'Who?']]>
+> > > ```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -67,8 +85,17 @@ delimiter to split on. Default is '\r?\n'.
 )
 </code></pre>
 
-Splits the strings from the input tensor.
+Splits the input tensor into pieces.
 
+Generally, the pieces returned by a splitter correspond to substrings of the
+original string, and can be encoded using either strings or integer ids.
+
+#### Example:
+
+```
+>>> print(tf_text.WhitespaceTokenizer().split("small medium large"))
+tf.Tensor([b'small' b'medium' b'large'], shape=(3,), dtype=string)
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -114,8 +141,16 @@ the pieces that string was split into.
 )
 </code></pre>
 
-Splits the input tensor, returns the resulting pieces with offsets.
+Splits the input tensor, and returns the resulting pieces with offsets.
 
+#### Example:
+
+```
+>>> splitter = tf_text.WhitespaceTokenizer()
+>>> pieces, starts, ends = splitter.split_with_offsets("a bb ccc")
+>>> print(pieces.numpy(), starts.numpy(), ends.numpy())
+[b'a' b'bb' b'ccc'] [0 2 5] [1 4 8]
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">

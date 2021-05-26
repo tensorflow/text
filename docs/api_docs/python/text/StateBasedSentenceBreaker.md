@@ -133,7 +133,6 @@ A string `Tensor` of shape `[batch]` or `[batch, 1]`.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

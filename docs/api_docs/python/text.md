@@ -52,6 +52,9 @@ n-gram op.
 [`class RegexSplitter`](./text/RegexSplitter.md): `RegexSplitter` splits text on
 the given regular expression.
 
+[`class RoundRobinTrimmer`](./text/RoundRobinTrimmer.md): A `Trimmer` that
+allocates a length budget to segments via round robin.
+
 [`class SentencepieceTokenizer`](./text/SentencepieceTokenizer.md): Tokenizes a
 tensor of UTF-8 strings.
 
@@ -76,8 +79,8 @@ tokenizer implementations that return offsets.
 [`class UnicodeCharTokenizer`](./text/UnicodeCharTokenizer.md): Tokenizes a
 tensor of UTF-8 strings on Unicode character boundaries.
 
-[`class UnicodeScriptTokenizer`](./text/UnicodeScriptTokenizer.md): Tokenizes a
-tensor of UTF-8 strings on Unicode script boundaries.
+[`class UnicodeScriptTokenizer`](./text/UnicodeScriptTokenizer.md): Tokenizes
+UTF-8 by splitting when there is a change in Unicode script.
 
 [`class WaterfallTrimmer`](./text/WaterfallTrimmer.md): A `Trimmer` that
 allocates a length budget to segments in order.

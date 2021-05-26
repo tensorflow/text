@@ -46,37 +46,8 @@ source</a>
 )
 </code></pre>
 
-Splits the strings from the input tensor.
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Args</th></tr>
-
-<tr>
-<td>
-`input`
-</td>
-<td>
-An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
-`RaggedTensor`.
-</td>
-</tr>
-</table>
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Returns</th></tr>
-<tr class="alt">
-<td colspan="2">
-An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
-For each string from the input tensor, the final, extra dimension contains
-the pieces that string was split into.
-</td>
-</tr>
-
-</table>
+Alias for
+<a href="../text/Tokenizer.md#tokenize"><code>Tokenizer.tokenize</code></a>.
 
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
@@ -89,42 +60,8 @@ source</a>
 )
 </code></pre>
 
-Splits the input tensor, returns the resulting pieces with offsets.
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Args</th></tr>
-
-<tr>
-<td>
-`input`
-</td>
-<td>
-An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
-`RaggedTensor`.
-</td>
-</tr>
-</table>
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Returns</th></tr>
-<tr class="alt">
-<td colspan="2">
-A tuple `(pieces, start_offsets, end_offsets)` where:
-
-*   `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
-    `RaggedTensor`.
-*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the starting indices of each piece (byte indices for input
-    strings).
-*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the exclusive ending indices of each piece (byte indices for
-    input strings). </td> </tr>
-
-</table>
+Alias for
+<a href="../text/TokenizerWithOffsets.md#tokenize_with_offsets"><code>TokenizerWithOffsets.tokenize_with_offsets</code></a>.
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
@@ -142,12 +79,12 @@ Tokenizes a tensor of UTF-8 strings according to labels.
 ### Example:
 
 ```
->>> strings = ["HelloMonday", "DearFriday"],
+>>> strings = ["HelloMonday", "DearFriday"]
 >>> labels = [[0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
-              [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
+...           [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
 >>> tokenizer = SplitMergeTokenizer()
 >>> tokenizer.tokenize(strings, labels)
-[['Hello', 'Monday'], ['Dear', 'Friday']]
+<tf.RaggedTensor [[b'Hello', b'Monday'], [b'Dear', b'Friday']]>
 ```
 
 <!-- Tabular view -->
@@ -239,17 +176,17 @@ Tokenizes a tensor of UTF-8 strings into tokens with [start,end) offsets.
 ### Example:
 
 ```
->>> strings = ["HelloMonday", "DearFriday"],
+>>> strings = ["HelloMonday", "DearFriday"]
 >>> labels = [[0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
-              [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
+...           [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0]]
 >>> tokenizer = SplitMergeTokenizer()
->>> result = tokenizer.tokenize_with_offsets(strings, labels)
->>> result[0].to_list()
-[['Hello', 'Monday'], ['Dear', 'Friday']]
->>> result[1].to_list()
->>> [[0, 5], [0, 4]]
->>> result[2].to_list()
->>> [[5, 11], [4, 10]]
+>>> tokens, starts, ends = tokenizer.tokenize_with_offsets(strings, labels)
+>>> tokens
+<tf.RaggedTensor [[b'Hello', b'Monday'], [b'Dear', b'Friday']]>
+>>> starts
+<tf.RaggedTensor [[0, 5], [0, 4]]>
+>>> ends
+<tf.RaggedTensor [[5, 11], [4, 10]]>
 ```
 
 <!-- Tabular view -->
@@ -313,7 +250,6 @@ output tokens=["New", "York"]
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

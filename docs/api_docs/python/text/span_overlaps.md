@@ -152,22 +152,25 @@ If the span tensors are incompatible.
 #### Example:
   Given the following source and target spans (with no batch dimensions):
 
-```python
-  #         0    5    10   15   20   25   30   35   40
-  #         |====|====|====|====|====|====|====|====|
-  # Source: [-0-]     [-1-] [2] [-3-][-4-][-5-]
-  # Target: [-0-][-1-]     [-2-] [3]   [-4-][-5-]
-  #         |====|====|====|====|====|====|====|====|
 ```
-
-> > > source_start = [0, 10, 16, 20, 25, 30] source_limit = [5, 15, 19, 25, 30,
-> > > 35] target_start = [0, 5, 15, 21, 27, 31] target_limit = [5, 10, 20, 24,
-> > > 32, 37] ` `
+  >>>  #         0    5    10   15   20   25   30   35   40
+  >>>  #         |====|====|====|====|====|====|====|====|
+  >>>  # Source: [-0-]     [-1-] [2] [-3-][-4-][-5-]
+  >>>  # Target: [-0-][-1-]     [-2-] [3]   [-4-][-5-]
+  >>>  #         |====|====|====|====|====|====|====|====|
+  >>> source_start = [0, 10, 16, 20, 25, 30]
+  >>> source_limit = [5, 15, 19, 25, 30, 35]
+  >>> target_start = [0,  5, 15, 21, 27, 31]
+  >>> target_limit = [5, 10, 20, 24, 32, 37]
+```
 
   `result[i, j]` will be true at the following locations:
 
-    * `[0, 0]` (always)
-    * `[2, 2]` (if contained_by=True or partial_overlaps=True)
-    * `[3, 3]` (if contains=True or partial_overlaps=True)
-    * `[4, 4]` (if partial_overlaps=True)
-    * `[5, 5]` (if partial_overlaps=True)
+```
+* `[0, 0]` (always)
+* `[2, 2]` (if contained_by=True or partial_overlaps=True)
+* `[3, 3]` (if contains=True or partial_overlaps=True)
+* `[4, 4]` (if partial_overlaps=True)
+* `[5, 4]` (if partial_overlaps=True)
+* `[5, 5]` (if partial_overlaps=True)
+```

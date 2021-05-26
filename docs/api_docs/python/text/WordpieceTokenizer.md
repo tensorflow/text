@@ -38,6 +38,74 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 
 <!-- Placeholder for "Used in" -->
 
+Each UTF-8 string token in the input is split into its corresponding wordpieces,
+drawing from the list in the file `vocab_lookup_table`.
+
+Algorithm summary: For each token, the longest token prefix that is in the
+vocabulary is split off. Any part of the token that remains is prefixed using
+the `suffix_indicator`, and the process of removing the longest token prefix
+continues. The `unknown_token` (UNK) is used when what remains of the token is
+not in the vocabulary, or if the token is too long.
+
+When `token_out_type` is tf.string, the output tensor contains strings in the
+vocabulary (or UNK). When it is an integer type, the output tensor contains
+indices into the vocabulary list (with UNK being after the last entry).
+
+#### Example:
+
+```
+>>> import pathlib
+>>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+...   "they ##' ##re the great ##est".replace(' ', '\n'))
+>>> tokenizer = WordpieceTokenizer('/tmp/tok_vocab.txt',
+...   token_out_type=tf.string)
+```
+
+```
+>>> tokenizer.tokenize(["they're", "the", "greatest"])
+<tf.RaggedTensor [[b'they', b"##'", b'##re'], [b'the'], [b'great', b'##est']]>
+```
+
+```
+>>> tokenizer.tokenize(["they", "are", "great"])
+<tf.RaggedTensor [[b'they'], [b'[UNK]'], [b'great']]>
+```
+
+```
+>>> int_tokenizer = WordpieceTokenizer('/tmp/tok_vocab.txt',
+...   token_out_type=tf.int32)
+```
+
+```
+>>> int_tokenizer.tokenize(["the", "greatest"])
+<tf.RaggedTensor [[3], [4, 5]]>
+```
+
+```
+>>> int_tokenizer.tokenize(["really", "the", "greatest"])
+<tf.RaggedTensor [[6], [3], [4, 5]]>
+```
+
+Tensor or ragged tensor inputs result in ragged tensor outputs. Scalar inputs
+(which are just a single token) result in tensor outputs.
+
+```
+>>> tokenizer.tokenize("they're")
+<tf.Tensor: shape=(3,), dtype=string, numpy=array([b'they', b"##'", b'##re'],
+dtype=object)>
+>>> tokenizer.tokenize(["they're"])
+<tf.RaggedTensor [[b'they', b"##'", b'##re']]>
+>>> tokenizer.tokenize(tf.ragged.constant([["they're"]]))
+<tf.RaggedTensor [[[b'they', b"##'", b'##re']]]>
+```
+
+Empty strings are tokenized into empty (ragged) tensors.
+
+```
+>>> tokenizer.tokenize([""])
+<tf.RaggedTensor [[]]>
+```
+
 <!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
@@ -124,12 +192,12 @@ Convert a `Tensor` or `RaggedTensor` of wordpiece IDs to string-words.
 
 ```
 >>> import pathlib
->>> pathlib.Path('vocab.txt').write_text(
-...     "a b c ##a ##b ##c".replace(' ', '\n'))
->>> wordpiece = text.WordpieceTokenizer('vocab.txt')
+>>> pathlib.Path('/tmp/detok_vocab.txt').write_text(
+...     'a b c ##a ##b ##c'.replace(' ', '\n'))
+>>> wordpiece = WordpieceTokenizer('/tmp/detok_vocab.txt')
 >>> token_ids = [[0, 4, 5, 2, 5, 5, 5]]
 >>> wordpiece.detokenize(token_ids)
-<tf.RaggedTensor [[b'ab', b'cccc']]>
+<tf.RaggedTensor [[b'abc', b'cccc']]>
 ```
 
 The word pieces are joined along the innermost axis to make words. So the result
@@ -147,7 +215,6 @@ Note: This method assumes wordpiece IDs are dense on the interval `[0,
 vocab_size)`.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -164,7 +231,6 @@ A `RaggedTensor` or `Tensor` with an int dtype. Must have
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -188,37 +254,8 @@ source</a>
 )
 </code></pre>
 
-Splits the strings from the input tensor.
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Args</th></tr>
-
-<tr>
-<td>
-`input`
-</td>
-<td>
-An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
-`RaggedTensor`.
-</td>
-</tr>
-</table>
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Returns</th></tr>
-<tr class="alt">
-<td colspan="2">
-An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
-For each string from the input tensor, the final, extra dimension contains
-the pieces that string was split into.
-</td>
-</tr>
-
-</table>
+Alias for
+<a href="../text/Tokenizer.md#tokenize"><code>Tokenizer.tokenize</code></a>.
 
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
@@ -231,42 +268,8 @@ source</a>
 )
 </code></pre>
 
-Splits the input tensor, returns the resulting pieces with offsets.
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Args</th></tr>
-
-<tr>
-<td>
-`input`
-</td>
-<td>
-An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
-`RaggedTensor`.
-</td>
-</tr>
-</table>
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Returns</th></tr>
-<tr class="alt">
-<td colspan="2">
-A tuple `(pieces, start_offsets, end_offsets)` where:
-
-*   `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
-    `RaggedTensor`.
-*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the starting indices of each piece (byte indices for input
-    strings).
-*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the exclusive ending indices of each piece (byte indices for
-    input strings). </td> </tr>
-
-</table>
+Alias for
+<a href="../text/TokenizerWithOffsets.md#tokenize_with_offsets"><code>TokenizerWithOffsets.tokenize_with_offsets</code></a>.
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
@@ -284,10 +287,15 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 ### Example:
 
 ```
->>> tokens = [["they're", "the", "greatest"]],
->>> tokenizer = WordpieceTokenizer(vocab, token_out_type=tf.string)
+>>> import pathlib
+>>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+...     "they ##' ##re the great ##est".replace(' ', '\n'))
+>>> tokens = [["they're", 'the', 'greatest']]
+>>> tokenizer = WordpieceTokenizer('/tmp/tok_vocab.txt',
+...                                token_out_type=tf.string)
 >>> tokenizer.tokenize(tokens)
-[[['they', "##'", '##re'], ['the'], ['great', '##est']]]
+<tf.RaggedTensor [[[b'they', b"##'", b'##re'], [b'the'],
+                   [b'great', b'##est']]]>
 ```
 
 <!-- Tabular view -->
@@ -336,13 +344,20 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 ### Example:
 
 ```
-
-> > > tokens = [["they're", "the", "greatest"]], tokenizer =
-> > > WordpieceTokenizer(vocab, token_out_type=tf.string) result =
-> > > tokenizer.tokenize_with_offsets(tokens) result[0].to_list() # subwords
-> > > [[['they', "##'", '##re'], ['the'], ['great', '##est']]]
-> > > result[1].to_list() # start offsets [[[0, 4, 5], [0], [0, 5]]]
-> > > result[2].to_list() # end offsets [[[4, 5, 7], [3], [5, 8]]
+>>> import pathlib
+>>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+...     "they ##' ##re the great ##est".replace(' ', '\n'))
+>>> tokens = [["they're", 'the', 'greatest']]
+>>> tokenizer = WordpieceTokenizer('/tmp/tok_vocab.txt',
+...                                token_out_type=tf.string)
+>>> subtokens, starts, ends = tokenizer.tokenize_with_offsets(tokens)
+>>> subtokens
+<tf.RaggedTensor [[[b'they', b"##'", b'##re'], [b'the'],
+                   [b'great', b'##est']]]>
+>>> starts
+<tf.RaggedTensor [[[0, 4, 5], [0], [0, 5]]]>
+>>> ends
+<tf.RaggedTensor [[[4, 5, 7], [3], [5, 8]]]>
 ```
 
 <!-- Tabular view -->

@@ -43,7 +43,7 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 This tokenizer applies an end-to-end, text string to wordpiece tokenization. It
 first applies basic tokenization, and then followed by wordpiece tokenization.
 
-See BasicTokenizer and WordpieceTokenizer for their respective details.
+See `WordpieceTokenizer` for details on the subword tokenization.
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -186,8 +186,20 @@ reversible.
 Note: This method assumes wordpiece IDs are dense on the interval `[0,
 vocab_size)`.
 
-<!-- Tabular view -->
+#### Example:
 
+```
+>>> import pathlib
+>>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+...    "they ##' ##re the great ##est".replace(' ', '\n'))
+>>> tokenizer = BertTokenizer(
+...    vocab_lookup_table='/tmp/tok_vocab.txt')
+>>> text_inputs = tf.constant(['greatest'.encode('utf-8')])
+>>> tokenizer.detokenize([[4, 5]])
+<tf.RaggedTensor [[b'greatest']]>
+```
+
+<!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -203,7 +215,6 @@ A `RaggedTensor` or `Tensor` with an int dtype.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -227,37 +238,8 @@ source</a>
 )
 </code></pre>
 
-Splits the strings from the input tensor.
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Args</th></tr>
-
-<tr>
-<td>
-`input`
-</td>
-<td>
-An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
-`RaggedTensor`.
-</td>
-</tr>
-</table>
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Returns</th></tr>
-<tr class="alt">
-<td colspan="2">
-An N+1-dimensional UTF-8 string or integer `Tensor` or `RaggedTensor`.
-For each string from the input tensor, the final, extra dimension contains
-the pieces that string was split into.
-</td>
-</tr>
-
-</table>
+Alias for
+<a href="../text/Tokenizer.md#tokenize"><code>Tokenizer.tokenize</code></a>.
 
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
@@ -270,42 +252,8 @@ source</a>
 )
 </code></pre>
 
-Splits the input tensor, returns the resulting pieces with offsets.
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Args</th></tr>
-
-<tr>
-<td>
-`input`
-</td>
-<td>
-An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
-`RaggedTensor`.
-</td>
-</tr>
-</table>
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2">Returns</th></tr>
-<tr class="alt">
-<td colspan="2">
-A tuple `(pieces, start_offsets, end_offsets)` where:
-
-*   `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
-    `RaggedTensor`.
-*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the starting indices of each piece (byte indices for input
-    strings).
-*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the exclusive ending indices of each piece (byte indices for
-    input strings). </td> </tr>
-
-</table>
+Alias for
+<a href="../text/TokenizerWithOffsets.md#tokenize_with_offsets"><code>TokenizerWithOffsets.tokenize_with_offsets</code></a>.
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
@@ -318,7 +266,20 @@ source</a>
 )
 </code></pre>
 
-Performs untokenized text to wordpiece tokenization for BERT.
+Tokenizes a tensor of string tokens into subword tokens for BERT.
+
+#### Example:
+
+```
+>>> import pathlib
+>>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+...     "they ##' ##re the great ##est".replace(' ', '\n'))
+>>> tokenizer = BertTokenizer(
+...     vocab_lookup_table='/tmp/tok_vocab.txt')
+>>> text_inputs = tf.constant(['greatest'.encode('utf-8') ])
+>>> tokenizer.tokenize(text_inputs)
+<tf.RaggedTensor [[[4, 5]]]>
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -361,7 +322,22 @@ source</a>
 )
 </code></pre>
 
-Tokenizes the input tensor and returns the result with offsets.
+Tokenizes a tensor of string tokens into subword tokens for BERT.
+
+#### Example:
+
+```
+>>> import pathlib
+>>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
+...     "they ##' ##re the great ##est".replace(' ', '\n'))
+>>> tokenizer = BertTokenizer(
+...     vocab_lookup_table='/tmp/tok_vocab.txt')
+>>> text_inputs = tf.constant(['greatest'.encode('utf-8')])
+>>> tokenizer.tokenize_with_offsets(text_inputs)
+(<tf.RaggedTensor [[[4, 5]]]>,
+ <tf.RaggedTensor [[[0, 5]]]>,
+ <tf.RaggedTensor [[[5, 8]]]>)
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -370,30 +346,27 @@ Tokenizes the input tensor and returns the result with offsets.
 
 <tr>
 <td>
-`input`
+`text_input`
 </td>
 <td>
-An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
-`RaggedTensor`.
+input: A `Tensor` or `RaggedTensor` of untokenized UTF-8
+strings.
 </td>
 </tr>
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
-A tuple `(tokens, start_offsets, end_offsets)` where:
-
-*   `tokens` is an N+1-dimensional UTF-8 string or integer `Tensor` or
-    `RaggedTensor`.
-*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the starting indices of each token (byte indices for input
-    strings).
-*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
-    containing the exclusive ending indices of each token (byte indices for
-    input strings). </td> </tr>
+A tuple of `RaggedTensor`s where the first element is the tokens where
+`tokens[i1...iN, j]`, the second element is the starting offsets, the
+third element is the end offset. (Please look at `tokenize` for details
+on tokens.)
+</td>
+</tr>
 
 </table>

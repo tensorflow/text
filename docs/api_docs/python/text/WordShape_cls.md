@@ -223,7 +223,7 @@ The supported wordshape identifiers are:
 BEGINS_WITH_OPEN_QUOTE<a id="BEGINS_WITH_OPEN_QUOTE"></a>
 </td>
 <td>
-`<WordShape.BEGINS_WITH_OPEN_QUOTE: '``.*|["\'`＇＂‘‚‛“«„‟‹「『〝⹂｢﹁﹃][^"\'`＇＂‘‚‛“«„‟‹「『〝⹂｢﹁﹃]*'>`
+``<WordShape.BEGINS_WITH_OPEN_QUOTE: '\`\`.*|["\'\`＇＂‘‚‛“«„‟‹「『〝⹂｢﹁﹃][^"\'\`＇＂‘‚‛“«„‟‹「『〝⹂｢﹁﹃]*'>``
 </td>
 </tr><tr>
 <td>
@@ -237,7 +237,7 @@ BEGINS_WITH_PUNCT_OR_SYMBOL<a id="BEGINS_WITH_PUNCT_OR_SYMBOL"></a>
 ENDS_WITH_CLOSE_QUOTE<a id="ENDS_WITH_CLOSE_QUOTE"></a>
 </td>
 <td>
-`<WordShape.ENDS_WITH_CLOSE_QUOTE: '.*\'\'|[^"\'`＇＂»’”›」』〞〟﹂﹄｣]*["\'`＇＂»’”›」』〞〟﹂﹄｣]'>`
+``<WordShape.ENDS_WITH_CLOSE_QUOTE: '.*\'\'|[^"\'\`＇＂»’”›」』〞〟﹂﹄｣]*["\'\`＇＂»’”›」』〞〟﹂﹄｣]'>``
 </td>
 </tr><tr>
 <td>
@@ -342,77 +342,105 @@ HAS_NO_PUNCT_OR_SYMBOL<a id="HAS_NO_PUNCT_OR_SYMBOL"></a>
 HAS_NO_QUOTES<a id="HAS_NO_QUOTES"></a>
 </td>
 <td>
-`<WordShape.HAS_NO_QUOTES: '[^"\'`\\p{Quotation_Mark}]*'>`</td>
+``<WordShape.HAS_NO_QUOTES: '[^"\'\`\\p{Quotation_Mark}]*'>``
+</td>
 </tr><tr>
 <td>
 HAS_ONLY_DIGITS<a id="HAS_ONLY_DIGITS"></a>
 </td>
-<td>`<WordShape.HAS_ONLY_DIGITS: '\\p{Nd}+'>`</td>
+<td>
+`<WordShape.HAS_ONLY_DIGITS: '\\p{Nd}+'>`
+</td>
 </tr><tr>
 <td>
 HAS_PUNCTUATION_DASH<a id="HAS_PUNCTUATION_DASH"></a>
 </td>
-<td>`<WordShape.HAS_PUNCTUATION_DASH: '.*\\p{Pd}+.*'>`</td>
+<td>
+`<WordShape.HAS_PUNCTUATION_DASH: '.*\\p{Pd}+.*'>`
+</td>
 </tr><tr>
 <td>
 HAS_QUOTE<a id="HAS_QUOTE"></a>
 </td>
-<td>`<WordShape.HAS_QUOTE: '^[`\\p{Quotation_Mark}].*|.*[`\\p{Quotation_Mark}]$'>`</td>
+<td>
+``<WordShape.HAS_QUOTE: '^[\`\\p{Quotation_Mark}].*|.*[\`\\p{Quotation_Mark}]$'>``
+</td>
 </tr><tr>
 <td>
 HAS_SOME_DIGITS<a id="HAS_SOME_DIGITS"></a>
 </td>
-<td>`<WordShape.HAS_SOME_DIGITS: '.*\\P{Nd}\\p{Nd}.*|.*\\p{Nd}\\P{Nd}.*'>`</td>
+<td>
+`<WordShape.HAS_SOME_DIGITS: '.*\\P{Nd}\\p{Nd}.*|.*\\p{Nd}\\P{Nd}.*'>`
+</td>
 </tr><tr>
 <td>
 HAS_SOME_PUNCT_OR_SYMBOL<a id="HAS_SOME_PUNCT_OR_SYMBOL"></a>
 </td>
-<td>`<WordShape.HAS_SOME_PUNCT_OR_SYMBOL: '.*[^\\p{P}\\p{S}][\\p{P}\\p{S}].*|.*[\\p{P}\\p{S}][^\\p{P}\\p{S}].*'>`</td>
+<td>
+`<WordShape.HAS_SOME_PUNCT_OR_SYMBOL: '.*[^\\p{P}\\p{S}][\\p{P}\\p{S}].*|.*[\\p{P}\\p{S}][^\\p{P}\\p{S}].*'>`
+</td>
 </tr><tr>
 <td>
 HAS_TITLE_CASE<a id="HAS_TITLE_CASE"></a>
 </td>
-<td>`<WordShape.HAS_TITLE_CASE: '\\P{L}*[\\p{Lu}\\p{Lt}]\\p{Ll}+.*'>`</td>
+<td>
+`<WordShape.HAS_TITLE_CASE: '\\P{L}*[\\p{Lu}\\p{Lt}]\\p{Ll}+.*'>`
+</td>
 </tr><tr>
 <td>
 IS_ACRONYM_WITH_PERIODS<a id="IS_ACRONYM_WITH_PERIODS"></a>
 </td>
-<td>`<WordShape.IS_ACRONYM_WITH_PERIODS: '(\\p{Lu}\\.)+'>`</td>
+<td>
+`<WordShape.IS_ACRONYM_WITH_PERIODS: '(\\p{Lu}\\.)+'>`
+</td>
 </tr><tr>
 <td>
 IS_EMOTICON<a id="IS_EMOTICON"></a>
 </td>
-<td>`<WordShape.IS_EMOTICON: "\\:\\-\\)|\\:\\)|\\:o\\)|\\:\\]|\\:3|\\:\\>|\\=\\]|\\=\\)|\\:\\}|\\:\\^\\)|\\:\\-D|\\:\\-\\)\\)|\\:\\-\\)\\)\\)|\\:\\-\\)\\)\\)\\)|\\:\\-\\)\\)\\)\\)\\)|\\>\\:$$|\\:\\-\\(|\\:\\(|\\:\\-c|\\:c|\\:\\-\\<|\\:\\<|\\:\\-\\[|\\:\\[|\\:\\{|\\;\\(|\\:\\-\\|\\||\\:\\@|\\>\\:\\(|\\:\\'\\-\\(|\\:\\'\\(|\\:\\'\\-\\)|\\:\\'\\)|D\\:\\<|\\>\\:O|\\:\\-O|\\:\\-o|\\:\\*|\\:\\-\\*|\\:\\^\\*|\\;\\-\\)|\\;\\)|\\*\\-\\)|\\*\\)|\\;\\-$$|\\;\\]|\\;\\^\\)|\\:\\-\\,|\\>\\:P|\\:\\-P|\\:p|\\=p|\\:\\-p|\\=p|\\:P|\\=P|\\;p|\\;\\-p|\\;P|\\;\\-P\\>\\:\\\\|\\>\\:\\/|\\:\\-\\/|\\:\\-\\.|\\:\\/|\\:\\\\|\\=\\/|\\=\\\\|\\:\\||\\:\\-\\||\\:\\$|\\:\\-\\#|\\:\\#|O\\:\\-\\)|0\\:\\-\\)|0\\:\\)|0\\;\\^\\)|\\>\\:\\)|\\>\\;\\)|\\>\\:\\-\\)|\\}\\:\\-\\)|\\}\\:\\)|3\\:\\-\\)|\\>_\\>\\^|\\^\\<_\\<|\\|\\;\\-\\)|\\|\\-O|\\:\\-J|\\:\\-\\&|\\:\\&|\\#\\-\\)|\\%\\-\\)|\\%\\)|\\<\\:\\-\\||\\~\\:\\-\\\\|\\*\\<\\|\\:\\-\\)|\\=\\:o\\]|\\,\\:\\-\\)|7\\:\\^\\]|\\<\\/3|\\<3|8\\-\\)|\\^_\\^|\\:D|\\:\\-D|\\=D|\\^_\\^\\;\\;|O\\=\\)|\\}\\=\\)|B\\)|B\\-\\)|\\=\\||\\-_\\-|o_o\\;|u_u|\\:\\-\\\\|\\:s|\\:S|\\:\\-s|\\:\\-S|\\;\\*|\\;\\-\\*\\:\\(|\\=\\(|\\>\\.\\<|\\>\\:\\-$$|\\>\\:\\(|\\>\\=\\(|\\;_\\;|T_T|\\=\\'\\(|\\>_\\<|D\\:|\\:o|\\:\\-o|\\=o|o\\.o|\\:O|\\:\\-O|\\=O|O\\.O|x_x|X\\-\\(|X\\(|X\\-o|X\\-O|\\:X$$|$$\\=\\^\\.\\^\\=$$|$$\\=\\^\\.\\.\\^\\=$$|\\=\\^_\\^\\=|\\-\\<\\@\\%|\\:$$\\|$$|\\:$$\\:$$|$$\\]\\:\\{|\\<\\\\3|\\~\\@\\~|8\\'\\(|XD|DX\\:っ$$|\\:っC|ಠ\\_ಠ">`</td>
+<td>
+`<WordShape.IS_EMOTICON: "\\:\\-\\)|\\:\\)|\\:o\\)|\\:\\]|\\:3|\\:\\>|\\=\\]|\\=\\)|\\:\\}|\\:\\^\\)|\\:\\-D|\\:\\-\\)\\)|\\:\\-\\)\\)\\)|\\:\\-\\)\\)\\)\\)|\\:\\-\\)\\)\\)\\)\\)|\\>\\:\\[|\\:\\-\\(|\\:\\(|\\:\\-c|\\:c|\\:\\-\\<|\\:\\<|\\:\\-\\[|\\:\\[|\\:\\{|\\;\\(|\\:\\-\\|\\||\\:\\@|\\>\\:\\(|\\:\\'\\-\\(|\\:\\'\\(|\\:\\'\\-\\)|\\:\\'\\)|D\\:\\<|\\>\\:O|\\:\\-O|\\:\\-o|\\:\\*|\\:\\-\\*|\\:\\^\\*|\\;\\-\\)|\\;\\)|\\*\\-\\)|\\*\\)|\\;\\-\\]|\\;\\]|\\;\\^\\)|\\:\\-\\,|\\>\\:P|\\:\\-P|\\:p|\\=p|\\:\\-p|\\=p|\\:P|\\=P|\\;p|\\;\\-p|\\;P|\\;\\-P\\>\\:\\\\|\\>\\:\\/|\\:\\-\\/|\\:\\-\\.|\\:\\/|\\:\\\\|\\=\\/|\\=\\\\|\\:\\||\\:\\-\\||\\:\\$|\\:\\-\\#|\\:\\#|O\\:\\-\\)|0\\:\\-\\)|0\\:\\)|0\\;\\^\\)|\\>\\:\\)|\\>\\;\\)|\\>\\:\\-\\)|\\}\\:\\-\\)|\\}\\:\\)|3\\:\\-\\)|\\>_\\>\\^|\\^\\<_\\<|\\|\\;\\-\\)|\\|\\-O|\\:\\-J|\\:\\-\\&|\\:\\&|\\#\\-\\)|\\%\\-\\)|\\%\\)|\\<\\:\\-\\||\\~\\:\\-\\\\|\\*\\<\\|\\:\\-\\)|\\=\\:o\\]|\\,\\:\\-\\)|7\\:\\^\\]|\\<\\/3|\\<3|8\\-\\)|\\^_\\^|\\:D|\\:\\-D|\\=D|\\^_\\^\\;\\;|O\\=\\)|\\}\\=\\)|B\\)|B\\-\\)|\\=\\||\\-_\\-|o_o\\;|u_u|\\:\\-\\\\|\\:s|\\:S|\\:\\-s|\\:\\-S|\\;\\*|\\;\\-\\*\\:\\(|\\=\\(|\\>\\.\\<|\\>\\:\\-\\(|\\>\\:\\(|\\>\\=\\(|\\;_\\;|T_T|\\=\\'\\(|\\>_\\<|D\\:|\\:o|\\:\\-o|\\=o|o\\.o|\\:O|\\:\\-O|\\=O|O\\.O|x_x|X\\-\\(|X\\(|X\\-o|X\\-O|\\:X\\)|\\(\\=\\^\\.\\^\\=\\)|\\(\\=\\^\\.\\.\\^\\=\\)|\\=\\^_\\^\\=|\\-\\<\\@\\%|\\:\\(\\|\\)|\\:\\(\\:\\)|\\(\\]\\:\\{|\\<\\\\3|\\~\\@\\~|8\\'\\(|XD|DX\\:っ\\)|\\:っC|ಠ\\_ಠ">`
+</td>
 </tr><tr>
 <td>
 IS_LOWERCASE<a id="IS_LOWERCASE"></a>
 </td>
-<td>`<WordShape.IS_LOWERCASE: '\\p{Ll}+'>`</td>
+<td>
+`<WordShape.IS_LOWERCASE: '\\p{Ll}+'>`
+</td>
 </tr><tr>
 <td>
 IS_MIXED_CASE_LETTERS<a id="IS_MIXED_CASE_LETTERS"></a>
 </td>
-<td>`<WordShape.IS_MIXED_CASE_LETTERS: '\\p{L}*\\p{Lu}\\p{L}*\\p{Ll}\\p{L}*|\\p{L}*\\p{Ll}\\p{L}*\\p{Lu}\\p{L}*'>`</td>
+<td>
+`<WordShape.IS_MIXED_CASE_LETTERS: '\\p{L}*\\p{Lu}\\p{L}*\\p{Ll}\\p{L}*|\\p{L}*\\p{Ll}\\p{L}*\\p{Lu}\\p{L}*'>`
+</td>
 </tr><tr>
 <td>
 IS_NUMERIC_VALUE<a id="IS_NUMERIC_VALUE"></a>
 </td>
-<td>`<WordShape.IS_NUMERIC_VALUE: '([+-]?((\\p{Nd}+\\.?\\p{Nd}*)|(\\.\\p{Nd}+)))([eE]-?\\p{Nd}+)?'>`</td>
+<td>
+`<WordShape.IS_NUMERIC_VALUE: '([+-]?((\\p{Nd}+\\.?\\p{Nd}*)|(\\.\\p{Nd}+)))([eE]-?\\p{Nd}+)?'>`
+</td>
 </tr><tr>
 <td>
 IS_PUNCT_OR_SYMBOL<a id="IS_PUNCT_OR_SYMBOL"></a>
 </td>
-<td>`<WordShape.IS_PUNCT_OR_SYMBOL: '[\\p{P}|\\p{S}]+'>`</td>
+<td>
+`<WordShape.IS_PUNCT_OR_SYMBOL: '[\\p{P}|\\p{S}]+'>`
+</td>
 </tr><tr>
 <td>
 IS_UPPERCASE<a id="IS_UPPERCASE"></a>
 </td>
-<td>`<WordShape.IS_UPPERCASE: '\\p{Lu}+'>`</td>
+<td>
+`<WordShape.IS_UPPERCASE: '\\p{Lu}+'>`
+</td>
 </tr><tr>
 <td>
 IS_WHITESPACE<a id="IS_WHITESPACE"></a>
 </td>
-<td>`<WordShape.IS_WHITESPACE: '\\p{Whitespace}+'>`
+<td>
+`<WordShape.IS_WHITESPACE: '\\p{Whitespace}+'>`
 </td>
 </tr>
 </table>

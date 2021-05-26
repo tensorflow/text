@@ -21,6 +21,8 @@ toc:
     path: /text/api_docs/python/text/Reduction
   - title: RegexSplitter
     path: /text/api_docs/python/text/RegexSplitter
+  - title: RoundRobinTrimmer
+    path: /text/api_docs/python/text/RoundRobinTrimmer
   - title: SentencepieceTokenizer
     path: /text/api_docs/python/text/SentencepieceTokenizer
   - title: SplitMergeFromLogitsTokenizer

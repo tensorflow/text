@@ -35,6 +35,8 @@ A sentence fragment is a potential next sentence determined using
 deterministic heuristics based on punctuation, capitalization, and similar
 text attributes.
 
+NOTE: This op is deprecated. Use `StateBasedSentenceBreaker` instead.
+
 <!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
