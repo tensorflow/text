@@ -39,6 +39,7 @@ _allowed_symbols = [
     "SplitMergeFromLogitsTokenizer",
     "SplitMergeTokenizer",
     "Splitter",
+    "SplitterWithOffsets",
     "StateBasedSentenceBreaker",
     "Tokenizer",
     "TokenizerWithOffsets",

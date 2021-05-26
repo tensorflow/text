@@ -52,6 +52,7 @@ from tensorflow_text.python.ops.sliding_window_op import sliding_window
 from tensorflow_text.python.ops.split_merge_from_logits_tokenizer import SplitMergeFromLogitsTokenizer
 from tensorflow_text.python.ops.split_merge_tokenizer import SplitMergeTokenizer
 from tensorflow_text.python.ops.splitter import Splitter
+from tensorflow_text.python.ops.splitter import SplitterWithOffsets
 from tensorflow_text.python.ops.state_based_sentence_breaker_op import StateBasedSentenceBreaker
 from tensorflow_text.python.ops.string_ops import coerce_to_structurally_valid_utf8
 from tensorflow_text.python.ops.tokenization import Detokenizer
