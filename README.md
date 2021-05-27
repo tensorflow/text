@@ -326,6 +326,6 @@ to do with Homebrew.
    `git clone https://github.com/tensorflow/text.git`
 1. Run the build script to create a pip package:
    `./oss_scripts/run_build.sh`
-   After this step, there should be a `*.whl` file in corrent directory. File name similar to `tensorflow_text-2.5.0rc0-cp38-cp38-linux_x86_64.whl`.
+   After this step, there should be a `*.whl` file in current directory. File name similar to `tensorflow_text-2.5.0rc0-cp38-cp38-linux_x86_64.whl`.
 1. Install the package to environment:
    `pip install ./tensorflow_text-*-*-*-os_platform.whl`
