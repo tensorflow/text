@@ -45,10 +45,10 @@ class Final(tf.keras.layers.Layer):
 def get_input_dataset(in_data, out_data=None):
   batch_size = in_data.shape[0]
   if out_data is None:
-    return tf.compat.v2.data.Dataset.from_tensor_slices(in_data).batch(
+    return tf.data.Dataset.from_tensor_slices(in_data).batch(
         batch_size)
 
-  return tf.compat.v2.data.Dataset.from_tensor_slices(
+  return tf.data.Dataset.from_tensor_slices(
       (in_data, out_data)).batch(batch_size)
 
 
@@ -129,8 +129,8 @@ class RaggedTensorsToDenseLayerTest(keras_parameterized.TestCase):
   @parameterized.named_parameters(
       *test_util.generate_combinations_with_testcase_name(layer=[
           tf.keras.layers.SimpleRNN, tf.compat.v1.keras.layers.GRU,
-          tf.compat.v1.keras.layers.LSTM, tf.compat.v2.keras.layers.GRU,
-          tf.compat.v2.keras.layers.LSTM
+          tf.compat.v1.keras.layers.LSTM, tf.keras.layers.GRU,
+          tf.keras.layers.LSTM
       ]))
   def SKIP_test_ragged_input_RNN_layer(self, layer):
     input_data = get_input_dataset(
