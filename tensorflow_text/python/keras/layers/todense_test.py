@@ -19,12 +19,12 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
+from keras import keras_parameterized
+from keras import testing_utils
 import numpy as np
 import tensorflow as tf
 
 from tensorflow.python.framework import test_util
-from tensorflow.python.keras import keras_parameterized
-from tensorflow.python.keras import testing_utils
 from tensorflow_text.python.keras.layers.todense import ToDense
 
 
