@@ -67,7 +67,8 @@ struct SentencepieceResource : public ResourceBase {
            (reverse == this->reverse);
   }
 
-  Status AsGraphDef(GraphDefBuilder* builder, Node** out) const override {
+  Status AsGraphDef(OpKernelContext* ctx, GraphDefBuilder* builder,
+                    Node** out) const override {
     absl::ReaderMutexLock l(&mu);
     // We set use_node_name_sharing with a unique node name so that the resource
     // can outlive the kernel. This means that the lifetime of the re-created
