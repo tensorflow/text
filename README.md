@@ -30,6 +30,7 @@ version of TF Text (eg. for tensorflow==2.3.x use tensorflow_text==2.3.x).
 
 ## INDEX
 * [Introduction](#introduction)
+* [Documentation](#documentation)
 * [Unicode](#unicode)
 * [Normalization](#normalization)
 * [Tokenization](#tokenization)
@@ -57,6 +58,12 @@ The benefit of using these ops in your text preprocessing is that they are done
 in the TensorFlow graph. You do not need to worry about tokenization in
 training being different than the tokenization at inference, or managing
 preprocessing scripts.
+
+## Documentation
+
+Please visit [http://tensorflow.org/text](http://tensorflow.org/text) for all
+documentation. This site includes API docs, guides for working with TensorFlow
+Text, as well as tutorials for building specific models.
 
 ## Unicode
 
