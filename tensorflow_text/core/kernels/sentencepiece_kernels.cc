@@ -273,7 +273,7 @@ class SentencepieceTokenizeOp : public OpKernel {
     const Tensor& resource_tensor = ctx->input(0);
     ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
     OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource, true>(
+        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
                  resource_handle.container(), resource_handle.name(), &sp));
     core::ScopedUnref unref_me(sp);
 
@@ -414,7 +414,7 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
     const Tensor& resource_tensor = ctx->input(0);
     ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
     OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource, true>(
+        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
                  resource_handle.container(), resource_handle.name(), &sp));
     core::ScopedUnref unref_me(sp);
 
@@ -563,7 +563,7 @@ class SentencepieceDetokenizeOp : public OpKernel {
     const Tensor& resource_tensor = ctx->input(0);
     ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
     OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource, true>(
+        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
                  resource_handle.container(), resource_handle.name(), &sp));
     core::ScopedUnref unref_me(sp);
 
@@ -647,7 +647,7 @@ class SentencepieceVocabSizeOp : public OpKernel {
     const Tensor& resource_tensor = ctx->input(0);
     ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
     OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource, true>(
+        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
                  resource_handle.container(), resource_handle.name(), &sp));
     core::ScopedUnref unref_me(sp);
 
@@ -671,7 +671,7 @@ class SentencepieceIdToStringOp : public OpKernel {
     const Tensor& resource_tensor = ctx->input(0);
     ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
     OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource, true>(
+        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
                  resource_handle.container(), resource_handle.name(), &sp));
     core::ScopedUnref unref_me(sp);
 
@@ -703,7 +703,7 @@ class SentencepieceStringToIdOp : public OpKernel {
     const Tensor& resource_tensor = ctx->input(0);
     ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
     OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource, true>(
+        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
                  resource_handle.container(), resource_handle.name(), &sp));
     core::ScopedUnref unref_me(sp);
 
