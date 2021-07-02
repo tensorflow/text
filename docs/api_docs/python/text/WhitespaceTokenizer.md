@@ -24,7 +24,9 @@ source</a>
 Tokenizes a tensor of UTF-8 strings on whitespaces.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
-[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md)
+[`Tokenizer`](../text/Tokenizer.md),
+[`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
+[`Splitter`](../text/Splitter.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.WhitespaceTokenizer()

@@ -28,8 +28,9 @@ source</a>
 Tokenizes a tensor of UTF-8 strings.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
-[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md),
-[`Detokenizer`](../text/Detokenizer.md)
+[`Tokenizer`](../text/Tokenizer.md),
+[`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
+[`Splitter`](../text/Splitter.md), [`Detokenizer`](../text/Detokenizer.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.SentencepieceTokenizer(

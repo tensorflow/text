@@ -24,7 +24,10 @@ description: Tokenizer that uses a Hub module.
 
 Tokenizer that uses a Hub module.
 
-Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md), [`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md)
+Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
+[`Tokenizer`](../text/Tokenizer.md),
+[`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
+[`Splitter`](../text/Splitter.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.HubModuleTokenizer(

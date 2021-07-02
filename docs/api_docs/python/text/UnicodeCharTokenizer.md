@@ -26,8 +26,9 @@ source</a>
 Tokenizes a tensor of UTF-8 strings on Unicode character boundaries.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
-[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md),
-[`Detokenizer`](../text/Detokenizer.md)
+[`Tokenizer`](../text/Tokenizer.md),
+[`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
+[`Splitter`](../text/Splitter.md), [`Detokenizer`](../text/Detokenizer.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.UnicodeCharTokenizer()
@@ -118,7 +119,6 @@ The name argument that is passed to the op function.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

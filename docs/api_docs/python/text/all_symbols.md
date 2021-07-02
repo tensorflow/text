@@ -19,6 +19,7 @@
 *   <a href="../text/SplitMergeFromLogitsTokenizer.md"><code>text.SplitMergeFromLogitsTokenizer</code></a>
 *   <a href="../text/SplitMergeTokenizer.md"><code>text.SplitMergeTokenizer</code></a>
 *   <a href="../text/Splitter.md"><code>text.Splitter</code></a>
+*   <a href="../text/SplitterWithOffsets.md"><code>text.SplitterWithOffsets</code></a>
 *   <a href="../text/StateBasedSentenceBreaker.md"><code>text.StateBasedSentenceBreaker</code></a>
 *   <a href="../text/Tokenizer.md"><code>text.Tokenizer</code></a>
 *   <a href="../text/TokenizerWithOffsets.md"><code>text.TokenizerWithOffsets</code></a>

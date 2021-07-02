@@ -31,6 +31,8 @@ toc:
     path: /text/api_docs/python/text/SplitMergeTokenizer
   - title: Splitter
     path: /text/api_docs/python/text/Splitter
+  - title: SplitterWithOffsets
+    path: /text/api_docs/python/text/SplitterWithOffsets
   - title: StateBasedSentenceBreaker
     path: /text/api_docs/python/text/StateBasedSentenceBreaker
   - title: Tokenizer

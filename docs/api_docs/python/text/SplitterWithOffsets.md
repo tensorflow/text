@@ -1,14 +1,14 @@
-description: RegexSplitter splits text on the given regular expression.
+description: An abstract base class for splitters that return offsets.
 
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
-<meta itemprop="name" content="text.RegexSplitter" />
+<meta itemprop="name" content="text.SplitterWithOffsets" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="split"/>
 <meta itemprop="property" content="split_with_offsets"/>
 </div>
 
-# text.RegexSplitter
+# text.SplitterWithOffsets
 
 <!-- Insert buttons and diff -->
 
@@ -16,71 +16,48 @@ description: RegexSplitter splits text on the given regular expression.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
+source</a>
 
+An abstract base class for splitters that return offsets.
 
-
-`RegexSplitter` splits text on the given regular expression.
-
-Inherits From: [`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
-[`Splitter`](../text/Splitter.md)
+Inherits From: [`Splitter`](../text/Splitter.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
-<code>text.RegexSplitter(
-    split_regex=None
+<code>text.SplitterWithOffsets(
+    name=None
 )
 </code></pre>
 
-
-
 <!-- Placeholder for "Used in" -->
 
-The default is a newline character pattern. It can also return the beginning and
-ending byte offsets as well.
+Each SplitterWithOffsets subclass must implement the `split_with_offsets`
+method, which returns a tuple containing both the pieces and the offsets where
+those pieces occurred in the input string. E.g.:
 
-By default, this splitter will break on newlines, ignoring any trailing ones.
 ```
-
-> > > splitter = RegexSplitter() text_input=[ ... b"Hi there.\nWhat time is
-> > > it?\nIt is gametime.", ... b"Who let the dogs out?\nWho?\nWho?\nWho?\n\n",
-> > > ... ] splitter.split(text_input)
-> > > <tf.RaggedTensor [[b'Hi there.', b'What time is it?', b'It is gametime.'], [b'Who let the dogs out?', b'Who?', b'Who?', b'Who?']]>
-> > > ```
-
-The splitter can be passed a custom split pattern, as well. The pattern can be
-any string, but we're using a single character (tab) in this example. ```
-
-> > > splitter = RegexSplitter(split_regex='\t') text_input=[ ... b"Hi
-> > > there.\tWhat time is it?\tIt is gametime.", ... b"Who let the dogs
-> > > out?\tWho?\tWho?\tWho?\t\t", ... ] splitter.split(text_input)
-> > > <tf.RaggedTensor [[b'Hi there.', b'What time is it?', b'It is gametime.'], [b'Who let the dogs out?', b'Who?', b'Who?', b'Who?']]>
-> > > ```
-
-<!-- Tabular view -->
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
-
-<tr>
-<td>
-`split_regex`
-</td>
-<td>
-(optional) A string containing the regex pattern of a
-delimiter to split on. Default is '\r?\n'.
-</td>
-</tr>
-</table>
-
-
+>>> class CharSplitter(SplitterWithOffsets):
+...   def split_with_offsets(self, input):
+...     chars, starts = tf.strings.unicode_split_with_offsets(input, 'UTF-8')
+...     lengths = tf.expand_dims(tf.strings.length(input), -1)
+...     ends = tf.concat([starts[..., 1:], tf.cast(lengths, tf.int64)], -1)
+...     return chars, starts, ends
+...   def split(self, input):
+...     return self.split_with_offsets(input)[0]
+>>> pieces, starts, ends = CharSplitter().split_with_offsets("a😊c")
+>>> print(pieces.numpy(), starts.numpy(), ends.numpy())
+[b'a' b'\xf0\x9f\x98\x8a' b'c'] [0 1 5] [1 5 6]
+```
 
 ## Methods
 
 <h3 id="split"><code>split</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>@abc.abstractmethod</code>
 <code>split(
     input
 )
@@ -99,6 +76,7 @@ tf.Tensor([b'small' b'medium' b'large'], shape=(3,), dtype=string)
 ```
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -114,9 +92,8 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </tr>
 </table>
 
-
-
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -130,13 +107,13 @@ the pieces that string was split into.
 
 </table>
 
-
-
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View source</a>
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>@abc.abstractmethod</code>
 <code>split_with_offsets(
     input
 )
@@ -154,6 +131,7 @@ Splits the input tensor, and returns the resulting pieces with offsets.
 ```
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -169,9 +147,8 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </tr>
 </table>
 
-
-
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -179,20 +156,13 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 <td colspan="2">
 A tuple `(pieces, start_offsets, end_offsets)` where:
 
-* `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
-`RaggedTensor`.
-* `start_offsets` is an N+1-dimensional integer `Tensor` or
-`RaggedTensor` containing the starting indices of each piece (byte
-indices for input strings).
-* `end_offsets` is an N+1-dimensional integer `Tensor` or
-`RaggedTensor` containing the exclusive ending indices of each piece
-(byte indices for input strings).
-</td>
-</tr>
+*   `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
+    `RaggedTensor`.
+*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the starting indices of each piece (byte indices for input
+    strings).
+*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the exclusive ending indices of each piece (byte indices for
+    input strings). </td> </tr>
 
 </table>
-
-
-
-
-

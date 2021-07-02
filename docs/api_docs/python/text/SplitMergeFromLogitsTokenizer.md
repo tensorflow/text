@@ -24,7 +24,10 @@ description: Tokenizes a tensor of UTF-8 string into words according to logits.
 
 Tokenizes a tensor of UTF-8 string into words according to logits.
 
-Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md), [`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md)
+Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
+[`Tokenizer`](../text/Tokenizer.md),
+[`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
+[`Splitter`](../text/Splitter.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.SplitMergeFromLogitsTokenizer(

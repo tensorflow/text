@@ -25,8 +25,9 @@ source</a>
 Tokenizer used for BERT.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
-[`Tokenizer`](../text/Tokenizer.md), [`Splitter`](../text/Splitter.md),
-[`Detokenizer`](../text/Detokenizer.md)
+[`Tokenizer`](../text/Tokenizer.md),
+[`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
+[`Splitter`](../text/Splitter.md), [`Detokenizer`](../text/Detokenizer.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.BertTokenizer(
@@ -41,9 +42,12 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 <!-- Placeholder for "Used in" -->
 
 This tokenizer applies an end-to-end, text string to wordpiece tokenization. It
-first applies basic tokenization, and then followed by wordpiece tokenization.
+first applies basic tokenization, followed by wordpiece tokenization.
 
 See `WordpieceTokenizer` for details on the subword tokenization.
+
+For an example of use, see
+https://www.tensorflow.org/text/guide/bert_preprocessing_guide
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -132,9 +136,9 @@ stripping them away.
 `normalization_form`
 </td>
 <td>
-If true and lower_case=False, the input text will be
-normalized to `normalization_form`. See normalize_utf8() op for a list of
-valid values.
+If set to a valid value and lower_case=False, the input
+text will be normalized to `normalization_form`. See normalize_utf8() op
+for a list of valid values.
 </td>
 </tr><tr>
 <td>
@@ -356,7 +360,6 @@ strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

@@ -35,7 +35,6 @@ strategy, then drops elements outside of the segment's allocated budget. See
 `generate_mask()` for more details.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
@@ -82,7 +81,6 @@ For example if the budget of [5] and we have segments of size [3, 4, 2], the
 truncate budget will be allocated as [2, 2, 1].
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -99,7 +97,6 @@ A list of `RaggedTensor` each w/ a shape of [num_batch,
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -128,7 +125,6 @@ Truncate the list of `segments` using the truncation strategy defined by
 `generate_mask`.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -144,7 +140,6 @@ A list of `RaggedTensor`s w/ shape [num_batch, (num_items)].
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

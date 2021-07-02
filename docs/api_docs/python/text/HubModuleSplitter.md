@@ -22,7 +22,8 @@ description: Splitter that uses a Hub module.
 
 Splitter that uses a Hub module.
 
-Inherits From: [`Splitter`](../text/Splitter.md)
+Inherits From: [`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
+[`Splitter`](../text/Splitter.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.HubModuleSplitter(

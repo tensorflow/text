@@ -56,6 +56,35 @@ the source span.
 
 For a definition of span overlap, see the docstring for `span_overlaps()`.
 
+#### Examples:
+
+Given the following source and target spans (with no batch dimensions):
+
+```
+>>> #         0    5    10   15   20   25   30   35   40   45   50   55   60
+>>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
+>>> # Source: [-0-]     [-1-] [2] [3]    [4][-5-][-6-][-7-][-8-][-9-]
+>>> # Target: [-0-][-1-]     [-2-][-3-][-4-] [5] [6]    [7]  [-8-][-9-][10]
+>>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
+>>> source_starts = [0, 10, 16, 20, 27, 30, 35, 40, 45, 50]
+>>> source_limits = [5, 15, 19, 23, 30, 35, 40, 45, 50, 55]
+>>> target_starts = [0,  5, 15, 20, 25, 31, 35, 42, 47, 52, 57]
+>>> target_limits = [5, 10, 20, 25, 30, 34, 38, 45, 52, 57, 61]
+>>> span_alignment(source_starts, source_limits, target_starts, target_limits)
+<tf.Tensor: shape=(10,), dtype=int64,
+    numpy=array([ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1])>
+>>> span_alignment(source_starts, source_limits, target_starts, target_limits,
+...                multivalent_result=True)
+<tf.RaggedTensor [[0], [], [], [], [], [], [], [], [], []]>
+>>> span_alignment(source_starts, source_limits, target_starts, target_limits,
+...                contains=True)
+<tf.Tensor: shape=(10,), dtype=int64,
+    numpy=array([ 0, -1, -1, -1, -1,  5,  6,  7, -1, -1])>
+>>> span_alignment(source_starts, source_limits, target_starts, target_limits,
+...                 partial_overlap=True, multivalent_result=True)
+<tf.RaggedTensor [[0], [], [2], [3], [4], [5], [6], [7], [8], [8, 9]]>
+```
+
 <!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
@@ -152,31 +181,3 @@ returned tensor has shape `[source_size, (num_aligned_target_spans)].
 
 </table>
 
-#### Examples:
-
-Given the following source and target spans (with no batch dimensions):
-
-```
->>> #         0    5    10   15   20   25   30   35   40   45   50   55   60
->>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
->>> # Source: [-0-]     [-1-] [2] [3]    [4][-5-][-6-][-7-][-8-][-9-]
->>> # Target: [-0-][-1-]     [-2-][-3-][-4-] [5] [6]    [7]  [-8-][-9-][10]
->>> #         |====|====|====|====|====|====|====|====|====|====|====|====|
->>> source_starts = [0, 10, 16, 20, 27, 30, 35, 40, 45, 50]
->>> source_limits = [5, 15, 19, 23, 30, 35, 40, 45, 50, 55]
->>> target_starts = [0,  5, 15, 20, 25, 31, 35, 42, 47, 52, 57]
->>> target_limits = [5, 10, 20, 25, 30, 34, 38, 45, 52, 57, 61]
->>> span_alignment(source_starts, source_limits, target_starts, target_limits)
-<tf.Tensor: shape=(10,), dtype=int64,
-    numpy=array([ 0, -1, -1, -1, -1, -1, -1, -1, -1, -1])>
->>> span_alignment(source_starts, source_limits, target_starts, target_limits,
-...                multivalent_result=True)
-<tf.RaggedTensor [[0], [], [], [], [], [], [], [], [], []]>
->>> span_alignment(source_starts, source_limits, target_starts, target_limits,
-...                contains=True)
-<tf.Tensor: shape=(10,), dtype=int64,
-    numpy=array([ 0, -1, -1, -1, -1,  5,  6,  7, -1, -1])>
->>> span_alignment(source_starts, source_limits, target_starts, target_limits,
-...                 partial_overlap=True, multivalent_result=True)
-<tf.RaggedTensor [[0], [], [2], [3], [4], [5], [6], [7], [8], [8, 9]]>
-```

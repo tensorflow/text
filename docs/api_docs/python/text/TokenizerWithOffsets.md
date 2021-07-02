@@ -24,6 +24,7 @@ source</a>
 Base class for tokenizer implementations that return offsets.
 
 Inherits From: [`Tokenizer`](../text/Tokenizer.md),
+[`SplitterWithOffsets`](../text/SplitterWithOffsets.md),
 [`Splitter`](../text/Splitter.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -136,7 +137,6 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
