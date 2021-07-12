@@ -194,9 +194,9 @@ def _round_robin_allocation(row_lengths, max_seq_length):
 
   def _cond(i, dist, quota_used):
     del i
-    have_quota = math_ops.reduce_any(quota_used < max_seq_length_bc)
-    have_space = math_ops.reduce_any(dist < row_lengths)
-    return math_ops.logical_and(have_quota, have_space)
+    have_quota = quota_used < max_seq_length_bc
+    have_space = math_ops.reduce_any(dist < row_lengths, 1)
+    return math_ops.reduce_any(math_ops.logical_and(have_quota, have_space))
 
   def _body(i, dist, quota_used):
     index = math_ops.mod(i, num_segments)
@@ -258,6 +258,7 @@ class RoundRobinTrimmer(Trimmer):
       segment_row_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
       budget = ops.convert_to_tensor(self._max_seq_length)
       results = _round_robin_allocation(segment_row_lengths, budget)
+
       results = array_ops.unstack(results, axis=-1)
       item_selectors = [
           item_selector_ops.FirstNItemSelector(i) for i in results

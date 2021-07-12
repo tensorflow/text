@@ -305,6 +305,24 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               [[[[True], [True], [True]]]],
           ],
       ),
+      dict(
+          descr="Test rank 2; test when one batch has "
+                "elements < max_seq_length",
+          segments=[[[11, 12, 13],
+                     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]],
+                    [[11, 12, 13],
+                     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]]],
+          max_seq_length=7,
+          axis=-1,
+          expected=[
+              [[True, True, True],
+               [True, True, True, True,
+                False, False, False, False, False, False]],
+              [[True, True, True],
+               [True, True, True, False,
+                False, False, False, False, False, False]]
+          ],
+      ),
       # pyformat: enable
   ])
   def testGenerateMask(self,
@@ -337,6 +355,21 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               [[[b"hello"], []]],
               [[[b"whodis"], []]],
           ]),
+      dict(
+          descr="Test rank 2; test when one batch has "
+                "elements < max_seq_length",
+          segments=[[[11, 12, 13],
+                     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]],
+                    [[11, 12, 13],
+                     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]]],
+          max_seq_length=7,
+          axis=-1,
+          expected=[
+              [[11, 12, 13],
+               [21, 22, 23, 24]],
+              [[11, 12, 13],
+               [21, 22, 23]]],
+      ),
       dict(
           descr="Test wordpiece trimming across 2 segments",
           segments=[
