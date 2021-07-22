@@ -183,6 +183,18 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
     return vocab, ids
 
+  def vocab_size(self, name=None):
+    """Returns the vocabulary size.
+
+    Args:
+      name: The name argument that is passed to the op function.
+
+    Returns:
+      A scalar representing the vocabulary size.
+    """
+    with ops.name_scope(name, 'WordpieceTokenizerVocabSize', [self]):
+      return self._vocab_lookup_table.size()
+
   def tokenize(self, input):  # pylint: disable=redefined-builtin
     r"""Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
