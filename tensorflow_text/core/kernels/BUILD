@@ -502,11 +502,27 @@ cc_test(
 
 cc_library(
     name = "whitespace_tokenizer",
-    srcs = ["whitespace_tokenizer.h"],
+    srcs = ["whitespace_tokenizer.cc"],
     hdrs = ["whitespace_tokenizer.h"],
     deps = [
         # absl/strings dep
         "@icu//:common",
+    ],
+)
+
+cc_test(
+    name = "whitespace_tokenizer_test",
+    size = "small",
+    srcs = ["whitespace_tokenizer_test.cc"],
+    deps = [
+        ":whitespace_tokenizer",
+        ":whitespace_tokenizer_config_builder",
+        "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/flags:flag",
+        "//third_party/absl/status",
+        "//third_party/absl/status:statusor",
+        # tf:lib tensorflow dep,
+        # tf:test_main tensorflow dep,
     ],
 )
 

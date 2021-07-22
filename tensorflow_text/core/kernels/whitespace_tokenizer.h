@@ -15,6 +15,9 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_H_
 
+#include <string>
+#include <vector>
+
 #include "absl/strings/string_view.h"
 #include "icu4c/source/common/unicode/umachine.h"
 
@@ -50,8 +53,61 @@ class WhitespaceTokenizerConfig {
   const absl::string_view config_;
   const int max_codepoint_;
 };
+
+class WhitespaceTokenizer {
+ public:
+  // Creates an instance.
+  //
+  // Args:
+  //  * config: A WhitespaceTokenizerConfig which should be created using the
+  //    WhitespaceTokenizerConfigBuilder
+  WhitespaceTokenizer(const WhitespaceTokenizerConfig& cfg)
+      : config_(cfg) { }
+
+  // Tokenizes a string (or series of character codepoints) by whitespace.
+  //
+  // Example:
+  // input = "Show me the way."
+  // tokens = ["Show", "me", "the", "way."]
+  // start_offsets = [0, 5, 8, 12]
+  // end_offsets = [4, 7, 11, 16]
+  //
+  // The input should be UTF-8 but the tokenization is performed on Unicode
+  // codepoints.
+  //
+  // Args:
+  //  * input: The UTF-8 string of an input.
+  //  * tokens: The output tokens.
+  //  * start_offsets: The start offsets of output tokens in the input
+  //    text, in utf-8 bytes.
+  //  * end_offsets: The end offsets of output tokens in the input
+  //    text, in utf-8 bytes.
+  // Note: the start offsets are inclusive and the end offsets are exclusive.
+  void Tokenize(const absl::string_view input,
+                std::vector<std::string>* tokens,
+                std::vector<int>* start_offsets,
+                std::vector<int>* end_offsets);
+
+  // Tokenizes a string (or series of character codepoints) by whitespace.
+  //
+  // Example:
+  // input = "Show me the way."
+  // output = ["Show", "me", "the", "way."]
+  //
+  // The input should be UTF-8 but the tokenization is performed on Unicode
+  // codepoints.
+  //
+  // Args:
+  //  * input: The UTF-8 string of an input.
+  //  * tokens: The output tokens.
+  void Tokenize(const absl::string_view input,
+                std::vector<std::string>* tokens);
+
+ private:
+  const WhitespaceTokenizerConfig config_;
+};
+
 }  // namespace text
 }  // namespace tensorflow
-
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_H_
