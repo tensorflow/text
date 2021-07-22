@@ -47,7 +47,12 @@ def py_tf_text_library(
                 "//conditions:default": ["-pthread"],
             }),
             alwayslink = 1,
-            deps = cc_op_kernels + tf_deps(),
+            deps = cc_op_kernels + select({
+                "@org_tensorflow//tensorflow:mobile": [
+                    "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+                ],
+                "//conditions:default": [],
+            }),
         )
 
         native.cc_binary(
@@ -59,7 +64,12 @@ def py_tf_text_library(
             linkshared = 1,
             deps = [
                 ":" + library_name,
-            ] + tf_deps(),
+            ] + select({
+                "@org_tensorflow//tensorflow:mobile": [
+                    "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+                ],
+                "//conditions:default": [],
+            }),
         )
 
     if srcs:
@@ -73,12 +83,35 @@ def py_tf_text_library(
         )
 
 
-def tf_deps(deps = []):
-    """Generate deps for tensorflow that support android.
+def tf_cc_library(
+        name,
+        srcs = [],
+        hdrs = [],
+        deps = [],
+        tf_deps = [],
+        copts = [],
+        compatible_with = None,
+        testonly = 0,
+        alwayslink = 0):
+    """ A rule to build a TensorFlow library or OpKernel.
+
+    Just like cc_library, but:
+      * Adds alwayslink=1 for kernels (name has kernel in it)
+      * Separates out TF deps for when building for Android.
 
     Args:
-      deps: Dependencies for linux build.
+        name: Name of library
+        srcs: Source files
+        hdrs: Headers files
+        deps: All non-TF dependencies
+        tf_deps: All TF depenedencies
+        copts: C options
+        compatible_with: List of environments target can be built for
+        testonly: If library is only for testing
+        alwayslink: If symbols should be exported
     """
+    if "kernel" in name:
+        alwayslink = 1
     # These are "random" deps likely needed by each library (http://b/142433427)
     oss_deps = [
         "@com_google_absl//absl/container:inlined_vector",
@@ -88,30 +121,21 @@ def tf_deps(deps = []):
         "@com_google_absl//absl/types:optional",
         "@com_google_absl//absl/types:span",
     ]
-    return select({
+    deps += select({
         "@org_tensorflow//tensorflow:mobile": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
         ],
         "//conditions:default": [
             "@local_config_tf//:libtensorflow_framework",
             "@local_config_tf//:tf_header_lib",
-        ] + deps + oss_deps,
+        ] + tf_deps + oss_deps,
     })
-
-# A rule to build a TensorFlow OpKernel.
-#
-# Just like cc_library, but adds alwayslink=1 by default.
-def tf_text_kernel_library(
-        name,
-        srcs = [],
-        hdrs = [],
-        deps = [],
-        copts = [],
-        alwayslink = 1):
     native.cc_library(
         name = name,
         srcs = srcs,
         hdrs = hdrs,
         deps = deps,
         copts = copts,
+        compatible_with = compatible_with,
+        testonly = testonly,
         alwayslink = alwayslink)
