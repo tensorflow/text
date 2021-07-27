@@ -55,18 +55,9 @@ write_to_bazelrc "build --strategy=Genrule=standalone"
 write_to_bazelrc "build -c opt"
 write_to_bazelrc "build --define=framework_shared_object=true"
 write_to_bazelrc "build --experimental_repo_remote_exec"
-
 # By default, build in C++ 14 mode.
-write_to_bazelrc "build:android --cxxopt=-std=c++14"
-write_to_bazelrc "build:android --host_cxxopt=-std=c++14"
-write_to_bazelrc "build:ios --cxxopt=-std=c++14"
-write_to_bazelrc "build:ios --host_cxxopt=-std=c++14"
-write_to_bazelrc "build:linux --cxxopt=-std=c++14"
-write_to_bazelrc "build:linux --host_cxxopt=-std=c++14"
-write_to_bazelrc "build:macos --cxxopt=-std=c++14"
-write_to_bazelrc "build:macos --host_cxxopt=-std=c++14"
-write_to_bazelrc "build:windows --cxxopt=/std:c++14"
-write_to_bazelrc "build:windows --host_cxxopt=/std:c++14"
+write_to_bazelrc "build --cxxopt=-std=c++14"
+write_to_bazelrc "build --host_cxxopt=-std=c++14"
 
 # Config for Android build.
 write_to_bazelrc "build:android --crosstool_top=//external:android/crosstool"
