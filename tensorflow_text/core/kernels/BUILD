@@ -153,8 +153,8 @@ tf_cc_library(
     ],
     deps = [
         ":disjoint_set_forest",
-        # absl/strings dep
-        # absl/types:span dep
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -208,7 +208,7 @@ tf_cc_library(
     deps = [
         ":edit_changes_cc_proto",
         "//third_party/icu/data:icu_normalization_data",
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@icu//:nfkc",
         "@icu//:nfkc_cf",
     ],
@@ -219,7 +219,7 @@ tf_cc_library(
     srcs = ["regex_split.cc"],
     hdrs = ["regex_split.h"],
     deps = [
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@com_googlesource_code_re2//:re2",
     ],
 )
@@ -243,7 +243,7 @@ cc_test(
     deps = [
         ":regex_split",
         "@com_google_googletest//:gtest_main",
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@com_googlesource_code_re2//:re2",
         # tf:lib tensorflow dep,
     ],
@@ -257,7 +257,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
     ],
 )
 
@@ -285,7 +285,7 @@ tf_cc_library(
     deps = [
         ":sentence_breaking_utils",
         ":sentence_fragmenter",
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
 )
@@ -298,7 +298,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
 )
@@ -335,7 +335,7 @@ tf_cc_library(
     ],
     deps = [
         ":sentence_fragmenter_v2",
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
     ],
 )
 
@@ -347,7 +347,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
 )
@@ -357,8 +357,8 @@ cc_test(
     srcs = ["sentence_fragmenter_v2_test.cc"],
     deps = [
         ":sentence_fragmenter_v2",
+        "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest_main",
-        # absl/strings dep
         "@icu//:common",
     ],
 )
@@ -376,8 +376,8 @@ tf_cc_library(
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/meta:type_traits",
-        # absl/strings dep
-        # absl/types:span dep
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
         "@com_google_sentencepiece//src:sentencepiece_cc_proto",
         "@com_google_sentencepiece//src:sentencepiece_processor",
     ],
@@ -413,7 +413,7 @@ tf_cc_library(
     ],
     deps = [
         "@com_google_absl//absl/base:core_headers",
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
 )
@@ -439,7 +439,7 @@ tf_cc_library(
     ],
     deps = [
         "@com_google_absl//absl/base:core_headers",
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
 )
@@ -516,7 +516,7 @@ tf_cc_library(
     srcs = ["wordpiece_tokenizer.cc"],
     hdrs = ["wordpiece_tokenizer.h"],
     deps = [
-        # absl/strings dep
+        "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
 )
