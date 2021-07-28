@@ -519,8 +519,8 @@ cc_test(
         ":whitespace_tokenizer_config_builder",
         "@com_google_googletest//:gtest_main",
         "@com_google_absl//absl/flags:flag",
-        "//third_party/absl/status",
-        "//third_party/absl/status:statusor",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
         # tf:lib tensorflow dep,
         # tf:test_main tensorflow dep,
     ],
@@ -546,6 +546,48 @@ cc_test(
         "@icu//:common",
         # tf:lib tensorflow dep,
         # tf:test_main tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "whitespace_tokenizer_kernel",
+    srcs = ["whitespace_tokenizer_kernel.cc"],
+    hdrs = ["whitespace_tokenizer_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":whitespace_tokenizer_kernel_template",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "whitespace_tokenizer_kernel_template",
+    hdrs = ["whitespace_tokenizer_kernel_template.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":whitespace_tokenizer",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:shape tensorflow dep,
+        # lite/kernels/shim:tensor_view tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "whitespace_tokenizer_tflite",
+    srcs = ["whitespace_tokenizer_tflite.cc"],
+    hdrs = ["whitespace_tokenizer_tflite.h"],
+    deps = [
+        ":whitespace_tokenizer_kernel_template",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels/shim:tflite_op_shim tensorflow dep,
     ],
 )
 
