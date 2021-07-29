@@ -526,29 +526,6 @@ cc_test(
     ],
 )
 
-cc_library(
-    name = "whitespace_tokenizer_config_builder",
-    srcs = ["whitespace_tokenizer_config_builder.cc"],
-    hdrs = ["whitespace_tokenizer_config_builder.h"],
-    deps = [
-        "@icu//:common",
-    ],
-)
-
-cc_test(
-    name = "whitespace_tokenizer_config_builder_test",
-    size = "small",
-    srcs = ["whitespace_tokenizer_config_builder_test.cc"],
-    deps = [
-        ":whitespace_tokenizer",
-        ":whitespace_tokenizer_config_builder",
-        "@com_google_googletest//:gtest_main",
-        "@icu//:common",
-        # tf:lib tensorflow dep,
-        # tf:test_main tensorflow dep,
-    ],
-)
-
 tf_cc_library(
     name = "whitespace_tokenizer_kernel",
     srcs = ["whitespace_tokenizer_kernel.cc"],
@@ -585,9 +562,40 @@ tf_cc_library(
     hdrs = ["whitespace_tokenizer_tflite.h"],
     deps = [
         ":whitespace_tokenizer_kernel_template",
+        "@org_tensorflow//tensorflow/lite/c:common",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:op_kernel",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:shape",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tensor_view",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
+        "@org_tensorflow//tensorflow/lite/kernels:kernel_util",
+        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
+        "@org_tensorflow//tensorflow/lite:type_to_tflitetype",
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels/shim:tflite_op_shim tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "whitespace_tokenizer_config_builder",
+    srcs = ["whitespace_tokenizer_config_builder.cc"],
+    hdrs = ["whitespace_tokenizer_config_builder.h"],
+    deps = [
+        "@icu//:common",
+    ],
+)
+
+cc_test(
+    name = "whitespace_tokenizer_config_builder_test",
+    size = "small",
+    srcs = ["whitespace_tokenizer_config_builder_test.cc"],
+    deps = [
+        ":whitespace_tokenizer",
+        ":whitespace_tokenizer_config_builder",
+        "@com_google_googletest//:gtest_main",
+        "@icu//:common",
+        # tf:lib tensorflow dep,
+        # tf:test_main tensorflow dep,
     ],
 )
 

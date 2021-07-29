@@ -39,6 +39,7 @@ cc_library(
         ":text_similarity_metric_ops_cc",
         ":unicode_script_tokenizer_cc",
         ":whitespace_tokenizer_cc",
+        ":whitespace_tokenizer_v2_cc",
         ":wordpiece_tokenizer_cc",
     ],
 )
@@ -94,6 +95,7 @@ py_library(
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
         ":whitespace_tokenizer",
+        ":whitespace_tokenizer_v2",
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python:util tensorflow dep,
@@ -1082,7 +1084,7 @@ py_test(
 
 py_tf_text_library(
     name = "whitespace_tokenizer",
-    srcs = ["python/ops/whitespace_tokenizer.py"],
+    srcs = [],
     cc_op_defs = ["core/ops/whitespace_tokenize_op.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:whitespace_tokenize_kernel",
@@ -1100,6 +1102,28 @@ py_tf_text_library(
     ],
 )
 
+py_tf_text_library(
+    name = "whitespace_tokenizer_v2",
+    srcs = ["python/ops/whitespace_tokenizer.py"],
+    cc_op_defs = ["core/ops/whitespace_tokenizer_op.cc"],
+    cc_op_kernels = [
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+        "//tensorflow_text/core/kernels:whitespace_tokenizer_kernel",
+    ],
+    deps = [
+        ":tokenization",
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python:math_ops tensorflow dep,
+        # python:string_ops tensorflow dep,
+        # python/ops/ragged:ragged_conversion_ops tensorflow dep,
+        # python/ops/ragged:ragged_string_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+        "//tensorflow_text/core/pybinds:pywrap_whitespace_tokenizer_config_builder",
+    ],
+)
+
 py_test(
     name = "whitespace_tokenizer_test",
     size = "large",
@@ -1108,7 +1132,7 @@ py_test(
     shard_count = 4,
     srcs_version = "PY3",
     deps = [
-        ":whitespace_tokenizer",
+        ":whitespace_tokenizer_v2",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
