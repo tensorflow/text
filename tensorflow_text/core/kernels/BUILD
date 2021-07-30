@@ -215,6 +215,61 @@ tf_cc_library(
 )
 
 tf_cc_library(
+    name = "ngrams_kernel_template",
+    hdrs = ["ngrams_kernel_template.h"],
+    tf_deps = [
+        # tf/platform:tstring tensorflow dep,
+    ],
+    deps = [
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
+        # lite/kernels/shim:tensor_view tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "ngrams_kernel",
+    srcs = ["ngrams_kernel.cc"],
+    hdrs = ["ngrams_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":ngrams_kernel_template",
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "ngrams_tflite",
+    srcs = ["ngrams_tflite.cc"],
+    hdrs = ["ngrams_tflite.h"],
+    deps = [
+        ":ngrams_kernel_template",
+        # lite:context tensorflow dep,
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels/shim:tflite_op_shim tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "ngrams_tflite_test",
+    srcs = ["ngrams_tflite_test.cc"],
+    deps = [
+        ":ngrams_tflite",
+        "@com_google_googletest//:gtest_main",
+        "//third_party/flatbuffers",
+        # lite:string_util tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels:test_util tensorflow dep,
+        # lite/schema:schema_fbs tensorflow dep,
+    ],
+)
+
+tf_cc_library(
     name = "regex_split",
     srcs = ["regex_split.cc"],
     hdrs = ["regex_split.h"],
