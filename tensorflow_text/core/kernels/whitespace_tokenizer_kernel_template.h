@@ -182,7 +182,7 @@ absl::Status WhitespaceTokenizeWithOffsetsV2Op<Rt>::FillOutputTensor(
 
 template <tflite::shim::Runtime Rt>
 const char WhitespaceTokenizeWithOffsetsV2Op<Rt>::kOpName[] =
-    "TFText>WhitespaceTokenizeWithOffsetsV2";
+    "WhitespaceTokenizeWithOffsetsV2";
 
 template <tflite::shim::Runtime Rt>
 const char WhitespaceTokenizeWithOffsetsV2Op<Rt>::kDoc[] = R"doc(
