@@ -1,3 +1,4 @@
+load("//devtools/python/blaze:pytype.bzl", "pytype_strict_binary")
 load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
 
 # [internal] load build_test.bzl
@@ -1275,5 +1276,21 @@ py_test(
         "@absl_py//absl:app",
         "@absl_py//absl/testing:parameterized",
         # python/user_ops:ops tensorflow dep,
+    ],
+)
+
+pytype_strict_binary(
+    name = "oss_scripts/build_docs",
+    srcs = ["oss_scripts/build_docs.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        "@absl_py//absl:app",
+        "//third_party/py/absl/flags",
+        # tensorflow package dep,
+        "//third_party/py/tensorflow_docs/api_generator:doc_controls",
+        "//third_party/py/tensorflow_docs/api_generator:generate_lib",
+        "//third_party/py/tensorflow_docs/api_generator:public_api",
+        "//third_party/py/tensorflow_text",
     ],
 )

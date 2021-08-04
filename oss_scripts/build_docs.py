@@ -50,10 +50,6 @@ flags.DEFINE_bool("search_hints", True,
 flags.DEFINE_string("site_path", "/text/api_docs/python",
                     "Path prefix in the _toc.yaml")
 
-flags.DEFINE_bool("gen_report", False,
-                  ("Generate an API report containing the health of the"
-                   "docstrings of the public API."))
-
 
 def _hide_layer_and_module_methods():
   """Hide methods and properties defined in the base classes of keras layers."""
@@ -90,7 +86,6 @@ def build_docs():
       search_hints=True,
       code_url_prefix=FLAGS.code_url_prefix,
       site_path="text/api_docs/python",
-      gen_report=FLAGS.gen_report,
       callbacks=[public_api.explicit_package_contents_filter])
   doc_generator.build(FLAGS.output_dir)
 
