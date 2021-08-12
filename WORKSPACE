@@ -4,11 +4,13 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "com_google_sentencepiece",
-    strip_prefix = "sentencepiece-720a72df78fde8f466dbe3a259a2ce6f1c7fc076",
-    sha256 = "5139b8f03a432071241e0b330f0afa1f85f5bf9f3ed9e6f3e29f9a88ffede85c",
+    strip_prefix = "sentencepiece-1.0.0",
+    sha256 = "c05901f30a1d0ed64cbcf40eba08e48894e1b0e985777217b7c9036cac631346",
     urls = [
-        "https://github.com/google/sentencepiece/archive/720a72df78fde8f466dbe3a259a2ce6f1c7fc076.zip"
+        "https://github.com/google/sentencepiece/archive/1.0.0.zip"
     ],
+    patches = ["//third_party/sentencepiece:processor.patch"],
+    patch_args = ["-p1"],
 )
 
 http_archive(
