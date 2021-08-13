@@ -37,7 +37,7 @@ tf_org_notebook_test(
 tf_org_notebook_test(
     name = "text_generation",
     ipynb = "text_generation.ipynb",
-    tags = ["notsan"],  # Test is flakey (times out) when run with tsan.
+    tags = ["notsan"],  # Test is flaky (times out) when run with tsan.
     deps = [
         "//third_party/py/matplotlib",
         #  numpy dep,
@@ -56,7 +56,10 @@ tf_org_notebook_test(
 tf_org_notebook_test(
     name = "transformer",
     ipynb = "transformer.ipynb",
-    tags = ["notsan"],  # Test is flaky (times out) when run with tsan.
+    tags = [
+        "noasan",  # Test is flaky (times out) when run with asan.
+        "notsan",  # Test is flaky (times out) when run with tsan.
+    ],
     deps = [
         "//third_party/py/matplotlib",
         #  numpy dep,
