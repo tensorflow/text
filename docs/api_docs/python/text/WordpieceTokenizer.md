@@ -9,6 +9,7 @@ description: Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 <meta itemprop="property" content="split_with_offsets"/>
 <meta itemprop="property" content="tokenize"/>
 <meta itemprop="property" content="tokenize_with_offsets"/>
+<meta itemprop="property" content="vocab_size"/>
 </div>
 
 # text.WordpieceTokenizer
@@ -391,5 +392,47 @@ offsets for the inclusive start of the `jth` token in `input[i1...iN]`.
 end_offsets[i1...iN, j]: is a `RaggedTensor` of the byte offsets for the
 exclusive end of the `jth` token in `input[i`...iN]` (exclusive, i.e., first
 byte after the end of the token). </td> </tr>
+
+</table>
+
+<h3 id="vocab_size"><code>vocab_size</code></h3>
+
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/wordpiece_tokenizer.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>vocab_size(
+    name=None
+)
+</code></pre>
+
+Returns the vocabulary size.
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`name`
+</td>
+<td>
+The name argument that is passed to the op function.
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A scalar representing the vocabulary size.
+</td>
+</tr>
 
 </table>

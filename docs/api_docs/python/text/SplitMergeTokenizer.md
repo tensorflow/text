@@ -108,46 +108,47 @@ first non-space character, regardless of the label of that character, for
 instance:
 
 ```python
-input="New York"
-labels=[0, 1, 1, 0, 1, 1, 1, 1]
-output tokens=["New", "York"]
+  input="New York"
+  labels=[0, 1, 1, 0, 1, 1, 1, 1]
+  output tokens=["New", "York"]
 ```
 
 ```python
-input="New York"
-labels=[0, 1, 1, 1, 1, 1, 1, 1]
-output tokens=["New", "York"]
+  input="New York"
+  labels=[0, 1, 1, 1, 1, 1, 1, 1]
+  output tokens=["New", "York"]
 ```
 
 ```python
-input="New York",
-labels=[0, 1, 1, 1, 0, 1, 1, 1]
-output tokens=["New", "York"]
+  input="New York",
+  labels=[0, 1, 1, 1, 0, 1, 1, 1]
+  output tokens=["New", "York"]
 ```
 
 *   otherwise, whether to create a new word or not for the first non-space
     character depends on the label of that character, for instance:
 
-```python
-input="New York",
-labels=[0, 1, 1, 0, 1, 1, 1, 1]
-output tokens=["NewYork"]
-```
+    ```python
+    input="New York",
+    labels=[0, 1, 1, 0, 1, 1, 1, 1]
+    output tokens=["NewYork"]
+    ```
 
-```python
-input="New York",
-labels=[0, 1, 1, 1, 1, 1, 1, 1]
-output tokens=["NewYork"]
-```
+    ```python
+    input="New York",
+    labels=[0, 1, 1, 1, 1, 1, 1, 1]
+    output tokens=["NewYork"]
+    ```
 
-```python
-input="New York",
-labels=[0, 1, 1, 1, 0, 1, 1, 1]
-output tokens=["New", "York"]
-```
-</td>
-</tr>
-</table>
+    ```python
+    input="New York",
+    labels=[0, 1, 1, 1, 0, 1, 1, 1]
+    output tokens=["New", "York"]
+    ```
+
+    </td>
+    </tr>
+    </table>
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -210,46 +211,47 @@ first non-space character, regardless of the label of that character, for
 instance:
 
 ```python
-input="New York"
-labels=[0, 1, 1, 0, 1, 1, 1, 1]
-output tokens=["New", "York"]
+  input="New York"
+  labels=[0, 1, 1, 0, 1, 1, 1, 1]
+  output tokens=["New", "York"]
 ```
 
 ```python
-input="New York"
-labels=[0, 1, 1, 1, 1, 1, 1, 1]
-output tokens=["New", "York"]
+  input="New York"
+  labels=[0, 1, 1, 1, 1, 1, 1, 1]
+  output tokens=["New", "York"]
 ```
 
 ```python
-input="New York",
-labels=[0, 1, 1, 1, 0, 1, 1, 1]
-output tokens=["New", "York"]
+  input="New York",
+  labels=[0, 1, 1, 1, 0, 1, 1, 1]
+  output tokens=["New", "York"]
 ```
 
 *   otherwise, whether to create a new word or not for the first non-space
     character depends on the label of that character, for instance:
 
-```python
-input="New York",
-labels=[0, 1, 1, 0, 1, 1, 1, 1]
-output tokens=["NewYork"]
-```
+    ```python
+    input="New York",
+    labels=[0, 1, 1, 0, 1, 1, 1, 1]
+    output tokens=["NewYork"]
+    ```
 
-```python
-input="New York",
-labels=[0, 1, 1, 1, 1, 1, 1, 1]
-output tokens=["NewYork"]
-```
+    ```python
+    input="New York",
+    labels=[0, 1, 1, 1, 1, 1, 1, 1]
+    output tokens=["NewYork"]
+    ```
 
-```python
-input="New York",
-labels=[0, 1, 1, 1, 0, 1, 1, 1]
-output tokens=["New", "York"]
-```
-</td>
-</tr>
-</table>
+    ```python
+    input="New York",
+    labels=[0, 1, 1, 1, 0, 1, 1, 1]
+    output tokens=["New", "York"]
+    ```
+
+    </td>
+    </tr>
+    </table>
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">

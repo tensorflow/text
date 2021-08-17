@@ -60,8 +60,8 @@ array([b'\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe', b'KADOKAWA'],
 A `Tensor` or `RaggedTensor` of type string. (Must be UTF-8.)
 normalization_form: One of the following string values ('NFC', 'NFKC',
 'NFD', 'NFKD'). Default is 'NFKC'. NOTE: `NFD` and `NFKD` for
-`normalize_utf8_with_offsets_map` will not be available until the
-tf.text release w/ ICU 69 (scheduled after 4/2021).
+  `normalize_utf8_with_offsets_map` will not be available until the
+  tf.text release w/ ICU 69 (scheduled after 4/2021).
 </td>
 </tr><tr>
 <td>

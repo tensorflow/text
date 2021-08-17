@@ -185,9 +185,8 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </tr>
 </table>
 
-
-
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -195,13 +194,13 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 <td colspan="2">
 A tuple `(pieces, start_offsets, end_offsets)` where:
 * `pieces` is a `RaggedTensor` of strings where `pieces[i1...iN, j]` is
-the string content of the `j-th` piece in `input_strs[i1...iN]`
+  the string content of the `j-th` piece in `input_strs[i1...iN]`
 * `start_offsets` is a `RaggedTensor` of int64s where
-`start_offsets[i1...iN, j]` is the byte offset for the start of the
-`j-th` piece in `input_strs[i1...iN]`.
+  `start_offsets[i1...iN, j]` is the byte offset for the start of the
+  `j-th` piece in `input_strs[i1...iN]`.
 * `end_offsets` is a `RaggedTensor` of int64s where
-`end_offsets[i1...iN, j]` is the byte offset immediately after the
-end of the `j-th` piece in `input_strs[i...iN]`.
+  `end_offsets[i1...iN, j]` is the byte offset immediately after the
+  end of the `j-th` piece in `input_strs[i...iN]`.
 </td>
 </tr>
 

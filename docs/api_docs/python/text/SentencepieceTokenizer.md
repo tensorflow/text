@@ -81,8 +81,8 @@ A scalar for sampling.
 * `nbest_size = {0,1}`: No sampling is performed. (default)
 * `nbest_size > 1`: samples from the nbest_size results.
 * `nbest_size < 0`: assuming that nbest_size is infinite and samples
-from the all hypothesis (lattice) using
-forward-filtering-and-backward-sampling algorithm.
+    from the all hypothesis (lattice) using
+    forward-filtering-and-backward-sampling algorithm.
 </td>
 </tr><tr>
 <td>

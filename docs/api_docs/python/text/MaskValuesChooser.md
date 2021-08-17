@@ -102,9 +102,21 @@ random token is substituted for tokens selected for masking. Default is
 </tr>
 </table>
 
+<!-- Tabular view -->
 
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
 
+<tr> <td> `mask_token` </td> <td>
 
+</td> </tr><tr> <td> `random_token_rate` </td> <td>
+
+</td> </tr><tr> <td> `vocab_size` </td> <td>
+
+</td>
+</tr>
+</table>
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">

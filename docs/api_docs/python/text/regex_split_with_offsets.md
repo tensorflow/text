@@ -119,13 +119,14 @@ be kept in the result.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
 <tr class="alt">
 <td colspan="2">
 A tuple of RaggedTensors containing:
-(split_results, begin_offsets, end_offsets)
+  (split_results, begin_offsets, end_offsets)
 where tokens is of type string, begin_offsets and end_offsets are of type
 int64.
 </td>

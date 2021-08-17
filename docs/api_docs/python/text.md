@@ -157,7 +157,6 @@ fragments in a given text. (deprecated)
 [`wordshape(...)`](./text/wordshape.md): Determine wordshape features for each input string.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Other Members</h2></th></tr>
@@ -167,7 +166,7 @@ fragments in a given text. (deprecated)
 __version__<a id="__version__"></a>
 </td>
 <td>
-`'2.6.0-rc0'`
+`'2.6.0'`
 </td>
 </tr>
 </table>

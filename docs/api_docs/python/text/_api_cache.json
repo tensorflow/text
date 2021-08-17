@@ -494,6 +494,7 @@
     "text.WordpieceTokenizer.split_with_offsets": true,
     "text.WordpieceTokenizer.tokenize": true,
     "text.WordpieceTokenizer.tokenize_with_offsets": true,
+    "text.WordpieceTokenizer.vocab_size": true,
     "text.__version__": true,
     "text.case_fold_utf8": false,
     "text.coerce_to_structurally_valid_utf8": false,

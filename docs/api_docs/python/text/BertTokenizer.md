@@ -50,6 +50,117 @@ For an example of use, see
 https://www.tensorflow.org/text/guide/bert_preprocessing_guide
 
 <!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
+
+<tr>
+<td>
+`vocab_lookup_table`
+</td>
+<td>
+A lookup table implementing the LookupInterface
+containing the vocabulary of subwords or a string which is the file path
+to the vocab.txt file.
+</td>
+</tr><tr>
+<td>
+`suffix_indicator`
+</td>
+<td>
+(optional) The characters prepended to a wordpiece to
+indicate that it is a suffix to another subword. Default is '##'.
+</td>
+</tr><tr>
+<td>
+`max_bytes_per_word`
+</td>
+<td>
+(optional) Max size of input token. Default is 100.
+</td>
+</tr><tr>
+<td>
+`max_chars_per_token`
+</td>
+<td>
+(optional) Max size of subwords, excluding suffix
+indicator. If known, providing this improves the efficiency of decoding
+long words.
+</td>
+</tr><tr>
+<td>
+`token_out_type`
+</td>
+<td>
+(optional) The type of the token to return. This can be
+`tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
+</td>
+</tr><tr>
+<td>
+`unknown_token`
+</td>
+<td>
+(optional) The value to use when an unknown token is found.
+Default is "[UNK]". If this is set to a string, and `token_out_type` is
+`tf.int64`, the `vocab_lookup_table` is used to convert the
+`unknown_token` to an integer. If this is set to `None`, out-of-vocabulary
+tokens are left as is.
+</td>
+</tr><tr>
+<td>
+`split_unknown_characters`
+</td>
+<td>
+(optional) Whether to split out single unknown
+characters as subtokens. If False (default), words containing unknown
+characters will be treated as single unknown tokens.
+</td>
+</tr><tr>
+<td>
+`lower_case`
+</td>
+<td>
+bool - If true, a preprocessing step is added to lowercase the
+text, apply NFD normalization, and strip accents characters.
+</td>
+</tr><tr>
+<td>
+`keep_whitespace`
+</td>
+<td>
+bool - If true, preserves whitespace characters instead of
+stripping them away.
+</td>
+</tr><tr>
+<td>
+`normalization_form`
+</td>
+<td>
+If set to a valid value and lower_case=False, the input
+text will be normalized to `normalization_form`. See normalize_utf8() op
+for a list of valid values.
+</td>
+</tr><tr>
+<td>
+`preserve_unused_token`
+</td>
+<td>
+If true, text in the regex format `\\[unused\\d+\\]`
+will be treated as a token and thus remain preserved as is to be looked up
+in the vocabulary.
+</td>
+</tr><tr>
+<td>
+`basic_tokenizer_class`
+</td>
+<td>
+If set, the class to use instead of BasicTokenizer
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>

@@ -54,6 +54,7 @@ force_split_at_break_character is true, create a new word starting at the first
 non-space character, regardless of the 0/1 label for that character, for
 instance:
 
+~~~
 ```python
 s = [2.0, 1.0]  # sample pair of logits indicating a split action
 m = [1.0, 3.0]  # sample pair of logits indicating a merge action
@@ -70,31 +71,31 @@ strings=["New York"],
 logits=[[s, m, m, m, s, m, m, m]]
 output tokens=[["New", "York"]]
 ```
+~~~
 
 *   otherwise, create a new word / continue the current one depending on the
     action for the first non-whitespace character.
 
-```python
-s = [2.0, 1.0]  # sample pair of logits indicating a split action
-m = [1.0, 3.0]  # sample pair of logits indicating a merge action
+    ```python
+    s = [2.0, 1.0]  # sample pair of logits indicating a split action
+    m = [1.0, 3.0]  # sample pair of logits indicating a merge action
 
-strings=["New York"],
-logits=[[s, m, m, s, m, m, m, m]]
-output tokens=[["NewYork"]]
+    strings=["New York"],
+    logits=[[s, m, m, s, m, m, m, m]]
+    output tokens=[["NewYork"]]
 
-strings=["New York"],
-logits=[[s, m, m, m, m, m, m, m]]
-output tokens=[["NewYork"]]
+    strings=["New York"],
+    logits=[[s, m, m, m, m, m, m, m]]
+    output tokens=[["NewYork"]]
 
-strings=["New York"],
-logits=[[s, m, m, m, s, m, m, m]]
-output tokens=[["New", "York"]]
-```
-</td>
-</tr>
-</table>
+    strings=["New York"],
+    logits=[[s, m, m, m, s, m, m, m]]
+    output tokens=[["New", "York"]]
+    ```
 
-
+    </td>
+    </tr>
+    </table>
 
 ## Methods
 
@@ -348,9 +349,8 @@ extra (padding) pairs of logits are ignored.
 </tr>
 </table>
 
-
-
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -358,13 +358,13 @@ extra (padding) pairs of logits are ignored.
 <td colspan="2">
 A tuple `(tokens, start_offsets, end_offsets)` where:
 * `tokens` is a `RaggedTensor` of strings where `tokens[i, k]` is
-the string content of the `k-th` token in `strings[i]`
+  the string content of the `k-th` token in `strings[i]`
 * `start_offsets` is a `RaggedTensor` of int64s where
-`start_offsets[i, k]` is the byte offset for the start of the
-`k-th` token in `strings[i]`.
+  `start_offsets[i, k]` is the byte offset for the start of the
+  `k-th` token in `strings[i]`.
 * `end_offsets` is a `RaggedTensor` of int64s where
-`end_offsets[i, k]` is the byte offset immediately after the
-end of the `k-th` token in `strings[i]`.
+  `end_offsets[i, k]` is the byte offset immediately after the
+  end of the `k-th` token in `strings[i]`.
 </td>
 </tr>
 

@@ -179,16 +179,14 @@ An N-dimensional UTF-8 string (or optionally integer) `Tensor` or
 <td colspan="2">
 A tuple `(pieces, start_offsets, end_offsets)` where:
 
-* `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
-`RaggedTensor`.
-* `start_offsets` is an N+1-dimensional integer `Tensor` or
-`RaggedTensor` containing the starting indices of each piece (byte
-indices for input strings).
-* `end_offsets` is an N+1-dimensional integer `Tensor` or
-`RaggedTensor` containing the exclusive ending indices of each piece
-(byte indices for input strings).
-</td>
-</tr>
+*   `pieces` is an N+1-dimensional UTF-8 string or integer `Tensor` or
+    `RaggedTensor`.
+*   `start_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the starting indices of each piece (byte indices for input
+    strings).
+*   `end_offsets` is an N+1-dimensional integer `Tensor` or `RaggedTensor`
+    containing the exclusive ending indices of each piece (byte indices for
+    input strings). </td> </tr>
 
 </table>
 

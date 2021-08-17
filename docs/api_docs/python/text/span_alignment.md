@@ -166,6 +166,7 @@ A name for the operation (optional).
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
@@ -173,9 +174,9 @@ A name for the operation (optional).
 <td colspan="2">
 An int64 tensor with values in the range: `-1 <= result < target_size`.
 If `multivalent_result=False`, then the returned tensor has shape
-`[source_size]`, where `source_size` is the length of the `source_start`
-and `source_limit` input tensors.  If `multivalent_result=True`, then the
-returned tensor has shape `[source_size, (num_aligned_target_spans)].
+  `[source_size]`, where `source_size` is the length of the `source_start`
+  and `source_limit` input tensors.  If `multivalent_result=True`, then the
+  returned tensor has shape `[source_size, (num_aligned_target_spans)].
 </td>
 </tr>
 
