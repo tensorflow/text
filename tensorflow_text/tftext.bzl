@@ -121,6 +121,7 @@ def tf_cc_library(
         "@com_google_absl//absl/strings:cord",
         "@com_google_absl//absl/types:optional",
         "@com_google_absl//absl/types:span",
+        "@com_google_absl//absl/time",
     ]
     deps += select({
         "@org_tensorflow//tensorflow:mobile": [
