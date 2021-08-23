@@ -115,7 +115,6 @@ def tf_cc_library(
     # These are "random" deps likely needed by each library (http://b/142433427)
     oss_deps = [
         "@com_google_absl//absl/strings:cord",
-        "@com_google_absl//absl/time",
     ]
     deps += select({
         "@org_tensorflow//tensorflow:mobile": [
