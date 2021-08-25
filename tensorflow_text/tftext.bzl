@@ -72,15 +72,14 @@ def py_tf_text_library(
             }),
         )
 
-    if srcs:
-        native.py_library(
-            name = name,
-            srcs = srcs,
-            srcs_version = "PY2AND3",
-            visibility = visibility,
-            data = [":" + binary_name],
-            deps = deps,
-        )
+    native.py_library(
+        name = name,
+        srcs = srcs,
+        srcs_version = "PY2AND3",
+        visibility = visibility,
+        data = [":" + binary_name],
+        deps = deps,
+    )
 
 
 def tf_cc_library(

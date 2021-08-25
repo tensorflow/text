@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from tensorflow.python.compat import compat
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
@@ -29,12 +30,16 @@ from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_string_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
+from tensorflow_text.core.pybinds import pywrap_whitespace_tokenizer_config_builder
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
-# pylint: disable=g-bad-import-order
+# pylint: disable=g-bad-import-order,unused-import
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_whitespace_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_whitespace_tokenizer.so'))
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_whitespace_tokenizer_v2 = load_library.load_op_library(resource_loader.get_path_to_datafile('_whitespace_tokenizer_v2.so'))
 
 _tf_text_whitespace_tokenizer_op_create_counter = monitoring.Counter(
     "/nlx/api/python/whitespace_tokenizer_create_counter",
@@ -48,6 +53,9 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
     """Initializes the WhitespaceTokenizer.
     """
     super(WhitespaceTokenizer, self).__init__()
+    if compat.forward_compatible(2021, 9, 13):
+      self._config = (pywrap_whitespace_tokenizer_config_builder.
+                      build_whitespace_tokenizer_config())
     _tf_text_whitespace_tokenizer_op_create_counter.get_cell().increase_by(1)
 
   def tokenize(self, input):  # pylint: disable=redefined-builtin
@@ -129,8 +137,11 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
           # normal.
-          return self._whitespace_tokenize_with_offsets_encode_decode_wrapper(
-              input_tensor)
+          if compat.forward_compatible(2021, 9, 13):
+            return self._whitespace_tokenize_with_offsets(input_tensor)
+          else:
+            return self._whitespace_tokenize_with_offsets_encode_decode_wrapper(
+                input_tensor)
 
   def _whitespace_tokenize_with_offsets_encode_decode_wrapper(
       self, input_tensor):
@@ -189,3 +200,27 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
         flat_values=output_offset_ends,
         nested_row_splits=[output_outer_splits])
     return (codepoint_tokens, codepoint_offset_starts, codepoint_offset_ends)
+
+  def _whitespace_tokenize_with_offsets(self, input_tensor):
+    """Tokenizes a tensor of codepoints with rank of 1.
+
+    Args:
+      input_tensor: Single-dimension Tensor of strings to tokenize.
+
+    Returns:
+      Tuple of tokenized codepoints with offsets relative to the codepoints have
+      a shape of [num_strings, (num_tokens or num_offsets)].
+    """
+    (values, row_splits, start_offsets, end_offsets) = (
+        gen_whitespace_tokenizer_v2.tf_text_whitespace_tokenize_with_offsets_v2(
+            input_values=input_tensor, input_config=self._config))
+    values = RaggedTensor.from_nested_row_splits(
+        flat_values=values,
+        nested_row_splits=[row_splits])
+    start_offsets = RaggedTensor.from_nested_row_splits(
+        flat_values=start_offsets,
+        nested_row_splits=[row_splits])
+    end_offsets = RaggedTensor.from_nested_row_splits(
+        flat_values=end_offsets,
+        nested_row_splits=[row_splits])
+    return (values, start_offsets, end_offsets)
