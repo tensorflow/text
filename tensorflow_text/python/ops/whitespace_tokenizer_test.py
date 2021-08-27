@@ -20,11 +20,25 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
+import sys
+
+import numpy as np
+import tensorflow as tf
+
+from tensorflow.lite.python import interpreter
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops.whitespace_tokenizer import WhitespaceTokenizer
+# Force loaded shared object symbols to be globally visible. This is needed so
+# that the interpreter_wrapper, in one .so file, can see the op resolver
+# in a different .so file. Note that this may already be set by default.
+# pylint: disable=g-import-not-at-top,g-bad-import-order,unused-import
+if hasattr(sys, 'setdlopenflags') and hasattr(sys, 'getdlopenflags'):
+  sys.setdlopenflags(sys.getdlopenflags() | os.RTLD_GLOBAL)
+from tensorflow_text.core.pybinds import pywrap_tflite_registrar
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -513,6 +527,47 @@ class WhitespaceTokenizerV2OpTest(test_util.TensorFlowTestCase):
     self.assertAllEqual(tokens, expected_tokens)
     self.assertAllEqual(starts, expected_offset_starts)
     self.assertAllEqual(ends, expected_offset_ends)
+
+  @test_util.with_forward_compatibility_horizons([2021, 9, 30])
+  def testTfLite(self):
+    """Checks TFLite conversion and inference."""
+
+    class TokenizerModel(tf.keras.Model):
+
+      def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.tokenizer = WhitespaceTokenizer()
+
+      def call(self, input_tensor, **kwargs):
+        return self.tokenizer.tokenize(input_tensor).flat_values
+
+    # Test input data.
+    input_data = np.array(['Some minds are better kept apart'])
+
+    # Define a Keras model.
+    model = TokenizerModel()
+    # Do TF.Text inference.
+    tf_result = model(tf.constant(input_data))
+
+    # Convert to TFLite.
+    converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS]
+    converter.allow_custom_ops = True
+    tflite_model = converter.convert()
+
+    # Do TFLite inference.
+    interp = interpreter.InterpreterWithCustomOps(
+        model_content=tflite_model,
+        custom_op_registerers=['AddWhitespaceTokenizeWithOffsetsV2'])
+    interp.allocate_tensors()
+    input_details = interp.get_input_details()
+    interp.set_tensor(input_details[0]['index'], input_data)
+    interp.invoke()
+    output_details = interp.get_output_details()
+    tflite_result = interp.get_tensor(output_details[0]['index'])
+
+    # Assert the results are identical.
+    self.assertAllEqual(tflite_result, tf_result)
 
 
 if __name__ == '__main__':

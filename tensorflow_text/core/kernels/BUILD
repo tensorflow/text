@@ -8,6 +8,13 @@ licenses(["notice"])
 # Visibility rules
 package(default_visibility = ["//visibility:public"])
 
+filegroup(
+    name = "tflite_headers",
+    srcs = [
+        "whitespace_tokenizer_tflite.h",
+    ],
+)
+
 exports_files(["LICENSE"])
 
 tf_cc_library(
@@ -617,14 +624,11 @@ tf_cc_library(
     hdrs = ["whitespace_tokenizer_tflite.h"],
     deps = [
         ":whitespace_tokenizer_kernel_template",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:op_kernel",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:shape",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tensor_view",
         "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite/kernels:kernel_util",
         "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
-        "@org_tensorflow//tensorflow/lite:type_to_tflitetype",
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels/shim:tflite_op_shim tensorflow dep,

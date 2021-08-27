@@ -1134,10 +1134,12 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":whitespace_tokenizer_v2",
+        # tensorflow package dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        "//tensorflow_text/core/pybinds:pywrap_tflite_registrar",
     ],
 )
 
