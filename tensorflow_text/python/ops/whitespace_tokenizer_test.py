@@ -20,9 +20,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-import sys
-
 import numpy as np
 import tensorflow as tf
 
@@ -31,14 +28,8 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
-from tensorflow_text.python.ops.whitespace_tokenizer import WhitespaceTokenizer
-# Force loaded shared object symbols to be globally visible. This is needed so
-# that the interpreter_wrapper, in one .so file, can see the op resolver
-# in a different .so file. Note that this may already be set by default.
-# pylint: disable=g-import-not-at-top,g-bad-import-order,unused-import
-if hasattr(sys, 'setdlopenflags') and hasattr(sys, 'getdlopenflags'):
-  sys.setdlopenflags(sys.getdlopenflags() | os.RTLD_GLOBAL)
 from tensorflow_text.core.pybinds import pywrap_tflite_registrar
+from tensorflow_text.python.ops.whitespace_tokenizer import WhitespaceTokenizer
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -556,9 +547,10 @@ class WhitespaceTokenizerV2OpTest(test_util.TensorFlowTestCase):
     tflite_model = converter.convert()
 
     # Do TFLite inference.
+    op = pywrap_tflite_registrar.AddWhitespaceTokenizeWithOffsetsV2
     interp = interpreter.InterpreterWithCustomOps(
         model_content=tflite_model,
-        custom_op_registerers=['AddWhitespaceTokenizeWithOffsetsV2'])
+        custom_op_registerers=[op])
     interp.allocate_tensors()
     input_details = interp.get_input_details()
     interp.set_tensor(input_details[0]['index'], input_data)
