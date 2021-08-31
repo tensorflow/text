@@ -99,6 +99,7 @@ if is_windows; then
   SHARED_LIBRARY_DIR="${HEADER_DIR:0:-7}python"
   SHARED_LIBRARY_NAME="_pywrap_tensorflow_internal.lib"
 fi
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SHARED_LIBRARY_DIR
 write_action_env_to_bazelrc "TF_HEADER_DIR" ${HEADER_DIR}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${SHARED_LIBRARY_DIR}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_NAME" ${SHARED_LIBRARY_NAME}
