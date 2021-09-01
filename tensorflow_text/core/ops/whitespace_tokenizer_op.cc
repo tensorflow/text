@@ -21,9 +21,14 @@
 namespace tensorflow {
 namespace text {
 
+#define REGISTER_OP_SHIM_IMPL_TMP(ctr, op_kernel_cls)                        \
+  static ::tensorflow::InitOnStartupMarker const register_op##ctr            \
+      TF_ATTRIBUTE_UNUSED =                                                  \
+          TF_INIT_ON_STARTUP_IF(SHOULD_REGISTER_OP(op_kernel_cls::OpName())) \
+          << ::tflite::shim::CreateOpDefBuilderWrapper<op_kernel_cls>()
+
 TF_ATTRIBUTE_ANNOTATE("tf:op")
-TF_NEW_ID_FOR_INIT(REGISTER_OP_SHIM_IMPL,
-                   "WhitespaceTokenizeWithOffsetsV2",
+TF_NEW_ID_FOR_INIT(REGISTER_OP_SHIM_IMPL_TMP,
                    WhitespaceTokenizeWithOffsetsV2OpKernel);
 
 }  // namespace text
