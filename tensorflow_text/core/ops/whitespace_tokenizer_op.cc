@@ -21,8 +21,10 @@
 namespace tensorflow {
 namespace text {
 
-REGISTER_TF_OP_SHIM("WhitespaceTokenizeWithOffsetsV2",
-                    WhitespaceTokenizeWithOffsetsV2OpKernel);
+TF_ATTRIBUTE_ANNOTATE("tf:op")
+TF_NEW_ID_FOR_INIT(REGISTER_OP_SHIM_IMPL,
+                   "WhitespaceTokenizeWithOffsetsV2",
+                   WhitespaceTokenizeWithOffsetsV2OpKernel);
 
 }  // namespace text
 }  // namespace tensorflow
