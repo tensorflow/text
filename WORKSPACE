@@ -2,6 +2,15 @@ workspace(name = "org_tensorflow_text")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+
+FLAT_BUFFERS_SHA = "a83caf5910644ba1c421c002ef68e42f21c15f9f"
+http_archive(
+    name = "com_github_google_flatbuffers",
+    sha256 = "b8efbc25721e76780752bad775a97c3f77a0250271e2db37fc747b20e8b0f24a",
+    strip_prefix = "flatbuffers-" + FLAT_BUFFERS_SHA,
+    url = "https://github.com/google/flatbuffers/archive/" + FLAT_BUFFERS_SHA + ".tar.gz",
+)
+
 http_archive(
     name = "com_google_sentencepiece",
     strip_prefix = "sentencepiece-1.0.0",
@@ -11,6 +20,16 @@ http_archive(
     ],
     patches = ["//third_party/sentencepiece:processor.patch"],
     patch_args = ["-p1"],
+)
+
+http_archive(
+    name = "darts_clone",
+    build_file = "//third_party/darts_clone:BUILD.bzl",
+    sha256 = "c97f55d05c98da6fcaf7f9ecc6a6dc6bc5b18b8564465f77abff8879d446491c",
+    strip_prefix = "darts-clone-e40ce4627526985a7767444b6ed6893ab6ff8983",
+    urls = [
+        "https://github.com/s-yata/darts-clone/archive/e40ce4627526985a7767444b6ed6893ab6ff8983.zip",
+    ],
 )
 
 http_archive(
