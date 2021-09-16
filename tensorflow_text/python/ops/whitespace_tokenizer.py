@@ -53,7 +53,7 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
     """Initializes the WhitespaceTokenizer.
     """
     super(WhitespaceTokenizer, self).__init__()
-    if compat.forward_compatible(2021, 9, 13):
+    if compat.forward_compatible(2021, 9, 27):
       self._config = (pywrap_whitespace_tokenizer_config_builder.
                       build_whitespace_tokenizer_config())
     _tf_text_whitespace_tokenizer_op_create_counter.get_cell().increase_by(1)
@@ -137,7 +137,7 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
           # normal.
-          if compat.forward_compatible(2021, 9, 13):
+          if compat.forward_compatible(2021, 9, 27):
             return self._whitespace_tokenize_with_offsets(input_tensor)
           else:
             return self._whitespace_tokenize_with_offsets_encode_decode_wrapper(
