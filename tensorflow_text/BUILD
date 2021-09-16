@@ -1246,11 +1246,11 @@ py_test(
 ##############
 
 # To run the benchmarks:
-#   bazel run -c opt benchmark_test_name -- --benchmarks=.
+#   bazel run -c opt benchmark_test_name -- --benchmark_filter=.
 
-# The --benchmarks flag specifies the list of benchmarks to run using a
+# The --benchmark_filter flag specifies the list of benchmarks to run using a
 # regular expression that is matched against the benchmark methods' name.
-# e.g. --benchmarks="wordpiece" will run the Wordpiece Tokenizer benchmarks.
+# e.g. --benchmark_filter="wordpiece" will run the Wordpiece Tokenizer benchmarks.
 
 py_library(name = "profiler_lib")
 
