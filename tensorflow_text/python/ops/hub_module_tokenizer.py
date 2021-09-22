@@ -32,6 +32,7 @@ class HubModuleTokenizer(TokenizerWithOffsets):
   tokenize() instead of the more general and less informatively named split().
 
   Example:
+
   >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
   >>> segmenter = HubModuleTokenizer(HUB_MODULE)
   >>> segmenter.tokenize(["新华社北京"])
@@ -39,6 +40,7 @@ class HubModuleTokenizer(TokenizerWithOffsets):
                      b'\xe5\x8c\x97\xe4\xba\xac']]>
 
   You can also use this tokenizer to return the split strings and their offsets:
+
   >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
   >>> segmenter = HubModuleTokenizer(HUB_MODULE)
   >>> pieces, starts, ends = segmenter.tokenize_with_offsets(["新华社北京"])
