@@ -157,6 +157,7 @@ py_tf_text_library(
     srcs = [],
     cc_op_defs = ["core/ops/constrained_sequence_op.cc"],
     cc_op_kernels = [
+        "//tensorflow_text/core/kernels:constrained_sequence",
         "//tensorflow_text/core/kernels:constrained_sequence_kernel",
     ],
     deps = [
