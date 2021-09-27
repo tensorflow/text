@@ -60,6 +60,7 @@ class HubModuleSplitter(SplitterWithOffsets):
   class is not using them.
 
   Example:
+
   >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
   >>> segmenter = HubModuleSplitter(HUB_MODULE)
   >>> segmenter.split(["新华社北京"])
@@ -67,6 +68,7 @@ class HubModuleSplitter(SplitterWithOffsets):
                      b'\xe5\x8c\x97\xe4\xba\xac']]>
 
   You can also use this tokenizer to return the split strings and their offsets:
+
   >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
   >>> segmenter = HubModuleSplitter(HUB_MODULE)
   >>> pieces, starts, ends = segmenter.split_with_offsets(["新华社北京"])
