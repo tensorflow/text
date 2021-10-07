@@ -635,7 +635,7 @@ REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                             .TypeConstraint<tensorflow::tstring>("T")
                             .TypeConstraint<int64>("Tsplits"),
                         SentencepieceDetokenizeOp<tensorflow::tstring, int64>);
-ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceTokenizeWithOffsetsOp");
+ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceDetokenizeOp");
 
 class SentencepieceVocabSizeOp : public OpKernel {
  public:
