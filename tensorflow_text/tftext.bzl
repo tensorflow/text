@@ -115,6 +115,7 @@ def tf_cc_library(
     oss_deps = [
         "@com_google_absl//absl/strings:cord",
         "@com_google_absl//absl/time",
+        "@com_google_absl//absl/types:variant",
     ]
     deps += select({
         "@org_tensorflow//tensorflow:mobile": [
