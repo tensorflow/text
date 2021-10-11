@@ -19,15 +19,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from tensorflow.python.compat import compat
 from tensorflow.python.eager import monitoring
-from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_conversion_ops
-from tensorflow.python.ops.ragged import ragged_string_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
 from tensorflow_text.core.pybinds import pywrap_whitespace_tokenizer_config_builder
@@ -53,9 +48,8 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
     """Initializes the WhitespaceTokenizer.
     """
     super(WhitespaceTokenizer, self).__init__()
-    if compat.forward_compatible(2021, 9, 27):
-      self._config = (pywrap_whitespace_tokenizer_config_builder.
-                      build_whitespace_tokenizer_config())
+    self._config = (pywrap_whitespace_tokenizer_config_builder.
+                    build_whitespace_tokenizer_config())
     _tf_text_whitespace_tokenizer_op_create_counter.get_cell().increase_by(1)
 
   def tokenize(self, input):  # pylint: disable=redefined-builtin
@@ -137,69 +131,7 @@ class WhitespaceTokenizer(TokenizerWithOffsets):
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
           # normal.
-          if compat.forward_compatible(2021, 9, 27):
-            return self._whitespace_tokenize_with_offsets(input_tensor)
-          else:
-            return self._whitespace_tokenize_with_offsets_encode_decode_wrapper(
-                input_tensor)
-
-  def _whitespace_tokenize_with_offsets_encode_decode_wrapper(
-      self, input_tensor):
-    """Tokenizes a tensor of UTF-8 strings with rank of 1.
-
-    Args:
-      input_tensor: The single dimensional Tensor to tokenize.
-
-    Returns:
-      Tuple of RaggedTensors of tokenized text and byte offsets, with shapes
-      [num_strings, (num_tokens or num_offsets)].
-    """
-    # Decode the strings and get byte offsets
-    (codepoints, byte_start_offsets) = (
-        ragged_string_ops.unicode_decode_with_offsets(input_tensor, "UTF-8"))
-    byte_end_offsets = array_ops.concat([
-        byte_start_offsets[:, 1:],
-        math_ops.cast(
-            array_ops.expand_dims(string_ops.string_length(input_tensor), 1),
-            dtypes.int64)
-    ], 1)
-
-    # Tokenize
-    (codepoint_tokens, codepoint_start_offsets, codepoint_end_offsets) = (
-        self._whitespace_tokenize_codepoints_with_offsets(codepoints))
-
-    # Encode the codepoints and translate the codepoint offsets to byte offsets.
-    return (ragged_string_ops.unicode_encode(codepoint_tokens, "UTF-8"),
-            array_ops.batch_gather(byte_start_offsets, codepoint_start_offsets),
-            array_ops.batch_gather(
-                byte_end_offsets,
-                math_ops.subtract(codepoint_end_offsets, [1])))
-
-  def _whitespace_tokenize_codepoints_with_offsets(self, codepoints_tensor):
-    """Tokenizes a tensor of codepoints with rank of 1.
-
-    Args:
-      codepoints_tensor: Single-dimension Tensor of codepoints to tokenize.
-
-    Returns:
-      Tuple of tokenized codepoints with offsets relative to the codepoints have
-      a shape of [num_strings, (num_tokens or num_offsets)].
-    """
-    (output_values, output_values_inner_splits, output_offset_starts,
-     output_offset_ends, output_outer_splits) = (
-         gen_whitespace_tokenizer.whitespace_tokenize_with_offsets(
-             input_values=codepoints_tensor.flat_values,
-             input_splits=codepoints_tensor.row_splits))
-    codepoint_tokens = RaggedTensor.from_nested_row_splits(
-        flat_values=output_values,
-        nested_row_splits=[output_outer_splits, output_values_inner_splits])
-    codepoint_offset_starts = RaggedTensor.from_nested_row_splits(
-        flat_values=output_offset_starts,
-        nested_row_splits=[output_outer_splits])
-    codepoint_offset_ends = RaggedTensor.from_nested_row_splits(
-        flat_values=output_offset_ends,
-        nested_row_splits=[output_outer_splits])
-    return (codepoint_tokens, codepoint_offset_starts, codepoint_offset_ends)
+          return self._whitespace_tokenize_with_offsets(input_tensor)
 
   def _whitespace_tokenize_with_offsets(self, input_tensor):
     """Tokenizes a tensor of codepoints with rank of 1.
