@@ -99,6 +99,7 @@ py_library(
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python:util tensorflow dep,
+        "//tensorflow_text/core/pybinds:pywrap_tflite_registrar",
         "//tensorflow_text/tools/wordpiece_vocab",
     ],
 )
