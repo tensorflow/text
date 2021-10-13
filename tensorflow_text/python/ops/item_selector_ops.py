@@ -223,8 +223,7 @@ class RandomItemSelector(ItemSelector):
     return self._selection_rate
 
   def get_selection_mask(self, input_ids, axis):
-    selectable = super(RandomItemSelector, self).get_selectable(
-        input_ids, axis)
+    selectable = self.get_selectable(input_ids, axis)
 
     # Run the selection algorithm on positions RT
     positions_flat = math_ops.range(array_ops.size(input_ids.flat_values))
