@@ -163,10 +163,10 @@ fragments in a given text. (deprecated)
 
 <tr>
 <td>
-__version__<a id="__version__"></a>
+**version**<a id="__version__"></a>
 </td>
 <td>
-`'2.6.0'`
+`'2.7.0-rc0'`
 </td>
 </tr>
 </table>

@@ -100,23 +100,9 @@ uses `tf.random.shuffle`.
 </tr>
 </table>
 
-<!-- Tabular view -->
 
- <table class="responsive fixed orange">
-<colgroup><col width="214px"><col></colgroup>
-<tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
 
-<tr> <td> `max_selections_per_batch` </td> <td>
 
-</td> </tr><tr> <td> `selection_rate` </td> <td>
-
-</td> </tr><tr> <td> `shuffle_fn` </td> <td>
-
-</td> </tr><tr> <td> `unselectable_ids` </td> <td>
-
-</td>
-</tr>
-</table>
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">

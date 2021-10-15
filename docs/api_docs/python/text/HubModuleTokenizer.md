@@ -54,14 +54,17 @@ tokenize() instead of the more general and less informatively named split().
 ```
 
 You can also use this tokenizer to return the split strings and their offsets:
-```
 
-> > > HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1" segmenter =
-> > > HubModuleTokenizer(HUB_MODULE) pieces, starts, ends =
-> > > segmenter.tokenize_with_offsets(["新华社北京"]) print("pieces: %s starts: %s
-> > > ends: %s" % (pieces, starts, ends)) pieces:
-> > > <tf.RaggedTensor [[b'\xe6\x96\xb0\xe5\x8d\x8e\xe7\xa4\xbe', b'\xe5\x8c\x97\xe4\xba\xac']]>
-> > > starts: <tf.RaggedTensor [[0, 9]]> ends: <tf.RaggedTensor [[9, 15]]> ```
+```
+>>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
+>>> segmenter = HubModuleTokenizer(HUB_MODULE)
+>>> pieces, starts, ends = segmenter.tokenize_with_offsets(["新华社北京"])
+>>> print("pieces: %s starts: %s ends: %s" % (pieces, starts, ends))
+pieces: <tf.RaggedTensor [[b'\xe6\x96\xb0\xe5\x8d\x8e\xe7\xa4\xbe',
+                           b'\xe5\x8c\x97\xe4\xba\xac']]>
+starts: <tf.RaggedTensor [[0, 9]]>
+ends: <tf.RaggedTensor [[9, 15]]>
+```
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -184,7 +187,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
