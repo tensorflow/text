@@ -14,6 +14,7 @@
 
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/pytypes.h"
+#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_tflite.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
 
 PYBIND11_MODULE(pywrap_tflite_registrar, m) {
@@ -32,4 +33,22 @@ PYBIND11_MODULE(pywrap_tflite_registrar, m) {
       The function that adds WhitespaceTokenizeWithOffsetsV2 to the TFLite
       interpreter.
       )pbdoc");
+  m.def(
+      "AddFastWordpieceTokenizer",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::AddFastWordpieceTokenizer(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      The function that adds FastWordpieceTokenizer to the TFLite interpreter.
+      )pbdoc");
+  m.def(
+      "AddFastWordpieceDetokenizer",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::AddFastWordpieceDetokenizer(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+    The function that adds FastWordpieceDetokenizer to the TFLite interpreter.
+    )pbdoc");
 }

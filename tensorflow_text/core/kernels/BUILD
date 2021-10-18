@@ -1,6 +1,6 @@
 # Kernels for tf.text ops.
-
 # [internal] load cc_proto_library.bzl
+load("@flatbuffers//:build_defs.bzl", "flatbuffer_cc_library")
 load("//tensorflow_text:tftext.bzl", "tf_cc_library")
 
 licenses(["notice"])
@@ -11,11 +11,156 @@ package(default_visibility = ["//visibility:public"])
 filegroup(
     name = "tflite_headers",
     srcs = [
+        "fast_wordpiece_tokenizer_tflite.h",
         "whitespace_tokenizer_tflite.h",
     ],
 )
 
 exports_files(["LICENSE"])
+
+flatbuffer_cc_library(
+    name = "fast_wordpiece_tokenizer_config",
+    srcs = [
+        "fast_wordpiece_tokenizer_config.fbs",
+    ],
+)
+
+cc_library(
+    name = "fast_wordpiece_tokenizer_utils",
+    hdrs = [
+        "fast_wordpiece_tokenizer_utils.h",
+    ],
+    deps = [
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@icu//:nfkc",
+    ],
+)
+
+cc_test(
+    name = "fast_wordpiece_tokenizer_utils_test",
+    srcs = ["fast_wordpiece_tokenizer_utils_test.cc"],
+    deps = [
+        ":fast_wordpiece_tokenizer_utils",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+tf_cc_library(
+    name = "fast_wordpiece_tokenizer",
+    srcs = ["fast_wordpiece_tokenizer.cc"],
+    hdrs = [
+        "fast_wordpiece_tokenizer.h",
+    ],
+    deps = [
+        ":darts_clone_trie_wrapper",
+        ":fast_wordpiece_tokenizer_config",
+        ":fast_wordpiece_tokenizer_utils",
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@icu//:nfkc",
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "fast_wordpiece_builder",
+    srcs = ["fast_wordpiece_builder.cc"],
+    hdrs = [
+        "fast_wordpiece_builder.h",
+    ],
+    deps = [
+        ":darts_clone_trie_builder",
+        ":darts_clone_trie_wrapper",
+        ":fast_wordpiece_tokenizer_config",
+        ":fast_wordpiece_tokenizer_utils",
+        ":sentence_fragmenter_v2",
+        ":wordpiece_tokenizer",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@icu//:nfkc",
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
+filegroup(
+    name = "fast_wordpiece_tokenizer_testdata",
+    srcs = glob(["testdata/**"]),
+)
+
+cc_test(
+    name = "fast_wordpiece_tokenizer_test",
+    srcs = ["fast_wordpiece_tokenizer_test.cc"],
+    data = [":fast_wordpiece_tokenizer_testdata"],
+    deps = [
+        ":fast_wordpiece_builder",
+        ":fast_wordpiece_tokenizer",
+        "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/flags:flag",
+        # tf:lib tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "fast_wordpiece_tokenizer_kernel_template",
+    hdrs = ["fast_wordpiece_tokenizer_kernel_template.h"],
+    deps = [
+        ":fast_wordpiece_tokenizer",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "fast_wordpiece_kernel",
+    srcs = ["fast_wordpiece_kernel.cc"],
+    hdrs = ["fast_wordpiece_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":fast_wordpiece_tokenizer_kernel_template",
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "fast_wordpiece_tokenizer_tflite",
+    srcs = ["fast_wordpiece_tokenizer_tflite.cc"],
+    hdrs = ["fast_wordpiece_tokenizer_tflite.h"],
+    deps = [
+        ":fast_wordpiece_tokenizer_kernel_template",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:lib",
+        "@org_tensorflow//tensorflow/lite/c:common",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
+        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels/shim:tflite_op_shim tensorflow dep,
+    ],
+)
+
+#cc_test(
+#    name = "fast_wordpiece_tokenizer_op_test",
+#    size = "small",
+#    srcs = ["core/ops/fast_wordpiece_tokenizer_op_test.cc"],
+#    deps = [
+#        ":fast_wordpiece_tokenizer_cc",
+#        # tf:framework tensorflow dep,
+#        # tf:test tensorflow dep,
+#        # tf:test_main tensorflow dep,
+#        # tf:testlib tensorflow dep,
+#        # tf/framework:shape_inference_testutil tensorflow dep,
+#        # tf/kernels:ops_testutil tensorflow dep,
+#    ],
+#)
 
 tf_cc_library(
     name = "constrained_sequence",
@@ -119,6 +264,43 @@ cc_test(
         # tf:testlib tensorflow dep,
         # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:constrained_sequence_op_cc",
+    ],
+)
+
+cc_library(
+    name = "darts_clone_trie_builder",
+    srcs = [
+        "darts_clone_trie_builder.cc",
+    ],
+    hdrs = [
+        "darts_clone_trie_builder.h",
+    ],
+    deps = [
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/status:statusor",
+        "@darts_clone",
+    ],
+)
+
+cc_library(
+    name = "darts_clone_trie_wrapper",
+    hdrs = [
+        "darts_clone_trie_wrapper.h",
+    ],
+    deps = [
+        "@com_google_absl//absl/status:statusor",
+    ],
+)
+
+cc_test(
+    name = "darts_clone_trie_test",
+    size = "small",
+    srcs = ["darts_clone_trie_test.cc"],
+    deps = [
+        ":darts_clone_trie_builder",
+        ":darts_clone_trie_wrapper",
+        "@com_google_absl//absl/status",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -268,7 +450,7 @@ cc_test(
     deps = [
         ":ngrams_tflite",
         "@com_google_googletest//:gtest_main",
-        "//third_party/flatbuffers",
+        "@flatbuffers",
         # lite:string_util tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels:test_util tensorflow dep,
@@ -348,7 +530,7 @@ tf_cc_library(
         ":sentence_breaking_utils",
         ":sentence_fragmenter",
         "@com_google_absl//absl/strings",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -361,7 +543,7 @@ tf_cc_library(
     ],
     deps = [
         "@com_google_absl//absl/strings",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -373,7 +555,7 @@ cc_test(
         ":sentence_breaking_utils",
         "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -410,7 +592,7 @@ tf_cc_library(
     ],
     deps = [
         "@com_google_absl//absl/strings",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -421,7 +603,7 @@ cc_test(
         ":sentence_fragmenter_v2",
         "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest_main",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -477,7 +659,7 @@ tf_cc_library(
     deps = [
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/strings",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -503,7 +685,7 @@ tf_cc_library(
     deps = [
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/strings",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -515,7 +697,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -542,7 +724,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -567,7 +749,7 @@ cc_library(
     hdrs = ["whitespace_tokenizer.h"],
     deps = [
         "@com_google_absl//absl/strings",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -639,7 +821,7 @@ cc_library(
     srcs = ["whitespace_tokenizer_config_builder.cc"],
     hdrs = ["whitespace_tokenizer_config_builder.h"],
     deps = [
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 
@@ -651,7 +833,7 @@ cc_test(
         ":whitespace_tokenizer",
         ":whitespace_tokenizer_config_builder",
         "@com_google_googletest//:gtest_main",
-        "@icu//:common",
+        "@icu//:nfkc",
         # tf:lib tensorflow dep,
         # tf:test_main tensorflow dep,
     ],
@@ -676,7 +858,7 @@ tf_cc_library(
     hdrs = ["wordpiece_tokenizer.h"],
     deps = [
         "@com_google_absl//absl/strings",
-        "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 

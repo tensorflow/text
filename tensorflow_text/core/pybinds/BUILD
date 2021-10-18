@@ -16,14 +16,48 @@ pybind_extension(
     hdrs = [
         "//tensorflow_text/core/kernels:tflite_headers",
     ],
-    additional_exported_symbols = ["AddWhitespaceTokenizeWithOffsetsV2"],
+    additional_exported_symbols = [
+        "AddFastWordpieceDetokenizer",
+        "AddFastWordpieceTokenizer",
+        "AddWhitespaceTokenizeWithOffsetsV2",
+    ],
     module_name = "pywrap_tflite_registrar",
     deps = [
         "@pybind11",
         # lite:framework tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels:builtin_ops tensorflow dep,
+        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_tflite",
         "//tensorflow_text/core/kernels:whitespace_tokenizer_tflite",
+    ],
+)
+
+pybind_extension(
+    name = "pywrap_fast_wordpiece_builder",
+    srcs = ["pywrap_fast_wordpiece_builder.cc"],
+    additional_exported_symbols = [
+        "BuildFastWordpieceModel",
+    ],
+    copts = ["-fexceptions"],
+    features = ["-use_header_modules"],
+    module_name = "pywrap_fast_wordpiece_builder",
+    srcs_version = "PY3ONLY",
+    deps = [
+        "//tensorflow_text/core/kernels:fast_wordpiece_builder",
+        "@pybind11",
+    ],
+)
+
+py_test(
+    name = "pywrap_fast_wordpiece_builder_test",
+    srcs = ["pywrap_fast_wordpiece_builder_test.py"],
+    data = [
+        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_testdata",
+    ],
+    python_version = "PY3",
+    deps = [
+        ":pywrap_fast_wordpiece_builder",
+        # tensorflow package dep,
     ],
 )
 
