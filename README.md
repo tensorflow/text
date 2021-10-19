@@ -331,7 +331,8 @@ to do with Homebrew.
 1. [build and install TensorFlow](https://www.tensorflow.org/install/source).
 1. Clone the TF Text repo:
    ```Shell
-   git clone https://github.com/tensorflow/text.git && cd text
+   git clone https://github.com/tensorflow/text.git
+   cd text
    ```
 1. Run the build script to create a pip package:
    ```Shell
