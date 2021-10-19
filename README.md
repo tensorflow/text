@@ -330,9 +330,9 @@ to do with Homebrew.
 
 1. [build and install TensorFlow](https://www.tensorflow.org/install/source).
 1. Clone the TF Text repo:
-   `git clone https://github.com/tensorflow/text.git`
+   ```git clone https://github.com/tensorflow/text.git && cd text```
 1. Run the build script to create a pip package:
-   `./oss_scripts/run_build.sh`
+   ```./oss_scripts/run_build.sh```
    After this step, there should be a `*.whl` file in current directory. File name similar to `tensorflow_text-2.5.0rc0-cp38-cp38-linux_x86_64.whl`.
 1. Install the package to environment:
-   `pip install ./tensorflow_text-*-*-*-os_platform.whl`
+   ```pip install ./tensorflow_text-*-*-*-os_platform.whl```
