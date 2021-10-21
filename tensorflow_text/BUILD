@@ -345,7 +345,6 @@ py_library(
     srcs = ["python/ops/ngrams_op.py"],
     deps = [
         ":sliding_window_op",
-        #  enum dep,
         # python:errors tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python:math_ops tensorflow dep,
@@ -1222,7 +1221,6 @@ py_library(
     name = "wordshape_ops",
     srcs = ["python/ops/wordshape_ops.py"],
     deps = [
-        #  enum dep,
         # python:array_ops tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python:string_ops tensorflow dep,
