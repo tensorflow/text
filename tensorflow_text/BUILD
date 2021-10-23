@@ -737,7 +737,16 @@ py_tf_text_library(
 
 # This is required for other external users to build tests using this model.
 exports_files(
-    glob(["python/ops/test_data/test_oss_model.*"]),
+    glob([
+        "python/ops/test_data/test_oss_model.*",
+    ]),
+)
+
+filegroup(
+    name = "test_data_segmenter_hub_module",
+    srcs = glob([
+        "python/ops/test_data/segmenter_hub_module/**",
+    ]),
 )
 
 py_test(
