@@ -25,8 +25,10 @@ from tensorflow_text.python.ops import *
 # Public symbols in the "tensorflow_text" package.  Symbols are sorted in
 # increasing order of their lowercase version.
 _allowed_symbols = [
+    "build_fast_wordpiece_model",
     "BertTokenizer",
     "Detokenizer",
+    "FastWordpieceTokenizer",
     "FirstNItemSelector",
     "HubModuleSplitter",
     "HubModuleTokenizer",

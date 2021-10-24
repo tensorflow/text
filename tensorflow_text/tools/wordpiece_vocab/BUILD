@@ -61,3 +61,14 @@ py_test(
         # tensorflow package dep,
     ],
 )
+
+cc_binary(
+    name = "build_fast_wordpiece_model",
+    srcs = ["build_fast_wordpiece_model.cc"],
+    deps = [
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/strings",
+        # tf:lib tensorflow dep,
+        "//tensorflow_text/core/kernels:fast_wordpiece_builder",
+    ],
+)

@@ -104,3 +104,5 @@ write_action_env_to_bazelrc "TF_HEADER_DIR" ${HEADER_DIR}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${SHARED_LIBRARY_DIR}
 write_action_env_to_bazelrc "TF_SHARED_LIBRARY_NAME" ${SHARED_LIBRARY_NAME}
 write_action_env_to_bazelrc "TF_CXX11_ABI_FLAG" ${TF_ABIFLAG}
+
+export BAZEL_LINKLIBS=-l%:libstdc++.a
