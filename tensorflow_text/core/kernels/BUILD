@@ -440,9 +440,9 @@ tf_cc_library(
         "@com_google_absl//absl/meta:type_traits",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
-        "@com_google_sentencepiece//src:sentencepiece_cc_proto",
-        "@com_google_sentencepiece//src:sentencepiece_model_cc_proto",
-        "@com_google_sentencepiece//src:sentencepiece_processor",
+        "@com_google_sentencepiece//:sentencepiece_cc_proto",
+        "@com_google_sentencepiece//:sentencepiece_model_cc_proto",
+        "@com_google_sentencepiece//:sentencepiece_processor",
     ],
 )
 
