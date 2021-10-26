@@ -3,6 +3,19 @@ workspace(name = "org_tensorflow_text")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "icu",
+    strip_prefix = "icu-release-64-2",
+    sha256 = "dfc62618aa4bd3ca14a3df548cd65fe393155edd213e49c39f3a30ccd618fc27",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/unicode-org/icu/archive/release-64-2.zip",
+        "https://github.com/unicode-org/icu/archive/release-64-2.zip",
+    ],
+    build_file = "//third_party/icu:BUILD.bzl",
+    patches = ["//third_party/icu:udata.patch"],
+    patch_args = ["-p1"],
+)
+
+http_archive(
     name = "com_google_sentencepiece",
     strip_prefix = "sentencepiece-1.0.0",
     sha256 = "c05901f30a1d0ed64cbcf40eba08e48894e1b0e985777217b7c9036cac631346",
@@ -14,16 +27,13 @@ http_archive(
 )
 
 http_archive(
-    name = "icu",
-    strip_prefix = "icu-release-64-2",
-    sha256 = "dfc62618aa4bd3ca14a3df548cd65fe393155edd213e49c39f3a30ccd618fc27",
+    name = "darts_clone",
+    build_file = "//third_party/darts_clone:BUILD.bzl",
+    sha256 = "c97f55d05c98da6fcaf7f9ecc6a6dc6bc5b18b8564465f77abff8879d446491c",
+    strip_prefix = "darts-clone-e40ce4627526985a7767444b6ed6893ab6ff8983",
     urls = [
-        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/unicode-org/icu/archive/release-64-2.zip",
-        "https://github.com/unicode-org/icu/archive/release-64-2.zip",
+        "https://github.com/s-yata/darts-clone/archive/e40ce4627526985a7767444b6ed6893ab6ff8983.zip",
     ],
-    build_file = "//third_party/icu:BUILD.bzl",
-    patches = ["//third_party/icu:udata.patch"],
-    patch_args = ["-p1"],
 )
 
 http_archive(
