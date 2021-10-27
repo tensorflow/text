@@ -499,7 +499,7 @@ _TEST_SUFFIX_INDICATOR = "##"
 _TEST_UNKNOWN_TOKEN = "<unk>"
 
 # The same WordPiece model but precompiled in buffer.
-_TEST_MODEL_BUFFER_PATH = "google3/third_party/tensorflow_text/core/kernels/testdata/fast_wordpiece_tokenizer_config.fb"
+_TEST_MODEL_BUFFER_PATH = "google3/third_party/tensorflow_text/core/kernels/testdata/fast_wordpiece_tokenizer_model.fb"
 
 
 def _LoadTestModelBuffer():

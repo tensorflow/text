@@ -186,7 +186,7 @@ tf_cc_library(
     ],
     deps = [
         ":darts_clone_trie_wrapper",
-        ":fast_wordpiece_tokenizer_config",
+        ":fast_wordpiece_tokenizer_model",
         ":fast_wordpiece_tokenizer_utils",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/status",
@@ -208,7 +208,7 @@ cc_test(
     data = [":fast_wordpiece_tokenizer_testdata"],
     deps = [
         ":fast_wordpiece_tokenizer",
-        ":fast_wordpiece_tokenizer_config_builder",
+        ":fast_wordpiece_tokenizer_model_builder",
         "@com_google_googletest//:gtest_main",
         "@com_google_absl//absl/flags:flag",
         # tf:lib tensorflow dep,
@@ -216,22 +216,22 @@ cc_test(
 )
 
 flatbuffer_cc_library(
-    name = "fast_wordpiece_tokenizer_config",
+    name = "fast_wordpiece_tokenizer_model",
     srcs = [
-        "fast_wordpiece_tokenizer_config.fbs",
+        "fast_wordpiece_tokenizer_model.fbs",
     ],
 )
 
 tf_cc_library(
-    name = "fast_wordpiece_tokenizer_config_builder",
-    srcs = ["fast_wordpiece_tokenizer_config_builder.cc"],
+    name = "fast_wordpiece_tokenizer_model_builder",
+    srcs = ["fast_wordpiece_tokenizer_model_builder.cc"],
     hdrs = [
-        "fast_wordpiece_tokenizer_config_builder.h",
+        "fast_wordpiece_tokenizer_model_builder.h",
     ],
     deps = [
         ":darts_clone_trie_builder",
         ":darts_clone_trie_wrapper",
-        ":fast_wordpiece_tokenizer_config",
+        ":fast_wordpiece_tokenizer_model",
         ":fast_wordpiece_tokenizer_utils",
         ":sentence_fragmenter_v2",
         ":wordpiece_tokenizer",

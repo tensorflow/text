@@ -21,7 +21,7 @@
 #include "absl/status/statusor.h"
 #include "absl/strings/str_cat.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_wrapper.h"
-#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_config_generated.h"
+#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_generated.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_utils.h"
 
 namespace tensorflow {

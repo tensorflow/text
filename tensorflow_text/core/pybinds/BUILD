@@ -33,30 +33,30 @@ pybind_extension(
 )
 
 pybind_extension(
-    name = "pywrap_fast_wordpiece_tokenizer_config_builder",
-    srcs = ["pywrap_fast_wordpiece_tokenizer_config_builder.cc"],
+    name = "pywrap_fast_wordpiece_tokenizer_model_builder",
+    srcs = ["pywrap_fast_wordpiece_tokenizer_model_builder.cc"],
     additional_exported_symbols = [
         "BuildFastWordpieceModel",
     ],
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
-    module_name = "pywrap_fast_wordpiece_tokenizer_config_builder",
+    module_name = "pywrap_fast_wordpiece_tokenizer_model_builder",
     srcs_version = "PY3ONLY",
     deps = [
-        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_config_builder",
+        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_model_builder",
         "@pybind11",
     ],
 )
 
 py_test(
-    name = "pywrap_fast_wordpiece_tokenizer_config_builder_test",
-    srcs = ["pywrap_fast_wordpiece_tokenizer_config_builder_test.py"],
+    name = "pywrap_fast_wordpiece_tokenizer_model_builder_test",
+    srcs = ["pywrap_fast_wordpiece_tokenizer_model_builder_test.py"],
     data = [
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_testdata",
     ],
     python_version = "PY3",
     deps = [
-        ":pywrap_fast_wordpiece_tokenizer_config_builder",
+        ":pywrap_fast_wordpiece_tokenizer_model_builder",
         # tensorflow package dep,
     ],
 )

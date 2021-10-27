@@ -51,7 +51,7 @@ static_assert(sizeof(int) == 4, "FastWordpieceTokenizer requires 4-byte int.");
 //
 // The encoded value is stored on the darts_clone trie as well as in the
 // `failure_pops_pool` (see FastWordpieceTokenizerConfig in
-// fast_wordpiece_tokenizer_config.fbs). As required by darts_clone_trie, the
+// fast_wordpiece_tokenizer_model.fbs). As required by darts_clone_trie, the
 // type of the encoded value should be 32-bit signed int, and the top bit is
 // reserved to be always 0.
 //

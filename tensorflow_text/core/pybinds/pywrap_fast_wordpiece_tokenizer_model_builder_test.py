@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-r"""Tests for pywrap_fast_wordpiece_tokenizer_config_builder."""
+r"""Tests for pywrap_fast_wordpiece_tokenizer_model_builder."""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -25,11 +25,11 @@ from absl import flags
 from tensorflow.python.framework import test_util
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
-from tensorflow_text.core.pybinds import pywrap_fast_wordpiece_tokenizer_config_builder
+from tensorflow_text.core.pybinds import pywrap_fast_wordpiece_tokenizer_model_builder
 
 FLAGS = flags.FLAGS
 
-EXPECTED_MODEL_BUFFER_PATH = "google3/third_party/tensorflow_text/core/kernels/testdata/fast_wordpiece_tokenizer_config.fb"
+EXPECTED_MODEL_BUFFER_PATH = "google3/third_party/tensorflow_text/core/kernels/testdata/fast_wordpiece_tokenizer_model.fb"
 
 
 class PywrapFastWordpieceBuilderTest(test_util.TensorFlowTestCase):
@@ -46,8 +46,8 @@ class PywrapFastWordpieceBuilderTest(test_util.TensorFlowTestCase):
         os.path.join(FLAGS.test_srcdir, EXPECTED_MODEL_BUFFER_PATH),
         "rb").read()
     self.assertEqual(
-        pywrap_fast_wordpiece_tokenizer_config_builder
-        .build_fast_wordpiece_config(
+        pywrap_fast_wordpiece_tokenizer_model_builder
+        .build_fast_wordpiece_model(
             vocab, max_bytes_per_token, suffix_indicator, unk_token, False,
             False),
         expected_model_buffer)
@@ -61,8 +61,8 @@ class PywrapFastWordpieceBuilderTest(test_util.TensorFlowTestCase):
     unk_token = "<unk>"
     with self.assertRaisesRegex(RuntimeError,
                                 "Cannot find unk_token in the vocab!"):
-      (pywrap_fast_wordpiece_tokenizer_config_builder
-       .build_fast_wordpiece_config(
+      (pywrap_fast_wordpiece_tokenizer_model_builder
+       .build_fast_wordpiece_model(
            vocab, max_bytes_per_token, suffix_indicator, unk_token, False,
            False))
 

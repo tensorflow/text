@@ -18,7 +18,7 @@
 #include <gtest/gtest.h>
 #include "absl/flags/flag.h"
 #include "tensorflow/core/platform/env.h"
-#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_config_builder.h"
+#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_builder.h"
 
 namespace tensorflow {
 namespace text {
@@ -28,7 +28,7 @@ using ::testing::ElementsAre;
 
 constexpr char kTestConfigPath[] =
     "/google3/third_party/tensorflow_text/core/kernels/testdata/"
-    "fast_wordpiece_tokenizer_config.fb";
+    "fast_wordpiece_tokenizer_model.fb";
 
 TEST(FastWordpieceTokenizerTest, LoadAndTokenize) {
   std::string config_flatbuffer;
