@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_config_builder.h"
+#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_builder.h"
 
 #include <stdint.h>
 
@@ -35,7 +35,7 @@
 #include "tensorflow_text/core/kernels/wordpiece_tokenizer.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_builder.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_wrapper.h"
-#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_config_generated.h"
+#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_generated.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_utils.h"
 
 namespace tensorflow {

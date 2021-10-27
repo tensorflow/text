@@ -214,7 +214,7 @@ py_tf_text_library(
         # python:dtypes tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_fast_wordpiece_tokenizer_config_builder",
+        "//tensorflow_text/core/pybinds:pywrap_fast_wordpiece_tokenizer_model_builder",
     ],
 )
 

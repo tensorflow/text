@@ -27,7 +27,7 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
-from tensorflow_text.core.pybinds import pywrap_fast_wordpiece_tokenizer_config_builder
+from tensorflow_text.core.pybinds import pywrap_fast_wordpiece_tokenizer_model_builder
 from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
@@ -94,7 +94,7 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
         flatbuffer. As a reference, when using 120k multilingual BERT WordPiece
         vocab, the flatbuffer's size increases from ~5MB to ~6MB.
       model_buffer: (optional) Bytes object that contains the wordpiece model in
-        flatbuffer format (see fast_wordpiece_tokenizer_config.fbs). If not
+        flatbuffer format (see fast_wordpiece_tokenizer_model.fbs). If not
         `None`, all other arguments (except `token_output_type`) are ignored.
     """
     super(FastWordpieceTokenizer, self).__init__()
@@ -102,8 +102,8 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
         1)
 
     if model_buffer is None:
-      model_buffer = (pywrap_fast_wordpiece_tokenizer_config_builder
-                      .build_fast_wordpiece_config(
+      model_buffer = (pywrap_fast_wordpiece_tokenizer_model_builder
+                      .build_fast_wordpiece_model(
                           vocab, max_bytes_per_word, suffix_indicator,
                           unknown_token, end_to_end, support_detokenization))
     # Use uint8 tensor as a buffer for the model to avoid any possible changes,
