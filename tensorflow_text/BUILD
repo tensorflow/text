@@ -91,6 +91,7 @@ py_library(
         ":text_similarity_metric_ops",
         ":todense_layer",
         ":tokenization",
+        ":tokenization_layers",
         ":trimmer_ops",
         ":unicode_char_tokenizer",
         ":unicode_script_tokenizer",
@@ -997,6 +998,36 @@ py_library(
     deps = [
         ":splitter",
         # python/module tensorflow dep,
+    ],
+)
+
+py_library(
+    name = "tokenization_layers",
+    srcs = ["python/keras/layers/tokenization_layers.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":unicode_script_tokenizer",
+        ":whitespace_tokenizer_v2",
+        ":wordpiece_tokenizer",
+        # tensorflow package dep,
+        # python:lookup_ops tensorflow dep,
+        # python/ops/ragged:ragged_conversion_ops tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "tokenization_layers_test",
+    size = "large",
+    srcs = ["python/keras/layers/tokenization_layers_test.py"],
+    python_version = "PY3",
+    shard_count = 20,
+    deps = [
+        ":tokenization_layers",
+        "@absl_py//absl/testing:parameterized",
+        #  numpy dep,
+        # tensorflow package dep,
+        # python/keras tensorflow dep,
+        # python/keras:testing_utils tensorflow dep,
     ],
 )
 
