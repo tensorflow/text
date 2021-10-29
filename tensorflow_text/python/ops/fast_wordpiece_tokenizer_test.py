@@ -756,7 +756,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
     tflite_model = converter.convert()
 
     # Do TFLite inference.
-    op = pywrap_tflite_registrar.AddFastWordpieceTokenizer
+    op = pywrap_tflite_registrar.AddFastWordpieceTokenize
     interp = interpreter.InterpreterWithCustomOps(
         model_content=tflite_model,
         custom_op_registerers=[op])
@@ -781,7 +781,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
     tflite_model = converter.convert()
 
     # Do TFLite detokenization.
-    op = pywrap_tflite_registrar.AddFastWordpieceDetokenizer
+    op = pywrap_tflite_registrar.AddFastWordpieceDetokenize
     interp = interpreter.InterpreterWithCustomOps(
         model_content=tflite_model,
         custom_op_registerers=[op])

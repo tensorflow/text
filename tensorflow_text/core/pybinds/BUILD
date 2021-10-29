@@ -17,9 +17,10 @@ pybind_extension(
         "//tensorflow_text/core/kernels:tflite_headers",
     ],
     additional_exported_symbols = [
-        "AddFastWordpieceDetokenizer",
-        "AddFastWordpieceTokenizer",
-        "AddWhitespaceTokenizeWithOffsetsV2",
+        "AddFastWordpieceDetokenize",
+        "AddFastWordpieceTokenize",
+        "AddNgramsStringJoin",
+        "AddWhitespaceTokenize",
     ],
     module_name = "pywrap_tflite_registrar",
     deps = [
@@ -28,6 +29,7 @@ pybind_extension(
         # lite/c:common tensorflow dep,
         # lite/kernels:builtin_ops tensorflow dep,
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_tflite",
+        "//tensorflow_text/core/kernels:ngrams_tflite",
         "//tensorflow_text/core/kernels:whitespace_tokenizer_tflite",
     ],
 )

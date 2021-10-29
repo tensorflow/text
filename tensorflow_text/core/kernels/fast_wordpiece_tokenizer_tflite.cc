@@ -20,6 +20,7 @@
 namespace tflite {
 namespace ops {
 namespace custom {
+namespace text {
 
 using TokenizeOpKernel = tflite::shim::TfLiteOpKernel<
     tensorflow::text::FastWordpieceTokenizeWithOffsetsOp>;
@@ -27,15 +28,16 @@ using TokenizeOpKernel = tflite::shim::TfLiteOpKernel<
 using DetokenizeOpKernel =
     tflite::shim::TfLiteOpKernel<tensorflow::text::FastWordpieceDetokenizeOp>;
 
-extern "C" void AddFastWordpieceTokenizer(tflite::MutableOpResolver* resolver) {
+extern "C" void AddFastWordpieceTokenize(tflite::MutableOpResolver* resolver) {
   TokenizeOpKernel::Add(resolver);
 }
 
-extern "C" void AddFastWordpieceDetokenizer(
+extern "C" void AddFastWordpieceDetokenize(
     tflite::MutableOpResolver* resolver) {
   DetokenizeOpKernel::Add(resolver);
 }
 
+}  // namespace text
 }  // namespace custom
 }  // namespace ops
 }  // namespace tflite

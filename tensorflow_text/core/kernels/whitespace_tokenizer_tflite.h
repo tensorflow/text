@@ -23,8 +23,7 @@ namespace ops {
 namespace custom {
 namespace text {
 
-extern "C" void AddWhitespaceTokenizeWithOffsetsV2(
-    ::tflite::MutableOpResolver* resolver);
+extern "C" void AddWhitespaceTokenize(::tflite::MutableOpResolver* resolver);
 
 }  // namespace text
 }  // namespace custom
