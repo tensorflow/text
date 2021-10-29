@@ -88,7 +88,7 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
     SH_RETURN_IF_ERROR(ctx->GetAttr("width", &width_));
     absl::string_view string_separator;
     SH_RETURN_IF_ERROR(ctx->GetAttr("string_separator", &string_separator));
-    string_separator_ = string_separator;
+    string_separator_ = std::string(string_separator);
     return absl::OkStatus();
   }
 

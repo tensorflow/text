@@ -12,6 +12,7 @@ filegroup(
     name = "tflite_headers",
     srcs = [
         "fast_wordpiece_tokenizer_tflite.h",
+        "ngrams_tflite.h",
         "whitespace_tokenizer_tflite.h",
     ],
 )
@@ -423,6 +424,11 @@ tf_cc_library(
     hdrs = ["ngrams_tflite.h"],
     deps = [
         ":ngrams_kernel_template",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:lib",
+        "@org_tensorflow//tensorflow/lite/c:common",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
+        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
         # lite:context tensorflow dep,
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,

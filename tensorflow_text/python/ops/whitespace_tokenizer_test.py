@@ -294,7 +294,7 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     tflite_model = converter.convert()
 
     # Do TFLite inference.
-    op = pywrap_tflite_registrar.AddWhitespaceTokenizeWithOffsetsV2
+    op = pywrap_tflite_registrar.AddWhitespaceTokenize
     interp = interpreter.InterpreterWithCustomOps(
         model_content=tflite_model,
         custom_op_registerers=[op])

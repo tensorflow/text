@@ -20,13 +20,14 @@
 namespace tflite {
 namespace ops {
 namespace custom {
+namespace text {
 
-extern "C" void AddFastWordpieceTokenizer(
+extern "C" void AddFastWordpieceTokenize(::tflite::MutableOpResolver* resolver);
+
+extern "C" void AddFastWordpieceDetokenize(
     ::tflite::MutableOpResolver* resolver);
 
-extern "C" void AddFastWordpieceDetokenizer(
-    ::tflite::MutableOpResolver* resolver);
-
+}  // namespace text
 }  // namespace custom
 }  // namespace ops
 }  // namespace tflite

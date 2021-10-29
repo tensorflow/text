@@ -15,6 +15,7 @@
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/pytypes.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_tflite.h"
+#include "tensorflow_text/core/kernels/ngrams_tflite.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
 
 PYBIND11_MODULE(pywrap_tflite_registrar, m) {
@@ -24,31 +25,39 @@ PYBIND11_MODULE(pywrap_tflite_registrar, m) {
       * WhitespaceTokenizer
   )pbdoc";
   m.def(
-      "AddWhitespaceTokenizeWithOffsetsV2",
+      "AddWhitespaceTokenize",
       [](uintptr_t resolver) {
-        tflite::ops::custom::text::AddWhitespaceTokenizeWithOffsetsV2(
+        tflite::ops::custom::text::AddWhitespaceTokenize(
             reinterpret_cast<tflite::MutableOpResolver*>(resolver));
       },
       R"pbdoc(
-      The function that adds WhitespaceTokenizeWithOffsetsV2 to the TFLite
-      interpreter.
+      The function that adds AddWhitespaceTokenize to the TFLite interpreter.
       )pbdoc");
   m.def(
-      "AddFastWordpieceTokenizer",
+      "AddFastWordpieceTokenize",
       [](uintptr_t resolver) {
-        tflite::ops::custom::AddFastWordpieceTokenizer(
+        tflite::ops::custom::text::AddFastWordpieceTokenize(
             reinterpret_cast<tflite::MutableOpResolver*>(resolver));
       },
       R"pbdoc(
-      The function that adds FastWordpieceTokenizer to the TFLite interpreter.
+      The function that adds FastWordpieceTokenize to the TFLite interpreter.
       )pbdoc");
   m.def(
-      "AddFastWordpieceDetokenizer",
+      "AddFastWordpieceDetokenize",
       [](uintptr_t resolver) {
-        tflite::ops::custom::AddFastWordpieceDetokenizer(
+        tflite::ops::custom::text::AddFastWordpieceDetokenize(
             reinterpret_cast<tflite::MutableOpResolver*>(resolver));
       },
       R"pbdoc(
-    The function that adds FastWordpieceDetokenizer to the TFLite interpreter.
+    The function that adds FastWordpieceDetokenize to the TFLite interpreter.
+    )pbdoc");
+  m.def(
+      "AddNgramsStringJoin",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddNgramsStringJoin(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+    The function that adds AddNgramsStringJoin to the TFLite interpreter.
     )pbdoc");
 }

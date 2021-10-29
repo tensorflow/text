@@ -40,7 +40,7 @@ namespace text {
 
 using OpKernel = tflite::shim::TfLiteOpKernel<tensorflow::text::NGramsStrJoin>;
 
-extern "C" void AddNgramsCustomOp(tflite::MutableOpResolver* resolver) {
+extern "C" void AddNgramsStringJoin(tflite::MutableOpResolver* resolver) {
   OpKernel::Add(resolver);
 }
 
