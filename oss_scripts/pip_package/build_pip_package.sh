@@ -39,7 +39,11 @@ function abspath() {
 
 plat_name=""
 if is_macos; then
-  plat_name="--plat-name macosx-10.9-x86_64"
+  if [[ x"$(arch)" == x"arm64" ]]; then
+    plat_name="--plat-name macosx_11_0_arm64"
+  else
+    plat_name="--plat-name macosx-10.9-x86_64"
+  fi
 fi
 
 main() {

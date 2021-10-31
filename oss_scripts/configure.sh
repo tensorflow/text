@@ -37,11 +37,17 @@ function is_macos() {
 # Remove .bazelrc if it already exist
 [ -e .bazelrc ] && rm .bazelrc
 
-if [[ $(pip show tensorflow) == *tensorflow* ]] || [[ $(pip show tf-nightly) == *tf-nightly* ]] ; then
+if [[ $(pip show tensorflow) == *tensorflow* ]] ||
+   [[ $(pip show tensorflow-macos) == *tensorflow-macos* ]] ||
+   [[ $(pip show tf-nightly) == *tf-nightly* ]]; then
   echo 'Using installed tensorflow.'
 else
   echo 'Installing tensorflow.'
-  pip install tensorflow==2.7.0
+  if is_macos; then
+    pip install tensorflow-macos
+  else
+    pip install tensorflow==2.7.0
+  fi
 fi
 
 if is_windows; then
