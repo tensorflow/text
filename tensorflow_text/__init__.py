@@ -17,6 +17,7 @@
 from tensorflow.python.util.all_util import remove_undocumented
 
 # pylint: disable=wildcard-import
+from tensorflow_text.core.pybinds import tflite_registrar
 from tensorflow_text.python import keras
 from tensorflow_text.python import metrics
 from tensorflow_text.python.ops import *
@@ -73,6 +74,7 @@ _allowed_symbols = [
     "sliding_window",
     "span_alignment",
     "span_overlaps",
+    "tflite_registrar",
     "viterbi_constrained_sequence",
     "wordshape",
 ]

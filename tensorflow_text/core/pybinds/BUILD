@@ -9,9 +9,9 @@ package(default_visibility = [
 ])
 
 pybind_extension(
-    name = "pywrap_tflite_registrar",
+    name = "tflite_registrar",
     srcs = [
-        "pywrap_tflite_registrar.cc",
+        "tflite_registrar.cc",
     ],
     hdrs = [
         "//tensorflow_text/core/kernels:tflite_headers",
@@ -22,7 +22,7 @@ pybind_extension(
         "AddNgramsStringJoin",
         "AddWhitespaceTokenize",
     ],
-    module_name = "pywrap_tflite_registrar",
+    module_name = "tflite_registrar",
     deps = [
         "@pybind11",
         # lite:framework tensorflow dep,

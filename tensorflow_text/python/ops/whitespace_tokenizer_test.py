@@ -28,7 +28,7 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
-from tensorflow_text.core.pybinds import pywrap_tflite_registrar
+from tensorflow_text.core.pybinds import tflite_registrar
 from tensorflow_text.python.ops.whitespace_tokenizer import WhitespaceTokenizer
 
 
@@ -294,7 +294,7 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     tflite_model = converter.convert()
 
     # Do TFLite inference.
-    op = pywrap_tflite_registrar.AddWhitespaceTokenize
+    op = tflite_registrar.AddWhitespaceTokenize
     interp = interpreter.InterpreterWithCustomOps(
         model_content=tflite_model,
         custom_op_registerers=[op])

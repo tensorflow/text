@@ -12,27 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/pytypes.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_tflite.h"
 #include "tensorflow_text/core/kernels/ngrams_tflite.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
 
-PYBIND11_MODULE(pywrap_tflite_registrar, m) {
+PYBIND11_MODULE(tflite_registrar, m) {
   m.doc() = R"pbdoc(
-    pywrap_tflite_registrar
-    A module with a Python wrapper for TFLite TFText ops:
-      * WhitespaceTokenizer
+    tflite_registrar
+    A module with a Python wrapper for TFLite TFText ops.
   )pbdoc";
-  m.def(
-      "AddWhitespaceTokenize",
-      [](uintptr_t resolver) {
-        tflite::ops::custom::text::AddWhitespaceTokenize(
-            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
-      },
-      R"pbdoc(
-      The function that adds AddWhitespaceTokenize to the TFLite interpreter.
-      )pbdoc");
+  m.attr("_allowed_symbols") = pybind11::make_tuple(
+      "AddFastWordpieceTokenize",
+      "AddFastWordpieceDetokenize",
+      "AddNgramsStringJoin",
+      "AddWhitespaceTokenize");
   m.def(
       "AddFastWordpieceTokenize",
       [](uintptr_t resolver) {
@@ -60,4 +56,13 @@ PYBIND11_MODULE(pywrap_tflite_registrar, m) {
       R"pbdoc(
     The function that adds AddNgramsStringJoin to the TFLite interpreter.
     )pbdoc");
+  m.def(
+      "AddWhitespaceTokenize",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddWhitespaceTokenize(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      The function that adds AddWhitespaceTokenize to the TFLite interpreter.
+      )pbdoc");
 }
