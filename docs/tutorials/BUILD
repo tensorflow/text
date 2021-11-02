@@ -33,6 +33,7 @@ tf_org_notebook_test(
 
 tf_org_notebook_test(
     name = "transformer",
+    size = "large",
     ipynb = "transformer.ipynb",
     deps = [
         "//third_party/py/matplotlib",
@@ -44,6 +45,7 @@ tf_org_notebook_test(
 
 tf_org_notebook_test(
     name = "text_classification_rnn",
+    size = "large",
     ipynb = "text_classification_rnn.ipynb",
     deps = [
         "//third_party/py/matplotlib",
