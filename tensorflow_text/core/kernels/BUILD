@@ -198,15 +198,12 @@ tf_cc_library(
     ],
 )
 
-filegroup(
-    name = "fast_wordpiece_tokenizer_testdata",
-    srcs = glob(["testdata/**"]),
-)
-
 cc_test(
     name = "fast_wordpiece_tokenizer_test",
     srcs = ["fast_wordpiece_tokenizer_test.cc"],
-    data = [":fast_wordpiece_tokenizer_testdata"],
+    data = [
+        "//tensorflow_text:python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
+    ],
     deps = [
         ":fast_wordpiece_tokenizer",
         ":fast_wordpiece_tokenizer_model_builder",
@@ -240,7 +237,6 @@ tf_cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
-        "//third_party/icu/data:icu_normalization_data",
         "@icu//:nfkc",
         # lite/kernels/shim:status_macros tensorflow dep,
     ],

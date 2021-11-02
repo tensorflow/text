@@ -20,8 +20,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-
 from absl import flags
 from absl.testing import parameterized
 import numpy as np
@@ -171,16 +169,15 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
 
   @parameterized.parameters([
       # Basic case
-      # TODO(b/204148042)
-      # dict(
-      #     tokens=[[_Utf8(u"купиха")]],
-      #     expected_subwords=[[[
-      #         _Utf8(u"к"),
-      #         _Utf8(u"##уп"),
-      #         _Utf8(u"##иха"),
-      #     ]]],
-      #     vocab=_RUSSIAN_VOCAB,
-      # ),
+      dict(
+          tokens=[[_Utf8(u"купиха")]],
+          expected_subwords=[[[
+              _Utf8(u"к"),
+              _Utf8(u"##уп"),
+              _Utf8(u"##иха"),
+          ]]],
+          vocab=_RUSSIAN_VOCAB,
+      ),
       dict(
           tokens=[[b"don't", b"treadness"]],
           expected_subwords=[[[b"don", b"##'", b"##t"], [b"tread", b"##ness"]]],
@@ -196,12 +193,12 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
           vocab=_ENGLISH_VOCAB,
       ),
       # Basic case w/ unknown token
-      # dict(
-      #     tokens=[[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]],
-      #     expected_subwords=[[[b"don", b"##'", b"##t"], [b"tread"],
-      #                         [b"[UNK]"], [b"[UNK]"]]],
-      #     vocab=_ENGLISH_VOCAB,
-      # ),
+      dict(
+          tokens=[[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]],
+          expected_subwords=[[[b"don", b"##'", b"##t"], [b"tread"], [b"[UNK]"],
+                              [b"[UNK]"]]],
+          vocab=_ENGLISH_VOCAB,
+      ),
       # Basic case w/ int id lookup
       dict(
           tokens=[[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]],
@@ -210,69 +207,69 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
           vocab=_ENGLISH_VOCAB,
       ),
       # Chinese test case
-      # dict(
-      #     tokens=[[
-      #         _Utf8(u"貿"),
-      #         _Utf8(u"易"),
-      #         _Utf8(u"戰"),
-      #         _Utf8(u"最"),
-      #         _Utf8(u"大"),
-      #         _Utf8(u"受"),
-      #         _Utf8(u"益"),
-      #         _Utf8(u"者")
-      #     ],
-      #             [
-      #                 _Utf8(u"越"),
-      #                 _Utf8(u"南"),
-      #                 _Utf8(u"總"),
-      #                 _Utf8(u"理"),
-      #                 _Utf8(u"阮"),
-      #                 _Utf8(u"春"),
-      #                 _Utf8(u"福")
-      #             ]],
-      #     expected_subwords=[[[_Utf8(u"貿")], [_Utf8(u"易")], [_Utf8(u"戰")],
-      #                         [_Utf8(u"最")], [_Utf8(u"大")], [_Utf8(u"受")],
-      #                         [_Utf8(u"益")], [_Utf8(u"者")]],
-      #                        [[_Utf8(u"越")], [_Utf8(u"南")], [_Utf8(u"總")],
-      #                         [_Utf8(u"理")], [_Utf8(u"阮")], [_Utf8(u"春")],
-      #                         [_Utf8(u"福")]]],
-      #     vocab=_CHINESE_VOCAB,
-      # ),
+      dict(
+          tokens=[[
+              _Utf8(u"貿"),
+              _Utf8(u"易"),
+              _Utf8(u"戰"),
+              _Utf8(u"最"),
+              _Utf8(u"大"),
+              _Utf8(u"受"),
+              _Utf8(u"益"),
+              _Utf8(u"者")
+          ],
+                  [
+                      _Utf8(u"越"),
+                      _Utf8(u"南"),
+                      _Utf8(u"總"),
+                      _Utf8(u"理"),
+                      _Utf8(u"阮"),
+                      _Utf8(u"春"),
+                      _Utf8(u"福")
+                  ]],
+          expected_subwords=[[[_Utf8(u"貿")], [_Utf8(u"易")], [_Utf8(u"戰")],
+                              [_Utf8(u"最")], [_Utf8(u"大")], [_Utf8(u"受")],
+                              [_Utf8(u"益")], [_Utf8(u"者")]],
+                             [[_Utf8(u"越")], [_Utf8(u"南")], [_Utf8(u"總")],
+                              [_Utf8(u"理")], [_Utf8(u"阮")], [_Utf8(u"春")],
+                              [_Utf8(u"福")]]],
+          vocab=_CHINESE_VOCAB,
+      ),
       # Mixed lang test cases
-      # dict(
-      #     tokens=[
-      #         [
-      #             _Utf8(u"貿"),
-      #             _Utf8(u"易"),
-      #             _Utf8(u"戰"),
-      #             _Utf8(u"最"),
-      #             _Utf8(u"大"),
-      #             _Utf8(u"受"),
-      #             _Utf8(u"益"),
-      #             _Utf8(u"者")
-      #         ],
-      #         [
-      #             _Utf8(u"越"),
-      #             _Utf8(u"南"),
-      #             _Utf8(u"總"),
-      #             _Utf8(u"理"),
-      #             _Utf8(u"阮"),
-      #             _Utf8(u"春"),
-      #             _Utf8(u"福")
-      #         ],
-      #         [b"don't", b"treadness"],
-      #     ],
-      #     expected_subwords=[
-      #         [[_Utf8(u"貿")], [_Utf8(u"易")], [_Utf8(u"戰")],
-      #          [_Utf8(u"最")], [_Utf8(u"大")], [_Utf8(u"受")],
-      #          [_Utf8(u"益")], [_Utf8(u"者")]],
-      #         [[_Utf8(u"越")], [_Utf8(u"南")], [_Utf8(u"總")],
-      #          [_Utf8(u"理")], [_Utf8(u"阮")], [_Utf8(u"春")],
-      #          [_Utf8(u"福")]],
-      #         [[b"don", b"##'", b"##t"], [b"tread", b"##ness"]],
-      #     ],
-      #     vocab=_MIXED_LANG_VOCAB,
-      # ),
+      dict(
+          tokens=[
+              [
+                  _Utf8(u"貿"),
+                  _Utf8(u"易"),
+                  _Utf8(u"戰"),
+                  _Utf8(u"最"),
+                  _Utf8(u"大"),
+                  _Utf8(u"受"),
+                  _Utf8(u"益"),
+                  _Utf8(u"者")
+              ],
+              [
+                  _Utf8(u"越"),
+                  _Utf8(u"南"),
+                  _Utf8(u"總"),
+                  _Utf8(u"理"),
+                  _Utf8(u"阮"),
+                  _Utf8(u"春"),
+                  _Utf8(u"福")
+              ],
+              [b"don't", b"treadness"],
+          ],
+          expected_subwords=[
+              [[_Utf8(u"貿")], [_Utf8(u"易")], [_Utf8(u"戰")],
+               [_Utf8(u"最")], [_Utf8(u"大")], [_Utf8(u"受")],
+               [_Utf8(u"益")], [_Utf8(u"者")]],
+              [[_Utf8(u"越")], [_Utf8(u"南")], [_Utf8(u"總")],
+               [_Utf8(u"理")], [_Utf8(u"阮")], [_Utf8(u"春")],
+               [_Utf8(u"福")]],
+              [[b"don", b"##'", b"##t"], [b"tread", b"##ness"]],
+          ],
+          vocab=_MIXED_LANG_VOCAB,
+      ),
       # Test token whose size is > max_bytes_per_word. When "[UNK]" is returned,
       # FastWordpieceTokenizer sets the end_offset as the length of the input
       # word. This is different from the original WordpieceTokenizer. See the
@@ -288,20 +285,20 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
           expected_end=[[[3, 4, 5], [9]]],
       ),
       # Test the token of death usecase.
-      # dict(
-      #     tokens=[[_Utf8(u"करें*👇👇")]],
-      #     token_out_type=dtypes.string,
-      #     expected_subwords=[[[
-      #         _Utf8(u"क"),
-      #         _Utf8(u"##र"),
-      #         _Utf8(u"##े"),
-      #         _Utf8(u"##ं"), b"##*",
-      #         _Utf8(u"##👇"),
-      #         _Utf8(u"##👇")
-      #     ]]],
-      #     vocab=_DEATH_VOCAB,
-      #     max_bytes_per_word=40,
-      # ),
+      dict(
+          tokens=[[_Utf8(u"करें*👇👇")]],
+          token_out_type=dtypes.string,
+          expected_subwords=[[[
+              _Utf8(u"क"),
+              _Utf8(u"##र"),
+              _Utf8(u"##े"),
+              _Utf8(u"##ं"), b"##*",
+              _Utf8(u"##👇"),
+              _Utf8(u"##👇")
+          ]]],
+          vocab=_DEATH_VOCAB,
+          max_bytes_per_word=40,
+      ),
       # Test not splitting out unknown characters.
       # (p and ! are unknown)
       dict(
@@ -411,39 +408,38 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
           ],
           vocab=_ENGLISH_VOCAB,
       ),
-      # TODO(b/204148042)
-      # dict(
-      #     tokens=[[[b"don't", _Utf8(u"貿")],
-      #              [b"treadness", _Utf8(u"大")],
-      #              [b"whatchamacallit?", _Utf8(u"福")]]],
-      #     expected_subwords=[[[[b"don", b"##'", b"##t"], [_Utf8(u"貿")]],
-      #                         [[b"tread", b"##ness"], [_Utf8(u"大")]],
-      #                         [[
-      #                             b"what", b"##cha", b"##ma", b"##call",
-      #                             b"##it?"
-      #                         ], [_Utf8(u"福")]]]],
-      #     vocab=_MIXED_LANG_VOCAB,
-      # ),
+      dict(
+          tokens=[[[b"don't", _Utf8(u"貿")],
+                   [b"treadness", _Utf8(u"大")],
+                   [b"whatchamacallit?", _Utf8(u"福")]]],
+          expected_subwords=[[[[b"don", b"##'", b"##t"], [_Utf8(u"貿")]],
+                              [[b"tread", b"##ness"], [_Utf8(u"大")]],
+                              [[
+                                  b"what", b"##cha", b"##ma", b"##call",
+                                  b"##it?"
+                              ], [_Utf8(u"福")]]]],
+          vocab=_MIXED_LANG_VOCAB,
+      ),
       # # Vector input
-      # dict(
-      #     tokens=[_Utf8(u"купиха")],
-      #     expected_subwords=[[
-      #         _Utf8(u"к"),
-      #         _Utf8(u"##уп"),
-      #         _Utf8(u"##иха"),
-      #     ]],
-      #     vocab=_RUSSIAN_VOCAB,
-      # ),
+      dict(
+          tokens=[_Utf8(u"купиха")],
+          expected_subwords=[[
+              _Utf8(u"к"),
+              _Utf8(u"##уп"),
+              _Utf8(u"##иха"),
+          ]],
+          vocab=_RUSSIAN_VOCAB,
+      ),
       # # Scalar input
-      # dict(
-      #     tokens=_Utf8(u"купиха"),
-      #     expected_subwords=[
-      #         _Utf8(u"к"),
-      #         _Utf8(u"##уп"),
-      #         _Utf8(u"##иха"),
-      #     ],
-      #     vocab=_RUSSIAN_VOCAB,
-      # ),
+      dict(
+          tokens=_Utf8(u"купиха"),
+          expected_subwords=[
+              _Utf8(u"к"),
+              _Utf8(u"##уп"),
+              _Utf8(u"##иха"),
+          ],
+          vocab=_RUSSIAN_VOCAB,
+      ),
       # 3D input with 1 ragged dimension.
       dict(
           tokens=[[b"don't", b"treadness", b"whatchamacallit?"]],
@@ -452,17 +448,16 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
                                b"##it?"]]],
           vocab=_ENGLISH_VOCAB,
       ),
-      # TODO(b/204148042)
-      # dict(
-      #     tokens=ragged_factory_ops.constant_value(
-      #         [[[b"don't"], [b"treadness"], [b"whatchamacallit?"]]],
-      #         ragged_rank=1),
-      #     expected_subwords=[
-      #         [[[b"don", b"##'", b"##t"]], [[b"tread", b"##ness"]],
-      #          [[b"what", b"##cha", b"##ma", b"##call", b"##it?"]]]
-      #     ],
-      #     vocab=_ENGLISH_VOCAB,
-      # ),
+      dict(
+          tokens=ragged_factory_ops.constant_value(
+              [[[b"don't"], [b"treadness"], [b"whatchamacallit?"]]],
+              ragged_rank=1),
+          expected_subwords=[
+              [[[b"don", b"##'", b"##t"]], [[b"tread", b"##ness"]],
+               [[b"what", b"##cha", b"##ma", b"##call", b"##it?"]]]
+          ],
+          vocab=_ENGLISH_VOCAB,
+      ),
       # Specifying max_chars_per_token.
       dict(
           tokens=[[b"don't", b"treadness"]],
@@ -499,12 +494,11 @@ _TEST_SUFFIX_INDICATOR = "##"
 _TEST_UNKNOWN_TOKEN = "<unk>"
 
 # The same WordPiece model but precompiled in buffer.
-_TEST_MODEL_BUFFER_PATH = "google3/third_party/tensorflow_text/core/kernels/testdata/fast_wordpiece_tokenizer_model.fb"
+_TEST_MODEL_BUFFER_PATH = "tensorflow_text/python/ops/test_data/fast_wordpiece_tokenizer_model.fb"
 
 
 def _LoadTestModelBuffer():
-  return gfile.GFile(
-      os.path.join(FLAGS.test_srcdir, _TEST_MODEL_BUFFER_PATH), "rb").read()
+  return gfile.GFile(_TEST_MODEL_BUFFER_PATH, "rb").read()
 
 
 @parameterized.parameters([
@@ -539,7 +533,7 @@ class FastWordpieceOpAdditionalTest(test_base.DatasetTestBase,
 
     self.assertAllEqual(tokenizer.tokenize(text_inputs), expected_outputs)
 
-  def DISABLED_testTokenizerBuiltFromModel(self, text_inputs, expected_outputs):
+  def testTokenizerBuiltFromModel(self, text_inputs, expected_outputs):
     model_buffer = _LoadTestModelBuffer()
     tokenizer = FastWordpieceTokenizer(model_buffer=model_buffer)
 
@@ -564,8 +558,8 @@ class FastWordpieceOpAdditionalTest(test_base.DatasetTestBase,
     dataset = dataset_ops.Dataset.from_tensor_slices(text_inputs)
     self.assertDatasetProduces(dataset.map(Preprocess), expected_outputs)
 
-  def DISABLED_testTokenizerBuiltInsideTfFunctionFromModel(self, text_inputs,
-                                                           expected_outputs):
+  def testTokenizerBuiltInsideTfFunctionFromModel(self, text_inputs,
+                                                  expected_outputs):
 
     @def_function.function
     def Preprocess(text_input):
@@ -599,8 +593,8 @@ class FastWordpieceOpAdditionalTest(test_base.DatasetTestBase,
     dataset = dataset_ops.Dataset.from_tensor_slices(text_inputs)
     self.assertDatasetProduces(dataset.map(Preprocess), expected_outputs)
 
-  def DISABLED_testTokenizerBuiltOutsideTfFunctionFromModel(self, text_inputs,
-                                                            expected_outputs):
+  def testTokenizerBuiltOutsideTfFunctionFromModel(self, text_inputs,
+                                                   expected_outputs):
     model_buffer = _LoadTestModelBuffer()
     tokenizer = FastWordpieceTokenizer(model_buffer=model_buffer)
 
@@ -639,9 +633,7 @@ class EndToEndFastWordpieceOpTest(test_base.DatasetTestBase,
                                   parameterized.TestCase):
   """Test on end-to-end fast WordPiece when input is sentence."""
 
-  # TODO(b/204148042): Determine why test is broken
-  def DISABLED_testTokenizerBuiltFromConfig(self, text_inputs,
-                                            expected_outputs):
+  def testTokenizerBuiltFromConfig(self, text_inputs, expected_outputs):
     tokenizer = FastWordpieceTokenizer(
         vocab=_TEST_VOCAB,
         max_bytes_per_word=_TEST_MAX_BYTES_PER_WORD,
@@ -674,8 +666,7 @@ class FastWordpieceDetokenizeOpTest(test_base.DatasetTestBase,
                                     parameterized.TestCase):
   """Test on end-to-end fast WordPiece when input is sentence."""
 
-  # TODO(b/204148042): Determine why test is broken
-  def DISABLED_testTokenizerBuiltFromConfig(self, id_inputs, expected_outputs):
+  def testTokenizerBuiltFromConfig(self, id_inputs, expected_outputs):
     tokenizer = FastWordpieceTokenizer(
         vocab=_TEST_VOCAB,
         max_bytes_per_word=_TEST_MAX_BYTES_PER_WORD,
@@ -703,8 +694,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
                                     parameterized.TestCase):
   """Tests fast WordPiece when used in a Keras model."""
 
-  # TODO(b/204148042): Determine why test is broken
-  def DISABLED_testTfliteWordpieceTokenizer(self, end_to_end, text_inputs):
+  def testTfLiteWordpieceTokenizer(self, end_to_end, text_inputs):
     """Checks TFLite conversion and inference."""
 
     class TokenizerModel(tf.keras.Model):
@@ -758,8 +748,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
     # Do TFLite inference.
     op = tflite_registrar.AddFastWordpieceTokenize
     interp = interpreter.InterpreterWithCustomOps(
-        model_content=tflite_model,
-        custom_op_registerers=[op])
+        model_content=tflite_model, custom_op_registerers=[op])
     interp.allocate_tensors()
     input_details = interp.get_input_details()
     interp.set_tensor(input_details[0]["index"], input_data)
@@ -783,8 +772,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
     # Do TFLite detokenization.
     op = tflite_registrar.AddFastWordpieceDetokenize
     interp = interpreter.InterpreterWithCustomOps(
-        model_content=tflite_model,
-        custom_op_registerers=[op])
+        model_content=tflite_model, custom_op_registerers=[op])
     interp.allocate_tensors()
     detokenize = interp.get_signature_runner("serving_default")
     tflite_detokenization_result = detokenize(

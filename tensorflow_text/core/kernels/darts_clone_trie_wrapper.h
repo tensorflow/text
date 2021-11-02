@@ -28,6 +28,7 @@
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_DARTS_CLONE_TRIE_WRAPPER_H_
 
 #include <stdint.h>
+#include <string.h>
 
 #include "absl/status/statusor.h"
 
@@ -81,7 +82,7 @@ class DartsCloneTrieWrapper {
   // Traverses one step from 'cursor' following 'ch'. If successful (i.e., there
   // exists such an edge), moves 'cursor' to the new node and returns true.
   // Otherwise, does nothing (i.e., 'cursor' is not changed) and returns false.
-  bool TryTraverseOneStep(TraversalCursor& cursor, char ch) const {
+  bool TryTraverseOneStep(TraversalCursor& cursor, unsigned char ch) const {
     const uint32_t next_node_id = cursor.node_id ^ offset(cursor.unit) ^ ch;
     const uint32_t next_node_unit = trie_array_[next_node_id];
     if (label(next_node_unit) != ch) {
@@ -124,9 +125,10 @@ class DartsCloneTrieWrapper {
     uint32_t cur_id = cursor.node_id;
     uint32_t cur_unit = cursor.unit;
     for (; size > 0; --size, ++ptr) {
-      cur_id ^= offset(cur_unit) ^ *ptr;
+      const unsigned char ch = static_cast<const unsigned char>(*ptr);
+      cur_id ^= offset(cur_unit) ^ ch;
       cur_unit = trie_array_[cur_id];
-      if (label(cur_unit) != *ptr) {
+      if (label(cur_unit) != ch) {
         return false;
       }
     }

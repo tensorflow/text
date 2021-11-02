@@ -54,7 +54,7 @@ py_test(
     name = "pywrap_fast_wordpiece_tokenizer_model_builder_test",
     srcs = ["pywrap_fast_wordpiece_tokenizer_model_builder_test.py"],
     data = [
-        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_testdata",
+        "//tensorflow_text:python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
     ],
     python_version = "PY3",
     deps = [
