@@ -19,17 +19,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-from absl import flags
-
 from tensorflow.python.framework import test_util
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
 from tensorflow_text.core.pybinds import pywrap_fast_wordpiece_tokenizer_model_builder
 
-FLAGS = flags.FLAGS
-
-EXPECTED_MODEL_BUFFER_PATH = "google3/third_party/tensorflow_text/core/kernels/testdata/fast_wordpiece_tokenizer_model.fb"
+EXPECTED_MODEL_BUFFER_PATH = "third_party/tensorflow_text/python/ops/test_data/fast_wordpiece_tokenizer_model.fb"
 
 
 class PywrapFastWordpieceBuilderTest(test_util.TensorFlowTestCase):
@@ -42,9 +37,7 @@ class PywrapFastWordpieceBuilderTest(test_util.TensorFlowTestCase):
     max_bytes_per_token = 100
     suffix_indicator = "##"
     unk_token = "<unk>"
-    expected_model_buffer = gfile.GFile(
-        os.path.join(FLAGS.test_srcdir, EXPECTED_MODEL_BUFFER_PATH),
-        "rb").read()
+    expected_model_buffer = gfile.GFile(EXPECTED_MODEL_BUFFER_PATH, "rb").read()
     self.assertEqual(
         pywrap_fast_wordpiece_tokenizer_model_builder
         .build_fast_wordpiece_model(

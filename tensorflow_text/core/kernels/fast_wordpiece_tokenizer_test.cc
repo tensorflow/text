@@ -27,14 +27,13 @@ namespace {
 using ::testing::ElementsAre;
 
 constexpr char kTestConfigPath[] =
-    "/google3/third_party/tensorflow_text/core/kernels/testdata/"
+    "third_party/tensorflow_text/python/ops/test_data/"
     "fast_wordpiece_tokenizer_model.fb";
 
 TEST(FastWordpieceTokenizerTest, LoadAndTokenize) {
   std::string config_flatbuffer;
   auto status = tensorflow::ReadFileToString(
-      tensorflow::Env::Default(),
-      absl::GetFlag(FLAGS_test_srcdir) + kTestConfigPath, &config_flatbuffer);
+      tensorflow::Env::Default(), kTestConfigPath, &config_flatbuffer);
   ASSERT_TRUE(status.ok());
 
   // The config_flatbuffer used here is built from the following config:

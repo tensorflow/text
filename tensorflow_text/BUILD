@@ -111,6 +111,11 @@ py_library(
 
 # public_names_test
 
+# This is required for other external users to build tests using these models.
+exports_files(
+    glob(["python/ops/test_data/**"]),
+)
+
 ##########################
 # Individual tf.text ops #
 ##########################
@@ -224,7 +229,7 @@ py_test(
     size = "small",
     srcs = ["python/ops/fast_wordpiece_tokenizer_test.py"],
     data = [
-        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_testdata",
+        ":python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
     ],
     python_version = "PY3",
     srcs_version = "PY3",
@@ -746,11 +751,6 @@ py_tf_text_library(
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
-)
-
-# This is required for other external users to build tests using this model.
-exports_files(
-    glob(["python/ops/test_data/test_oss_model.*"]),
 )
 
 py_test(
