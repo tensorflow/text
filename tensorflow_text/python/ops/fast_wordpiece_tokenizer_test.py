@@ -36,7 +36,7 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
-from tensorflow_text.core.pybinds import pywrap_tflite_registrar
+from tensorflow_text.core.pybinds import tflite_registrar
 from tensorflow_text.python.ops.fast_wordpiece_tokenizer import FastWordpieceTokenizer
 
 FLAGS = flags.FLAGS
@@ -756,7 +756,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
     tflite_model = converter.convert()
 
     # Do TFLite inference.
-    op = pywrap_tflite_registrar.AddFastWordpieceTokenize
+    op = tflite_registrar.AddFastWordpieceTokenize
     interp = interpreter.InterpreterWithCustomOps(
         model_content=tflite_model,
         custom_op_registerers=[op])
@@ -781,7 +781,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
     tflite_model = converter.convert()
 
     # Do TFLite detokenization.
-    op = pywrap_tflite_registrar.AddFastWordpieceDetokenize
+    op = tflite_registrar.AddFastWordpieceDetokenize
     interp = interpreter.InterpreterWithCustomOps(
         model_content=tflite_model,
         custom_op_registerers=[op])

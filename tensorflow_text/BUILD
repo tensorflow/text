@@ -102,7 +102,7 @@ py_library(
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python:util tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_tflite_registrar",
+        "//tensorflow_text/core/pybinds:tflite_registrar",
         "//tensorflow_text/tools/wordpiece_vocab",
     ],
 )
@@ -239,7 +239,7 @@ py_test(
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_tflite_registrar",
+        "//tensorflow_text/core/pybinds:tflite_registrar",
     ],
 )
 
@@ -1243,7 +1243,7 @@ py_test(
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_tflite_registrar",
+        "//tensorflow_text/core/pybinds:tflite_registrar",
     ],
 )
 
