@@ -605,14 +605,14 @@ tf_cc_library(
         # tf:protos_all_cc tensorflow dep,
     ],
     deps = [
+        "@com_google_sentencepiece//src:sentencepiece_cc_proto",  # Old target
+        "@com_google_sentencepiece//src:sentencepiece_model_cc_proto",  # Old target
+        "@com_google_sentencepiece//src:sentencepiece_processor",  # Old target
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/meta:type_traits",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
-        "@com_google_sentencepiece//src:sentencepiece_cc_proto",
-        "@com_google_sentencepiece//src:sentencepiece_model_cc_proto",
-        "@com_google_sentencepiece//src:sentencepiece_processor",
     ],
 )
 
