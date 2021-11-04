@@ -7,6 +7,7 @@
 *   <a href="../text.md"><code>text</code></a>
 *   <a href="../text/BertTokenizer.md"><code>text.BertTokenizer</code></a>
 *   <a href="../text/Detokenizer.md"><code>text.Detokenizer</code></a>
+*   <a href="../text/FastWordpieceTokenizer.md"><code>text.FastWordpieceTokenizer</code></a>
 *   <a href="../text/FirstNItemSelector.md"><code>text.FirstNItemSelector</code></a>
 *   <a href="../text/HubModuleSplitter.md"><code>text.HubModuleSplitter</code></a>
 *   <a href="../text/HubModuleTokenizer.md"><code>text.HubModuleTokenizer</code></a>
@@ -29,6 +30,7 @@
 *   <a href="../text/WhitespaceTokenizer.md"><code>text.WhitespaceTokenizer</code></a>
 *   <a href="../text/WordShape_cls.md"><code>text.WordShape</code></a>
 *   <a href="../text/WordpieceTokenizer.md"><code>text.WordpieceTokenizer</code></a>
+*   <a href="../text/build_fast_wordpiece_model.md"><code>text.build_fast_wordpiece_model</code></a>
 *   <a href="../text/case_fold_utf8.md"><code>text.case_fold_utf8</code></a>
 *   <a href="../text/coerce_to_structurally_valid_utf8.md"><code>text.coerce_to_structurally_valid_utf8</code></a>
 *   <a href="../text/combine_segments.md"><code>text.combine_segments</code></a>
@@ -54,5 +56,10 @@
 *   <a href="../text/sliding_window.md"><code>text.sliding_window</code></a>
 *   <a href="../text/span_alignment.md"><code>text.span_alignment</code></a>
 *   <a href="../text/span_overlaps.md"><code>text.span_overlaps</code></a>
+*   <a href="../text/tflite_registrar.md"><code>text.tflite_registrar</code></a>
+*   <a href="../text/tflite_registrar/AddFastWordpieceDetokenize.md"><code>text.tflite_registrar.AddFastWordpieceDetokenize</code></a>
+*   <a href="../text/tflite_registrar/AddFastWordpieceTokenize.md"><code>text.tflite_registrar.AddFastWordpieceTokenize</code></a>
+*   <a href="../text/tflite_registrar/AddNgramsStringJoin.md"><code>text.tflite_registrar.AddNgramsStringJoin</code></a>
+*   <a href="../text/tflite_registrar/AddWhitespaceTokenize.md"><code>text.tflite_registrar.AddWhitespaceTokenize</code></a>
 *   <a href="../text/viterbi_constrained_sequence.md"><code>text.viterbi_constrained_sequence</code></a>
 *   <a href="../text/wordshape.md"><code>text.wordshape</code></a>

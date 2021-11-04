@@ -7,6 +7,8 @@ toc:
     path: /text/api_docs/python/text/BertTokenizer
   - title: Detokenizer
     path: /text/api_docs/python/text/Detokenizer
+  - title: FastWordpieceTokenizer
+    path: /text/api_docs/python/text/FastWordpieceTokenizer
   - title: FirstNItemSelector
     path: /text/api_docs/python/text/FirstNItemSelector
   - title: HubModuleSplitter
@@ -51,6 +53,8 @@ toc:
     path: /text/api_docs/python/text/WordShape
   - title: WordpieceTokenizer
     path: /text/api_docs/python/text/WordpieceTokenizer
+  - title: build_fast_wordpiece_model
+    path: /text/api_docs/python/text/build_fast_wordpiece_model
   - title: case_fold_utf8
     path: /text/api_docs/python/text/case_fold_utf8
   - title: coerce_to_structurally_valid_utf8
@@ -112,3 +116,15 @@ toc:
     path: /text/api_docs/python/text/metrics
   - title: rouge_l
     path: /text/api_docs/python/text/metrics/rouge_l
+- title: text.tflite_registrar
+  section:
+  - title: Overview
+    path: /text/api_docs/python/text/tflite_registrar
+  - title: AddFastWordpieceDetokenize
+    path: /text/api_docs/python/text/tflite_registrar/AddFastWordpieceDetokenize
+  - title: AddFastWordpieceTokenize
+    path: /text/api_docs/python/text/tflite_registrar/AddFastWordpieceTokenize
+  - title: AddNgramsStringJoin
+    path: /text/api_docs/python/text/tflite_registrar/AddNgramsStringJoin
+  - title: AddWhitespaceTokenize
+    path: /text/api_docs/python/text/tflite_registrar/AddWhitespaceTokenize
