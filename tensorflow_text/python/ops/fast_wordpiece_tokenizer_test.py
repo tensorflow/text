@@ -24,6 +24,7 @@ from absl import flags
 from absl.testing import parameterized
 import numpy as np
 import tensorflow as tf
+import tensorflow_text as tf_text
 
 from tensorflow.lite.python import interpreter
 from tensorflow.python.data.kernel_tests import test_base
@@ -34,7 +35,6 @@ from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
-from tensorflow_text.core.pybinds import tflite_registrar
 from tensorflow_text.python.ops.fast_wordpiece_tokenizer import FastWordpieceTokenizer
 
 FLAGS = flags.FLAGS
@@ -746,9 +746,9 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
     tflite_model = converter.convert()
 
     # Do TFLite inference.
-    op = tflite_registrar.AddFastWordpieceTokenize
     interp = interpreter.InterpreterWithCustomOps(
-        model_content=tflite_model, custom_op_registerers=[op])
+        model_content=tflite_model,
+        custom_op_registerers=tf_text.tflite_registrar.SELECT_TFTEXT_OPS)
     interp.allocate_tensors()
     input_details = interp.get_input_details()
     interp.set_tensor(input_details[0]["index"], input_data)
@@ -770,9 +770,9 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
     tflite_model = converter.convert()
 
     # Do TFLite detokenization.
-    op = tflite_registrar.AddFastWordpieceDetokenize
     interp = interpreter.InterpreterWithCustomOps(
-        model_content=tflite_model, custom_op_registerers=[op])
+        model_content=tflite_model,
+        custom_op_registerers=tf_text.tflite_registrar.SELECT_TFTEXT_OPS)
     interp.allocate_tensors()
     detokenize = interp.get_signature_runner("serving_default")
     tflite_detokenization_result = detokenize(
