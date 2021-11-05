@@ -25,12 +25,17 @@ Various tensorflow ops related to text-processing.
 
 [`metrics`](./text/metrics.md) module: Tensorflow text-processing metrics.
 
+[`tflite_registrar`](./text/tflite_registrar.md) module: tflite_registrar
+
 ## Classes
 
 [`class BertTokenizer`](./text/BertTokenizer.md): Tokenizer used for BERT.
 
 [`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
 implementations.
+
+[`class FastWordpieceTokenizer`](./text/FastWordpieceTokenizer.md): Tokenizes a
+tensor of UTF-8 string tokens into subword pieces.
 
 [`class FirstNItemSelector`](./text/FirstNItemSelector.md): An `ItemSelector`
 that selects the first `n` items in the batch.
@@ -100,6 +105,10 @@ of UTF-8 string tokens into subword pieces.
 
 ## Functions
 
+[`build_fast_wordpiece_model(...)`](./text/build_fast_wordpiece_model.md):
+build_fast_wordpiece_model(arg0: List[str], arg1: int, arg2: str, arg3: str,
+arg4: bool, arg5: bool) -> bytes
+
 [`case_fold_utf8(...)`](./text/case_fold_utf8.md): Applies case folding to every
 UTF-8 string in the input.
 
@@ -166,7 +175,7 @@ fragments in a given text. (deprecated)
 **version**<a id="__version__"></a>
 </td>
 <td>
-`'2.7.0-rc0'`
+`'2.7.0-rc1'`
 </td>
 </tr>
 </table>

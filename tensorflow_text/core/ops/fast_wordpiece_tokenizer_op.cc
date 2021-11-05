@@ -12,23 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
+#ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_OPS_FAST_WORDPIECE_TOKENIZER_OP_H_
+#define THIRD_PARTY_TENSORFLOW_TEXT_CORE_OPS_FAST_WORDPIECE_TOKENIZER_OP_H_
 
-#include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/kernels/shim/tflite_op_shim.h"
-#include "tensorflow_text/core/kernels/whitespace_tokenizer_kernel_template.h"
+#include "tensorflow/lite/kernels/shim/tf_op_shim.h"
+#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_kernel.h"
 
-namespace tflite {
-namespace ops {
-namespace custom {
+namespace tensorflow {
 namespace text {
 
-extern "C" void AddWhitespaceTokenize(tflite::MutableOpResolver* resolver) {
-  tflite::shim::TfLiteOpKernel<
-      tensorflow::text::WhitespaceTokenizeWithOffsetsV2Op>::Add(resolver);
-}
+REGISTER_TF_OP_SHIM(FastWordpieceTokenizeWithOffsetsOpKernel);
+
+REGISTER_TF_OP_SHIM(FastWordpieceDetokenizeOpKernel);
 
 }  // namespace text
-}  // namespace custom
-}  // namespace ops
-}  // namespace tflite
+}  // namespace tensorflow
+
+#endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_OPS_FAST_WORDPIECE_TOKENIZER_OP_H_

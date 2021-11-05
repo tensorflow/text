@@ -31,7 +31,6 @@ limitations under the License.
 ==============================================================================*/
 
 #include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/context.h"
 #include "tensorflow/lite/mutable_op_resolver.h"
 
 namespace tflite {
@@ -42,7 +41,7 @@ namespace text {
 // Adds the Ngrams custom op to an op resolver.
 // This function can be loaded using dlopen.  Since C++ function names get
 // mangled, declare this function as extern C, so its name is unchanged.
-extern "C" void AddNgramsCustomOp(MutableOpResolver* resolver);
+extern "C" void AddNgramsStringJoin(MutableOpResolver* resolver);
 
 TfLiteRegistration* Register_tftext_Ngrams();
 

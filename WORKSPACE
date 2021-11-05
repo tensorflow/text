@@ -3,16 +3,6 @@ workspace(name = "org_tensorflow_text")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
-    name = "com_google_sentencepiece",
-    strip_prefix = "sentencepiece-0.1.96",
-    sha256 = "8409b0126ebd62b256c685d5757150cf7fcb2b92a2f2b98efb3f38fc36719754",
-    urls = [
-        "https://github.com/google/sentencepiece/archive/refs/tags/v0.1.96.zip"
-    ],
-    build_file = "//third_party/sentencepiece:BUILD",
-)
-
-http_archive(
     name = "icu",
     strip_prefix = "icu-release-64-2",
     sha256 = "dfc62618aa4bd3ca14a3df548cd65fe393155edd213e49c39f3a30ccd618fc27",
@@ -23,6 +13,26 @@ http_archive(
     build_file = "//third_party/icu:BUILD.bzl",
     patches = ["//third_party/icu:udata.patch"],
     patch_args = ["-p1"],
+)
+
+http_archive(
+    name = "com_google_sentencepiece",
+    strip_prefix = "sentencepiece-0.1.96",
+    sha256 = "8409b0126ebd62b256c685d5757150cf7fcb2b92a2f2b98efb3f38fc36719754",
+    urls = [
+        "https://github.com/google/sentencepiece/archive/refs/tags/v0.1.96.zip"
+    ],
+    build_file = "//third_party/sentencepiece:BUILD",
+)
+
+http_archive(
+    name = "darts_clone",
+    build_file = "//third_party/darts_clone:BUILD.bzl",
+    sha256 = "c97f55d05c98da6fcaf7f9ecc6a6dc6bc5b18b8564465f77abff8879d446491c",
+    strip_prefix = "darts-clone-e40ce4627526985a7767444b6ed6893ab6ff8983",
+    urls = [
+        "https://github.com/s-yata/darts-clone/archive/e40ce4627526985a7767444b6ed6893ab6ff8983.zip",
+    ],
 )
 
 http_archive(
@@ -51,10 +61,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    strip_prefix = "tensorflow-2.7.0-rc0",
-    sha256 = "6b31d38c3a408bebe746dfecbc073eb68e6de38046fde40067a4eef9abddf25c",
+    strip_prefix = "tensorflow-2.7.0",
+    sha256 = "249b48ddee927801c7a4f8e5442cf1a3c860f6f46b85a2ff7a78b501507dd561",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/v2.7.0-rc0.zip"
+        "https://github.com/tensorflow/tensorflow/archive/v2.7.0.zip"
     ],
 )
 
