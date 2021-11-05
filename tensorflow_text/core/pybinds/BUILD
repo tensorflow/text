@@ -13,9 +13,6 @@ pybind_extension(
     srcs = [
         "tflite_registrar.cc",
     ],
-    hdrs = [
-        "//tensorflow_text/core/kernels:tflite_headers",
-    ],
     additional_exported_symbols = [
         "AddFastWordpieceDetokenize",
         "AddFastWordpieceTokenize",
@@ -28,9 +25,7 @@ pybind_extension(
         # lite:framework tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels:builtin_ops tensorflow dep,
-        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_tflite",
-        "//tensorflow_text/core/kernels:ngrams_tflite",
-        "//tensorflow_text/core/kernels:whitespace_tokenizer_tflite",
+        "//tensorflow_text/core/kernels:tflite_ops",
     ],
 )
 

@@ -8,15 +8,6 @@ licenses(["notice"])
 # Visibility rules
 package(default_visibility = ["//visibility:public"])
 
-filegroup(
-    name = "tflite_headers",
-    srcs = [
-        "fast_wordpiece_tokenizer_tflite.h",
-        "ngrams_tflite.h",
-        "whitespace_tokenizer_tflite.h",
-    ],
-)
-
 exports_files(["LICENSE"])
 
 tf_cc_library(
@@ -660,6 +651,20 @@ cc_library(
         "@com_google_googletest//:gtest",
         # tf:framework tensorflow dep,
         # tf:testlib tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "tflite_ops",
+    hdrs = [
+        "fast_wordpiece_tokenizer_tflite.h",
+        "ngrams_tflite.h",
+        "whitespace_tokenizer_tflite.h",
+    ],
+    deps = [
+        ":fast_wordpiece_tokenizer_tflite",
+        ":ngrams_tflite",
+        ":whitespace_tokenizer_tflite",
     ],
 )
 

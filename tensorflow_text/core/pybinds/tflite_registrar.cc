@@ -28,7 +28,8 @@ PYBIND11_MODULE(tflite_registrar, m) {
       "AddFastWordpieceTokenize",
       "AddFastWordpieceDetokenize",
       "AddNgramsStringJoin",
-      "AddWhitespaceTokenize");
+      "AddWhitespaceTokenize",
+      "SELECT_TFTEXT_OPS");
   m.def(
       "AddFastWordpieceTokenize",
       [](uintptr_t resolver) {

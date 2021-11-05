@@ -234,7 +234,7 @@ py_test(
     python_version = "PY3",
     srcs_version = "PY3",
     deps = [
-        ":fast_wordpiece_tokenizer",
+        ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
         # python:array_ops tensorflow dep,
@@ -244,7 +244,6 @@ py_test(
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        "//tensorflow_text/core/pybinds:tflite_registrar",
     ],
 )
 
@@ -1237,13 +1236,12 @@ py_test(
     shard_count = 4,
     srcs_version = "PY3",
     deps = [
-        ":whitespace_tokenizer_v2",
+        ":tensorflow_text",
         # tensorflow package dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        "//tensorflow_text/core/pybinds:tflite_registrar",
     ],
 )
 
