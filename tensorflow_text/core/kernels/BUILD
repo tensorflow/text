@@ -8,15 +8,6 @@ licenses(["notice"])
 # Visibility rules
 package(default_visibility = ["//visibility:public"])
 
-filegroup(
-    name = "tflite_headers",
-    srcs = [
-        "fast_wordpiece_tokenizer_tflite.h",
-        "ngrams_tflite.h",
-        "whitespace_tokenizer_tflite.h",
-    ],
-)
-
 exports_files(["LICENSE"])
 
 tf_cc_library(
@@ -198,15 +189,12 @@ tf_cc_library(
     ],
 )
 
-filegroup(
-    name = "fast_wordpiece_tokenizer_testdata",
-    srcs = glob(["testdata/**"]),
-)
-
 cc_test(
     name = "fast_wordpiece_tokenizer_test",
     srcs = ["fast_wordpiece_tokenizer_test.cc"],
-    data = [":fast_wordpiece_tokenizer_testdata"],
+    data = [
+        "//tensorflow_text:python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
+    ],
     deps = [
         ":fast_wordpiece_tokenizer",
         ":fast_wordpiece_tokenizer_model_builder",
@@ -240,7 +228,6 @@ tf_cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
-        "//third_party/icu/data:icu_normalization_data",
         "@icu//:nfkc",
         # lite/kernels/shim:status_macros tensorflow dep,
     ],
@@ -609,14 +596,14 @@ tf_cc_library(
         # tf:protos_all_cc tensorflow dep,
     ],
     deps = [
+        "@com_google_sentencepiece//src:sentencepiece_cc_proto",  # Old target
+        "@com_google_sentencepiece//src:sentencepiece_model_cc_proto",  # Old target
+        "@com_google_sentencepiece//src:sentencepiece_processor",  # Old target
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/meta:type_traits",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
-        "@com_google_sentencepiece//src:sentencepiece_cc_proto",
-        "@com_google_sentencepiece//src:sentencepiece_model_cc_proto",
-        "@com_google_sentencepiece//src:sentencepiece_processor",
     ],
 )
 
@@ -664,6 +651,20 @@ cc_library(
         "@com_google_googletest//:gtest",
         # tf:framework tensorflow dep,
         # tf:testlib tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "tflite_ops",
+    hdrs = [
+        "fast_wordpiece_tokenizer_tflite.h",
+        "ngrams_tflite.h",
+        "whitespace_tokenizer_tflite.h",
+    ],
+    deps = [
+        ":fast_wordpiece_tokenizer_tflite",
+        ":ngrams_tflite",
+        ":whitespace_tokenizer_tflite",
     ],
 )
 

@@ -102,7 +102,7 @@ py_library(
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python:util tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_tflite_registrar",
+        "//tensorflow_text/core/pybinds:tflite_registrar",
         "//tensorflow_text/tools/wordpiece_vocab",
     ],
 )
@@ -110,6 +110,11 @@ py_library(
 # build_test
 
 # public_names_test
+
+# This is required for other external users to build tests using these models.
+exports_files(
+    glob(["python/ops/test_data/**"]),
+)
 
 ##########################
 # Individual tf.text ops #
@@ -224,12 +229,12 @@ py_test(
     size = "small",
     srcs = ["python/ops/fast_wordpiece_tokenizer_test.py"],
     data = [
-        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_testdata",
+        ":python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
     ],
     python_version = "PY3",
     srcs_version = "PY3",
     deps = [
-        ":fast_wordpiece_tokenizer",
+        ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
         # python:array_ops tensorflow dep,
@@ -239,7 +244,6 @@ py_test(
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_tflite_registrar",
     ],
 )
 
@@ -748,11 +752,6 @@ py_tf_text_library(
     ],
 )
 
-# This is required for other external users to build tests using this model.
-exports_files(
-    glob(["python/ops/test_data/test_oss_model.*"]),
-)
-
 py_test(
     name = "sentencepiece_tokenizer_test",
     size = "large",
@@ -1237,13 +1236,12 @@ py_test(
     shard_count = 4,
     srcs_version = "PY3",
     deps = [
-        ":whitespace_tokenizer_v2",
+        ":tensorflow_text",
         # tensorflow package dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_tflite_registrar",
     ],
 )
 
