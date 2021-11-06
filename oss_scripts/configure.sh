@@ -46,7 +46,7 @@ else
   if is_macos; then
     pip install tensorflow-macos
   else
-    pip install tensorflow==2.7.0rc0
+    pip install tensorflow==2.7.0
   fi
 fi
 
