@@ -323,6 +323,7 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
         unknown_token=unknown_token,
         token_out_type=token_out_type,
         max_bytes_per_word=max_bytes_per_word,
+        no_pretokenization=True
     )
     subwords_t, begin_t, end_t = tokenizer.tokenize_with_offsets(tokens_t)
     self.assertAllEqual(subwords_t, expected_subwords)
@@ -365,7 +366,8 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
       ragged_tokens = ragged_factory_ops.constant(
           tokens, row_splits_dtype=row_splits_dtype)
       tokenizer = FastWordpieceTokenizer(
-          vocab=vocab, token_out_type=token_out_type)
+          vocab=vocab, token_out_type=token_out_type,
+          no_pretokenization=True)
       subwords = tokenizer.tokenize(ragged_tokens)
       self.assertAllEqual(subwords, expected_subwords)
 
@@ -374,7 +376,8 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
     tokens = ragged_factory_ops.constant(
         [[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]])
     tokenizer = FastWordpieceTokenizer(
-        vocab=_ENGLISH_VOCAB, token_out_type=dtypes.int64)
+        vocab=_ENGLISH_VOCAB, token_out_type=dtypes.int64,
+        no_pretokenization=True)
     subwords, _, _ = tokenizer.tokenize_with_offsets(tokens)
 
     self.assertAllEqual(subwords, [[[0, 1, 2], [3], [21], [21]]])
@@ -385,7 +388,8 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
     tokens = ragged_factory_ops.constant(
         [[b"don't", b"tread", b"cantfindme", b"treadcantfindme"]])
     tokenizer = FastWordpieceTokenizer(
-        vocab=_ENGLISH_VOCAB, token_out_type=dtypes.int32)
+        vocab=_ENGLISH_VOCAB, token_out_type=dtypes.int32,
+        no_pretokenization=True)
     subwords, _, _ = tokenizer.tokenize_with_offsets(tokens)
 
     self.assertAllEqual(subwords, [[[0, 1, 2], [3], [21], [21]]])
@@ -478,6 +482,7 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
     tokenizer = FastWordpieceTokenizer(
         vocab=vocab,
         token_out_type=token_out_type,
+        no_pretokenization=True
     )
     subwords = tokenizer.tokenize(tokens)
     self.assertAllEqual(subwords, expected_subwords)
@@ -529,7 +534,8 @@ class FastWordpieceOpAdditionalTest(test_base.DatasetTestBase,
         vocab=_TEST_VOCAB,
         max_bytes_per_word=_TEST_MAX_BYTES_PER_WORD,
         suffix_indicator=_TEST_SUFFIX_INDICATOR,
-        unknown_token=_TEST_UNKNOWN_TOKEN)
+        unknown_token=_TEST_UNKNOWN_TOKEN,
+        no_pretokenization=True)
 
     self.assertAllEqual(tokenizer.tokenize(text_inputs), expected_outputs)
 
@@ -548,7 +554,8 @@ class FastWordpieceOpAdditionalTest(test_base.DatasetTestBase,
           vocab=_TEST_VOCAB,
           max_bytes_per_word=_TEST_MAX_BYTES_PER_WORD,
           suffix_indicator=_TEST_SUFFIX_INDICATOR,
-          unknown_token=_TEST_UNKNOWN_TOKEN)
+          unknown_token=_TEST_UNKNOWN_TOKEN,
+          no_pretokenization=True)
       return tokenizer.tokenize(text_input)
 
     # Basic tests.
@@ -580,7 +587,8 @@ class FastWordpieceOpAdditionalTest(test_base.DatasetTestBase,
         vocab=_TEST_VOCAB,
         max_bytes_per_word=_TEST_MAX_BYTES_PER_WORD,
         suffix_indicator=_TEST_SUFFIX_INDICATOR,
-        unknown_token=_TEST_UNKNOWN_TOKEN)
+        unknown_token=_TEST_UNKNOWN_TOKEN,
+        no_pretokenization=True)
 
     @def_function.function
     def Preprocess(text_input):
@@ -638,8 +646,7 @@ class EndToEndFastWordpieceOpTest(test_base.DatasetTestBase,
         vocab=_TEST_VOCAB,
         max_bytes_per_word=_TEST_MAX_BYTES_PER_WORD,
         suffix_indicator=_TEST_SUFFIX_INDICATOR,
-        unknown_token=_TEST_UNKNOWN_TOKEN,
-        end_to_end=True)
+        unknown_token=_TEST_UNKNOWN_TOKEN)
     self.assertAllEqual(tokenizer.tokenize(text_inputs), expected_outputs)
 
 
@@ -672,7 +679,6 @@ class FastWordpieceDetokenizeOpTest(test_base.DatasetTestBase,
         max_bytes_per_word=_TEST_MAX_BYTES_PER_WORD,
         suffix_indicator=_TEST_SUFFIX_INDICATOR,
         unknown_token=_TEST_UNKNOWN_TOKEN,
-        end_to_end=True,
         support_detokenization=True)
     results = tokenizer.detokenize(id_inputs)
     self.assertAllEqual(results, expected_outputs)
@@ -681,12 +687,12 @@ class FastWordpieceDetokenizeOpTest(test_base.DatasetTestBase,
 @parameterized.parameters([
     # Test 0: Single-word case.
     dict(
-        end_to_end=False,
+        no_pretokenization=True,
         text_inputs=[["", "abcdefghz", "abc", "abcX"]],
     ),
     # Test 1: End-to-end case.
     dict(
-        end_to_end=True,
+        no_pretokenization=False,
         text_inputs=[["", "abcdefghz, a", "abcdefghz abc abcX"]],
     ),
 ])
@@ -694,7 +700,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
                                     parameterized.TestCase):
   """Tests fast WordPiece when used in a Keras model."""
 
-  def testTfLiteWordpieceTokenizer(self, end_to_end, text_inputs):
+  def testTfLiteWordpieceTokenizer(self, no_pretokenization, text_inputs):
     """Checks TFLite conversion and inference."""
 
     class TokenizerModel(tf.keras.Model):
@@ -704,7 +710,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
                    max_bytes_per_word=100,
                    suffix_indicator="##",
                    unknown_token="<unk>",
-                   end_to_end=False,
+                   no_pretokenization=True,
                    support_detokenization=False,
                    **kwargs):
         super().__init__(**kwargs)
@@ -713,7 +719,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
             max_bytes_per_word=max_bytes_per_word,
             suffix_indicator=suffix_indicator,
             unknown_token=unknown_token,
-            end_to_end=end_to_end,
+            no_pretokenization=no_pretokenization,
             support_detokenization=support_detokenization)
 
       def call(self, input_tensor, **kwargs):
@@ -733,7 +739,7 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
         _TEST_MAX_BYTES_PER_WORD,
         _TEST_SUFFIX_INDICATOR,
         _TEST_UNKNOWN_TOKEN,
-        end_to_end,
+        no_pretokenization,
         support_detokenization=True)
     # Test tokenization.
     # Do TF.Text inference.

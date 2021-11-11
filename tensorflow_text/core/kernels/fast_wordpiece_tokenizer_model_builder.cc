@@ -169,12 +169,13 @@ class StringVocab : public WordpieceVocab {
 // Builds the FastWordpieceTokenizer model.
 class FastWordpieceBuilder {
  public:
-  // When end_to_end is true, we split the input string by punctuation chars
-  // (in addition to whitespaces) and then tokenize it to wordpieces.
+  // When no_pretokenization is false, we split the input string by punctuation
+  // chars (in addition to whitespaces) and then tokenize it to wordpieces.
   absl::Status BuildModel(const std::vector<std::string>& vocab,
                           int max_bytes_per_token,
                           absl::string_view suffix_indicator,
-                          absl::string_view unk_token, bool end_to_end,
+                          absl::string_view unk_token,
+                          bool no_pretokenization,
                           bool support_detokenization);
 
   absl::StatusOr<std::string> ExportToFlatBuffer() const;
@@ -267,10 +268,10 @@ class FastWordpieceBuilder {
   uint32_t trie_punct_failure_link_node_ =
       fast_wordpiece_tokenizer_utils::kNullNode;
 
-  // Whether to build the end-to-end tokenizer that tokenize general texts. It
-  // splits the input on punctuation/whitespace and treat each punctuation as an
-  // independent word.
-  bool end_to_end_;
+  // Whether to build the end-to-end tokenizer that tokenizes general texts.
+  // When set to false, it splits the input on punctuation/whitespace and treat
+  // each punctuation as an independent word.
+  bool no_pretokenization_;
 
   // Whether the tokenizer supports the detokenization function.
   bool support_detokenization_;
@@ -294,11 +295,11 @@ class FastWordpieceBuilder {
 absl::Status FastWordpieceBuilder::BuildModel(
     const std::vector<std::string>& vocab, int max_bytes_per_token,
     absl::string_view suffix_indicator, absl::string_view unk_token,
-    bool end_to_end, bool support_detokenization) {
+    bool no_pretokenization, bool support_detokenization) {
   unk_token_ = std::string(unk_token);
   suffix_indicator_ = std::string(suffix_indicator);
   max_bytes_per_token_ = max_bytes_per_token;
-  end_to_end_ = end_to_end;
+  no_pretokenization_ = no_pretokenization;
   support_detokenization_ = support_detokenization;
 
   vocab_.emplace(vocab);
@@ -397,7 +398,7 @@ FastWordpieceBuilder::PrepareVocabTokensToBuildTrie() {
     }
     // Skip word that contains punctuation but is not a punctuation itself.
     // <unk>, <pad>, ##. are skipped in this step.
-    if (end_to_end_ && vocab_token.ContainsPunctuation() &&
+    if (!no_pretokenization_ && vocab_token.ContainsPunctuation() &&
         (vocab_token.TokenUnicodeLengthWithoutSuffixIndicator() > 1 ||
          vocab_token.IsSuffixToken())) {
       continue;
@@ -425,7 +426,7 @@ FastWordpieceBuilder::PrepareVocabTokensToBuildTrie() {
     }
   }
 
-  if (end_to_end_) {
+  if (!no_pretokenization_) {
     // Special treatment for all Unicode punctuation chars that are not already
     // in the trie.
     // The maximum codepoint in Unicode is 0x0010FFFF.
@@ -490,7 +491,7 @@ absl::Status FastWordpieceBuilder::ConstructTrie(
   }
   trie_suffix_root_ = node.node_id;
 
-  if (end_to_end_) {
+  if (!no_pretokenization_) {
     // Locate the dummy node for the failure link for punctuation nodes.
     node = trie_->CreateTraversalCursorPointToRoot();
     if (!trie_->TryTraverseSeveralSteps(node,
@@ -616,7 +617,8 @@ absl::Status FastWordpieceBuilder::BuildFailureStructure(
               "Failed to find if an end node in the trie is a punctuation char "
               "in node_id_is_punc_map_. It should never happen.");
         }
-        if (end_to_end_ && node_id_is_punc_map_.at(child_node.node_id)) {
+        if (!no_pretokenization_ &&
+            node_id_is_punc_map_.at(child_node.node_id)) {
           // For end-to-end tokenizer, we set the failure link node of every
           // punctuation char as a special node trie_punct_failure_link_node_
           // which is a dummy node (no parent, no descendants, failure link is
@@ -718,7 +720,7 @@ absl::Status FastWordpieceBuilder::BuildFailureStructure(
     }
   }
 
-  if (end_to_end_ && !suffix_indicator_.empty()) {
+  if (!no_pretokenization_ && !suffix_indicator_.empty()) {
     // Rewire trie links along suffix_indicator_.
     // If the suffix indicator contains a punctuation char, let `u`--(`c`)-->`v`
     // be the first trie edge along the suffix indicator such that the edge
@@ -937,7 +939,7 @@ absl::StatusOr<std::string> FastWordpieceBuilder::ExportToFlatBuffer() const {
   wtcb.add_unk_token_id(unk_token_id_);
   wtcb.add_precomputed_result_for_suffix_indicator(
       precomputed_result_for_suffix_indicator);
-  wtcb.add_end_to_end(end_to_end_);
+  wtcb.add_end_to_end(!no_pretokenization_);
   wtcb.add_support_detokenization(support_detokenization_);
   wtcb.add_vocab_array(vocab_array);
   wtcb.add_vocab_is_suffix_array(vocab_is_suffix_array);
@@ -950,10 +952,11 @@ absl::StatusOr<std::string> FastWordpieceBuilder::ExportToFlatBuffer() const {
 absl::StatusOr<std::string> BuildModelAndExportToFlatBuffer(
     const std::vector<std::string>& vocab, int max_bytes_per_token,
     absl::string_view suffix_indicator, absl::string_view unk_token,
-    bool end_to_end, bool support_detokenization) {
+    bool no_pretokenization, bool support_detokenization) {
   FastWordpieceBuilder builder;
   SH_RETURN_IF_ERROR(builder.BuildModel(vocab, max_bytes_per_token,
-                                        suffix_indicator, unk_token, end_to_end,
+                                        suffix_indicator, unk_token,
+                                        no_pretokenization,
                                         support_detokenization));
   SH_ASSIGN_OR_RETURN(std::string flatbuffer, builder.ExportToFlatBuffer());
   return flatbuffer;
