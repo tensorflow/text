@@ -17,12 +17,8 @@
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/meta/type_traits.h"
-#include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/span.h"
-#include "src/sentencepiece_model.pb.h"
-#include "src/sentencepiece.pb.h"
-#include "src/sentencepiece_processor.h"
 #include "tensorflow/core/framework/bounds_check.h"
 #include "tensorflow/core/framework/dataset_stateful_op_allowlist.h"
 #include "tensorflow/core/framework/device_base.h"
@@ -43,6 +39,7 @@
 #include "tensorflow/core/platform/thread_annotations.h"
 #include "tensorflow/core/platform/types.h"
 #include "tensorflow/core/util/work_sharder.h"
+#include "tensorflow_text/core/kernels/sentencepiece_wrapper.h"
 
 namespace tensorflow {
 namespace text {
@@ -51,7 +48,7 @@ namespace {
 
 // Our resource object that will hold the SentencePiece processor.
 struct SentencepieceResource : public ResourceBase {
-  sentencepiece::SentencePieceProcessor processor;
+  SentencepieceWrapper wrapper;
   int64 memory_used;
   bool add_bos = false;
   bool add_eos = false;
@@ -76,7 +73,7 @@ struct SentencepieceResource : public ResourceBase {
     static std::atomic<int64> counter(0);
     std::string unique_node_name = strings::StrCat(
         "SentencepieceResourceFromGraphDef", "/", counter.fetch_add(1));
-    std::string model = processor.model_proto().SerializeAsString();
+    std::string model = wrapper.GetModelProtoAsString();
     *out = ops::SourceOp(
         "SentencepieceOp",
         builder->opts()
@@ -93,7 +90,7 @@ struct SentencepieceResource : public ResourceBase {
 // TODO(broken) Determine a medium cost of a call to the SentencePiece processor
 constexpr int64 kCostPerUnit = 10000;
 
-::tensorflow::Status ToTFStatus(const ::util::Status& s) {
+::tensorflow::Status ToTFStatus(const sentencepiece::util::Status& s) {
   if (s.ok()) return ::tensorflow::Status();
   return ::tensorflow::Status(static_cast<::tensorflow::error::Code>(s.code()),
                               ::tensorflow::string(s.message()));
@@ -161,8 +158,10 @@ tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
     absl::StrAppend(&options, "reverse");
   }
 
-  TF_RETURN_IF_ERROR(ToTFStatus(sp->processor.SetEncodeExtraOptions(options)));
-  TF_RETURN_IF_ERROR(ToTFStatus(sp->processor.SetDecodeExtraOptions(options)));
+  TF_RETURN_IF_ERROR(ToTFStatus(
+      sp->wrapper.processor.SetEncodeExtraOptions(options)));
+  TF_RETURN_IF_ERROR(ToTFStatus(
+      sp->wrapper.processor.SetDecodeExtraOptions(options)));
 
   return Status::OK();
 }
@@ -217,7 +216,8 @@ class SentencepieceOp : public OpKernel {
               // tensorflow graph such that the tensorflow graph is
               // self-contained.
               TF_RETURN_IF_ERROR(ToTFStatus(
-                  sp->processor.LoadFromSerializedProto(model_proto_attr)));
+                  sp->wrapper.processor.LoadFromSerializedProto(
+                      model_proto_attr)));
               // TODO(broken): Determine a better computation of what the memory
               // requirements for the processor are.
               sp->memory_used = model_proto_attr.size();
@@ -324,17 +324,17 @@ class SentencepieceTokenizeOp : public OpKernel {
                                          ? nbest_size_tensor->vec<int32>()(i)
                                          : nbest_size_tensor->scalar<int32>()();
             if (return_nbest) {
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.NBestEncode(
+              OP_REQUIRES_OK(ctx, ToTFStatus(sp->wrapper.processor.NBestEncode(
                                       input_values_flat(i), nbest_size,
                                       &nbest_tokens[i])));
             } else if (nbest_size == 0 || nbest_size == 1) {
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Encode(
+              OP_REQUIRES_OK(ctx, ToTFStatus(sp->wrapper.processor.Encode(
                                       input_values_flat(i), &tokens[i])));
             } else {
               const float alpha = alpha_tensor->dims() == 1
                                       ? alpha_tensor->vec<float>()(i)
                                       : alpha_tensor->scalar<float>()();
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.SampleEncode(
+              OP_REQUIRES_OK(ctx, ToTFStatus(sp->wrapper.processor.SampleEncode(
                                       input_values_flat(i), nbest_size, alpha,
                                       &tokens[i])));
             }
@@ -463,17 +463,17 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
                                          ? nbest_size_tensor->vec<int32>()(i)
                                          : nbest_size_tensor->scalar<int32>()();
             if (return_nbest) {
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.NBestEncode(
+              OP_REQUIRES_OK(ctx, ToTFStatus(sp->wrapper.processor.NBestEncode(
                                       input_values_flat(i), nbest_size,
                                       &nbest_results[i])));
             } else if (nbest_size == 0 || nbest_size == 1) {
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Encode(
+              OP_REQUIRES_OK(ctx, ToTFStatus(sp->wrapper.processor.Encode(
                                       input_values_flat(i), &results[i])));
             } else {
               const float alpha = alpha_tensor->dims() == 1
                                       ? alpha_tensor->vec<float>()(i)
                                       : alpha_tensor->scalar<float>()();
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.SampleEncode(
+              OP_REQUIRES_OK(ctx, ToTFStatus(sp->wrapper.processor.SampleEncode(
                                       input_values_flat(i), nbest_size, alpha,
                                       &results[i])));
             }
@@ -607,7 +607,7 @@ class SentencepieceDetokenizeOp : public OpKernel {
                 pieces(&input_values_flat(input_splits_flat(i)),
                        &input_values_flat(input_splits_flat(i + 1)));
             std::string output_flat_str;
-            OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Decode(
+            OP_REQUIRES_OK(ctx, ToTFStatus(sp->wrapper.processor.Decode(
                                     pieces, &output_flat_str)));
             output_flat(i) = output_flat_str;
           }
@@ -653,7 +653,7 @@ class SentencepieceVocabSizeOp : public OpKernel {
 
     Tensor* output_tensor;
     OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {}, &output_tensor));
-    output_tensor->scalar<int32>()() = sp->processor.GetPieceSize();
+    output_tensor->scalar<int32>()() = sp->wrapper.processor.GetPieceSize();
   }
 };
 
@@ -684,7 +684,8 @@ class SentencepieceIdToStringOp : public OpKernel {
 
     absl::ReaderMutexLock lock(&sp->mu);
     for (int i = 0; i < input_tensor_flat.size(); ++i) {
-      output_tensor_flat(i) = sp->processor.IdToPiece(input_tensor_flat(i));
+      output_tensor_flat(i) = sp->wrapper.processor.IdToPiece(
+          input_tensor_flat(i));
     }
   }
 };
@@ -716,7 +717,8 @@ class SentencepieceStringToIdOp : public OpKernel {
 
     absl::ReaderMutexLock lock(&sp->mu);
     for (int i = 0; i < input_tensor_flat.size(); ++i) {
-      output_tensor_flat(i) = sp->processor.PieceToId(input_tensor_flat(i));
+      output_tensor_flat(i) = sp->wrapper.processor.PieceToId(
+          input_tensor_flat(i));
     }
   }
 };

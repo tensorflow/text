@@ -624,6 +624,23 @@ cc_test(
     ],
 )
 
+cc_library(
+    name = "sentencepiece_wrapper",
+    srcs = [],
+    hdrs = ["sentencepiece_wrapper.h"],
+    linkstatic = 1,
+    deps = [
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/memory",
+        "@com_google_absl//absl/meta:type_traits",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
+        "@com_google_sentencepiece//:sentencepiece_cc_proto",
+        "@com_google_sentencepiece//:sentencepiece_model_cc_proto",
+        "@com_google_sentencepiece//:sentencepiece_processor",
+    ],
+)
+
 tf_cc_library(
     name = "sentencepiece_kernels",
     srcs = ["sentencepiece_kernels.cc"],
@@ -634,9 +651,7 @@ tf_cc_library(
         # tf:protos_all_cc tensorflow dep,
     ],
     deps = [
-        "@com_google_sentencepiece//src:sentencepiece_cc_proto",  # Old target
-        "@com_google_sentencepiece//src:sentencepiece_model_cc_proto",  # Old target
-        "@com_google_sentencepiece//src:sentencepiece_processor",  # Old target
+        ":sentencepiece_wrapper",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/meta:type_traits",
