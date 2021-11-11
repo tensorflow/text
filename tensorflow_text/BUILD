@@ -640,6 +640,21 @@ py_test(
     ],
 )
 
+py_test(
+    name = "ragged_tensor_to_tensor_test",
+    srcs = ["python/ragged/ragged_tensor_to_tensor_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":tensorflow_text",
+        # tensorflow package dep,
+        # python:client_testlib tensorflow dep,
+        # python:constant_op tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
 py_tf_text_library(
     name = "regex_split_ops",
     srcs = ["python/ops/regex_split_ops.py"],
