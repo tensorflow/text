@@ -1143,7 +1143,8 @@ TEST_P(TestTokenizeSingleWord, Test) {
   ASSERT_OK_AND_ASSIGN(
       std::string flatbuffer,
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token));
+                                      spec.suffix_indicator, spec.unk_token,
+                                      /*no_pretokenization=*/true));
   ASSERT_OK_AND_ASSIGN(auto tokenizer,
                        FastWordpieceTokenizer::Create(flatbuffer.data()));
 
@@ -1164,7 +1165,8 @@ TEST_P(TestTokenizeSingleWord, TestNoOutputPieces) {
   ASSERT_OK_AND_ASSIGN(
       std::string flatbuffer,
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token));
+                                      spec.suffix_indicator, spec.unk_token,
+                                      true /* no_pretokenization */));
   ASSERT_OK_AND_ASSIGN(auto tokenizer,
                        FastWordpieceTokenizer::Create(flatbuffer.data()));
 
@@ -1183,7 +1185,8 @@ TEST_P(TestTokenizeSingleWord, TestNoOutputPiecesOnlyOutputIds) {
   ASSERT_OK_AND_ASSIGN(
       std::string flatbuffer,
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token));
+                                      spec.suffix_indicator, spec.unk_token,
+                                      true /* no_pretokenization */));
   ASSERT_OK_AND_ASSIGN(auto tokenizer,
                        FastWordpieceTokenizer::Create(flatbuffer.data()));
 
@@ -1198,7 +1201,8 @@ TEST_P(TestTokenizeSingleWord, TestNoOutputPiecesWithPositiveSentenceOffsets) {
   ASSERT_OK_AND_ASSIGN(
       std::string flatbuffer,
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token));
+                                      spec.suffix_indicator, spec.unk_token,
+                                      true /* no_pretokenization */));
   ASSERT_OK_AND_ASSIGN(auto tokenizer,
                        FastWordpieceTokenizer::Create(flatbuffer.data()));
 
@@ -2365,8 +2369,7 @@ TEST_P(TestTokenizeText, Test) {
   ASSERT_OK_AND_ASSIGN(
       std::string flatbuffer,
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token,
-                                      /*end_to_end=*/true));
+                                      spec.suffix_indicator, spec.unk_token));
   ASSERT_OK_AND_ASSIGN(auto tokenizer,
                        FastWordpieceTokenizer::Create(flatbuffer.data()));
 
@@ -2387,8 +2390,7 @@ TEST_P(TestTokenizeText, TestNoOutputPieces) {
   ASSERT_OK_AND_ASSIGN(
       std::string flatbuffer,
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token,
-                                      /*end_to_end=*/true));
+                                      spec.suffix_indicator, spec.unk_token));
   ASSERT_OK_AND_ASSIGN(auto tokenizer,
                        FastWordpieceTokenizer::Create(flatbuffer.data()));
 
@@ -2407,8 +2409,7 @@ TEST_P(TestTokenizeText, TestNoOutputPiecesOnlyOutputIds) {
   ASSERT_OK_AND_ASSIGN(
       std::string flatbuffer,
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token,
-                                      /*end_to_end=*/true));
+                                      spec.suffix_indicator, spec.unk_token));
   ASSERT_OK_AND_ASSIGN(auto tokenizer,
                        FastWordpieceTokenizer::Create(flatbuffer.data()));
 
@@ -2466,7 +2467,7 @@ TEST_P(TestTokenizeDetokenize, Test) {
       std::string flatbuffer,
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
                                       spec.suffix_indicator, spec.unk_token,
-                                      /*end_to_end=*/false,
+                                      /*no_pretokenization=*/true,
                                       /*support_detokenization=*/true));
   ASSERT_OK_AND_ASSIGN(auto tokenizer,
                        FastWordpieceTokenizer::Create(flatbuffer.data()));

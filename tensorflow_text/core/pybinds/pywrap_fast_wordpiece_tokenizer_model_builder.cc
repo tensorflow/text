@@ -27,10 +27,10 @@ PYBIND11_MODULE(pywrap_fast_wordpiece_tokenizer_model_builder, m) {
   m.def("build_fast_wordpiece_model",
         [](const std::vector<std::string>& vocab, int max_bytes_per_token,
            const std::string& suffix_indicator, const std::string& unk_token,
-           bool end_to_end, bool support_detokenization) {
+           bool no_pretokenization, bool support_detokenization) {
           const auto result = BuildModelAndExportToFlatBuffer(
               vocab, max_bytes_per_token, suffix_indicator, unk_token,
-              end_to_end, support_detokenization);
+              no_pretokenization, support_detokenization);
           if (!result.status().ok()) {
             // Propagate the error to the Python code.
             throw std::runtime_error(std::string(result.status().message()));

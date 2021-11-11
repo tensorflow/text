@@ -32,8 +32,8 @@ namespace text {
 //  * suffix_indicator: Characters prepended to a wordpiece to indicate that
 //    it is a suffix to another subword, such as "##".
 //  * unk_token: The unknown token string.
-//  * end_to_end: Whether to build end-to-end tokneizer.
-//    Set to `true` when the model is used for general text end-to-end
+//  * no_pretokenization: Whether to pretokenize on punctuation & whitespace.
+//    Set to `false` when the model is used for general text end-to-end
 //    tokenization, which combines pre-tokenization (splitting text into words
 //    on punctuation/whitespaces) and WordPiece (breaking words into subwords)
 //    into one pass.
@@ -46,7 +46,7 @@ namespace text {
 absl::StatusOr<std::string> BuildModelAndExportToFlatBuffer(
     const std::vector<std::string>& vocab, int max_bytes_per_token,
     absl::string_view suffix_indicator, absl::string_view unk_token,
-    bool end_to_end = false, bool support_detokenization = false);
+    bool no_pretokenization = false, bool support_detokenization = false);
 }  // namespace text
 }  // namespace tensorflow
 
