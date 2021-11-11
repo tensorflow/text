@@ -90,9 +90,36 @@ cc_library(
             ":common",
             ":sentencepiece_cc_proto",
             ":sentencepiece_model_cc_proto",
+            ":status",
+            ":threadpool",
             "@com_google_absl//absl/container:flat_hash_map",
             "@com_google_absl//absl/container:flat_hash_set",
             "@com_google_absl//absl/memory",
             "@com_google_absl//absl/strings",
+            "@darts_clone",
         ],
+)
+
+cc_library(
+    name = "basic_types",
+    hdrs = ["src/deps/basic_types.h"],
+)
+
+cc_library(
+    name = "threadpool",
+    hdrs = ["src/deps/threadpool.h"],
+)
+
+cc_library(
+    name = "status",
+    srcs = ["src/deps/status.cc"],
+    hdrs = [
+        "src/deps/canonical_errors.h",
+        "src/deps/status.h",
+        "src/deps/status_builder.h",
+        "src/deps/status_macros.h",
+    ],
+    deps = [
+        "@com_google_absl//absl/strings",
+    ],
 )
