@@ -44,7 +44,12 @@ if [[ $(pip show tensorflow) == *tensorflow* ]] ||
 else
   echo 'Installing tensorflow.'
   if is_macos; then
-    pip install tensorflow-macos
+    #  Only Apple Silicon will be installed with tensorflow-macos.
+    if [[ x"$(arch)" == x"arm64" ]]; then
+      pip install tensorflow-macos==2.6.0
+    else
+      pip install tensorflow==2.7.0
+    fi
   else
     pip install tensorflow==2.7.0
   fi
