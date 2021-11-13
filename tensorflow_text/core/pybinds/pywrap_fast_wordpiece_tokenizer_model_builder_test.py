@@ -41,7 +41,7 @@ class PywrapFastWordpieceBuilderTest(test_util.TensorFlowTestCase):
     self.assertEqual(
         pywrap_fast_wordpiece_tokenizer_model_builder
         .build_fast_wordpiece_model(
-            vocab, max_bytes_per_token, suffix_indicator, unk_token, False,
+            vocab, max_bytes_per_token, suffix_indicator, unk_token, True,
             False),
         expected_model_buffer)
 
@@ -56,7 +56,7 @@ class PywrapFastWordpieceBuilderTest(test_util.TensorFlowTestCase):
                                 "Cannot find unk_token in the vocab!"):
       (pywrap_fast_wordpiece_tokenizer_model_builder
        .build_fast_wordpiece_model(
-           vocab, max_bytes_per_token, suffix_indicator, unk_token, False,
+           vocab, max_bytes_per_token, suffix_indicator, unk_token, True,
            False))
 
 

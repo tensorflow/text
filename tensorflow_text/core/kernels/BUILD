@@ -264,6 +264,7 @@ cc_library(
     hdrs = ["fast_wordpiece_tokenizer_tflite.h"],
     deps = [
         ":fast_wordpiece_tokenizer_kernel_template",
+        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/lite/c:common",
@@ -411,6 +412,7 @@ tf_cc_library(
     hdrs = ["ngrams_tflite.h"],
     deps = [
         ":ngrams_kernel_template",
+        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/lite/c:common",
@@ -433,6 +435,42 @@ cc_test(
         # lite:string_util tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels:test_util tensorflow dep,
+        # lite/schema:schema_fbs tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "ragged_tensor_to_tensor_tflite",
+    srcs = ["ragged_tensor_to_tensor_tflite.cc"],
+    hdrs = ["ragged_tensor_to_tensor_tflite.h"],
+    deps = [
+        "@flatbuffers",
+        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:lib",
+        "@org_tensorflow//tensorflow/lite/c:common",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
+        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
+        # tf/util:ragged_to_dense_util_common tensorflow dep,
+        # lite:framework tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels:kernel_util tensorflow dep,
+        # lite/kernels/internal:tensor tensorflow dep,
+        # lite/kernels/internal:types tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "ragged_tensor_to_tensor_tflite_test",
+    srcs = ["ragged_tensor_to_tensor_tflite_test.cc"],
+    deps = [
+        ":ragged_tensor_to_tensor_tflite",
+        "@com_google_googletest//:gtest_main",
+        "@flatbuffers",
+        # lite:framework tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels:test_util tensorflow dep,
+        # lite/kernels/internal:tensor tensorflow dep,
         # lite/schema:schema_fbs tensorflow dep,
     ],
 )
@@ -659,11 +697,13 @@ tf_cc_library(
     hdrs = [
         "fast_wordpiece_tokenizer_tflite.h",
         "ngrams_tflite.h",
+        "ragged_tensor_to_tensor_tflite.h",
         "whitespace_tokenizer_tflite.h",
     ],
     deps = [
         ":fast_wordpiece_tokenizer_tflite",
         ":ngrams_tflite",
+        ":ragged_tensor_to_tensor_tflite",
         ":whitespace_tokenizer_tflite",
     ],
 )
@@ -798,6 +838,7 @@ tf_cc_library(
     hdrs = ["whitespace_tokenizer_tflite.h"],
     deps = [
         ":whitespace_tokenizer_kernel_template",
+        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/lite/c:common",

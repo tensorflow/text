@@ -67,7 +67,7 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
                max_bytes_per_word=100,
                token_out_type=dtypes.int64,
                unknown_token='[UNK]',
-               end_to_end=False,
+               no_pretokenization=False,
                support_detokenization=False,
                model_buffer=None):
     """Initializes the FastWordpieceTokenizer.
@@ -75,7 +75,7 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
     Two ways to initialize:
       * (preferred) use a precompiled `model_buffer`.
       * use `vocab`, `suffix_indicator`, `max_bytes_per_word`, `unknown_token`,
-        and `end_to_end`.
+        and `no_pretokenization`.
 
     Args:
       vocab: (optional) The list of tokens in the vocabulary.
@@ -86,9 +86,9 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
         `tf.int64` or `tf.int32` IDs, or `tf.string` subwords.
       unknown_token: (optional) The string value to substitute for an unknown
         token. It must be included in `vocab`.
-      end_to_end: (optional) Whether to use end-to-end Fast WordPiece tokenizer.
-        When true, the input must be a sentence and we split the input on
-        whitespaces and punctuations.
+      no_pretokenization: (optional) By default, the input is split on
+        whitespaces and punctuations before applying the Wordpiece tokenization.
+        When true, the input is assumed to be pretokenized already.
       support_detokenization: (optional) Whether to make the tokenizer support
         doing detokenization. Setting it to true expands the size of the model
         flatbuffer. As a reference, when using 120k multilingual BERT WordPiece
@@ -105,7 +105,8 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
       model_buffer = (pywrap_fast_wordpiece_tokenizer_model_builder
                       .build_fast_wordpiece_model(
                           vocab, max_bytes_per_word, suffix_indicator,
-                          unknown_token, end_to_end, support_detokenization))
+                          unknown_token, no_pretokenization,
+                          support_detokenization))
     # Use uint8 tensor as a buffer for the model to avoid any possible changes,
     # for example truncation by '\0'.
     self._model = constant_op.constant(list(model_buffer), dtype=dtypes.uint8)
@@ -117,18 +118,18 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
     ### Example 1, single word tokenization:
     >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]"]
-    >>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string)
+    >>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string,
+    ...                                    no_pretokenization=True)
     >>> tokens = [["they're", "the", "greatest"]]
     >>> tokenizer.tokenize(tokens)
     <tf.RaggedTensor [[[b'they', b"##'", b'##re'], [b'the'],
                        [b'great', b'##est']]]>
 
-    ### Example 2, general text end-to-end tokenization (pre-tokenization on
+    ### Example 2, general text tokenization (pre-tokenization on
     ### punctuation and whitespace followed by WordPiece tokenization):
     >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]",
     ...          "'", "re"]
-    >>> tokenizer = FastWordpieceTokenizer(
-    ...     vocab, token_out_type=tf.string, end_to_end=True)
+    >>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string)
     >>> tokens = [["they're the greatest", "the greatest"]]
     >>> tokenizer.tokenize(tokens)
     <tf.RaggedTensor [[[b'they', b"'", b're', b'the', b'great', b'##est'],
@@ -154,7 +155,8 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
     ### Example 1, single word tokenization:
     >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]"]
-    >>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string)
+    >>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string,
+    ...                                    no_pretokenization=True)
     >>> tokens = [["they're", "the", "greatest"]]
     >>> subtokens, starts, ends = tokenizer.tokenize_with_offsets(tokens)
     >>> subtokens
@@ -165,12 +167,11 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
     >>> ends
     <tf.RaggedTensor [[[4, 5, 7], [3], [5, 8]]]>
 
-    ### Example 2, general text end-to-end tokenization (pre-tokenization on
+    ### Example 2, general text tokenization (pre-tokenization on
     ### punctuation and whitespace followed by WordPiece tokenization):
     >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]",
     ...          "'", "re"]
-    >>> tokenizer = FastWordpieceTokenizer(
-    ...     vocab, token_out_type=tf.string, end_to_end=True)
+    >>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string)
     >>> tokens = [["they're the greatest", "the greatest"]]
     >>> subtokens, starts, ends = tokenizer.tokenize_with_offsets(tokens)
     >>> subtokens
