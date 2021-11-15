@@ -62,7 +62,6 @@ cc_library(
         "src/unigram_model.cc",
         "src/util.cc",
         "src/word_model.cc",
-        "third_party/absl/strings/string_view.cc",
     ],
     hdrs = [
         "src/bpe_model.h",
@@ -77,7 +76,6 @@ cc_library(
         "src/unigram_model.h",
         "src/util.h",
         "src/word_model.h",
-        "third_party/absl/strings/string_view.h",
     ],
     defines = ["_USE_TF_STRING_VIEW"],
     includes = [

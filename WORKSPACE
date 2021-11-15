@@ -23,6 +23,8 @@ http_archive(
         "https://github.com/google/sentencepiece/archive/refs/tags/v0.1.96.zip"
     ],
     build_file = "//third_party/sentencepiece:BUILD",
+    patches = ["//third_party/sentencepiece:sp.patch"],
+    patch_args = ["-p1"],
 )
 
 http_archive(
