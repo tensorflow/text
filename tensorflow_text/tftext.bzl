@@ -136,3 +136,208 @@ def tf_cc_library(
         compatible_with = compatible_with,
         testonly = testonly,
         alwayslink = alwayslink)
+
+
+def _make_search_paths(prefix, levels_to_root):
+    return ",".join(
+        [
+            "-rpath,%s/%s" % (prefix, "/".join([".."] * search_level))
+            for search_level in range(levels_to_root + 1)
+        ],
+    )
+
+
+def _rpath_linkopts(name):
+    # Search parent directories up to the TensorFlow root directory for shared
+    # object dependencies, even if this op shared object is deeply nested
+    # (e.g. tensorflow/contrib/package:python/ops/_op_lib.so). tensorflow/ is then
+    # the root and tensorflow/libtensorflow_framework.so should exist when
+    # deployed. Other shared object dependencies (e.g. shared between contrib/
+    # ops) are picked up as long as they are in either the same or a parent
+    # directory in the tensorflow/ tree.
+    levels_to_root = native.package_name().count("/") + name.count("/")
+    return select({
+        "@org_tensorflow//tensorflow:macos": [
+            "-Wl,%s" % (_make_search_paths("@loader_path", levels_to_root),),
+            "-Wl,-rename_section,__TEXT,text_env,__TEXT,__text",
+        ],
+        "@org_tensorflow//tensorflow:windows": [],
+        "//conditions:default": [
+            "-Wl,%s" % (_make_search_paths("$$ORIGIN", levels_to_root),),
+        ],
+    })
+
+
+# buildozer: disable=function-docstring-args
+def tf_pybind_extension(
+        name,
+        srcs,
+        module_name,
+        hdrs = [],
+        features = [],
+        srcs_version = "PY3",
+        data = [],
+        copts = [],
+        linkopts = [],
+        deps = [],
+        defines = [],
+        additional_exported_symbols = [],
+        visibility = None,
+        testonly = None,
+        licenses = None,
+        compatible_with = None,
+        restricted_to = None,
+        deprecation = None,
+        link_in_framework = False,
+        pytype_deps = [],
+        pytype_srcs = []):
+    """Builds a generic Python extension module."""
+    _ignore = [module_name]
+    p = name.rfind("/")
+    if p == -1:
+        sname = name
+        prefix = ""
+    else:
+        sname = name[p + 1:]
+        prefix = name[:p + 1]
+    so_file = "%s%s.so" % (prefix, sname)
+    exported_symbols = [
+        "init%s" % sname,
+        "init_%s" % sname,
+        "PyInit_%s" % sname,
+    ] + additional_exported_symbols
+
+    exported_symbols_file = "%s-exported-symbols.lds" % name
+    version_script_file = "%s-version-script.lds" % name
+
+    exported_symbols_output = "\n".join(["_%s" % symbol for symbol in exported_symbols])
+    version_script_output = "\n".join([" %s;" % symbol for symbol in exported_symbols])
+
+    native.genrule(
+        name = name + "_exported_symbols",
+        outs = [exported_symbols_file],
+        cmd = "echo '%s' >$@" % exported_symbols_output,
+        output_licenses = ["unencumbered"],
+        visibility = ["//visibility:private"],
+        testonly = testonly,
+    )
+
+    native.genrule(
+        name = name + "_version_script",
+        outs = [version_script_file],
+        cmd = "echo '{global:\n%s\n local: *;};' >$@" % version_script_output,
+        output_licenses = ["unencumbered"],
+        visibility = ["//visibility:private"],
+        testonly = testonly,
+    )
+
+    native.cc_binary(
+        name = so_file,
+        srcs = srcs + hdrs,
+        data = data,
+        copts = copts + [
+            "-fno-strict-aliasing",
+            "-fexceptions",
+        ] + select({
+            "@org_tensorflow//tensorflow:windows": [],
+            "//conditions:default": [
+                "-fvisibility=hidden",
+            ],
+        }),
+        linkopts = linkopts + _rpath_linkopts(name) + select({
+            "@org_tensorflow//tensorflow:macos": [
+                # TODO: the -w suppresses a wall of harmless warnings about hidden typeinfo symbols
+                # not being exported.  There should be a better way to deal with this.
+                "-Wl,-w",
+                "-Wl,-exported_symbols_list,$(location %s)" % exported_symbols_file,
+            ],
+            "@org_tensorflow//tensorflow:windows": [],
+            "//conditions:default": [
+                "-Wl,--version-script",
+                "$(location %s)" % version_script_file,
+            ],
+        }),
+        deps = deps + [
+            exported_symbols_file,
+            version_script_file,
+        ],
+        defines = defines,
+        features = features + ["-use_header_modules"],
+        linkshared = 1,
+        testonly = testonly,
+        licenses = licenses,
+        visibility = visibility,
+        deprecation = deprecation,
+        restricted_to = restricted_to,
+        compatible_with = compatible_with,
+    )
+    native.py_library(
+        name = name,
+        data = select({
+            "//conditions:default": [so_file],
+        }) + pytype_srcs,
+        deps = pytype_deps,
+        srcs_version = srcs_version,
+        licenses = licenses,
+        testonly = testonly,
+        visibility = visibility,
+        deprecation = deprecation,
+        restricted_to = restricted_to,
+        compatible_with = compatible_with,
+    )
+
+
+
+def pybind_extension(
+        name = None,
+        srcs = None,
+        hdrs = None,
+        data = None,
+        visibility = None,
+        deps = None,
+        local_defines = None,
+        module_name = None,
+        additional_exported_symbols = []):
+    """Creates a Python module implemented in C++.
+    Python modules can depend on a py_extension. Other py_extensions can depend
+    on a generated C++ library named with "_cc" suffix.
+    Args:
+      name: Name for this target.
+      srcs: C++ source files.
+      hdrs: C++ header files, for other py_extensions which depend on this.
+      data: Files needed at runtime. This may include Python libraries.
+      visibility: Controls which rules can depend on this.
+      deps: Other C++ libraries that this library depends upon.
+      local_defines: A list of custom definitions.
+    """
+    _ignore = [module_name, additional_exported_symbols]
+
+    cc_library_name = name + "_cc"
+    cc_binary_name = name + ".so"
+
+    native.cc_library(
+        name = cc_library_name,
+        srcs = srcs,
+        hdrs = hdrs,
+        data = data,
+        visibility = visibility,
+        deps = deps,
+        alwayslink = True,
+        local_defines = local_defines,
+    )
+
+    native.cc_binary(
+        name = cc_binary_name,
+        linkshared = True,
+        linkstatic = True,
+        # Ensure that the init function is exported. Required for gold.
+        linkopts = ['-Wl,--export-dynamic-symbol=PyInit_{}'.format(name)],
+        visibility = ["//visibility:private"],
+        deps = [cc_library_name],
+    )
+
+    native.py_library(
+        name = name,
+        data = [cc_binary_name],
+        visibility = visibility,
+    )
