@@ -76,4 +76,4 @@ _allowed_symbols = [
 ]
 
 remove_undocumented(__name__, _allowed_symbols)
-__version__ = "2.6.0"
+__version__ = "2.7.2"
