@@ -700,7 +700,8 @@ class FastWordpieceInKerasModelTest(test_util.TensorFlowTestCase,
                                     parameterized.TestCase):
   """Tests fast WordPiece when used in a Keras model."""
 
-  def testTfLiteWordpieceTokenizer(self, no_pretokenization, text_inputs):
+  def DISABLED_testTfLiteWordpieceTokenizer(
+      self, no_pretokenization, text_inputs):
     """Checks TFLite conversion and inference."""
 
     class TokenizerModel(tf.keras.Model):

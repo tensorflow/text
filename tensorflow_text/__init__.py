@@ -17,7 +17,7 @@
 from tensorflow.python.util.all_util import remove_undocumented
 
 # pylint: disable=wildcard-import
-from tensorflow_text.core.pybinds import tflite_registrar
+# from tensorflow_text.core.pybinds import tflite_regisrar
 from tensorflow_text.python import keras
 from tensorflow_text.python import metrics
 from tensorflow_text.python.ops import *
@@ -74,18 +74,17 @@ _allowed_symbols = [
     "sliding_window",
     "span_alignment",
     "span_overlaps",
-    "tflite_registrar",
+#     "tflite_regisrar",
     "viterbi_constrained_sequence",
     "wordshape",
 ]
 
-tflite_registrar.SELECT_TFTEXT_OPS = [
-    tflite_registrar.AddFastWordpieceTokenize,
-    tflite_registrar.AddFastWordpieceDetokenize,
-    tflite_registrar.AddNgramsStringJoin,
-    tflite_registrar.AddRaggedTensorToTensor,
-    tflite_registrar.AddWhitespaceTokenize
-]
+# tflite_regisrar.SELECT_TFTEXT_OPS = [
+#     tflite_regisrar.AddFastWordpieceTokenize,
+#     tflite_regisrar.AddFastWordpieceDetokenize,
+#     tflite_regisrar.AddNgramsStringJoin,
+#     tflite_regisrar.AddRaggedTensorToTensor,
+#     tflite_regisrar.AddWhitespaceTokenize]
 
 remove_undocumented(__name__, _allowed_symbols)
 __version__ = "2.7.0-rc1"
