@@ -87,4 +87,4 @@ _allowed_symbols = [
 #     tflite_regisrar.AddWhitespaceTokenize]
 
 remove_undocumented(__name__, _allowed_symbols)
-__version__ = "2.7.0"
+__version__ = "2.7.1"
