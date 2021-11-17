@@ -28,7 +28,7 @@ from tensorflow_text.python.ops import *
 _allowed_symbols = [
     "BertTokenizer",
     "Detokenizer",
-    "FastWordpieceTokenizer",
+#     "FastWordpieceTokenizer",
     "FirstNItemSelector",
     "HubModuleSplitter",
     "HubModuleTokenizer",
@@ -51,7 +51,7 @@ _allowed_symbols = [
     "WhitespaceTokenizer",
     "WordShape",
     "WordpieceTokenizer",
-    "build_fast_wordpiece_model",
+#     "build_fast_wordpiece_model",
     "case_fold_utf8",
     "coerce_to_structurally_valid_utf8",
     "combine_segments",
