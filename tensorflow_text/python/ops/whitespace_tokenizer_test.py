@@ -267,7 +267,7 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     self.assertAllEqual(starts, expected_offset_starts)
     self.assertAllEqual(ends, expected_offset_ends)
 
-  def DISABLED_testTfLite(self):
+  def testTfLite(self):
     """Checks TFLite conversion and inference."""
 
     class TokenizerModel(tf.keras.Model):
