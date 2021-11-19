@@ -175,7 +175,7 @@ fragments in a given text. (deprecated)
 **version**<a id="__version__"></a>
 </td>
 <td>
-`'2.7.0-rc1'`
+`'2.7.0'`
 </td>
 </tr>
 </table>
