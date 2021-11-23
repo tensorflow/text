@@ -93,7 +93,7 @@ struct SentencepieceResource : public ResourceBase {
 // TODO(broken) Determine a medium cost of a call to the SentencePiece processor
 constexpr int64 kCostPerUnit = 10000;
 
-::tensorflow::Status ToTFStatus(const ::util::Status& s) {
+::tensorflow::Status ToTFStatus(const sentencepiece::util::Status& s) {
   if (s.ok()) return ::tensorflow::Status();
   return ::tensorflow::Status(static_cast<::tensorflow::error::Code>(s.code()),
                               ::tensorflow::string(s.message()));

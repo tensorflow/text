@@ -32,8 +32,8 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.FastWordpieceTokenizer(
     vocab=None, suffix_indicator=&#x27;##&#x27;, max_bytes_per_word=100,
-    token_out_type=dtypes.int64, unknown_token=&#x27;[UNK]&#x27;, end_to_end=False,
-    support_detokenization=False, model_buffer=None
+    token_out_type=dtypes.int64, unknown_token=&#x27;[UNK]&#x27;,
+    no_pretokenization=False, support_detokenization=False, model_buffer=None
 )
 </code></pre>
 
@@ -54,7 +54,6 @@ the end_offset is set to be the length of the `unknown_token` string. (4)
 used or needed.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
@@ -99,12 +98,12 @@ token. It must be included in `vocab`.
 </td>
 </tr><tr>
 <td>
-`end_to_end`
+`no_pretokenization`
 </td>
 <td>
-(optional) Whether to use end-to-end Fast WordPiece tokenizer.
-When true, the input must be a sentence and we split the input on
-whitespaces and punctuations.
+(optional) By default, the input is split on
+whitespaces and punctuations before applying the Wordpiece tokenization.
+When true, the input is assumed to be pretokenized already.
 </td>
 </tr><tr>
 <td>
@@ -147,7 +146,6 @@ Detokenize and tokenize an input string returns itself when the input string is
 normalized and the tokenized wordpieces don't contain `<unk>`.
 
 ### Example:
-
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]",
 ...          "'", "re", "ok"]
@@ -162,7 +160,6 @@ normalized and the tokenized wordpieces don't contain `<unk>`.
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -236,22 +233,22 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]"]
->>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string)
+>>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string,
+...                                    no_pretokenization=True)
 >>> tokens = [["they're", "the", "greatest"]]
 >>> tokenizer.tokenize(tokens)
 <tf.RaggedTensor [[[b'they', b"##'", b'##re'], [b'the'],
                    [b'great', b'##est']]]>
 ```
 
-### Example 2, general text end-to-end tokenization (pre-tokenization on
+### Example 2, general text tokenization (pre-tokenization on
 
 ### punctuation and whitespace followed by WordPiece tokenization):
 
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]",
 ...          "'", "re"]
->>> tokenizer = FastWordpieceTokenizer(
-...     vocab, token_out_type=tf.string, end_to_end=True)
+>>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string)
 >>> tokens = [["they're the greatest", "the greatest"]]
 >>> tokenizer.tokenize(tokens)
 <tf.RaggedTensor [[[b'they', b"'", b're', b'the', b'great', b'##est'],
@@ -259,7 +256,6 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -275,7 +271,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -309,7 +304,8 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]"]
->>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string)
+>>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string,
+...                                    no_pretokenization=True)
 >>> tokens = [["they're", "the", "greatest"]]
 >>> subtokens, starts, ends = tokenizer.tokenize_with_offsets(tokens)
 >>> subtokens
@@ -321,15 +317,14 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 <tf.RaggedTensor [[[4, 5, 7], [3], [5, 8]]]>
 ```
 
-### Example 2, general text end-to-end tokenization (pre-tokenization on
+### Example 2, general text tokenization (pre-tokenization on
 
 ### punctuation and whitespace followed by WordPiece tokenization):
 
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]",
 ...          "'", "re"]
->>> tokenizer = FastWordpieceTokenizer(
-...     vocab, token_out_type=tf.string, end_to_end=True)
+>>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string)
 >>> tokens = [["they're the greatest", "the greatest"]]
 >>> subtokens, starts, ends = tokenizer.tokenize_with_offsets(tokens)
 >>> subtokens
@@ -342,7 +337,6 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -358,7 +352,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

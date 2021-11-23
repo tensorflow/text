@@ -557,12 +557,14 @@
     "text.tflite_registrar.AddFastWordpieceDetokenize": false,
     "text.tflite_registrar.AddFastWordpieceTokenize": false,
     "text.tflite_registrar.AddNgramsStringJoin": false,
+    "text.tflite_registrar.AddRaggedTensorToTensor": false,
     "text.tflite_registrar.AddWhitespaceTokenize": false,
+    "text.tflite_registrar.SELECT_TFTEXT_OPS": true,
     "text.viterbi_constrained_sequence": false,
     "text.wordshape": false
   },
+  "link_prefix": null,
   "py_module_names": [
     "text"
-  ],
-  "site_link": null
+  ]
 }

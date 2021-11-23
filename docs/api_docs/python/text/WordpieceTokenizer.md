@@ -105,7 +105,7 @@ Empty strings are tokenized into empty (ragged) tensors.
 
 ```
 >>> tokenizer.tokenize([""])
-<tf.RaggedTensor [[]]>
+<tf.RaggedTensor []>
 ```
 
 <!-- Tabular view -->

@@ -60,6 +60,7 @@
 *   <a href="../text/tflite_registrar/AddFastWordpieceDetokenize.md"><code>text.tflite_registrar.AddFastWordpieceDetokenize</code></a>
 *   <a href="../text/tflite_registrar/AddFastWordpieceTokenize.md"><code>text.tflite_registrar.AddFastWordpieceTokenize</code></a>
 *   <a href="../text/tflite_registrar/AddNgramsStringJoin.md"><code>text.tflite_registrar.AddNgramsStringJoin</code></a>
+*   <a href="../text/tflite_registrar/AddRaggedTensorToTensor.md"><code>text.tflite_registrar.AddRaggedTensorToTensor</code></a>
 *   <a href="../text/tflite_registrar/AddWhitespaceTokenize.md"><code>text.tflite_registrar.AddWhitespaceTokenize</code></a>
 *   <a href="../text/viterbi_constrained_sequence.md"><code>text.viterbi_constrained_sequence</code></a>
 *   <a href="../text/wordshape.md"><code>text.wordshape</code></a>

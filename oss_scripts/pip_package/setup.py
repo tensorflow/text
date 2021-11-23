@@ -32,7 +32,7 @@ from setuptools.command.install import install
 from setuptools.dist import Distribution
 
 project_name = 'tensorflow-text'
-project_version = '2.7.0-rc1'
+project_version = '2.7.0'
 
 
 class BinaryDistribution(Distribution):
@@ -73,7 +73,7 @@ setup(
     cmdclass={'install': InstallPlatlib},
     distclass=BinaryDistribution,
     install_requires=[
-        "tensorflow>=2.7.0rc0, <2.8; platform_machine != 'arm64'",
+        "tensorflow>=2.7.0, <2.8; platform_machine != 'arm64'",
         "tensorflow-macos>=2.6.0, <2.7; platform_system == 'Darwin' and platform_machine == 'arm64'",
         "tensorflow_hub>=0.8.0",
     ],

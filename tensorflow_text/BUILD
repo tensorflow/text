@@ -227,6 +227,7 @@ py_tf_text_library(
 py_test(
     name = "fast_wordpiece_tokenizer_test",
     size = "small",
+    timeout = "moderate",
     srcs = ["python/ops/fast_wordpiece_tokenizer_test.py"],
     data = [
         ":python/ops/test_data/fast_wordpiece_tokenizer_model.fb",

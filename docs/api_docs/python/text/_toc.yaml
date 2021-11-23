@@ -126,5 +126,7 @@ toc:
     path: /text/api_docs/python/text/tflite_registrar/AddFastWordpieceTokenize
   - title: AddNgramsStringJoin
     path: /text/api_docs/python/text/tflite_registrar/AddNgramsStringJoin
+  - title: AddRaggedTensorToTensor
+    path: /text/api_docs/python/text/tflite_registrar/AddRaggedTensorToTensor
   - title: AddWhitespaceTokenize
     path: /text/api_docs/python/text/tflite_registrar/AddWhitespaceTokenize
