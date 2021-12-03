@@ -73,7 +73,6 @@ setup(
     cmdclass={'install': InstallPlatlib},
     distclass=BinaryDistribution,
     install_requires=[
-        'tensorflow>=2.7.0, <2.8',
         'tensorflow_hub>=0.8.0',
     ],
     extras_require={
