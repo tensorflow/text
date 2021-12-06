@@ -73,6 +73,8 @@ setup(
     cmdclass={'install': InstallPlatlib},
     distclass=BinaryDistribution,
     install_requires=[
+        'tensorflow>=2.7.0, <2.8.0; platform_machine != "arm64" and platform_system != "Darwin"',
+        'tensorflow-macos>=2.7.0, <2.8.0; platform_machine == "arm64" and platform_system == "Darwin"',
         'tensorflow_hub>=0.8.0',
     ],
     extras_require={
