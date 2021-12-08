@@ -38,6 +38,7 @@ _allowed_symbols = [
     "RegexSplitter",
     "RoundRobinTrimmer",
     "SentencepieceTokenizer",
+    "ShrinkLongestTrimmer",
     "SplitMergeFromLogitsTokenizer",
     "SplitMergeTokenizer",
     "Splitter",

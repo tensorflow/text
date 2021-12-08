@@ -28,8 +28,7 @@ from tensorflow_text.python.ops import item_selector_ops
 
 
 class Trimmer(metaclass=abc.ABCMeta):
-  """Truncates a list of segments using a pre-determined truncation strategy.
-  """
+  """Truncates a list of segments using a pre-determined truncation strategy."""
 
   def trim(self, segments):
     """Truncate the list of `segments`.
@@ -47,8 +46,9 @@ class Trimmer(metaclass=abc.ABCMeta):
       `TruncationStrategy` defined.
     """
     with ops.name_scope("Trimmer/Trim"):
-      segments = [ragged_tensor.convert_to_tensor_or_ragged_tensor(s)
-                  for s in segments]
+      segments = [
+          ragged_tensor.convert_to_tensor_or_ragged_tensor(s) for s in segments
+      ]
       truncate_masks = self.generate_mask(segments)
       truncated_segments = [
           ragged_array_ops.boolean_mask(
@@ -151,6 +151,7 @@ class WaterfallTrimmer(Trimmer):
     Args:
       segments: A list of `RaggedTensor` each w/ a shape of [num_batch,
         (num_items)].
+
     Returns:
       a list with len(segments) of `RaggedTensor`s, see superclass for details.
     """
@@ -260,6 +261,86 @@ class RoundRobinTrimmer(Trimmer):
       results = _round_robin_allocation(segment_row_lengths, budget)
 
       results = array_ops.unstack(results, axis=-1)
+      item_selectors = [
+          item_selector_ops.FirstNItemSelector(i) for i in results
+      ]
+      return [
+          i.get_selectable(s, self._axis)
+          for s, i in zip(segments, item_selectors)
+      ]
+
+
+def _shrink_longest_allocation(segment_lengths, max_row_length):
+  """Allocating quota via a shrink-longest strategy."""
+  depth = array_ops.shape(segment_lengths)[-1]
+
+  def _condition(l):
+    return math_ops.reduce_any(
+        math_ops.greater(math_ops.reduce_sum(l, axis=-1), max_row_length))
+
+  def _body(l):
+    needs_truncation = math_ops.cast(
+        math_ops.greater(math_ops.reduce_sum(l, axis=-1), max_row_length),
+        dtypes.int32)
+    minus_ones_or_zeros = array_ops.expand_dims(-1 * needs_truncation, axis=1)
+    one_hot_to_max_position = array_ops.one_hot(
+        math_ops.argmax(l, axis=-1), depth=depth, dtype=dtypes.int32)
+    return (l + minus_ones_or_zeros * one_hot_to_max_position,)
+
+  return control_flow_ops.while_loop_v2(
+      cond=_condition, body=_body, loop_vars=[segment_lengths])
+
+
+class ShrinkLongestTrimmer(Trimmer):
+  """A `Trimmer` that truncates the longest segment.
+
+  A `Trimmer` that allocates a length budget to segments by shrinking whatever
+  is the longest segment at each round at the end, until the total length of
+  segments is no larger than the allocated budget.
+  See `generate_mask()` for more details.
+  """
+
+  def __init__(self, max_seq_length, axis=-1):
+    self._max_seq_length = max_seq_length
+    self._axis = axis
+
+  def generate_mask(self, segments):
+    """Calculates a truncation mask given a per-batch budget.
+
+    Calculate a truncation mask given a budget of the max number of items for
+    each batch row. The allocation of the budget is done using a
+    'shrink the largest segment' algorithm. This algorithm identifies the
+    currently longest segment (in cases of tie, picking whichever segment occurs
+    first) and reduces its length by 1 by dropping its last element, repeating
+    until the total length of segments is no larger than `_max_seq_length`.
+
+    For example if the budget is [7] and we have segments of size
+    [3, 4, 4], the truncate budget will be allocated as [2, 2, 3], going through
+    truncation steps
+      # Truncate the second segment.
+      [3, 3, 4]
+      # Truncate the last segment.
+      [3, 3, 3]
+      # Truncate the first segment.
+      [2, 3, 3]
+      # Truncate the second segment.
+      [2, 2, 3]
+
+    Args:
+      segments: A list of `RaggedTensor` each w/ a shape of [num_batch,
+        (num_items)].
+
+    Returns:
+      a list with len(segments) of `RaggedTensor`s, see superclass for details.
+    """
+    with ops.name_scope("ShrinkLongestTrimmer/generate_mask"):
+      segment_row_lengths = [_get_row_lengths(s, self._axis) for s in segments]
+      segment_row_lengths = array_ops.stack(segment_row_lengths, axis=-1)
+      segment_row_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
+      budget = ops.convert_to_tensor(self._max_seq_length)
+      results = array_ops.unstack(
+          _shrink_longest_allocation(segment_row_lengths, budget), axis=-1)
+
       item_selectors = [
           item_selector_ops.FirstNItemSelector(i) for i in results
       ]

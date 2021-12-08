@@ -61,6 +61,7 @@ from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import Tokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 from tensorflow_text.python.ops.trimmer_ops import RoundRobinTrimmer
+from tensorflow_text.python.ops.trimmer_ops import ShrinkLongestTrimmer
 from tensorflow_text.python.ops.trimmer_ops import WaterfallTrimmer
 from tensorflow_text.python.ops.unicode_char_tokenizer import UnicodeCharTokenizer
 from tensorflow_text.python.ops.unicode_script_tokenizer import UnicodeScriptTokenizer

@@ -512,5 +512,223 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
       self.assertAllEqual(expected_seg, actual_seg)
 
 
+@test_util.run_all_in_graph_and_eager_modes
+class ShrinkLongestTrimmerTest(test.TestCase, parameterized.TestCase):
+
+  @parameterized.parameters([
+      # pyformat: disable
+      dict(
+          descr="Basic test on rank 2 RTs",
+          segments=[
+              # segment 1
+              [
+                  [1, 2, 3],
+                  [4, 5, 6],
+                  [7, 8, 9, 0],
+              ],
+              # segment 2
+              [
+                  [10],
+                  [20, 30, 40],
+                  [50, 60, 70],
+              ]
+          ],
+          expected=[
+              # segment 1
+              [
+                  [True, True, True],
+                  [True, True, False],
+                  [True, True, False, False],
+              ],
+              # Segment 2
+              [
+                  [True],
+                  [True, True, False],
+                  [True, True, False],
+              ]
+          ],
+          max_seq_length=4,
+      ),
+      dict(
+          descr="Test where no truncation is needed",
+          segments=[
+              # segment 1
+              [
+                  [1, 2, 3],
+                  [4, 5],
+                  [6],
+              ],
+              # segment 2
+              [
+                  [10],
+                  [20],
+                  [30, 40, 50],
+              ]
+          ],
+          expected=[
+              # segment 1
+              [[True, True, True], [True, True], [True]],
+              # Segment 2
+              [[True], [True], [True, True, True]]
+          ],
+          max_seq_length=100,
+      ),
+      dict(
+          descr="Test 4 segments",
+          segments=[
+              # first segment
+              [[b"a", b"b"]],
+              # second segment
+              [[b"one", b"two"]],
+              # third segment
+              [[b"un", b"deux", b"trois", b"quatre", b"cinque"]],
+              # fourth segment
+              [[b"unos", b"dos", b"tres", b"quatro", b"cincos"]],
+          ],
+          max_seq_length=10,
+          expected=[
+              # first segment
+              [[True, True]],
+              # second segment
+              [[True, True]],
+              # third segment
+              [[True, True, True, False, False]],
+              # fourth segment
+              [[True, True, True, False, False]],
+          ],
+      ),
+      dict(
+          descr="Test rank 2; test when one batch has "
+                "elements < max_seq_length",
+          segments=[[[11, 12, 13],
+                     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]],
+                    [[11, 12, 13],
+                     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]]],
+          max_seq_length=7,
+          axis=-1,
+          expected=[
+              [[True, True, True],
+               [True, True, True, False,
+                False, False, False, False, False, False]],
+              [[True, True, True],
+               [True, True, True, True,
+                False, False, False, False, False, False]]
+          ],
+      ),
+      # pyformat: enable
+  ])
+  def testGenerateMask(self,
+                       segments,
+                       max_seq_length,
+                       expected,
+                       axis=-1,
+                       descr=None):
+    max_seq_length = constant_op.constant(max_seq_length)
+    segments = [ragged_factory_ops.constant(i) for i in segments]
+    expected = [ragged_factory_ops.constant(i) for i in expected]
+    trimmer = trimmer_ops.ShrinkLongestTrimmer(max_seq_length, axis=axis)
+    actual = trimmer.generate_mask(segments)
+    for expected_mask, actual_mask in zip(expected, actual):
+      self.assertAllEqual(actual_mask, expected_mask)
+
+  @parameterized.parameters([
+      # pyformat: disable
+      dict(
+          descr="Test rank 2; test when one batch has "
+                "elements < max_seq_length",
+          segments=[
+              # first segment
+              [
+                  [11, 12, 13],
+                  [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+              ],
+              # second segment
+              [
+                  [11, 12, 13],
+                  [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+              ],
+          ],
+          max_seq_length=7,
+          axis=-1,
+          expected=[
+              # first segment
+              [
+                  [11, 12, 13],
+                  [21, 22, 23],
+              ],
+              # second segment
+              [
+                  [11, 12, 13],
+                  [21, 22, 23, 24],
+              ],
+          ]
+      ),
+      dict(
+          descr="Basic test w/ segments of rank 2",
+          segments=[
+              # first segment
+              [
+                  [b"hello", b"there"],
+                  [b"name", b"is"],
+                  [b"what", b"time", b"is", b"it", b"?"],
+              ],
+              # second segment
+              [
+                  [b"whodis", b"?"],
+                  [b"bond", b",", b"james", b"bond"],
+                  [b"5:30", b"AM"],
+              ],
+          ],
+          max_seq_length=2,
+          expected=[
+              # first segment
+              [
+                  [b"hello"],
+                  [b"name"],
+                  [b"what"],
+              ],
+              # second segment
+              [
+                  [b"whodis"],
+                  [b"bond"],
+                  [b"5:30"],
+              ],
+          ]),
+      dict(
+          descr="Test 4 segments",
+          segments=[
+              # first segment
+              [[b"a", b"b"]],
+              # second segment
+              [[b"one", b"two"]],
+              # third segment
+              [[b"un", b"deux", b"trois", b"quatre", b"cinque"]],
+              # fourth segment
+              [[b"unos", b"dos", b"tres", b"quatro", b"cincos"]],
+          ],
+          max_seq_length=10,
+          expected=[
+              [[b"a", b"b"]],
+              [[b"one", b"two"]],
+              [[b"un", b"deux", b"trois"]],
+              [[b"unos", b"dos", b"tres"]],
+          ],
+      ),
+      # pyformat: enable
+  ])
+  def testPerBatchBudgetTrimmer(self,
+                                max_seq_length,
+                                segments,
+                                expected,
+                                axis=-1,
+                                descr=None):
+    max_seq_length = constant_op.constant(max_seq_length)
+    trimmer = trimmer_ops.ShrinkLongestTrimmer(max_seq_length, axis=axis)
+    segments = [ragged_factory_ops.constant(seg) for seg in segments]
+    expected = [ragged_factory_ops.constant(exp) for exp in expected]
+    actual = trimmer.trim(segments)
+    for expected_seg, actual_seg in zip(expected, actual):
+      self.assertAllEqual(expected_seg, actual_seg)
+
 if __name__ == "__main__":
   test.main()
