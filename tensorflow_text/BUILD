@@ -5,7 +5,10 @@ load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object"
 
 # Visibility rules
 package(
-    default_visibility = ["//visibility:public"],
+    default_visibility = [
+        "//third_party/tensorflow_models/official/nlp:__subpackages__",
+        "//visibility:public",
+    ],
 )
 
 licenses(["notice"])
