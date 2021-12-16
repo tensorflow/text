@@ -32,7 +32,7 @@ namespace {
 template <bool kGetPieces>
 int GetCurrentOutputSize(std::vector<std::string>* output_pieces,
                          std::vector<int>* output_ids) {
-  if constexpr (kGetPieces) {
+  if (constexpr (kGetPieces)) {
     return output_pieces->size();
   } else {
     return output_ids->size();
@@ -538,10 +538,10 @@ void FastWordpieceTokenizer::AppendTokenToOutput(
     std::vector<int>* output_end_offsets) const {
   auto token_id =
       fast_wordpiece_tokenizer_utils::GetTokenId(encoded_token_value);
-  if constexpr (kGetIds) {
+  if (constexpr (kGetIds)) {
     output_ids->push_back(token_id);
   }
-  if constexpr (kGetPieces || kGetOffsets) {
+  if (constexpr (kGetPieces || kGetOffsets)) {
     // For suffix tokens, the length below is without the suffix indicator.
     int token_substr_length =
         fast_wordpiece_tokenizer_utils::GetTokenLength(encoded_token_value);
@@ -553,7 +553,7 @@ void FastWordpieceTokenizer::AppendTokenToOutput(
       // to adjust and add the length of the suffix indicator string.
       token_substr_length += config_->suffix_indicator()->size();
     }
-    if constexpr (kGetPieces) {
+    if (constexpr (kGetPieces)) {
       // If token id is unk_token_id, it means that it is a dummy node for
       // punctuations that are not contained in the vocabulary, we append
       // the unk_token in this case. Otherwise, we
@@ -569,7 +569,7 @@ void FastWordpieceTokenizer::AppendTokenToOutput(
               ? absl::StrCat(config_->suffix_indicator()->str(), subword_str)
               : subword_str);
     }
-    if constexpr (kGetOffsets) {
+    if (constexpr (kGetOffsets)) {
       // Record the offsets relative to the start of the whole text.
       output_start_offsets->push_back(input_word_offset_in_text +
                                       cur_offset_in_input_word);
@@ -646,15 +646,15 @@ void FastWordpieceTokenizer::ResetOutputAppendUnknownToken(
     std::vector<std::string>* output_pieces, std::vector<int>* output_ids,
     std::vector<int>* output_start_offsets,
     std::vector<int>* output_end_offsets) const {
-  if constexpr (kGetPieces) {
+  if (constexpr (kGetPieces)) {
     output_pieces->resize(original_num_tokens + 1);
     output_pieces->back() = config_->unk_token()->str();
   }
-  if constexpr (kGetIds) {
+  if (constexpr (kGetIds)) {
     output_ids->resize(original_num_tokens + 1);
     output_ids->back() = config_->unk_token_id();
   }
-  if constexpr (kGetOffsets) {
+  if (constexpr (kGetOffsets)) {
     output_start_offsets->resize(original_num_tokens + 1);
     output_start_offsets->back() = input_word_offset_in_text;
 
