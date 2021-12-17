@@ -94,10 +94,16 @@ if is_windows; then
   write_to_bazelrc "build --host_copt=/experimental:preprocessor"
 fi
 
-TF_CFLAGS=( $(python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_compile_flags()))" | awk '{print $1}') )
-TF_LFLAGS=( $(python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $1}') )
-TF_LFLAGS_2=( $(python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $2}') )
-TF_ABIFLAG=$(python -c "import tensorflow as tf; print(tf.sysconfig.CXX11_ABI_FLAG)")
+if (which python) | grep -q "python"; then
+  installed_python="python"
+elif (which python3) | grep -q "python3"; then
+  installed_python="python3"
+fi
+
+TF_CFLAGS=( $($installed_python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_compile_flags()))" | awk '{print $1}') )
+TF_LFLAGS=( $($installed_python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $1}') )
+TF_LFLAGS_2=( $($installed_python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $2}') )
+TF_ABIFLAG=$($installed_python -c "import tensorflow as tf; print(tf.sysconfig.CXX11_ABI_FLAG)")
 
 HEADER_DIR=${TF_CFLAGS:2}
 SHARED_LIBRARY_DIR=${TF_LFLAGS:2}

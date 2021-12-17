@@ -11,7 +11,10 @@ if [[ $osname == "Darwin" ]]; then
 fi
 
 # Run configure.
-./oss_scripts/configure.sh
+source oss_scripts/configure.sh
+
+# Set tensorflow version
+source oss_scripts/prepare_tf_dep.sh
 
 # Build the pip package.
 bazel build --enable_runfiles oss_scripts/pip_package:build_pip_package

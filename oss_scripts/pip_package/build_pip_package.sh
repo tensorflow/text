@@ -86,11 +86,17 @@ main() {
 
   pushd "${temp_dir}" > /dev/null
 
+  if (which python) | grep -q "python"; then
+      installed_python="python"
+  elif (which python3) | grep -q "python3"; then
+      installed_python="python3"
+  fi
+
   # Build pip package
   if is_nightly; then
-    python setup.nightly.py bdist_wheel --universal $plat_name
+    $installed_python setup.nightly.py bdist_wheel --universal $plat_name
   else
-    python setup.py bdist_wheel --universal $plat_name
+    $installed_python setup.py bdist_wheel --universal $plat_name
   fi
   cp dist/*.whl "${output_dir}"
 }
