@@ -117,7 +117,7 @@ the bytes in the original string the token was created from.
 All of the tokenizers return RaggedTensors with the inner-most dimension of
 tokens mapping to the original individual strings. As a result, the resulting
 shape's rank is increased by one. Please review the ragged tensor guide if you
-are unfamiliar with them. https://www.tensorflow.org/guide/ragged_tensors
+are unfamiliar with them. https://www.tensorflow.org/guide/ragged_tensor
 
 ### WhitespaceTokenizer
 
