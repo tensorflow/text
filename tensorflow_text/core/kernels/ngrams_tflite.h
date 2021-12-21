@@ -43,7 +43,7 @@ namespace text {
 // mangled, declare this function as extern C, so its name is unchanged.
 extern "C" void AddNgramsStringJoin(MutableOpResolver* resolver);
 
-TfLiteRegistration* Register_tftext_Ngrams();
+TfLiteRegistration* Register_TFText_NgramsStringJoin();
 
 }  // namespace text
 }  // namespace custom
