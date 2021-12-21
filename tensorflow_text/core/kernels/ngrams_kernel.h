@@ -36,8 +36,7 @@ limitations under the License.
 namespace tensorflow {
 namespace text {
 
-class NgramsStringJoinKernel
-    : public tflite::shim::TfOpKernel<NgramsStringJoin> {
+class NGramsStrJoinKernel : public tflite::shim::TfOpKernel<NGramsStrJoin> {
  public:
   using TfOpKernel::TfOpKernel;
 };

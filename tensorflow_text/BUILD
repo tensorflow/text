@@ -30,7 +30,6 @@ cc_library(
         ":constrained_sequence_op_cc",
         ":fast_wordpiece_tokenizer_cc",
         ":mst_ops_cc",
-        ":ngrams_op_cc",
         ":normalize_ops_cc",
         ":regex_split_ops_cc",
         ":sentence_breaking_ops_cc",
@@ -451,13 +450,9 @@ py_test(
     ],
 )
 
-py_tf_text_library(
+py_library(
     name = "ngrams_op",
     srcs = ["python/ops/ngrams_op.py"],
-    cc_op_defs = ["core/ops/ngrams_op.cc"],
-    cc_op_kernels = [
-        "//tensorflow_text/core/kernels:ngrams_kernel",
-    ],
     deps = [
         ":sliding_window_op",
         # python:errors tensorflow dep,
@@ -471,13 +466,12 @@ py_tf_text_library(
 
 py_test(
     name = "ngrams_op_test",
-    size = "medium",
+    size = "small",
     srcs = ["python/ops/ngrams_op_test.py"],
     python_version = "PY3",
     srcs_version = "PY3",
     deps = [
-        ":tensorflow_text",
-        # tensorflow package dep,
+        ":ngrams_op",
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:errors tensorflow dep,

@@ -152,8 +152,7 @@ class NgramsModel : public SingleOpModel {
     fbb.EndMap(start_map);
     fbb.Finish();
 
-    SetCustomOp("TFText>NgramsStringJoin", fbb.GetBuffer(),
-                Register_TFText_NgramsStringJoin);
+    SetCustomOp("tftext:Ngrams", fbb.GetBuffer(), Register_tftext_Ngrams);
   }
 
   int input_values_;
