@@ -66,6 +66,7 @@ write_to_bazelrc "build --strategy=Genrule=standalone"
 write_to_bazelrc "build -c opt"
 write_to_bazelrc "build --define=framework_shared_object=true"
 write_to_bazelrc "build --experimental_repo_remote_exec"
+write_to_bazelrc "build --incompatible_blacklisted_protos_requires_proto_info=false"
 # By default, build in C++ 14 mode.
 write_to_bazelrc "build --cxxopt=-std=c++14"
 write_to_bazelrc "build --host_cxxopt=-std=c++14"
