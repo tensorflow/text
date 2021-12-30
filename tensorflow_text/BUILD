@@ -29,6 +29,7 @@ cc_library(
     deps = [
         ":constrained_sequence_op_cc",
         ":fast_bert_normalizer_cc",
+        ":fast_sentencepiece_tokenizer_cc",
         ":fast_wordpiece_tokenizer_cc",
         ":mst_ops_cc",
         ":ngrams_op_cc",
@@ -70,6 +71,7 @@ py_library(
         ":create_feature_bitmask_op",
         ":fast_bert_normalizer",
         ":fast_bert_tokenizer",
+        ":fast_sentencepiece_tokenizer",
         ":fast_wordpiece_tokenizer",
         ":greedy_constrained_sequence_op",
         ":hub_module_splitter",
@@ -287,6 +289,42 @@ py_test(
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "fast_sentencepiece_tokenizer",
+    srcs = ["python/ops/fast_sentencepiece_tokenizer.py"],
+    cc_op_defs = ["core/ops/fast_sentencepiece_ops.cc"],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels/mobile/sentencepiece:sentencepiece_tokenizer_op",
+        "//tensorflow_text/core/kernels/mobile/sentencepiece:sentencepiece_detokenizer_op",
+    ],
+    deps = [
+        # tensorflow package dep,
+        "//tensorflow_text/core/kernels/mobile/sentencepiece/py:model_converter",
+    ],
+)
+
+py_test(
+    name = "fast_sentencepiece_tokenizer_test",
+    size = "small",
+    timeout = "moderate",
+    srcs = ["python/ops/fast_sentencepiece_tokenizer_test.py"],
+    data = [
+        ":python/ops/test_data/fast_sentencepiece.model",
+    ],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":fast_sentencepiece_tokenizer",
+        "@absl_py//absl:app",
+        "//third_party/py/absl/flags",
+        "//third_party/py/absl/logging",
+        "@absl_py//absl/testing:parameterized",
+        # tensorflow package dep,
+        "//third_party/py/tensorflow_text",
+        "//tensorflow_text/core/kernels/mobile/sentencepiece/py:pywrap_tflite_registerer",
     ],
 )
 
