@@ -35,6 +35,7 @@ cc_library(
         ":normalize_ops_cc",
         ":regex_split_ops_cc",
         ":sentence_breaking_ops_cc",
+        ":sentencepiece_mobile_tokenizer_cc",
         ":sentencepiece_tokenizer_cc",
         ":split_merge_from_logits_tokenizer_cc",
         ":split_merge_tokenizer_cc",
@@ -85,6 +86,7 @@ py_library(
         ":regex_split_ops",
         ":segment_combiner_ops",
         ":sentence_breaking_ops",
+        ":sentencepiece_mobile_tokenizer",
         ":sentencepiece_tokenizer",
         ":sliding_window_op",
         ":split_merge_from_logits_tokenizer",
@@ -834,6 +836,40 @@ py_test(
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "sentencepiece_mobile_tokenizer",
+    srcs = ["python/mobile/sentencepiece_tokenizer.py"],
+    cc_op_defs = ["core/ops/sentencepiece_mobile_ops.cc"],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels/mobile/sentencepiece:sentencepiece_tokenizer_op",
+        "//tensorflow_text/core/kernels/mobile/sentencepiece:sentencepiece_detokenizer_op",
+    ],
+    deps = [
+        # tensorflow package dep,
+        "//tensorflow_text/core/kernels/mobile/sentencepiece/py:model_converter",
+    ],
+)
+
+py_test(
+    name = "sentencepiece_mobile_tokenizer_test",
+    srcs = ["python/mobile/sentencepiece_tokenizer_test.py"],
+    data = [
+        ":python/ops/test_data/sentencepiece_mobile.model",
+    ],
+    main = "sentencepiece_tokenizer_test.py",
+    python_version = "PY3",
+    deps = [
+        ":sentencepiece_mobile_tokenizer",
+        "@absl_py//absl:app",
+        "//third_party/py/absl/flags",
+        "//third_party/py/absl/logging",
+        "@absl_py//absl/testing:parameterized",
+        # tensorflow package dep,
+        "//third_party/py/tensorflow_text",
+        "//tensorflow_text/core/kernels/mobile/sentencepiece/py:pywrap_tflite_registerer",
     ],
 )
 
