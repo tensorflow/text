@@ -19,10 +19,14 @@ from tensorflow.python.util.all_util import remove_undocumented
 
 # pylint: disable=wildcard-import
 from tensorflow_text.python.keras.layers.todense import *
+from tensorflow_text.python.keras.layers.tokenization_layers import *
 
 # Public symbols in the "tensorflow_text.layers" package.
 _allowed_symbols = [
     "ToDense",
+    "UnicodeScriptTokenizer",
+    "WhitespaceTokenizer",
+    "WordpieceTokenizer",
 ]
 
 remove_undocumented(__name__, _allowed_symbols)
