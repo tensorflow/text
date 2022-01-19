@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2021 TF.Text Authors.
+# Copyright 2022 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -93,9 +93,10 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
         doing detokenization. Setting it to true expands the size of the model
         flatbuffer. As a reference, when using 120k multilingual BERT WordPiece
         vocab, the flatbuffer's size increases from ~5MB to ~6MB.
-      model_buffer: (optional) Bytes object that contains the wordpiece model in
-        flatbuffer format (see fast_wordpiece_tokenizer_model.fbs). If not
-        `None`, all other arguments (except `token_output_type`) are ignored.
+      model_buffer: (optional) Bytes object (or a uint8 tf.Tenosr) that contains
+        the wordpiece model in flatbuffer format (see
+        fast_wordpiece_tokenizer_model.fbs). If not `None`, all other arguments
+        (except `token_output_type`) are ignored.
     """
     super(FastWordpieceTokenizer, self).__init__()
     _tf_text_fast_wordpiece_tokenizer_op_create_counter.get_cell().increase_by(
@@ -109,7 +110,10 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
                           support_detokenization))
     # Use uint8 tensor as a buffer for the model to avoid any possible changes,
     # for example truncation by '\0'.
-    self._model = constant_op.constant(list(model_buffer), dtype=dtypes.uint8)
+    if isinstance(model_buffer, ops.Tensor):
+      self._model = model_buffer
+    else:
+      self._model = constant_op.constant(list(model_buffer), dtype=dtypes.uint8)
 
     self._token_out_type = token_out_type
 

@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2021 TF.Text Authors.
+# Copyright 2022 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -541,6 +541,13 @@ class FastWordpieceOpAdditionalTest(test_base.DatasetTestBase,
 
   def testTokenizerBuiltFromModel(self, text_inputs, expected_outputs):
     model_buffer = _LoadTestModelBuffer()
+    tokenizer = FastWordpieceTokenizer(model_buffer=model_buffer)
+
+    self.assertAllEqual(tokenizer.tokenize(text_inputs), expected_outputs)
+
+  def testTokenizerBuiltFromModelInTensor(self, text_inputs, expected_outputs):
+    model_buffer = _LoadTestModelBuffer()
+    model_buffer = tf.constant(list(model_buffer), dtype=tf.uint8)
     tokenizer = FastWordpieceTokenizer(model_buffer=model_buffer)
 
     self.assertAllEqual(tokenizer.tokenize(text_inputs), expected_outputs)
