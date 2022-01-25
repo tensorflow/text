@@ -188,7 +188,7 @@ class SentenceFragmenterV2 {
   // See UpdateLatestOpenParenForFragment() in the .cc file for details.
   bool latest_open_paren_is_sentential_ = false;
 
-  absl::string_view document_ = nullptr;  // not owned
+  absl::string_view document_ = {};  // not owned
 
   // TODO(thuang513): DISALLOW_COPY_AND_ASSIGN(SentenceFragmenter);
 };
