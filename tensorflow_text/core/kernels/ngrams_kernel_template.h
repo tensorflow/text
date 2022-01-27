@@ -203,8 +203,7 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
       output_values_or = ctx->GetOutput(
           kValues, OutputValuesTensorShape(input_values_shape, width_));
     } else {
-      output_values_or =
-          ctx->GetOutput(kValues, Shape({static_cast<int>(buffer.size())}));
+      output_values_or = ctx->GetOutput(kValues, Shape({buffer.size()}));
     }
     if (!output_values_or.ok()) return output_values_or.status();
     auto& output_buffer =
@@ -218,7 +217,7 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
   inline static Shape OutputValuesTensorShape(const Shape& input_values_shape,
                                               const int64_t width) {
     Shape output_shape(input_values_shape);
-    const int last_dim = output_shape->size() - 1;
+    const int last_dim = static_cast<int>(output_shape->size()) - 1;
     (*output_shape)[last_dim] =
         std::max(0, output_shape->at(last_dim) - static_cast<int>(width) + 1);
     return output_shape;

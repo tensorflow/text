@@ -139,14 +139,12 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Invoke(
       auto output_ids,
       context->GetOutput(
           kOutputIds,
-          Shape({static_cast<int>(
-              subword_ids.size())}))); /* same shape as `output_subwords` */
+          Shape({subword_ids.size()}))); /* same shape as `output_subwords` */
   auto output_ids_vec = output_ids->template As<int64, 1>();
 
   SH_ASSIGN_OR_RETURN(
       auto output_row_splits,
-      context->GetOutput(kOutputRowSplits,
-                         Shape({static_cast<int>(row_splits.size())})));
+      context->GetOutput(kOutputRowSplits, Shape({row_splits.size()})));
   auto output_row_splits_vec = output_row_splits->template As<int64, 1>();
 
   SH_ASSIGN_OR_RETURN(auto start_values,
@@ -383,12 +381,12 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::ShapeInference(
   return absl::OkStatus();
 }
 
-  template <tflite::shim::Runtime Rt>
-  const char FastWordpieceDetokenizeOp<Rt>::kOpName[] =
-      "TFText>FastWordpieceDetokenize";
+template <tflite::shim::Runtime Rt>
+const char FastWordpieceDetokenizeOp<Rt>::kOpName[] =
+    "TFText>FastWordpieceDetokenize";
 
-  template <tflite::shim::Runtime Rt>
-  const char FastWordpieceDetokenizeOp<Rt>::kDoc[] = R"doc(
+template <tflite::shim::Runtime Rt>
+const char FastWordpieceDetokenizeOp<Rt>::kDoc[] = R"doc(
   Detokenizes sub-word ids into sentences.
 
   ### Example:

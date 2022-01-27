@@ -114,8 +114,8 @@ absl::Status WhitespaceTokenizeWithOffsetsV2Op<Rt>::ShapeInference(
 }
 
 template <tflite::shim::Runtime Rt>
-    absl::Status WhitespaceTokenizeWithOffsetsV2Op<Rt>
-        ::Invoke(InvokeContext* context) {
+absl::Status WhitespaceTokenizeWithOffsetsV2Op<Rt>::Invoke(
+    InvokeContext* context) {
   // Inputs
   const auto values_statusor = context->GetInput(kInputValues);
   if (!values_statusor.ok()) {
@@ -169,8 +169,9 @@ template <typename BufferType, typename DType>
 absl::Status WhitespaceTokenizeWithOffsetsV2Op<Rt>::FillOutputTensor(
     const std::vector<BufferType>& buffer, const int index,
     InvokeContext* context) {
-  SH_ASSIGN_OR_RETURN(const auto tensorview, context->GetOutput(
-      index, tflite::shim::Shape({static_cast<int>(buffer.size())})));
+  SH_ASSIGN_OR_RETURN(
+      const auto tensorview,
+      context->GetOutput(index, tflite::shim::Shape({buffer.size()})));
   auto data = tensorview->template As<DType, 1>();
   // TODO(broken): investigate using memcpy like previous WST
   for (int i = 0; i < buffer.size(); ++i) data(i) = buffer.at(i);
