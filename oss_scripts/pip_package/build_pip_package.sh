@@ -42,7 +42,7 @@ if is_macos; then
   if [[ x"$(arch)" == x"arm64" ]]; then
     plat_name="--plat-name macosx_11_0_arm64"
   else
-    plat_name="--plat-name macosx-10.9-x86_64"
+    plat_name="--plat-name macosx-11.0-x86_64"
   fi
 fi
 
