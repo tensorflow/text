@@ -20,16 +20,16 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
-from keras import keras_parameterized
-from keras import testing_utils
+from keras.testing_infra import test_combinations
+from keras.testing_infra import test_utils as keras_test_utils
 import numpy as np
 import tensorflow as tf
 
 from tensorflow_text.python.keras.layers import tokenization_layers
 
 
-@keras_parameterized.run_all_keras_modes
-class TokenizationLayersTest(keras_parameterized.TestCase, tf.test.TestCase):
+@test_combinations.run_all_keras_modes
+class TokenizationLayersTest(test_combinations.TestCase, tf.test.TestCase):
 
   @parameterized.named_parameters(
       {
@@ -111,7 +111,7 @@ class TokenizationLayersTest(keras_parameterized.TestCase, tf.test.TestCase):
       # input to send an input to (which causes issues w/ single io models)
       input_data = [input_data]
 
-    output_data = testing_utils.layer_test(
+    output_data = keras_test_utils.layer_test(
         cls,
         kwargs=kwargs,
         validate_training=False,

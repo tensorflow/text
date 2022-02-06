@@ -999,11 +999,12 @@ py_test(
     deps = [
         ":todense_layer",
         "@absl_py//absl/testing:parameterized",
+        "//third_party/py/keras/testing_infra:test_combinations",
+        "//third_party/py/keras/testing_infra:test_utils",
         #  numpy dep,
         # tensorflow package dep,
         # python:framework_test_lib tensorflow dep,
         # python/keras tensorflow dep,
-        # python/keras:testing_utils tensorflow dep,
     ],
 )
 
@@ -1039,10 +1040,11 @@ py_test(
     deps = [
         ":tokenization_layers",
         "@absl_py//absl/testing:parameterized",
+        "//third_party/py/keras/testing_infra:test_combinations",
+        "//third_party/py/keras/testing_infra:test_utils",
         #  numpy dep,
         # tensorflow package dep,
         # python/keras tensorflow dep,
-        # python/keras:testing_utils tensorflow dep,
     ],
 )
 
