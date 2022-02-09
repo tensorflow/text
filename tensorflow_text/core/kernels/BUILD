@@ -8,8 +8,6 @@ licenses(["notice"])
 # Visibility rules
 package(default_visibility = ["//visibility:public"])
 
-exports_files(["LICENSE"])
-
 tf_cc_library(
     name = "constrained_sequence",
     srcs = ["constrained_sequence.cc"],
