@@ -6,7 +6,10 @@ load("//tensorflow_text:tftext.bzl", "tf_cc_library")
 licenses(["notice"])
 
 # Visibility rules
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = [
+    "//inputmethod/keyboard/decoder:__subpackages__",
+    "//visibility:public",
+])
 
 exports_files(["LICENSE"])
 
@@ -180,6 +183,7 @@ tf_cc_library(
         ":darts_clone_trie_wrapper",
         ":fast_wordpiece_tokenizer_model",
         ":fast_wordpiece_tokenizer_utils",
+        "//base:logging",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
