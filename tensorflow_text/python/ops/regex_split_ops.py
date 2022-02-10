@@ -87,7 +87,7 @@ def regex_split_with_offsets(input,
     name: (optional) Name of the op.
 
   Returns:
-    A tuple of RaggedTensors containing:
+    A tuple of Tensors (if input was a scalar) or RaggedTensors containing:
       (split_results, begin_offsets, end_offsets)
     where tokens is of type string, begin_offsets and end_offsets are of type
     int64.
@@ -121,6 +121,11 @@ def regex_split_with_offsets(input,
       gen_regex_split_ops.regex_split_with_offsets(input_reshaped,
                                                    delim_regex_pattern,
                                                    keep_delim_regex_pattern))
+  static_rank = input.get_shape().rank
+  # If the input was a scalar, regex split output should already be vectors.
+  if static_rank is not None and static_rank == 0:
+    return tokens, begin_offsets, end_offsets
+
   # Pack back into ragged tensors
   tokens_rt = ragged_tensor.RaggedTensor.from_row_splits(
       tokens, row_splits=row_splits)
@@ -132,7 +137,6 @@ def regex_split_with_offsets(input,
 
   # If the original input was a multi-dimensional Tensor, add back the
   # dimensions
-  static_rank = input.get_shape().ndims
   if static_rank is not None and static_rank > 1:
     i = array_ops.get_positive_axis(-1, input.get_shape().ndims)
     for i in range(

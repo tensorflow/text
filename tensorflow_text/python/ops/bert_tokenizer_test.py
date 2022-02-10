@@ -44,27 +44,35 @@ def _utf8(x):
 #               checking this into core TF.
 def _ragged_substr(text_input, begin, end):
   text_input_flat = None
-  if ragged_tensor.is_ragged(text_input):
-    text_input_flat = text_input.flat_values
-  else:
-    text_input_flat = text_input
 
   def _ragged_tile(x):
     input_text, indices = x
     multiple = math_ops.reduce_sum(indices.row_lengths())
     return array_ops.tile([input_text], [multiple])
 
-  broadcasted_text = ragged_map_ops.map_fn(
-      _ragged_tile,
-      (text_input_flat, begin),
-      dtype=ragged_tensor.RaggedTensorType(dtype=dtypes.string, ragged_rank=1),
-      infer_shape=False,
-  )
+  if text_input.shape.rank > 0:  # Non-scalar input.
+    if ragged_tensor.is_ragged(text_input):
+      text_input_flat = text_input.flat_values
+    else:
+      text_input_flat = text_input
+
+    broadcasted_text = ragged_map_ops.map_fn(
+        _ragged_tile,
+        (text_input_flat, begin),
+        dtype=ragged_tensor.RaggedTensorType(
+            dtype=dtypes.string, ragged_rank=1),
+        infer_shape=False,
+    )
+  else:  # Scalar input.
+    broadcasted_text = _ragged_tile((text_input, begin))
+
   size = math_ops.sub(
       array_ops.squeeze(end.flat_values), array_ops.squeeze(begin.flat_values))
   new_tokens = string_ops.substr_v2(broadcasted_text,
                                     array_ops.squeeze(begin.flat_values), size)
-  return begin.with_flat_values(new_tokens.flat_values)
+  return begin.with_flat_values(
+      new_tokens.flat_values if ragged_tensor.is_ragged(new_tokens
+                                                       ) else new_tokens)
 
 
 _VOCAB = [
@@ -216,6 +224,10 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
 
   @parameterized.parameters([
       dict(
+          text_inputs=_utf8(u'taste the rustisc indiefrost'),  # A scalar.
+          expected_tokens=[b'taste', b'the', b'rustisc', b'indiefrost'],
+      ),
+      dict(
           text_inputs=[
               _utf8(u'taste the rustisc indiefrost'),
               _utf8(u'Han Kuo-yu (韓國食)🤔'),
@@ -310,6 +322,11 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     self.assertAllEqual(tokens, expected_tokens)
 
   @parameterized.parameters([
+      dict(
+          text_inputs=b'taste the rustisc indiefrost',  # A scalar.
+          expected=[[b'taste'], [b'the'], [b'rust', b'##is', b'##c'],
+                    [b'indie', b'##fr', b'##ost']],
+      ),
       dict(
           text_inputs=[
               b'taste the rustisc indiefrost',
