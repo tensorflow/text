@@ -283,9 +283,9 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
         strings.
 
     Returns:
-      A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string
+      A `RaggedTensor` of tokens where `tokens[i1...iN, j, k]` is the string
       contents (or ID in the vocab_lookup_table representing that string)
-      of the `jth` token in `input[i1...iN]`
+      of the k-th wordpiece in the j-th token in `input[i1...iN]`.
     """
     tokens = self._basic_tokenizer.tokenize(text_input)
     return self._wordpiece_tokenizer.tokenize(tokens)
