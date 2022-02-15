@@ -40,6 +40,15 @@ def py_tf_text_library(
         library_name = name + "_cc"
         native.cc_library(
             name = library_name,
+            linkopts = select({
+                "@org_tensorflow//tensorflow:macos": [
+                    "-Wl,-exported_symbols_list,$(location //tensorflow_text:exported_symbols.lds)",
+                ],
+                "@org_tensorflow//tensorflow:windows": [],
+                "//conditions:default": [
+                    "-Wl,--version-script,$(location //tensorflow_text:version_script.lds)",
+                ],
+            }),
             srcs = cc_op_defs,
             copts = select({
                 # Android supports pthread natively, -pthread is not needed.
@@ -47,7 +56,10 @@ def py_tf_text_library(
                 "//conditions:default": ["-pthread"],
             }),
             alwayslink = 1,
-            deps = cc_op_kernels + select({
+            deps = [
+                "//tensorflow_text:version_script.lds",
+                "//tensorflow_text:exported_symbols.lds",
+            ] + cc_op_kernels + select({
                 "@org_tensorflow//tensorflow:mobile": [
                     "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
                 ],
