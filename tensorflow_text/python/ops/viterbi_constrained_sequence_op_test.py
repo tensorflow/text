@@ -32,6 +32,39 @@ from tensorflow_text.python.ops import viterbi_constrained_sequence_op as sequen
 @test_util.run_all_in_graph_and_eager_modes
 class ViterbiConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
 
+  # Test a corner case when there is no data for a batch. In this case there
+  # may be garbage data for the scores in the batch matrix, but the
+  # sequence_length is zero for the batch.
+  def test_empty_rows(self):
+    use_log_space = True
+    use_start_and_end_states = False
+    # [batch, num_tokens, num_states]
+    scores = np.array(
+        [
+            [[10.0, 12.0, 6.0, 4.0], [-13.0, -12.0, -11.0, -10.0]],
+            # This batch should be ignored
+            [[10.0, 12.0, 6.0, 4.0], [-13.0, -12.0, -11.0, -10.0]],
+        ],
+        dtype='f')
+
+    # [batch] each indicating row size for batch. The second row has no data.
+    sequence_length = [2, 0]
+
+    # [num_states, num_states]
+    allowed_transitions = np.array([[True, True, True, True],
+                                    [True, True, True, True],
+                                    [True, False, True, False],
+                                    [True, True, True, True]])
+
+    multiple_sequence_op = sequence_op.viterbi_constrained_sequence(
+        scores,
+        sequence_length,
+        allowed_transitions=allowed_transitions,
+        use_log_space=use_log_space,
+        use_start_and_end_states=use_start_and_end_states)
+    multiple_sequence_result = self.evaluate(multiple_sequence_op)
+    self.assertAllEqual(multiple_sequence_result, [[1, 3], []])
+
   def test_sequence_in_exp_space_with_start_end_states_single_input(self):
     use_log_space = False
     use_start_and_end_states = True

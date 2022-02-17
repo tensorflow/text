@@ -113,6 +113,11 @@ void ViterbiAnalysis(
   std::vector<double> *current_scores = &scores_b;
 
   const bool vlog3 = VLOG_IS_ON(3);
+
+  if (backpointers.empty()) {
+    // We're done with this batch if there are no steps to analyze.
+    return;
+  }
   for (int curr_state = 0; curr_state < num_states; ++curr_state) {
     std::vector<int> &current_bps = backpointers[0];
     if (use_start_end_states) {
