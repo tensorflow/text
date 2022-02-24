@@ -96,6 +96,24 @@ void FastWordpieceTokenizer::Tokenize(absl::string_view input,
 }
 
 void FastWordpieceTokenizer::Tokenize(absl::string_view input,
+                                      std::vector<std::string>* output_pieces,
+                                      std::vector<int>* output_start_offsets,
+                                      std::vector<int>* output_end_offsets,
+                                      int input_word_offset_in_text) const {
+  if (config_->end_to_end()) {
+    TokenizeTextImpl</*kGetPieces=*/true, /*kGetIds=*/false,
+                     /*kGetOffsets=*/true>(
+        input, output_pieces, /*output_ids=*/nullptr, output_start_offsets,
+        output_end_offsets);
+  } else {
+    TokenizeSingleWordImpl</*kGetPieces=*/true, /*kGetIds=*/false,
+                           /*kGetOffsets=*/true>(
+        input, input_word_offset_in_text, output_pieces, /*output_ids=*/nullptr,
+        output_start_offsets, output_end_offsets);
+  }
+}
+
+void FastWordpieceTokenizer::Tokenize(absl::string_view input,
                                       std::vector<int>* output_ids,
                                       int input_word_offset_in_text) const {
   if (config_->end_to_end()) {
@@ -108,6 +126,24 @@ void FastWordpieceTokenizer::Tokenize(absl::string_view input,
     TokenizeSingleWordImpl</*kGetPieces=*/false, /*kGetIds=*/true,
                            /*kGetOffsets=*/false>(
         input, input_word_offset_in_text, /*output_pieces=*/nullptr, output_ids,
+        /*output_start_offsets=*/nullptr,
+        /*output_end_offsets=*/nullptr);
+  }
+}
+
+void FastWordpieceTokenizer::Tokenize(absl::string_view input,
+                                      std::vector<std::string>* output_pieces,
+                                      int input_word_offset_in_text) const {
+  if (config_->end_to_end()) {
+    TokenizeTextImpl</*kGetPieces=*/true, /*kGetIds=*/false,
+                     /*kGetOffsets=*/false>(input, output_pieces,
+                                            /*Output_ids=*/nullptr,
+                                            /*output_start_offsets=*/nullptr,
+                                            /*output_end_offsets=*/nullptr);
+  } else {
+    TokenizeSingleWordImpl</*kGetPieces=*/true, /*kGetIds=*/false,
+                           /*kGetOffsets=*/false>(
+        input, input_word_offset_in_text, output_pieces, /*output_ids=*/nullptr,
         /*output_start_offsets=*/nullptr,
         /*output_end_offsets=*/nullptr);
   }

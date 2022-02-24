@@ -86,8 +86,20 @@ class FastWordpieceTokenizer {
                 std::vector<int>* output_end_offsets,
                 int input_word_offset_in_text = 0) const;
 
+  // An override not returning `output_ids`.
+  void Tokenize(absl::string_view input,
+                std::vector<std::string>* output_pieces,
+                std::vector<int>* output_start_offsets,
+                std::vector<int>* output_end_offsets,
+                int input_word_offset_in_text = 0) const;
+
   // An override only returning `output_ids`.
   void Tokenize(absl::string_view input, std::vector<int>* output_ids,
+                int input_word_offset_in_text = 0) const;
+
+  // An override only returning `output_pieces`.
+  void Tokenize(absl::string_view input,
+                std::vector<std::string>* output_pieces,
                 int input_word_offset_in_text = 0) const;
 
   // Detokenizes wordpiece ids into a vector of tokens.

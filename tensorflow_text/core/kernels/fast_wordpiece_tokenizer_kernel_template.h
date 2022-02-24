@@ -51,6 +51,15 @@ class FastWordpieceTokenizeWithOffsetsOp
                                             Rt>::InvokeContext;
   using typename tflite::shim::OpKernelShim<FastWordpieceTokenizeWithOffsetsOp,
                                             Rt>::ShapeInferenceContext;
+  static const char kGetPiecesAttr[];
+  static const char kGetOffsetsAttr[];
+
+  // The real work of the invoke operation.
+  template <bool kGetPieces, bool kGetOffsets>
+  absl::Status InvokeRealWork(InvokeContext* context);
+
+  bool get_pieces_;
+  bool get_offsets_;
 
  public:
   FastWordpieceTokenizeWithOffsetsOp() = default;
@@ -58,7 +67,7 @@ class FastWordpieceTokenizeWithOffsetsOp
   static const char kDoc[];
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
-  static std::vector<std::string> Attrs() { return {}; }
+  static std::vector<std::string> Attrs();
 
   // Input tensors declaration (syntax:
   // https://www.tensorflow.org/guide/create_op)
@@ -69,7 +78,7 @@ class FastWordpieceTokenizeWithOffsetsOp
   static std::vector<std::string> Outputs();
 
   // Initializes the op
-  absl::Status Init(InitContext* context) { return absl::OkStatus(); }
+  absl::Status Init(InitContext* context);
 
   // Runs the operation
   absl::Status Invoke(InvokeContext* context);
@@ -79,6 +88,22 @@ class FastWordpieceTokenizeWithOffsetsOp
 };
 
 ////////////////////////// Implementation
+
+template <tflite::shim::Runtime Rt>
+const char FastWordpieceTokenizeWithOffsetsOp<Rt>::kGetPiecesAttr[] =
+    "get_pieces";
+
+template <tflite::shim::Runtime Rt>
+const char FastWordpieceTokenizeWithOffsetsOp<Rt>::kGetOffsetsAttr[] =
+    "get_offsets";
+
+template <tflite::shim::Runtime Rt>
+std::vector<std::string> FastWordpieceTokenizeWithOffsetsOp<Rt>::Attrs() {
+  return {
+      absl::StrCat(kGetPiecesAttr, ": bool = false"),
+      absl::StrCat(kGetOffsetsAttr, ": bool = false"),
+  };
+}
 
 template <tflite::shim::Runtime Rt>
 std::vector<std::string> FastWordpieceTokenizeWithOffsetsOp<Rt>::Inputs() {
@@ -93,7 +118,37 @@ std::vector<std::string> FastWordpieceTokenizeWithOffsetsOp<Rt>::Outputs() {
 }
 
 template <tflite::shim::Runtime Rt>
+absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Init(
+    InitContext* context) {
+  SH_RETURN_IF_ERROR(context->GetAttr(kGetPiecesAttr, &get_pieces_));
+  SH_RETURN_IF_ERROR(context->GetAttr(kGetOffsetsAttr, &get_offsets_));
+  return absl::OkStatus();
+}
+
+template <tflite::shim::Runtime Rt>
 absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Invoke(
+    InvokeContext* context) {
+  if (get_pieces_) {
+    if (get_offsets_) {
+      return InvokeRealWork</*kGetPieces=*/true, /*kGetOffsets=*/true>(context);
+    } else {
+      return InvokeRealWork</*kGetPieces=*/true, /*kGetOffsets=*/false>(
+          context);
+    }
+  } else {
+    if (get_offsets_) {
+      return InvokeRealWork</*kGetPieces=*/false, /*kGetOffsets=*/true>(
+          context);
+    } else {
+      return InvokeRealWork</*kGetPieces=*/false, /*kGetOffsets=*/false>(
+          context);
+    }
+  }
+}
+
+template <tflite::shim::Runtime Rt>
+template <bool kGetPieces, bool kGetOffsets>
+absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::InvokeRealWork(
     InvokeContext* context) {
   SH_ASSIGN_OR_RETURN(const auto input_values, context->GetInput(kInputValues));
   const auto& values_vec = input_values->template As<tstring, 1>();
@@ -107,76 +162,98 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Invoke(
           wp_model->template Data<uint8>().data());
   SH_RETURN_IF_ERROR(fast_wordpiece_tokenizer.status());
 
-  // TODO(xysong): Optimize based on which information below is requested.
   std::vector<std::string> subwords;
   std::vector<int> subword_ids;
   std::vector<int> begin_offset;
   std::vector<int> end_offset;
   std::vector<int> row_splits;
-
+  int subwords_size;
   row_splits.push_back(0);
 
   // Iterate through all the values and wordpiece tokenize them.
   for (int i = 0; i < values_vec.Dim(0); ++i) {
     // Tokenize into subwords and record the offset locations.
-    const int original_num_wordpieces = subwords.size();
-    fast_wordpiece_tokenizer->Tokenize(values_vec(i), &subwords, &subword_ids,
-                                       &begin_offset, &end_offset);
-    const int delta_num_wordpieces = subwords.size() - original_num_wordpieces;
-
+    int delta_num_wordpieces = 0;
+    if constexpr (kGetPieces) {
+      const int original_num_wordpieces = subwords.size();
+      if constexpr (kGetOffsets) {
+        fast_wordpiece_tokenizer->Tokenize(values_vec(i), &subwords,
+                                           &begin_offset, &end_offset);
+      } else {
+        fast_wordpiece_tokenizer->Tokenize(values_vec(i), &subwords);
+      }
+      delta_num_wordpieces = subwords.size() - original_num_wordpieces;
+    } else {
+      const int original_num_wordpieces = subword_ids.size();
+      if constexpr (kGetOffsets) {
+        fast_wordpiece_tokenizer->Tokenize(values_vec(i), &subword_ids,
+                                           &begin_offset, &end_offset);
+      } else {
+        fast_wordpiece_tokenizer->Tokenize(values_vec(i), &subword_ids);
+      }
+      delta_num_wordpieces = subword_ids.size() - original_num_wordpieces;
+    }
     // Record the row splits.
     row_splits.push_back(delta_num_wordpieces + row_splits.back());
   }
 
-  const int subwords_size = subwords.size();
-  SH_ASSIGN_OR_RETURN(
-      auto output_subwords,
-      context->GetOutput(kOutputSubwords, Shape({subwords_size})));
-  auto output_subwords_vec =
-      output_subwords->template As<tensorflow::tstring, 1>();
+  if constexpr (kGetPieces) {
+    subwords_size = subwords.size();
+  } else {
+    subwords_size = subword_ids.size();
+  }
 
-  SH_ASSIGN_OR_RETURN(
-      auto output_ids,
-      context->GetOutput(
-          kOutputIds,
-          Shape({static_cast<int>(
-              subword_ids.size())}))); /* same shape as `output_subwords` */
-  auto output_ids_vec = output_ids->template As<int64, 1>();
+  if constexpr (kGetPieces) {
+    // Copy subwords to output.
+    SH_ASSIGN_OR_RETURN(
+        auto output_subwords,
+        context->GetOutput(kOutputSubwords, Shape({subwords_size})));
+    auto output_subwords_vec =
+        output_subwords->template As<tensorflow::tstring, 1>();
 
+    for (int i = 0; i < subwords.size(); ++i) {
+      output_subwords_vec(i) = subwords[i];
+    }
+  } else {
+    // Copy subword ids to output.
+    SH_ASSIGN_OR_RETURN(
+        auto output_ids,
+        context->GetOutput(
+            kOutputIds,
+            Shape({static_cast<int>(
+                subword_ids.size())}))); /* same shape as `output_subwords` */
+    auto output_ids_vec = output_ids->template As<int64, 1>();
+    for (int i = 0; i < subword_ids.size(); ++i) {
+      output_ids_vec(i) = subword_ids[i];
+    }
+  }
+
+  // Copy row splits to output.
   SH_ASSIGN_OR_RETURN(
       auto output_row_splits,
       context->GetOutput(kOutputRowSplits,
                          Shape({static_cast<int>(row_splits.size())})));
   auto output_row_splits_vec = output_row_splits->template As<int64, 1>();
-
-  SH_ASSIGN_OR_RETURN(auto start_values,
-                      context->GetOutput(kStartValues, Shape({subwords_size})));
-  auto start_values_vec = start_values->template As<int64, 1>();
-
-  SH_ASSIGN_OR_RETURN(auto end_values,
-                      context->GetOutput(kEndValues, Shape({subwords_size})));
-  auto end_values_vec = end_values->template As<int64, 1>();
-
-  for (int i = 0; i < subwords.size(); ++i) {
-    output_subwords_vec(i) = subwords[i];
-  }
-
-  for (int i = 0; i < subword_ids.size(); ++i) {
-    output_ids_vec(i) = subword_ids[i];
-  }
-
   for (int i = 0; i < row_splits.size(); ++i) {
     output_row_splits_vec(i) = row_splits[i];
   }
 
-  for (int i = 0; i < begin_offset.size(); ++i) {
-    start_values_vec(i) = begin_offset[i];
-  }
+  if constexpr (kGetOffsets) {
+    // Copy offsets to output.
+    SH_ASSIGN_OR_RETURN(
+        auto start_values,
+        context->GetOutput(kStartValues, Shape({subwords_size})));
+    auto start_values_vec = start_values->template As<int64, 1>();
 
-  for (int i = 0; i < end_offset.size(); ++i) {
-    end_values_vec(i) = end_offset[i];
+    SH_ASSIGN_OR_RETURN(auto end_values,
+                        context->GetOutput(kEndValues, Shape({subwords_size})));
+    auto end_values_vec = end_values->template As<int64, 1>();
+    // The sizes of `begin_offset` and `end_offset` are always equal.
+    for (int i = 0; i < begin_offset.size(); ++i) {
+      start_values_vec(i) = begin_offset[i];
+      end_values_vec(i) = end_offset[i];
+    }
   }
-
   return absl::OkStatus();
 }
 
@@ -234,10 +311,19 @@ const char FastWordpieceTokenizeWithOffsetsOp<Rt>::kDoc[] = R"doc(
   >>> RaggedTensor.from_row_splits(end, row_splits)
   end = [[[3, 4, 5], [5, 10]]]
   ```
-
+  
   Args:
-    input_values: 1D Tensor of strings to tokenize with.
-    wp_model: Buffer tensor for the FastWordpieceTokenizerConfig flatbuffer.
+    * get_pieces: bool - If true, generate `output_values` (i.e., the wordpiece
+      strings) in the output, and `output_ids` are not touched. If false,
+      generate `output_ids` (i.e., the wordpiece ids) and `output_pieces` are
+      not touched.
+    * get_offsets: bool - Generate `start_values`, and `end_values` in the output (so as to get the offsets of each wordpiece).
+      If false, those tensors are not touched. Note that `output_row_splits` is
+      always populated (to infer the shape of the ragged tensor `output_values`
+      or `output_ids`).
+  Inputs:
+    * input_values: 1D Tensor of strings to tokenize with.
+    * wp_model: Buffer tensor for the FastWordpieceTokenizerConfig flatbuffer.
 
   Returns:
     * output_values: 1D tensor containing the wordpieces for all input strings.
@@ -383,12 +469,12 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::ShapeInference(
   return absl::OkStatus();
 }
 
-  template <tflite::shim::Runtime Rt>
-  const char FastWordpieceDetokenizeOp<Rt>::kOpName[] =
-      "TFText>FastWordpieceDetokenize";
+template <tflite::shim::Runtime Rt>
+const char FastWordpieceDetokenizeOp<Rt>::kOpName[] =
+    "TFText>FastWordpieceDetokenize";
 
-  template <tflite::shim::Runtime Rt>
-  const char FastWordpieceDetokenizeOp<Rt>::kDoc[] = R"doc(
+template <tflite::shim::Runtime Rt>
+const char FastWordpieceDetokenizeOp<Rt>::kDoc[] = R"doc(
   Detokenizes sub-word ids into sentences.
 
   ### Example:

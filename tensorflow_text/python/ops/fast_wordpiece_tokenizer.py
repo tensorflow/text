@@ -103,11 +103,12 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
         1)
 
     if model_buffer is None:
-      model_buffer = (pywrap_fast_wordpiece_tokenizer_model_builder
-                      .build_fast_wordpiece_model(
-                          vocab, max_bytes_per_word, suffix_indicator,
-                          unknown_token, no_pretokenization,
-                          support_detokenization))
+      model_buffer = (
+          pywrap_fast_wordpiece_tokenizer_model_builder
+          .build_fast_wordpiece_model(vocab, max_bytes_per_word,
+                                      suffix_indicator, unknown_token,
+                                      no_pretokenization,
+                                      support_detokenization))
     # Use uint8 tensor as a buffer for the model to avoid any possible changes,
     # for example truncation by '\0'.
     if isinstance(model_buffer, ops.Tensor):
@@ -150,8 +151,7 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
       is controlled by the `token_out_type` parameter passed to the initializer
       method.
     """
-    # TODO(xysong): Optimize below by calling different overload kernels.
-    subword, _, _ = self.tokenize_with_offsets(input)
+    subword, _, _ = self._tokenize_with_offsets_helper(input, get_offsets=False)
     return subword
 
   def tokenize_with_offsets(self, input):  # pylint: disable=redefined-builtin
@@ -204,6 +204,20 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
           the exclusive end of the `jth` token in `input[i`...iN]` (exclusive,
           i.e., first byte after the end of the token).
     """
+    return self._tokenize_with_offsets_helper(input, get_offsets=True)
+
+  def _tokenize_with_offsets_helper(self, input, get_offsets):  # pylint: disable=redefined-builtin
+    """The actual function of tokenization.
+
+    Args:
+      input: An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
+      get_offsets: bool - True to return start_offsets/end_offsets. If False,
+        start_offsets/end_offsets will be None.
+
+    Returns:
+      A tuple `(tokens, start_offsets, end_offsets)`. See the comments of
+      `tokenize_with_offsets()`.
+    """
     name = None
     with ops.name_scope(name, 'FastWordpieceTokenizeWithOffsets',
                         [input, self._model]):
@@ -214,27 +228,35 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
         raise ValueError('input must have a known rank.')
 
       if rank == 0:
-        wordpieces, starts, ends = self.tokenize_with_offsets(
-            array_ops.stack([tokens]))
-        return wordpieces.values, starts.values, ends.values
+        wordpieces, starts, ends = self._tokenize_with_offsets_helper(
+            array_ops.stack([tokens]), get_offsets)
+        return (wordpieces.values, starts.values if starts else None,
+                ends.values if ends else None)
 
       elif rank > 1:
         if not ragged_tensor.is_ragged(tokens):
           tokens = ragged_tensor.RaggedTensor.from_tensor(
               tokens, ragged_rank=rank - 1)
-        wordpieces, starts, ends = self.tokenize_with_offsets(
-            tokens.flat_values)
+        wordpieces, starts, ends = self._tokenize_with_offsets_helper(
+            tokens.flat_values, get_offsets)
         wordpieces = wordpieces.with_row_splits_dtype(tokens.row_splits.dtype)
-        starts = starts.with_row_splits_dtype(tokens.row_splits.dtype)
-        ends = ends.with_row_splits_dtype(tokens.row_splits.dtype)
-        return (tokens.with_flat_values(wordpieces),
-                tokens.with_flat_values(starts), tokens.with_flat_values(ends))
+        if get_offsets:
+          starts = starts.with_row_splits_dtype(tokens.row_splits.dtype)
+          ends = ends.with_row_splits_dtype(tokens.row_splits.dtype)
+          return (tokens.with_flat_values(wordpieces),
+                  tokens.with_flat_values(starts),
+                  tokens.with_flat_values(ends))
+        else:
+          return (tokens.with_flat_values(wordpieces), None, None)
 
       # Tokenize the tokens into subwords.
-      # TODO(xysong): Optimize below by calling different overload kernels.
       subwords, subword_ids, row_splits, starts, ends = (
           gen_fast_wordpiece_tokenizer.fast_wordpiece_tokenize_with_offsets(
-              input_values=tokens, wp_model=self._model))
+              input_values=tokens,
+              wp_model=self._model,
+              get_pieces=(self._token_out_type != dtypes.int64 and
+                          self._token_out_type != dtypes.int32),
+              get_offsets=get_offsets))
 
       if self._token_out_type == dtypes.int64:
         values = math_ops.cast(subword_ids, dtypes.int64)
@@ -245,10 +267,13 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
       wordpieces = RaggedTensor.from_row_splits(
           values, row_splits, validate=False)
-      starts = RaggedTensor.from_row_splits(starts, row_splits, validate=False)
-      ends = RaggedTensor.from_row_splits(ends, row_splits, validate=False)
-
-      return wordpieces, starts, ends
+      if get_offsets:
+        starts = RaggedTensor.from_row_splits(
+            starts, row_splits, validate=False)
+        ends = RaggedTensor.from_row_splits(ends, row_splits, validate=False)
+        return wordpieces, starts, ends
+      else:
+        return wordpieces, None, None
 
   def detokenize(self, input):  # pylint: disable=redefined-builtin
     """Detokenizes a tensor of int64 or int32 subword ids into sentences.

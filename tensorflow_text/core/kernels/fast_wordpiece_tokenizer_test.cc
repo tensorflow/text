@@ -2404,6 +2404,25 @@ TEST_P(TestTokenizeText, TestNoOutputPieces) {
   EXPECT_THAT(output_end_offsets, spec.expected_token_end_offsets);
 }
 
+TEST_P(TestTokenizeText, TestNoOutputIds) {
+  const Spec& spec = GetParam();
+  ASSERT_OK_AND_ASSIGN(
+      std::string flatbuffer,
+      BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
+                                      spec.suffix_indicator, spec.unk_token));
+  ASSERT_OK_AND_ASSIGN(auto tokenizer,
+                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+
+  std::vector<std::string> output_pieces;
+  std::vector<int> output_begin_offsets;
+  std::vector<int> output_end_offsets;
+  tokenizer.Tokenize(spec.input, &output_pieces, &output_begin_offsets,
+                     &output_end_offsets);
+  EXPECT_THAT(output_pieces, spec.expected_tokens);
+  EXPECT_THAT(output_begin_offsets, spec.expected_token_start_offsets);
+  EXPECT_THAT(output_end_offsets, spec.expected_token_end_offsets);
+}
+
 TEST_P(TestTokenizeText, TestNoOutputPiecesOnlyOutputIds) {
   const Spec& spec = GetParam();
   ASSERT_OK_AND_ASSIGN(
@@ -2416,6 +2435,20 @@ TEST_P(TestTokenizeText, TestNoOutputPiecesOnlyOutputIds) {
   std::vector<int> output_ids;
   tokenizer.Tokenize(spec.input, &output_ids);
   EXPECT_THAT(output_ids, spec.expected_token_ids);
+}
+
+TEST_P(TestTokenizeText, TestNoOutputPiecesOnlyOutputPieces) {
+  const Spec& spec = GetParam();
+  ASSERT_OK_AND_ASSIGN(
+      std::string flatbuffer,
+      BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
+                                      spec.suffix_indicator, spec.unk_token));
+  ASSERT_OK_AND_ASSIGN(auto tokenizer,
+                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+
+  std::vector<std::string> output_pieces;
+  tokenizer.Tokenize(spec.input, &output_pieces);
+  EXPECT_THAT(output_pieces, spec.expected_tokens);
 }
 
 INSTANTIATE_TEST_SUITE_P(EndToEndFastWordpieceTokenizerParameterizedTest,
