@@ -14,7 +14,9 @@ fi
 source oss_scripts/configure.sh
 
 # Set tensorflow version
-source oss_scripts/prepare_tf_dep.sh
+if [[ $osname != "Darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "Apple" ]]; then
+  source oss_scripts/prepare_tf_dep.sh
+fi
 
 # Build the pip package.
 bazel build --enable_runfiles oss_scripts/pip_package:build_pip_package
