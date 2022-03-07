@@ -64,6 +64,9 @@ allocates a length budget to segments via round robin.
 [`class SentencepieceTokenizer`](./text/SentencepieceTokenizer.md): Tokenizes a
 tensor of UTF-8 strings.
 
+[`class ShrinkLongestTrimmer`](./text/ShrinkLongestTrimmer.md): A `Trimmer` that
+truncates the longest segment.
+
 [`class SplitMergeFromLogitsTokenizer`](./text/SplitMergeFromLogitsTokenizer.md):
 Tokenizes a tensor of UTF-8 string into words according to logits.
 
@@ -175,7 +178,7 @@ fragments in a given text. (deprecated)
 **version**<a id="__version__"></a>
 </td>
 <td>
-`'2.7.0'`
+`'2.8.0-rc0'`
 </td>
 </tr>
 </table>

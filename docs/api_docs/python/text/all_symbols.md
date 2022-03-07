@@ -17,6 +17,7 @@
 *   <a href="../text/RegexSplitter.md"><code>text.RegexSplitter</code></a>
 *   <a href="../text/RoundRobinTrimmer.md"><code>text.RoundRobinTrimmer</code></a>
 *   <a href="../text/SentencepieceTokenizer.md"><code>text.SentencepieceTokenizer</code></a>
+*   <a href="../text/ShrinkLongestTrimmer.md"><code>text.ShrinkLongestTrimmer</code></a>
 *   <a href="../text/SplitMergeFromLogitsTokenizer.md"><code>text.SplitMergeFromLogitsTokenizer</code></a>
 *   <a href="../text/SplitMergeTokenizer.md"><code>text.SplitMergeTokenizer</code></a>
 *   <a href="../text/Splitter.md"><code>text.Splitter</code></a>
@@ -40,6 +41,9 @@
 *   <a href="../text/keras.md"><code>text.keras</code></a>
 *   <a href="../text/keras/layers.md"><code>text.keras.layers</code></a>
 *   <a href="../text/keras/layers/ToDense.md"><code>text.keras.layers.ToDense</code></a>
+*   <a href="../text/keras/layers/UnicodeScriptTokenizer.md"><code>text.keras.layers.UnicodeScriptTokenizer</code></a>
+*   <a href="../text/keras/layers/WhitespaceTokenizer.md"><code>text.keras.layers.WhitespaceTokenizer</code></a>
+*   <a href="../text/keras/layers/WordpieceTokenizer.md"><code>text.keras.layers.WordpieceTokenizer</code></a>
 *   <a href="../text/mask_language_model.md"><code>text.mask_language_model</code></a>
 *   <a href="../text/max_spanning_tree.md"><code>text.max_spanning_tree</code></a>
 *   <a href="../text/max_spanning_tree_gradient.md"><code>text.max_spanning_tree_gradient</code></a>

@@ -36,7 +36,6 @@ AddRaggedTensorToTensor(arg0: int) -> None
 AddWhitespaceTokenize(arg0: int) -> None
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Other Members</h2></th></tr>
@@ -46,11 +45,11 @@ AddWhitespaceTokenize(arg0: int) -> None
 SELECT_TFTEXT_OPS<a id="SELECT_TFTEXT_OPS"></a>
 </td>
 <td>
-`[<built-in method AddFastWordpieceTokenize of PyCapsule object at 0x7f51da49e810>,
- <built-in method AddFastWordpieceDetokenize of PyCapsule object at 0x7f51da49ea20>,
- <built-in method AddNgramsStringJoin of PyCapsule object at 0x7f51da49ef30>,
- <built-in method AddRaggedTensorToTensor of PyCapsule object at 0x7f51cff80480>,
- <built-in method AddWhitespaceTokenize of PyCapsule object at 0x7f51cff804e0>]`
+`[<built-in method AddFastWordpieceTokenize of PyCapsule object at 0x7ff038dce450>,
+ <built-in method AddFastWordpieceDetokenize of PyCapsule object at 0x7ff038e05f90>,
+ <built-in method AddNgramsStringJoin of PyCapsule object at 0x7ff038de4600>,
+ <built-in method AddRaggedTensorToTensor of PyCapsule object at 0x7ff038de4a80>,
+ <built-in method AddWhitespaceTokenize of PyCapsule object at 0x7ff038de4120>]`
 </td>
 </tr>
 </table>

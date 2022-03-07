@@ -27,6 +27,8 @@ toc:
     path: /text/api_docs/python/text/RoundRobinTrimmer
   - title: SentencepieceTokenizer
     path: /text/api_docs/python/text/SentencepieceTokenizer
+  - title: ShrinkLongestTrimmer
+    path: /text/api_docs/python/text/ShrinkLongestTrimmer
   - title: SplitMergeFromLogitsTokenizer
     path: /text/api_docs/python/text/SplitMergeFromLogitsTokenizer
   - title: SplitMergeTokenizer
@@ -110,6 +112,12 @@ toc:
       path: /text/api_docs/python/text/keras/layers
     - title: ToDense
       path: /text/api_docs/python/text/keras/layers/ToDense
+    - title: UnicodeScriptTokenizer
+      path: /text/api_docs/python/text/keras/layers/UnicodeScriptTokenizer
+    - title: WhitespaceTokenizer
+      path: /text/api_docs/python/text/keras/layers/WhitespaceTokenizer
+    - title: WordpieceTokenizer
+      path: /text/api_docs/python/text/keras/layers/WordpieceTokenizer
 - title: text.metrics
   section:
   - title: Overview

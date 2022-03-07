@@ -22,3 +22,12 @@ Tensorflow Text layers for Keras API.
 
 [`class ToDense`](../../text/keras/layers/ToDense.md): Layer that makes padding
 and masking a Composite Tensors effortless.
+
+[`class UnicodeScriptTokenizer`](../../text/keras/layers/UnicodeScriptTokenizer.md):
+Unicode script tokenization layer.
+
+[`class WhitespaceTokenizer`](../../text/keras/layers/WhitespaceTokenizer.md):
+Whitespace tokenization layer.
+
+[`class WordpieceTokenizer`](../../text/keras/layers/WordpieceTokenizer.md):
+Splits an already-tokenized tensor of tokens further into WordPiece tokens.

@@ -120,9 +120,10 @@ vocab, the flatbuffer's size increases from ~5MB to ~6MB.
 `model_buffer`
 </td>
 <td>
-(optional) Bytes object that contains the wordpiece model in
-flatbuffer format (see fast_wordpiece_tokenizer_model.fbs). If not
-`None`, all other arguments (except `token_output_type`) are ignored.
+(optional) Bytes object (or a uint8 tf.Tenosr) that contains
+the wordpiece model in flatbuffer format (see
+fast_wordpiece_tokenizer_model.fbs). If not `None`, all other arguments
+(except `token_output_type`) are ignored.
 </td>
 </tr>
 </table>
@@ -175,7 +176,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of int64 or int32.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -230,7 +230,6 @@ source</a>
 Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
 ### Example 1, single word tokenization:
-
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]"]
 >>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string,
@@ -242,9 +241,7 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 ```
 
 ### Example 2, general text tokenization (pre-tokenization on
-
 ### punctuation and whitespace followed by WordPiece tokenization):
-
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]",
 ...          "'", "re"]
@@ -301,7 +298,6 @@ source</a>
 Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 
 ### Example 1, single word tokenization:
-
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]"]
 >>> tokenizer = FastWordpieceTokenizer(vocab, token_out_type=tf.string,
@@ -318,9 +314,7 @@ Tokenizes a tensor of UTF-8 string tokens further into subword tokens.
 ```
 
 ### Example 2, general text tokenization (pre-tokenization on
-
 ### punctuation and whitespace followed by WordPiece tokenization):
-
 ```
 >>> vocab = ["they", "##'", "##re", "the", "great", "##est", "[UNK]",
 ...          "'", "re"]
