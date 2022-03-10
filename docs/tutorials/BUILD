@@ -16,6 +16,7 @@ tf_org_check_links(name = "check_links")
 tf_org_notebook_test(
     name = "text_generation",
     ipynb = "text_generation.ipynb",
+    tags = ["requires-net:external"],
     deps = [
         "//third_party/py/matplotlib",
         #  numpy dep,
@@ -35,6 +36,7 @@ tf_org_notebook_test(
     name = "transformer",
     size = "large",
     ipynb = "transformer.ipynb",
+    tags = ["requires-net:external"],
     deps = [
         "//third_party/py/matplotlib",
         #  numpy dep,
@@ -47,6 +49,7 @@ tf_org_notebook_test(
     name = "text_classification_rnn",
     size = "large",
     ipynb = "text_classification_rnn.ipynb",
+    tags = ["requires-net:external"],
     deps = [
         "//third_party/py/matplotlib",
         #  numpy dep,
