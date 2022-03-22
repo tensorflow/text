@@ -41,6 +41,12 @@ class WaterfallTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               # Segment 2
               [[False], [False], [True, True, False]]
           ],
+          expected_reverse=[
+              # segment 1
+              [[False, False, True], [False, False], [False]],
+              # Segment 2
+              [[True], [True], [True, True, True]]
+          ],
           max_seq_length=[[2], [1], [3]],
       ),
       dict(
@@ -55,6 +61,12 @@ class WaterfallTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               [[True, True, False], [True, False], [True]],
               # Segment 2
               [[False], [False], [True, True, False]]
+          ],
+          expected_reverse=[
+              # segment 1
+              [[False, False, True], [False, False], [False]],
+              # Segment 2
+              [[True], [True], [True, True, True]]
           ],
           max_seq_length=[2, 1, 3],
       ),
@@ -74,22 +86,48 @@ class WaterfallTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               # second segment
               [[True, False], [False, False, False, False], [False, False]],
           ],
+          expected_reverse=[
+              # first segment
+              [[False], [False, False], [False, False, False, False, False]],
+              # second segment
+              [[True, True], [False, False, True, True], [True, True]],
+          ],
       ),
       dict(
           descr="Test when segments are rank 3 RaggedTensors",
           segments=[
               # first segment
-              [[[b"hello"], [b"there"]], [[b"name", b"is"]],
+              [[[b"hello"], [b"there"]],
+               [[b"name", b"is"]],
                [[b"what", b"time"], [b"is"], [b"it"], [b"?"]]],
               # second segment
-              [[[b"whodis"], [b"?"]], [[b"bond"], [b","], [b"james"],
-                                       [b"bond"]], [[b"5:30"], [b"AM"]]],
+              [[[b"whodis"], [b"?"]],
+               [[b"bond"], [b","], [b"james"], [b"bond"]],
+               [[b"5:30"], [b"AM"]]],
           ],
           max_seq_length=2,
-          expected=[[[[True], [True]], [[True, True]],
-                     [[True, True], [False], [False], [False]]],
-                    [[[False], [False]], [[False], [False], [False], [False]],
-                     [[False], [False]]]],
+          expected=[
+              # first segment
+              [[[True], [True]],
+               [[True, True]],
+               [[True, True], [False], [False], [False]]
+               ],
+              # second segment
+              [[[False], [False]],
+               [[False], [False], [False], [False]],
+               [[False], [False]]
+               ]],
+          expected_reverse=[
+              # first segment
+              [[[False], [False]],
+               [[False, False]],
+               [[False, False], [False], [False], [False]]
+               ],
+              # second segment
+              [[[True], [True]],
+               [[False], [False], [True], [True]],
+               [[True], [True]]
+               ]],
       ),
       dict(
           descr="Test when segments are rank 3 RaggedTensors and axis = 1",
@@ -109,6 +147,12 @@ class WaterfallTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               # 2nd segment
               [[False, False], [True, False, False, False], [False, False]],
           ],
+          expected_reverse=[
+              # 1st segment
+              [[False, False], [False], [False, False, False, False]],
+              # 2nd segment
+              [[True, True], [False, False, True, True], [True, True]],
+          ],
       ),
       # pyformat: enable
   ])
@@ -116,15 +160,25 @@ class WaterfallTrimmerOpsTest(test.TestCase, parameterized.TestCase):
                        segments,
                        max_seq_length,
                        expected,
+                       expected_reverse,
                        axis=-1,
                        descr=None):
     max_seq_length = constant_op.constant(max_seq_length)
     segments = [ragged_factory_ops.constant(i) for i in segments]
     expected = [ragged_factory_ops.constant(i) for i in expected]
-    trimmer = trimmer_ops.WaterfallTrimmer(max_seq_length, axis=axis)
-    actual = trimmer.generate_mask(segments)
-    for expected_mask, actual_mask in zip(expected, actual):
-      self.assertAllEqual(actual_mask, expected_mask)
+    expected_reverse = [
+        ragged_factory_ops.constant(i) for i in expected_reverse
+    ]
+
+    def RunAndAssert(expected_output, reverse: bool):
+      trimmer = trimmer_ops.WaterfallTrimmer(
+          max_seq_length, axis=axis, reverse=reverse)
+      actual = trimmer.generate_mask(segments)
+      for expected_mask, actual_mask in zip(expected_output, actual):
+        self.assertAllEqual(expected_mask, actual_mask)
+
+    RunAndAssert(expected, reverse=False)
+    RunAndAssert(expected_reverse, reverse=True)
 
   @parameterized.parameters([
       dict(

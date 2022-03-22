@@ -78,11 +78,11 @@ class Trimmer(metaclass=abc.ABCMeta):
     raise NotImplementedError()
 
 
-def _get_row_lengths(segments, axis=-1):
-  axis = array_ops.get_positive_axis(axis, segments.shape.ndims) - 1
+def _get_row_lengths(segment_batch, axis=-1):
+  axis = array_ops.get_positive_axis(axis, segment_batch.shape.ndims) - 1
   foo = ragged_tensor.RaggedTensor.from_nested_row_lengths(
-      segments.nested_row_lengths()[axis],
-      segments.nested_row_lengths()[:axis])
+      segment_batch.nested_row_lengths()[axis],
+      segment_batch.nested_row_lengths()[:axis])
   for _ in range(axis):
     foo = math_ops.reduce_sum(foo, -1)
   return foo
@@ -110,8 +110,8 @@ class WaterfallTrimmer(Trimmer):
   length budget.
   """
 
-  def __init__(self, max_seq_length, axis=-1):
-    """Creates an instance of `WaterfallTruncator`.
+  def __init__(self, max_seq_length, axis=-1, reverse=False):
+    """Creates an instance of `WaterfallTrimmer`.
 
     Args:
       max_seq_length: a scalar `Tensor` or a 1D `Tensor` of type int32 that
@@ -119,9 +119,11 @@ class WaterfallTrimmer(Trimmer):
         scalar is provided, the value is broadcasted and applied to all values
         across the batch.
       axis: Axis to apply trimming on.
+      reverse: whether to apply trimming in reverse order (right-to-left).
     """
     self._max_seq_length = max_seq_length
     self._axis = axis
+    self._reverse = reverse
 
   def generate_mask(self, segments):
     """Calculates a truncation mask given a per-batch budget.
@@ -167,8 +169,12 @@ class WaterfallTrimmer(Trimmer):
       # Compute the allocation for each segment using a `waterfall` algorithm
       segment_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
       budget = math_ops.cast(budget, dtypes.int32)
-      leftover_budget = math_ops.cumsum(
-          -1 * segment_lengths, exclusive=False, axis=-1) + budget
+      leftover_budget = (
+          math_ops.cumsum(
+              -1 * segment_lengths,
+              exclusive=False,
+              axis=-1,
+              reverse=self._reverse) + budget)
       leftover_budget = segment_lengths + math_ops.minimum(leftover_budget, 0)
       results = math_ops.maximum(leftover_budget, 0)
 
@@ -176,7 +182,8 @@ class WaterfallTrimmer(Trimmer):
       # segment
       results = array_ops.unstack(results, axis=-1)
       item_selectors = [
-          item_selector_ops.FirstNItemSelector(i) for i in results
+          item_selector_ops.FirstNItemSelector(i, reverse=self._reverse)
+          for i in results
       ]
       return [
           i.get_selectable(s, self._axis)
