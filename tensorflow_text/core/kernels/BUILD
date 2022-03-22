@@ -83,6 +83,58 @@ cc_test(
     ],
 )
 
+tf_cc_library(
+    name = "fast_bert_normalizer",
+    hdrs = ["fast_bert_normalizer.h"],
+    deps = [
+        ":darts_clone_trie_builder",
+        ":darts_clone_trie_wrapper",
+        "@com_google_absl//absl/memory",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        "@icu//:common",
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
+flatbuffer_cc_library(
+    name = "fast_bert_normalizer_model",
+    srcs = [
+        "fast_bert_normalizer_model.fbs",
+    ],
+)
+
+tf_cc_library(
+    name = "fast_bert_normalizer_model_builder",
+    srcs = ["fast_bert_normalizer_model_builder.cc"],
+    hdrs = ["fast_bert_normalizer_model_builder.h"],
+    deps = [
+        ":darts_clone_trie_builder",
+        ":fast_bert_normalizer",
+        ":fast_bert_normalizer_model",
+        "@com_google_absl//absl/memory",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@icu//:common",
+        "@icu//:nfkc_cf",  # Needed for NFKC_Casefold Unicode Normalization form.
+        "@com_googlesource_code_re2//:re2",
+        # tf:lib tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "fast_bert_normalizer_test",
+    size = "small",
+    srcs = ["fast_bert_normalizer_test.cc"],
+    deps = [
+        ":fast_bert_normalizer",
+        ":fast_bert_normalizer_model_builder",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 cc_test(
     name = "log_greedy_constrained_sequence_kernel_test",
     srcs = ["log_greedy_constrained_sequence_kernel_test.cc"],
