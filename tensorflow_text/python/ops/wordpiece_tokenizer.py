@@ -101,7 +101,7 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
   Empty strings are tokenized into empty (ragged) tensors.
 
   >>> tokenizer.tokenize([""])
-  <tf.RaggedTensor []>
+  <tf.RaggedTensor [[]]>
   """
 
   def __init__(self,
