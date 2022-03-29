@@ -15,7 +15,7 @@ exports_files(["LICENSE"])
 ####################################
 # Public TF.Text library to import #
 ####################################
-
+# DO_NOT_SUBMIT no change
 # Most TF users will want to add this as their dependency.
 alias(
     name = "tensorflow_text",
