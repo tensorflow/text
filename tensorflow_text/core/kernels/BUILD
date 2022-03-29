@@ -89,6 +89,7 @@ tf_cc_library(
     deps = [
         ":darts_clone_trie_builder",
         ":darts_clone_trie_wrapper",
+        ":fast_bert_normalizer_model",
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
@@ -132,6 +133,49 @@ cc_test(
         ":fast_bert_normalizer",
         ":fast_bert_normalizer_model_builder",
         "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "fast_bert_normalizer_kernel_template",
+    hdrs = ["fast_bert_normalizer_kernel_template.h"],
+    deps = [
+        ":fast_bert_normalizer",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "fast_bert_normalizer_tf_kernel",
+    srcs = ["fast_bert_normalizer_tf_kernel.cc"],
+    hdrs = ["fast_bert_normalizer_tf_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":fast_bert_normalizer_kernel_template",
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "fast_bert_normalizer_tflite_kernel",
+    srcs = ["fast_bert_normalizer_tflite_kernel.cc"],
+    hdrs = ["fast_bert_normalizer_tflite_kernel.h"],
+    deps = [
+        ":fast_bert_normalizer_kernel_template",
+        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
+        "@org_tensorflow//tensorflow/core:framework",
+        "@org_tensorflow//tensorflow/core:lib",
+        "@org_tensorflow//tensorflow/lite/c:common",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
+        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels/shim:tflite_op_shim tensorflow dep,
     ],
 )
 
@@ -747,12 +791,14 @@ cc_library(
 tf_cc_library(
     name = "tflite_ops",
     hdrs = [
+        "fast_bert_normalizer_tflite_kernel.h",
         "fast_wordpiece_tokenizer_tflite.h",
         "ngrams_tflite.h",
         "ragged_tensor_to_tensor_tflite.h",
         "whitespace_tokenizer_tflite.h",
     ],
     deps = [
+        ":fast_bert_normalizer_tflite_kernel",
         ":fast_wordpiece_tokenizer_tflite",
         ":ngrams_tflite",
         ":ragged_tensor_to_tensor_tflite",

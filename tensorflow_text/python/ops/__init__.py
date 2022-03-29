@@ -23,6 +23,7 @@ except ImportError:
 from tensorflow_text.core.pybinds.pywrap_fast_wordpiece_tokenizer_model_builder import build_fast_wordpiece_model
 from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
 from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_bitmask
+from tensorflow_text.python.ops.fast_bert_normalizer import FastBertNormalizer
 from tensorflow_text.python.ops.fast_wordpiece_tokenizer import FastWordpieceTokenizer
 from tensorflow_text.python.ops.greedy_constrained_sequence_op import greedy_constrained_sequence
 from tensorflow_text.python.ops.hub_module_splitter import HubModuleSplitter
