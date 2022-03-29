@@ -28,7 +28,6 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":constrained_sequence_op_cc",
-        ":fast_bert_normalizer_cc",
         ":fast_wordpiece_tokenizer_cc",
         ":mst_ops_cc",
         ":normalize_ops_cc",
@@ -67,8 +66,6 @@ py_library(
     deps = [
         ":bert_tokenizer",
         ":create_feature_bitmask_op",
-        ":fast_bert_normalizer",
-        ":fast_bert_tokenizer",
         ":fast_wordpiece_tokenizer",
         ":greedy_constrained_sequence_op",
         ":hub_module_splitter",
@@ -206,86 +203,6 @@ py_test(
         # python:dtypes tensorflow dep,
         # python:errors tensorflow dep,
         # python:framework_test_lib tensorflow dep,
-    ],
-)
-
-py_tf_text_library(
-    name = "fast_bert_normalizer",
-    srcs = ["python/ops/fast_bert_normalizer.py"],
-    cc_op_defs = ["core/ops/fast_bert_normalizer_op.cc"],
-    cc_op_kernels = [
-        # lite/kernels/shim:tf_op_shim tensorflow dep,
-        "//tensorflow_text/core/kernels:fast_bert_normalizer_tf_kernel",
-    ],
-    deps = [
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python/ops/ragged:ragged_tensor tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_fast_bert_normalizer_model_builder",
-    ],
-)
-
-py_test(
-    name = "fast_bert_normalizer_test",
-    size = "small",
-    srcs = ["python/ops/fast_bert_normalizer_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
-    deps = [
-        ":tensorflow_text",
-        "@absl_py//absl/testing:parameterized",
-        # tensorflow package dep,
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python/compat tensorflow dep,
-        # python/data/kernel_tests:test_base tensorflow dep,
-        # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        "//tensorflow_text:normalize_ops",
-        "//tensorflow_text/core/pybinds:pywrap_fast_bert_normalizer_model_builder",
-    ],
-)
-
-py_library(
-    name = "fast_bert_tokenizer",
-    srcs = ["python/ops/fast_bert_tokenizer.py"],
-    tags = ["ignore_srcs"],
-    deps = [
-        ":fast_bert_normalizer",
-        ":fast_wordpiece_tokenizer",
-        ":tokenization",
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python/eager:monitoring tensorflow dep,
-        "//tensorflow_text:normalize_ops",
-    ],
-)
-
-py_test(
-    name = "fast_bert_tokenizer_test",
-    size = "small",
-    timeout = "moderate",
-    srcs = ["python/ops/fast_bert_tokenizer_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
-    deps = [
-        ":tensorflow_text",
-        "@absl_py//absl/testing:parameterized",
-        # tensorflow package dep,
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
-        # python/ops/ragged:ragged_factory_ops tensorflow dep,
-        # python/ops/ragged:ragged_map_ops tensorflow dep,
-        # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
 
@@ -732,6 +649,10 @@ py_test(
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
+        # lite/python:lite tensorflow dep,
+        # lite/python:lite_v2_test_util tensorflow dep,
+        # lite/python:test_util tensorflow dep,
+        # lite/python/testdata:_pywrap_test_registerer tensorflow dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
