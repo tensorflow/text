@@ -114,7 +114,7 @@ class ItemSelector(object):
         for i in self._unselectable_ids
     ]
 
-    # if there are no blacklisted ids, mark everything as selectable
+    # if there are no blocked ids, mark everything as selectable
     if all_selectable_flats:
       reduce_flat = math_ops.reduce_all(all_selectable_flats, axis=0)
     else:
