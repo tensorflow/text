@@ -15,6 +15,7 @@
 
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/pytypes.h"
+#include "tensorflow_text/core/kernels/fast_bert_normalizer_tflite_kernel.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_tflite.h"
 #include "tensorflow_text/core/kernels/ngrams_tflite.h"
 #include "tensorflow_text/core/kernels/ragged_tensor_to_tensor_tflite.h"
@@ -26,12 +27,18 @@ PYBIND11_MODULE(tflite_registrar, m) {
     A module with a Python wrapper for TFLite TFText ops.
   )pbdoc";
   m.attr("_allowed_symbols") = pybind11::make_tuple(
-      "AddFastWordpieceTokenize",
-      "AddFastWordpieceDetokenize",
-      "AddNgramsStringJoin",
-      "AddRaggedTensorToTensor",
-      "AddWhitespaceTokenize",
-      "SELECT_TFTEXT_OPS");
+      "AddFastBertNormalize", "AddFastWordpieceTokenize",
+      "AddFastWordpieceDetokenize", "AddNgramsStringJoin",
+      "AddRaggedTensorToTensor", "AddWhitespaceTokenize", "SELECT_TFTEXT_OPS");
+  m.def(
+      "AddFastBertNormalize",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddFastBertNormalize(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      The function that adds FastBertNormalize to the TFLite interpreter.
+      )pbdoc");
   m.def(
       "AddFastWordpieceTokenize",
       [](uintptr_t resolver) {

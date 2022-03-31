@@ -22,12 +22,12 @@ from tensorflow_text.python import keras
 from tensorflow_text.python import metrics
 from tensorflow_text.python.ops import *
 
-
 # Public symbols in the "tensorflow_text" package.  Symbols are sorted in
 # increasing order of their lowercase version.
 _allowed_symbols = [
     "BertTokenizer",
     "Detokenizer",
+    "FastBertNormalizer",
     "FastWordpieceTokenizer",
     "FirstNItemSelector",
     "HubModuleSplitter",
@@ -81,6 +81,7 @@ _allowed_symbols = [
 ]
 
 tflite_registrar.SELECT_TFTEXT_OPS = [
+    tflite_registrar.AddFastBertNormalize,
     tflite_registrar.AddFastWordpieceTokenize,
     tflite_registrar.AddFastWordpieceDetokenize,
     tflite_registrar.AddNgramsStringJoin,

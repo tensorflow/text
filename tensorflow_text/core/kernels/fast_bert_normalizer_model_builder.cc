@@ -20,6 +20,7 @@
 #include "absl/container/flat_hash_map.h"
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
+#include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 #include "icu4c/source/common/unicode/errorcode.h"
 #include "icu4c/source/common/unicode/normalizer2.h"
@@ -78,10 +79,10 @@ absl::StatusOr<std::string> normalize_utf8_nfd(absl::string_view input) {
 }
 
 // Returns all valid Unicode codepoints.
-std::vector<char32> AllValidUnicodeCodePoints() {
-  std::vector<char32> ret;
+std::vector<char32_t> AllValidUnicodeCodePoints() {
+  std::vector<char32_t> ret;
   // The maximum codepoint in Unicode is 0x0010FFFF.
-  for (char32 cp = 0; cp <= 0x0010FFFF; ++cp) {
+  for (char32_t cp = 0; cp <= 0x0010FFFF; ++cp) {
     if (!U_IS_UNICODE_CHAR(cp)) {
       continue;
     }
@@ -140,7 +141,7 @@ absl::StatusOr<std::string> BuildFastBertNormalizerModelAndExportToFlatBuffer(
   // Memorize and reuse normalized strings.
   absl::flat_hash_map<std::string, int> norm_string_to_pool_offset;
 
-  for (const char32 cp : AllValidUnicodeCodePoints()) {
+  for (const auto cp : AllValidUnicodeCodePoints()) {
     // Get the utf8 view of the codepoint.
     char buf[4];
     int len = 0;
@@ -220,7 +221,7 @@ FastBertNormalizerFactory::FastBertNormalizerFactory(
     // Should never happen since the same code must have passed the unit tests.
     LOG(ERROR) << "Unexpected error. Failed to build the data for "
                   "FastBertNormalizer. Error message: "
-               << status.error_message();
+               << status.message();
     return;
   }
   auto char_set_recognizer_mapper = FastBertNormalizer::Create(

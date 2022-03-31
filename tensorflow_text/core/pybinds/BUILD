@@ -14,6 +14,7 @@ pybind_extension(
         "tflite_registrar.cc",
     ],
     additional_exported_symbols = [
+        "AddFastBertNormalize",
         "AddFastWordpieceDetokenize",
         "AddFastWordpieceTokenize",
         "AddNgramsStringJoin",
