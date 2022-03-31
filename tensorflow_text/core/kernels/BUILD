@@ -1,7 +1,7 @@
 # Kernels for tf.text ops.
 # [internal] load cc_proto_library.bzl
 load("@flatbuffers//:build_defs.bzl", "flatbuffer_cc_library")
-load("//tensorflow_text:tftext.bzl", "tf_cc_library")
+load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
 
 licenses(["notice"])
 
@@ -161,18 +161,12 @@ tf_cc_library(
     ],
 )
 
-cc_library(
+tflite_cc_library(
     name = "fast_bert_normalizer_tflite_kernel",
     srcs = ["fast_bert_normalizer_tflite_kernel.cc"],
     hdrs = ["fast_bert_normalizer_tflite_kernel.h"],
     deps = [
         ":fast_bert_normalizer_kernel_template",
-        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels/shim:tflite_op_shim tensorflow dep,
@@ -354,18 +348,12 @@ cc_library(
     ],
 )
 
-cc_library(
+tflite_cc_library(
     name = "fast_wordpiece_tokenizer_tflite",
     srcs = ["fast_wordpiece_tokenizer_tflite.cc"],
     hdrs = ["fast_wordpiece_tokenizer_tflite.h"],
     deps = [
         ":fast_wordpiece_tokenizer_kernel_template",
-        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels/shim:tflite_op_shim tensorflow dep,
@@ -502,18 +490,12 @@ tf_cc_library(
     ],
 )
 
-tf_cc_library(
+tflite_cc_library(
     name = "ngrams_tflite",
     srcs = ["ngrams_tflite.cc"],
     hdrs = ["ngrams_tflite.h"],
     deps = [
         ":ngrams_kernel_template",
-        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
         # lite:context tensorflow dep,
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
@@ -535,18 +517,12 @@ cc_test(
     ],
 )
 
-cc_library(
+tflite_cc_library(
     name = "ragged_tensor_to_tensor_tflite",
     srcs = ["ragged_tensor_to_tensor_tflite.cc"],
     hdrs = ["ragged_tensor_to_tensor_tflite.h"],
     deps = [
         "@flatbuffers",
-        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
         # tf/util:ragged_to_dense_util_common tensorflow dep,
         # lite:framework tensorflow dep,
         # lite/c:common tensorflow dep,
@@ -788,7 +764,7 @@ cc_library(
     ],
 )
 
-tf_cc_library(
+tflite_cc_library(
     name = "tflite_ops",
     hdrs = [
         "fast_bert_normalizer_tflite_kernel.h",
@@ -930,18 +906,12 @@ tf_cc_library(
     ],
 )
 
-tf_cc_library(
+tflite_cc_library(
     name = "whitespace_tokenizer_tflite",
     srcs = ["whitespace_tokenizer_tflite.cc"],
     hdrs = ["whitespace_tokenizer_tflite.h"],
     deps = [
         ":whitespace_tokenizer_kernel_template",
-        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels/shim:tflite_op_shim tensorflow dep,
