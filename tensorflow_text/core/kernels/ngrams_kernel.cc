@@ -35,8 +35,8 @@ namespace tensorflow {
 namespace text {
 
 REGISTER_KERNEL_BUILDER(
-    Name(NGramsStrJoinKernel::OpName()).Device(tensorflow::DEVICE_CPU),
-    NGramsStrJoinKernel);
+    Name(NgramsStringJoinKernel::OpName()).Device(tensorflow::DEVICE_CPU),
+    NgramsStringJoinKernel);
 
 }  // namespace text
 }  // namespace tensorflow

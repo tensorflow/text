@@ -26,8 +26,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
-#ifndef TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_H_
-#define TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_H_
+#ifndef TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_KERNEL_TEMPLATE_H_
+#define TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_KERNEL_TEMPLATE_H_
 
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
@@ -43,43 +43,43 @@ namespace text {
 
 // text.ngrams op kernel. See `kDoc` for more info.
 template <tflite::shim::Runtime Rt>
-class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
+class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
+                                                           Rt> {
  protected:
   using Shape = tflite::shim::Shape;
 
  public:
-  using typename tflite::shim::OpKernelShim<NGramsStrJoin, Rt>::InitContext;
-  using typename tflite::shim::OpKernelShim<NGramsStrJoin, Rt>::InvokeContext;
-  using typename tflite::shim::OpKernelShim<NGramsStrJoin,
+  using typename tflite::shim::OpKernelShim<NgramsStringJoin,
+                                            Rt>::InitContext;
+  using typename tflite::shim::OpKernelShim<NgramsStringJoin,
+                                            Rt>::InvokeContext;
+  using typename tflite::shim::OpKernelShim<NgramsStringJoin,
                                             Rt>::ShapeInferenceContext;
 
-  NGramsStrJoin() = default;
+  NgramsStringJoin() = default;
   static const char kOpName[];
   static const char kDoc[];
 
   // Attributes declaration
   static std::vector<std::string> Attrs() {
-    return {"width: int32",           "axis: int",
-            "reduction_type: string", "string_separator: string",
-            "RAGGED_RANK: int >= 0",  "Tsplits: {int64} = DT_INT64"};
+    return {"width: int",
+            "axis: int",
+            "string_separator: string",
+            "RAGGED_RANK: int >= 0",
+            "Tsplits: {int64} = DT_INT64"};
   }
   // Input tensors declaration
   static std::vector<std::string> Inputs() {
-    return {"values: string", "row_splits: RAGGED_RANK * Tsplits"};
+    return {"input_values: string", "input_row_splits: RAGGED_RANK * Tsplits"};
   }
   // Output tensors declaration
   static std::vector<std::string> Outputs() {
-    return {"values: string", "row_splits: RAGGED_RANK * Tsplits"};
+    return {"output_values: string",
+            "output_row_splits: RAGGED_RANK * Tsplits"};
   }
 
   // Initializes the op
   absl::Status Init(InitContext* ctx) {
-    absl::string_view reduction_type_val;
-    SH_RETURN_IF_ERROR(ctx->GetAttr("reduction_type", &reduction_type_val));
-    if (reduction_type_val != kStringJoin) {
-      return absl::InternalError(
-          absl::StrCat("Unsupported reduction_type: ", reduction_type_val));
-    }
     int64_t axis;
     SH_RETURN_IF_ERROR(ctx->GetAttr("axis", &axis));
     if (axis != -1) {
@@ -103,7 +103,11 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
           kValues, OutputValuesTensorShape(input_shape, width)));
     } else {
       // RaggedTensor Output
-      SH_RETURN_IF_ERROR(ctx->SetOutputShape(kValues, Shape()));
+      SH_ASSIGN_OR_RETURN(const auto input_shape, ctx->GetInputShape(kValues));
+      Shape output_shape(input_shape);
+      const int last_dim = output_shape->size() - 1;
+      (*output_shape)[last_dim] = output_shape.kUnknownDim;
+      SH_RETURN_IF_ERROR(ctx->SetOutputShape(kValues, output_shape));
 
       // The row_splits tensors maintain their shape, because only the
       // innermost dimension will change.
@@ -153,6 +157,7 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
       // RaggedTensor output
       int index = 0;
       const int num_row_splits = ctx->NumInputs() - kRowSplitsStart;
+      // Copy all input splits except for innermost into output splits.
       while (index < num_row_splits - 1) {
         SH_ASSIGN_OR_RETURN(const auto input_tensor_row_splits,
                             ctx->GetInput(kRowSplitsStart + index));
@@ -168,7 +173,7 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
                     input_buffer.size() * sizeof(Tsplits));
         ++index;
       }
-
+      // Set row splits variables to the innermost
       SH_ASSIGN_OR_RETURN(const auto input_tensor_row_splits,
                           ctx->GetInput(kRowSplitsStart + index));
       SH_ASSIGN_OR_RETURN(
@@ -185,8 +190,10 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
     const auto input_values_data =
         input_values->template Data<tensorflow::tstring>();
 
+    // Create ngrams by looping through the innermost input splits.
     std::vector<std::string> buffer;
     for (int i = 0; i < n_row_splits - 1; ++i) {
+      // Set output splits using current number of created output values.
       output_row_splits[i] = buffer.size();
       std::vector<tensorflow::tstring> tokens;
       for (int j = input_row_splits[i]; j < input_row_splits[i + 1]; ++j) {
@@ -198,6 +205,7 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
     }
     output_row_splits[n_row_splits - 1] = buffer.size();
 
+    // Set output values from the generated buffer.
     tflite::shim::TensorViewOr output_values_or;
     if (ctx->NumOutputs() == 1) {
       output_values_or = ctx->GetOutput(
@@ -219,12 +227,13 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
                                               const int64_t width) {
     Shape output_shape(input_values_shape);
     const int last_dim = output_shape->size() - 1;
+    if (input_values_shape->at(last_dim) == input_values_shape.kUnknownDim)
+      return output_shape;
     (*output_shape)[last_dim] =
         std::max(0, output_shape->at(last_dim) - static_cast<int>(width) + 1);
     return output_shape;
   }
 
-  static const char kStringJoin[];
   // Both the input and output tensors use the same indices.
   static constexpr int kValues = 0;
   static constexpr int kRowSplitsStart = 1;
@@ -237,37 +246,31 @@ class NGramsStrJoin : public tflite::shim::OpKernelShim<NGramsStrJoin, Rt> {
 // These can be inlined once the toolchain is bumped up to C++17
 
 template <tflite::shim::Runtime Rt>
-const char NGramsStrJoin<Rt>::kOpName[] = "TFText>Ngrams";
+const char NgramsStringJoin<Rt>::kOpName[] = "TFText>NgramsStringJoin";
 
 template <tflite::shim::Runtime Rt>
-const char NGramsStrJoin<Rt>::kDoc[] = R"doc(
-Description:
-  This TFLite op implements the text.ngrams when reduction_type = STRING_JOIN.
+const char NgramsStringJoin<Rt>::kDoc[] = R"doc(
+  Create a tensor of n-grams based on the string input data.
 
-Input:
-* data: A string tensor, or a ragged string tensor (a 1D string value tensor
-    and one or more 1D int64 row_split tensors).
+  Args:
+    input_values: A string tensor, or a ragged string tensor (a 1D string value
+        tensor and one or more 1D int64 row_split tensors).
+    row_splits: List of integer tensors representing the splits of the
+        input_values
+    width:             scalar integer
+        The width of the ngram window.
+    axis:              scalar integer
+        The axis to create ngrams along.  Currently, it must be -1.
+    string_separator:  scalar string
+        The separator string used to join tokens together.
 
-Attributes:
-* width:             scalar integer
-    The width of the ngram window.
-* axis:              scalar integer
-    The axis to create ngrams along.  For STRING_JOIN, this must be -1.
-* reduction_type:    scalar string
-    A string corresponding to the name of an enum value of text.Reduction
-    Currently, only STRING_JOIN is supported.
-* string_separator:  scalar string
-    The separator string used to join tokens together.
-
-Output:
-* output: A string tensor that matches the rank of 'data'.  Will be a ragged
-    tensor if 'data' is a ragged tensor.
-)doc";
-
-template <tflite::shim::Runtime Rt>
-const char NGramsStrJoin<Rt>::kStringJoin[] = "STRING_JOIN";
+  Returns:
+    output_values: A string tensor that matches the rank of 'data'.  Will be a
+        ragged tensor if 'data' is a ragged tensor.
+    output_row_splits: Splits of above.
+  )doc";
 
 }  // namespace text
 }  // namespace tensorflow
 
-#endif  // TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_H_
+#endif  // TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_KERNEL_TEMPLATE_H_

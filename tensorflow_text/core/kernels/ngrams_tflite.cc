@@ -38,13 +38,14 @@ namespace ops {
 namespace custom {
 namespace text {
 
-using OpKernel = tflite::shim::TfLiteOpKernel<tensorflow::text::NGramsStrJoin>;
+using OpKernel =
+    tflite::shim::TfLiteOpKernel<tensorflow::text::NgramsStringJoin>;
 
 extern "C" void AddNgramsStringJoin(tflite::MutableOpResolver* resolver) {
   OpKernel::Add(resolver);
 }
 
-TfLiteRegistration* Register_tftext_Ngrams() {
+TfLiteRegistration* Register_TFText_NgramsStringJoin() {
   return OpKernel::GetTfLiteRegistration();
 }
 

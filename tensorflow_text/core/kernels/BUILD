@@ -448,21 +448,6 @@ cc_proto_library(
 )
 
 tf_cc_library(
-    name = "normalize_kernels",
-    srcs = ["normalize_kernels.cc"],
-    tf_deps = [
-        # tf:framework tensorflow dep,
-    ],
-    deps = [
-        ":edit_changes_cc_proto",
-        "//third_party/icu/data:icu_normalization_data",
-        "@com_google_absl//absl/strings",
-        "@icu//:nfkc",
-        "@icu//:nfkc_cf",
-    ],
-)
-
-tf_cc_library(
     name = "ngrams_kernel_template",
     hdrs = ["ngrams_kernel_template.h"],
     tf_deps = [
@@ -470,6 +455,7 @@ tf_cc_library(
     ],
     deps = [
         "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,
@@ -496,7 +482,6 @@ tflite_cc_library(
     hdrs = ["ngrams_tflite.h"],
     deps = [
         ":ngrams_kernel_template",
-        # lite:context tensorflow dep,
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels/shim:tflite_op_shim tensorflow dep,
@@ -514,6 +499,21 @@ cc_test(
         # lite/c:common tensorflow dep,
         # lite/kernels:test_util tensorflow dep,
         # lite/schema:schema_fbs tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "normalize_kernels",
+    srcs = ["normalize_kernels.cc"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":edit_changes_cc_proto",
+        "//third_party/icu/data:icu_normalization_data",
+        "@com_google_absl//absl/strings",
+        "@icu//:nfkc",
+        "@icu//:nfkc_cf",
     ],
 )
 

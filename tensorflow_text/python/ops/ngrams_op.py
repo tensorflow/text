@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# encoding=utf-8
 """Tensorflow ngram operations."""
 
 from __future__ import absolute_import
@@ -21,6 +22,7 @@ from __future__ import print_function
 
 import enum
 
+from tensorflow.python.compat import compat
 from tensorflow.python.framework import errors
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import math_ops
@@ -28,6 +30,11 @@ from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_functional_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow_text.python.ops.sliding_window_op import sliding_window
+
+# pylint: disable=g-bad-import-order,unused-import
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_ngrams_op = load_library.load_op_library(resource_loader.get_path_to_datafile('_ngrams_op.so'))
 
 
 class Reduction(enum.Enum):
@@ -126,12 +133,36 @@ def ngrams(data,
     elif reduction_type is Reduction.MEAN:
       return math_ops.reduce_mean(windowed_data, reduction_axis)
     elif reduction_type is Reduction.STRING_JOIN:
-      if isinstance(data, ragged_tensor.RaggedTensor):
-        return ragged_functional_ops.map_flat_values(
-            string_ops.reduce_join,
-            windowed_data,
-            axis=axis,
-            separator=string_separator)
+      if not compat.forward_compatible(2022, 2, 29):
+        if isinstance(data, ragged_tensor.RaggedTensor):
+          return ragged_functional_ops.map_flat_values(
+              string_ops.reduce_join,
+              windowed_data,
+              axis=axis,
+              separator=string_separator)
+        else:
+          return string_ops.reduce_join(
+              windowed_data, axis=axis, separator=string_separator)
       else:
-        return string_ops.reduce_join(
-            windowed_data, axis=axis, separator=string_separator)
+        if isinstance(data, ragged_tensor.RaggedTensor):
+          if isinstance(data.values, ragged_tensor.RaggedTensor):
+            values = ngrams(data.values, width, axis, reduction_type,
+                            string_separator, name)
+            return data.with_values(values)
+          else:
+            vals, splits = gen_ngrams_op.tf_text_ngrams_string_join(
+                input_values=data.values,
+                input_row_splits=data.nested_row_splits,
+                width=width,
+                axis=axis,
+                string_separator=string_separator)
+            return ragged_tensor.RaggedTensor.from_nested_row_splits(vals,
+                                                                     splits)
+        else:
+          output_values, _ = gen_ngrams_op.tf_text_ngrams_string_join(
+              input_values=data,
+              input_row_splits=list(),
+              width=width,
+              axis=axis,
+              string_separator=string_separator)
+          return output_values
