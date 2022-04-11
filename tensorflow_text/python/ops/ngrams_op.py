@@ -133,7 +133,7 @@ def ngrams(data,
     elif reduction_type is Reduction.MEAN:
       return math_ops.reduce_mean(windowed_data, reduction_axis)
     elif reduction_type is Reduction.STRING_JOIN:
-      if not compat.forward_compatible(2022, 2, 29):
+      if not compat.forward_compatible(2022, 4, 18):
         if isinstance(data, ragged_tensor.RaggedTensor):
           return ragged_functional_ops.map_flat_values(
               string_ops.reduce_join,
