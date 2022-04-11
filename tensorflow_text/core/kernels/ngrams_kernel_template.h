@@ -106,7 +106,9 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
       SH_ASSIGN_OR_RETURN(const auto input_shape, ctx->GetInputShape(kValues));
       Shape output_shape(input_shape);
       const int last_dim = output_shape->size() - 1;
-      (*output_shape)[last_dim] = output_shape.kUnknownDim;
+      if (last_dim != -1) {
+        (*output_shape)[last_dim] = output_shape.kUnknownDim;
+      }
       SH_RETURN_IF_ERROR(ctx->SetOutputShape(kValues, output_shape));
 
       // The row_splits tensors maintain their shape, because only the
