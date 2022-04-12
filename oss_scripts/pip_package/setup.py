@@ -32,7 +32,7 @@ from setuptools.command.install import install
 from setuptools.dist import Distribution
 
 project_name = 'tensorflow-text'
-project_version = '2.8.1'
+project_version = '2.9.0-rc0'
 
 
 class BinaryDistribution(Distribution):
@@ -78,7 +78,7 @@ setup(
         'tensorflow_hub>=0.8.0',
     ],
     extras_require={
-        'tensorflow_cpu': ['tensorflow-cpu>=2.8.0, <2.9',],
+        'tensorflow_cpu': ['tensorflow-cpu>=2.9.0rc0, <2.10',],
         'tests': [
             'absl-py',
             'pytest',
