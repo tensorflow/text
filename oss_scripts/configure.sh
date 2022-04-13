@@ -60,6 +60,9 @@ if is_windows; then
   sed -i -e 's/":headers",$/":headers", ":windows_static_link_data",/' third_party/icu/BUILD.bzl
 fi
 
+# Copy the current bazelversion of TF.
+curl https://raw.githubusercontent.com/tensorflow/tensorflow/master/.bazelversion -o .bazelversion
+
 write_to_bazelrc "build:release_cpu_linux --config=manylinux2014"
 write_to_bazelrc "build:manylinux2010 --crosstool_top=@ubuntu20.04-gcc9_manylinux2014-cuda11.2-cudnn8.1-tensorrt7.2_config_cuda//crosstool:toolchain"
 write_to_bazelrc "build:manylinux2014 --crosstool_top=@ubuntu20.04-gcc9_manylinux2014-cuda11.2-cudnn8.1-tensorrt7.2_config_cuda//crosstool:toolchain"
