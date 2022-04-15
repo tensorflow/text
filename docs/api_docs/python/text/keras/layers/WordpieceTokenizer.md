@@ -24,9 +24,14 @@ Splits an already-tokenized tensor of tokens further into WordPiece tokens.
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.keras.layers.WordpieceTokenizer(
-    vocabulary=None, suffix_indicator=&#x27;##&#x27;, max_bytes_per_word=100,
-    token_out_type=tf.string, unknown_token=&#x27;[UNK]&#x27;, pad_value=None,
-    merge_wordpiece_dim=True, **kwargs
+    vocabulary=None,
+    suffix_indicator=&#x27;##&#x27;,
+    max_bytes_per_word=100,
+    token_out_type=tf.string,
+    unknown_token=&#x27;[UNK]&#x27;,
+    pad_value=None,
+    merge_wordpiece_dim=True,
+    **kwargs
 )
 </code></pre>
 
@@ -38,7 +43,6 @@ vocabulary; instead, users should set the vocabulary by either passing it to the
 init call or by calling set_vocabulary() after the layer is constructed.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>

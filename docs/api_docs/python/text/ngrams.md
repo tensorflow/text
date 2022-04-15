@@ -20,7 +20,11 @@ Create a tensor of n-grams based on the input data `data`.
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.ngrams(
-    data, width, axis=-1, reduction_type=None, string_separator=&#x27; &#x27;,
+    data,
+    width,
+    axis=-1,
+    reduction_type=None,
+    string_separator=&#x27; &#x27;,
     name=None
 )
 </code></pre>

@@ -34,6 +34,12 @@ Various tensorflow ops related to text-processing.
 [`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
 implementations.
 
+[`class FastBertNormalizer`](./text/FastBertNormalizer.md): Normalizes a tensor
+of UTF-8 strings.
+
+[`class FastBertTokenizer`](./text/FastBertTokenizer.md): Tokenizer used for
+BERT, a faster version with TFLite support.
+
 [`class FastWordpieceTokenizer`](./text/FastWordpieceTokenizer.md): Tokenizes a
 tensor of UTF-8 string tokens into subword pieces.
 
@@ -178,7 +184,7 @@ fragments in a given text. (deprecated)
 **version**<a id="__version__"></a>
 </td>
 <td>
-`'2.8.0-rc0'`
+`'2.9.0-rc1'`
 </td>
 </tr>
 </table>

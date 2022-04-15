@@ -21,7 +21,10 @@ Split `input` by delimiters that match a regex pattern.
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.regex_split(
-    input, delim_regex_pattern, keep_delim_regex_pattern=&#x27;&#x27;, name=None
+    input,
+    delim_regex_pattern,
+    keep_delim_regex_pattern=&#x27;&#x27;,
+    name=None
 )
 </code></pre>
 

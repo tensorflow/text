@@ -20,6 +20,9 @@ A module with a Python wrapper for TFLite TFText ops.
 
 ## Functions
 
+[`AddFastBertNormalize(...)`](../text/tflite_registrar/AddFastBertNormalize.md):
+AddFastBertNormalize(arg0: int) -> None
+
 [`AddFastWordpieceDetokenize(...)`](../text/tflite_registrar/AddFastWordpieceDetokenize.md):
 AddFastWordpieceDetokenize(arg0: int) -> None
 
@@ -45,11 +48,12 @@ AddWhitespaceTokenize(arg0: int) -> None
 SELECT_TFTEXT_OPS<a id="SELECT_TFTEXT_OPS"></a>
 </td>
 <td>
-`[<built-in method AddFastWordpieceTokenize of PyCapsule object at 0x7ff038dce450>,
- <built-in method AddFastWordpieceDetokenize of PyCapsule object at 0x7ff038e05f90>,
- <built-in method AddNgramsStringJoin of PyCapsule object at 0x7ff038de4600>,
- <built-in method AddRaggedTensorToTensor of PyCapsule object at 0x7ff038de4a80>,
- <built-in method AddWhitespaceTokenize of PyCapsule object at 0x7ff038de4120>]`
+`[<built-in method AddFastBertNormalize of PyCapsule object>,
+ <built-in method AddFastWordpieceTokenize of PyCapsule object>,
+ <built-in method AddFastWordpieceDetokenize of PyCapsule object>,
+ <built-in method AddNgramsStringJoin of PyCapsule object>,
+ <built-in method AddRaggedTensorToTensor of PyCapsule object>,
+ <built-in method AddWhitespaceTokenize of PyCapsule object>]`
 </td>
 </tr>
 </table>

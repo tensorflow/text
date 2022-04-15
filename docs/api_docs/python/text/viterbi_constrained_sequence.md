@@ -20,8 +20,13 @@ Performs greedy constrained sequence on a batch of examples.
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.viterbi_constrained_sequence(
-    scores, sequence_length=None, allowed_transitions=None, transition_weights=None,
-    use_log_space=False, use_start_and_end_states=True, name=None
+    scores,
+    sequence_length=None,
+    allowed_transitions=None,
+    transition_weights=None,
+    use_log_space=False,
+    use_start_and_end_states=True,
+    name=None
 )
 </code></pre>
 

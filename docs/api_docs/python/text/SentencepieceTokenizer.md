@@ -34,8 +34,15 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.SentencepieceTokenizer(
-    model=None, out_type=dtypes.int32, nbest_size=0, alpha=1.0, reverse=False,
-    add_bos=False, add_eos=False, return_nbest=False, name=None
+    model=None,
+    out_type=dtypes.int32,
+    nbest_size=0,
+    alpha=1.0,
+    reverse=False,
+    add_bos=False,
+    add_eos=False,
+    return_nbest=False,
+    name=None
 )
 </code></pre>
 

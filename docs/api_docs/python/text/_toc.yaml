@@ -7,6 +7,10 @@ toc:
     path: /text/api_docs/python/text/BertTokenizer
   - title: Detokenizer
     path: /text/api_docs/python/text/Detokenizer
+  - title: FastBertNormalizer
+    path: /text/api_docs/python/text/FastBertNormalizer
+  - title: FastBertTokenizer
+    path: /text/api_docs/python/text/FastBertTokenizer
   - title: FastWordpieceTokenizer
     path: /text/api_docs/python/text/FastWordpieceTokenizer
   - title: FirstNItemSelector
@@ -128,6 +132,8 @@ toc:
   section:
   - title: Overview
     path: /text/api_docs/python/text/tflite_registrar
+  - title: AddFastBertNormalize
+    path: /text/api_docs/python/text/tflite_registrar/AddFastBertNormalize
   - title: AddFastWordpieceDetokenize
     path: /text/api_docs/python/text/tflite_registrar/AddFastWordpieceDetokenize
   - title: AddFastWordpieceTokenize

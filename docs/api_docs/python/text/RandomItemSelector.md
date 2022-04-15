@@ -24,11 +24,12 @@ An `ItemSelector` implementation that randomly selects items in a batch.
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.RandomItemSelector(
-    max_selections_per_batch, selection_rate, unselectable_ids=None, shuffle_fn=None
+    max_selections_per_batch,
+    selection_rate,
+    unselectable_ids=None,
+    shuffle_fn=None
 )
 </code></pre>
-
-
 
 <!-- Placeholder for "Used in" -->
 

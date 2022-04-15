@@ -21,8 +21,15 @@ Return an alignment from a set of source spans to a set of target spans.
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.span_alignment(
-    source_start, source_limit, target_start, target_limit, contains=False,
-    contained_by=False, partial_overlap=False, multivalent_result=False, name=None
+    source_start,
+    source_limit,
+    target_start,
+    target_limit,
+    contains=False,
+    contained_by=False,
+    partial_overlap=False,
+    multivalent_result=False,
+    name=None
 )
 </code></pre>
 

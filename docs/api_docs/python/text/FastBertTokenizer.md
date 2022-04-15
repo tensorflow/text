@@ -1,7 +1,7 @@
-description: Tokenizer used for BERT.
+description: Tokenizer used for BERT, a faster version with TFLite support.
 
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
-<meta itemprop="name" content="text.BertTokenizer" />
+<meta itemprop="name" content="text.FastBertTokenizer" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="detokenize"/>
@@ -11,7 +11,7 @@ description: Tokenizer used for BERT.
 <meta itemprop="property" content="tokenize_with_offsets"/>
 </div>
 
-# text.BertTokenizer
+# text.FastBertTokenizer
 
 <!-- Insert buttons and diff -->
 
@@ -19,10 +19,10 @@ description: Tokenizer used for BERT.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_tokenizer.py">View
 source</a>
 
-Tokenizer used for BERT.
+Tokenizer used for BERT, a faster version with TFLite support.
 
 Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 [`Tokenizer`](../text/Tokenizer.md),
@@ -30,26 +30,26 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 [`Splitter`](../text/Splitter.md), [`Detokenizer`](../text/Detokenizer.md)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
-<code>text.BertTokenizer(
-    vocab_lookup_table,
+<code>text.FastBertTokenizer(
+    vocab=None,
     suffix_indicator=&#x27;##&#x27;,
     max_bytes_per_word=100,
-    max_chars_per_token=None,
     token_out_type=dtypes.int64,
     unknown_token=&#x27;[UNK]&#x27;,
-    split_unknown_characters=False,
-    lower_case=False,
-    keep_whitespace=False,
-    normalization_form=None,
-    preserve_unused_token=False,
-    basic_tokenizer_class=BasicTokenizer
+    no_pretokenization=False,
+    support_detokenization=False,
+    fast_wordpiece_model_buffer=None,
+    lower_case_nfd_strip_accents=False,
+    fast_bert_normalizer_model_buffer=None
 )
 </code></pre>
 
 <!-- Placeholder for "Used in" -->
 
 This tokenizer applies an end-to-end, text string to wordpiece tokenization. It
-first applies basic tokenization, followed by wordpiece tokenization.
+is equivalent to `BertTokenizer` for most common scenarios while running faster
+and supporting TFLite. It does not support certain special settings (see the
+docs below).
 
 See `WordpieceTokenizer` for details on the subword tokenization.
 
@@ -57,18 +57,17 @@ For an example of use, see
 https://www.tensorflow.org/text/guide/bert_preprocessing_guide
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
 
 <tr>
 <td>
-`vocab_lookup_table`
+`vocab`
 </td>
 <td>
-A lookup table implementing the LookupInterface
-containing the vocabulary of subwords or a string which is the file path
-to the vocab.txt file.
+(optional) The list of tokens in the vocabulary.
 </td>
 </tr><tr>
 <td>
@@ -76,23 +75,14 @@ to the vocab.txt file.
 </td>
 <td>
 (optional) The characters prepended to a wordpiece to
-indicate that it is a suffix to another subword. Default is '##'.
+indicate that it is a suffix to another subword.
 </td>
 </tr><tr>
 <td>
 `max_bytes_per_word`
 </td>
 <td>
-(optional) Max size of input token. Default is 100.
-</td>
-</tr><tr>
-<td>
-`max_chars_per_token`
-</td>
-<td>
-(optional) Max size of subwords, excluding suffix
-indicator. If known, providing this improves the efficiency of decoding
-long words.
+(optional) Max size of input token.
 </td>
 </tr><tr>
 <td>
@@ -100,68 +90,65 @@ long words.
 </td>
 <td>
 (optional) The type of the token to return. This can be
-`tf.int64` IDs, or `tf.string` subwords. The default is `tf.int64`.
+`tf.int64` or `tf.int32` IDs, or `tf.string` subwords.
 </td>
 </tr><tr>
 <td>
 `unknown_token`
 </td>
 <td>
-(optional) The value to use when an unknown token is found.
-Default is "[UNK]". If this is set to a string, and `token_out_type` is
-`tf.int64`, the `vocab_lookup_table` is used to convert the
-`unknown_token` to an integer. If this is set to `None`, out-of-vocabulary
-tokens are left as is.
+(optional) The string value to substitute for an unknown
+token. It must be included in `vocab`.
 </td>
 </tr><tr>
 <td>
-`split_unknown_characters`
+`no_pretokenization`
 </td>
 <td>
-(optional) Whether to split out single unknown
-characters as subtokens. If False (default), words containing unknown
-characters will be treated as single unknown tokens.
-</td>
-</tr><tr>
-<td>
-`lower_case`
-</td>
-<td>
-bool - If true, a preprocessing step is added to lowercase the
-text, apply NFD normalization, and strip accents characters.
+(optional) By default, the input is split on
+whitespaces and punctuations before applying the Wordpiece tokenization.
+When true, the input is assumed to be pretokenized already.
 </td>
 </tr><tr>
 <td>
-`keep_whitespace`
+`support_detokenization`
 </td>
 <td>
-bool - If true, preserves whitespace characters instead of
-stripping them away.
-</td>
-</tr><tr>
-<td>
-`normalization_form`
-</td>
-<td>
-If set to a valid value and lower_case=False, the input
-text will be normalized to `normalization_form`. See normalize_utf8() op
-for a list of valid values.
+(optional) Whether to make the tokenizer support
+doing detokenization. Setting it to true expands the size of the model
+flatbuffer. As a reference, when using 120k multilingual BERT WordPiece
+vocab, the flatbuffer's size increases from ~5MB to ~6MB.
 </td>
 </tr><tr>
 <td>
-`preserve_unused_token`
+`fast_wordpiece_model_buffer`
 </td>
 <td>
-If true, text in the regex format `\\[unused\\d+\\]`
-will be treated as a token and thus remain preserved as is to be looked up
-in the vocabulary.
+(optional) Bytes object (or a uint8 tf.Tenosr)
+that contains the wordpiece model in flatbuffer format (see
+fast_wordpiece_tokenizer_model.fbs). If not `None`, all other arguments
+related to FastWordPieceTokenizer (except `token_output_type`) are
+ignored.
 </td>
 </tr><tr>
 <td>
-`basic_tokenizer_class`
+`lower_case_nfd_strip_accents`
 </td>
 <td>
-If set, the class to use instead of BasicTokenizer
+(optional) .
+- If true, it first lowercases the text, applies NFD normalization, strips
+accents characters, and then replaces control characters with whitespaces.
+- If false, it only replaces control characters with whitespaces.
+</td>
+</tr><tr>
+<td>
+`fast_bert_normalizer_model_buffer`
+</td>
+<td>
+(optional) bytes object (or a uint8
+tf.Tenosr) that contains the fast bert normalizer model in flatbuffer
+format (see fast_bert_normalizer_model.fbs). If not `None`,
+`lower_case_nfd_strip_accents` is ignored.
 </td>
 </tr>
 </table>
@@ -170,7 +157,7 @@ If set, the class to use instead of BasicTokenizer
 
 <h3 id="detokenize"><code>detokenize</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_tokenizer.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -186,7 +173,7 @@ See
 for details.
 
 Note:
-<a href="../text/BertTokenizer.md#tokenize"><code>BertTokenizer.tokenize</code></a>/<a href="../text/BertTokenizer.md#detokenize"><code>BertTokenizer.detokenize</code></a>
+<a href="../text/FastBertTokenizer.md#tokenize"><code>FastBertTokenizer.tokenize</code></a>/<a href="../text/FastBertTokenizer.md#detokenize"><code>FastBertTokenizer.detokenize</code></a>
 does not round trip losslessly. The result of `detokenize` will not, in general,
 have the same content or offsets as the input to `tokenize`. This is because the
 "basic tokenization" step, that splits the strings into words before applying
@@ -200,17 +187,15 @@ vocab_size)`.
 #### Example:
 
 ```
->>> import pathlib
->>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
-...    "they ##' ##re the great ##est".replace(' ', '\n'))
->>> tokenizer = BertTokenizer(
-...    vocab_lookup_table='/tmp/tok_vocab.txt')
->>> text_inputs = tf.constant(['greatest'.encode('utf-8')])
+>>> vocab = ['they', "##'", '##re', 'the', 'great', '##est', '[UNK]']
+>>> tokenizer = FastBertTokenizer(vocab=vocab, support_detokenization=True)
 >>> tokenizer.detokenize([[4, 5]])
-<tf.RaggedTensor [[b'greatest']]>
+<tf.Tensor: shape=(1,), dtype=string, numpy=array([b'greatest'],
+dtype=object)>
 ```
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -226,6 +211,7 @@ A `RaggedTensor` or `Tensor` with an int dtype.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -268,7 +254,7 @@ Alias for
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_tokenizer.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -282,17 +268,15 @@ Tokenizes a tensor of string tokens into subword tokens for BERT.
 #### Example:
 
 ```
->>> import pathlib
->>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
-...     "they ##' ##re the great ##est".replace(' ', '\n'))
->>> tokenizer = BertTokenizer(
-...     vocab_lookup_table='/tmp/tok_vocab.txt')
+>>> vocab = ['they', "##'", '##re', 'the', 'great', '##est', '[UNK]']
+>>> tokenizer = FastBertTokenizer(vocab=vocab)
 >>> text_inputs = tf.constant(['greatest'.encode('utf-8') ])
 >>> tokenizer.tokenize(text_inputs)
-<tf.RaggedTensor [[[4, 5]]]>
+<tf.RaggedTensor [[4, 5]]>
 ```
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -309,6 +293,7 @@ strings.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -324,7 +309,7 @@ of the `jth` token in `input[i1...iN]`
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/bert_tokenizer.py">View
+<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_tokenizer.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -338,19 +323,17 @@ Tokenizes a tensor of string tokens into subword tokens for BERT.
 #### Example:
 
 ```
->>> import pathlib
->>> pathlib.Path('/tmp/tok_vocab.txt').write_text(
-...     "they ##' ##re the great ##est".replace(' ', '\n'))
->>> tokenizer = BertTokenizer(
-...     vocab_lookup_table='/tmp/tok_vocab.txt')
+>>> vocab = ['they', "##'", '##re', 'the', 'great', '##est', '[UNK]']
+>>> tokenizer = FastBertTokenizer(vocab=vocab)
 >>> text_inputs = tf.constant(['greatest'.encode('utf-8')])
 >>> tokenizer.tokenize_with_offsets(text_inputs)
-(<tf.RaggedTensor [[[4, 5]]]>,
- <tf.RaggedTensor [[[0, 5]]]>,
- <tf.RaggedTensor [[[5, 8]]]>)
+(<tf.RaggedTensor [[4, 5]]>,
+ <tf.RaggedTensor [[0, 5]]>,
+ <tf.RaggedTensor [[5, 8]]>)
 ```
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -367,6 +350,7 @@ strings.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

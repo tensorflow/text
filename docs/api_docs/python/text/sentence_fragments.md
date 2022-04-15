@@ -20,15 +20,20 @@ Find the sentence fragments in a given text. (deprecated)
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.sentence_fragments(
-    token_word, token_starts, token_ends, token_properties,
-    input_encoding=&#x27;UTF-8&#x27;, errors=&#x27;replace&#x27;,
-    replacement_char=65533, replace_control_characters=False
+    token_word,
+    token_starts,
+    token_ends,
+    token_properties,
+    input_encoding=&#x27;UTF-8&#x27;,
+    errors=&#x27;replace&#x27;,
+    replacement_char=65533,
+    replace_control_characters=False
 )
 </code></pre>
 
 <!-- Placeholder for "Used in" -->
 
-Warning: THIS FUNCTION IS DEPRECATED. It will be removed in a future version.
+Deprecated: THIS FUNCTION IS DEPRECATED. It will be removed in a future version.
 Instructions for updating: Deprecated, use 'StateBasedSentenceBreaker' instead.
 
 A sentence fragment is a potential next sentence determined using

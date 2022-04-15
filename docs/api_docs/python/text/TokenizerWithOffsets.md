@@ -162,11 +162,15 @@ source</a>
 )
 </code></pre>
 
-Tokenizes the input tensor and returns the result with offsets.
+Tokenizes the input tensor and returns the result with byte-offsets.
 
 The offsets indicate which substring from the input string was used to generate
-each token. E.g., if `input` is a single string, then each token `token[i]` was
-generated from the substring `input[starts[i]:ends[i]]`.
+each token. E.g., if `input` is a `tf.string` tensor, then each token `token[i]`
+was generated from the substring `tf.substr(input, starts[i],
+len=ends[i]-starts[i])`.
+
+Note: Remember that the `tf.string` type is a byte-string. The returned indices
+are in units of bytes, not characters like a Python `str`.
 
 #### Example:
 

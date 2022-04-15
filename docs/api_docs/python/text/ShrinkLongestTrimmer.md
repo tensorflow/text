@@ -61,7 +61,6 @@ Truncate the second segment. [3, 3, 4] # Truncate the last segment. [3, 3, 3] #
 Truncate the first segment. [2, 3, 3] # Truncate the second segment. [2, 2, 3]
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -78,7 +77,6 @@ A list of `RaggedTensor` each w/ a shape of [num_batch,
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -107,7 +105,6 @@ Truncate the list of `segments` using the truncation strategy defined by
 `generate_mask`.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -123,7 +120,6 @@ A list of `RaggedTensor`s w/ shape [num_batch, (num_items)].
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

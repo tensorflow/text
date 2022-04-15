@@ -31,9 +31,14 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.FastWordpieceTokenizer(
-    vocab=None, suffix_indicator=&#x27;##&#x27;, max_bytes_per_word=100,
-    token_out_type=dtypes.int64, unknown_token=&#x27;[UNK]&#x27;,
-    no_pretokenization=False, support_detokenization=False, model_buffer=None
+    vocab=None,
+    suffix_indicator=&#x27;##&#x27;,
+    max_bytes_per_word=100,
+    token_out_type=dtypes.int64,
+    unknown_token=&#x27;[UNK]&#x27;,
+    no_pretokenization=False,
+    support_detokenization=False,
+    model_buffer=None
 )
 </code></pre>
 
