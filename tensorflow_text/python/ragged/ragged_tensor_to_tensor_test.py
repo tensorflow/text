@@ -32,7 +32,7 @@ from tensorflow.python.platform import test
 @test_util.run_all_in_graph_and_eager_modes
 class RaggedTensorToTensorTest(test_util.TensorFlowTestCase):
 
-  def DISABLED_testTfLite(self):
+  def testTfLite(self):
     """Checks TFLite conversion and inference."""
 
     class TokenizerModel(tf.keras.Model):
