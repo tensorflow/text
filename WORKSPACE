@@ -81,11 +81,11 @@ http_archive(
 
 http_archive(
     name = "pybind11",
-    strip_prefix = "pybind11-2.6.0",
-    sha256 = "90b705137b69ee3b5fc655eaca66d0dc9862ea1759226f7ccd3098425ae69571",
+    strip_prefix = "pybind11-2.8.1",
+    sha256 = "f1bcc07caa568eb312411dde5308b1e250bd0e1bc020fae855bf9f43209940cc",
     urls = [
-        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11/archive/v2.6.0.tar.gz",
-        "https://github.com/pybind/pybind11/archive/v2.6.0.tar.gz",
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11/archive/v2.8.1.tar.gz",
+        "https://github.com/pybind/pybind11/archive/v2.8.1.tar.gz",
     ],
    build_file = "//third_party/pybind11:BUILD.bzl",
 )

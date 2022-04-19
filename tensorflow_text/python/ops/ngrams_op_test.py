@@ -392,7 +392,7 @@ class NgramsV2OpTest(test_util.TensorFlowTestCase):
       _ = ngrams_op.ngrams(data=[], width=2, axis=0, reduction_type="SUM")
 
   @test_util.with_forward_compatibility_horizons([2022, 11, 30])
-  def DISABLED_testTfLite(self):
+  def testTfLite(self):
     """Checks TFLite conversion and inference."""
 
     class NgramModel(tf.keras.Model):
@@ -433,7 +433,7 @@ class NgramsV2OpTest(test_util.TensorFlowTestCase):
     self.assertAllEqual(tflite_result, tf_result)
 
   @test_util.with_forward_compatibility_horizons([2022, 11, 30])
-  def DISABLED_testTfLiteRagged(self):
+  def testTfLiteRagged(self):
     """Checks TFLite conversion and inference."""
 
     class NgramModel(tf.keras.Model):
