@@ -15,7 +15,7 @@
 
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/pytypes.h"
-#include "tensorflow_text/core/kernels/fast_bert_normalizer_tflite_kernel.h"
+#include "tensorflow_text/core/kernels/fast_bert_normalizer_tflite.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_tflite.h"
 #include "tensorflow_text/core/kernels/ngrams_tflite.h"
 #include "tensorflow_text/core/kernels/ragged_tensor_to_tensor_tflite.h"

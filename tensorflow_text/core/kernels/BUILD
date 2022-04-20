@@ -162,9 +162,9 @@ tf_cc_library(
 )
 
 tflite_cc_library(
-    name = "fast_bert_normalizer_tflite_kernel",
-    srcs = ["fast_bert_normalizer_tflite_kernel.cc"],
-    hdrs = ["fast_bert_normalizer_tflite_kernel.h"],
+    name = "fast_bert_normalizer_tflite",
+    srcs = ["fast_bert_normalizer_tflite.cc"],
+    hdrs = ["fast_bert_normalizer_tflite.h"],
     deps = [
         ":fast_bert_normalizer_kernel_template",
         # lite:mutable_op_resolver tensorflow dep,
@@ -767,18 +767,20 @@ cc_library(
 tflite_cc_library(
     name = "tflite_ops",
     hdrs = [
-        "fast_bert_normalizer_tflite_kernel.h",
+        "fast_bert_normalizer_tflite.h",
         "fast_wordpiece_tokenizer_tflite.h",
         "ngrams_tflite.h",
         "ragged_tensor_to_tensor_tflite.h",
         "whitespace_tokenizer_tflite.h",
     ],
     deps = [
-        ":fast_bert_normalizer_tflite_kernel",
+        ":fast_bert_normalizer_tflite",
         ":fast_wordpiece_tokenizer_tflite",
         ":ngrams_tflite",
         ":ragged_tensor_to_tensor_tflite",
         ":whitespace_tokenizer_tflite",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
     ],
 )
 
