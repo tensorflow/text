@@ -20,6 +20,7 @@ try:
   from tensorflow.python.ops.ragged import ragged_ops as _ragged_ops
 except ImportError:
   pass
+from tensorflow_text.core.pybinds.pywrap_fast_bert_normalizer_model_builder import build_fast_bert_normalizer_model
 from tensorflow_text.core.pybinds.pywrap_fast_wordpiece_tokenizer_model_builder import build_fast_wordpiece_model
 from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
 from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_bitmask

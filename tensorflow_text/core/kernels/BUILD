@@ -117,6 +117,7 @@ tf_cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
+        "//third_party/icu/data:icu_normalization_data",
         "@icu//:common",
         "@icu//:nfkc_cf",  # Needed for NFKC_Casefold Unicode Normalization form.
         "@com_googlesource_code_re2//:re2",

@@ -372,14 +372,14 @@ class FastBertTokenizerTest(test_util.TensorFlowTestCase,
       ),
   ])
   @test_util.run_in_graph_and_eager_modes
-  def DISABLED_test_fast_bert_tokenizer(self,
-                                        text_inputs,
-                                        lower_case_nfd_strip_accents,
-                                        expected_tokens,
-                                        expected_token_ids,
-                                        expected_starts,
-                                        expected_ends,
-                                        vocab=None):
+  def test_fast_bert_tokenizer(self,
+                               text_inputs,
+                               lower_case_nfd_strip_accents,
+                               expected_tokens,
+                               expected_token_ids,
+                               expected_starts,
+                               expected_ends,
+                               vocab=None):
     text_inputs = constant_op.constant(text_inputs)
     if not vocab:
       vocab = _VOCAB
@@ -421,8 +421,8 @@ class FastBertTokenizerTest(test_util.TensorFlowTestCase,
 ])
 class FastBertTokenizerKerasModelTest(test.TestCase):
 
-  def DISABLED_testKerasAndTflite(self, vocab, lower_case_nfd_strip_accents,
-                                  text_inputs):
+  def testKerasAndTflite(self, vocab, lower_case_nfd_strip_accents,
+                         text_inputs):
     """Checks TFLite conversion and inference."""
 
     class TextTokenizerModel(tf.keras.Model):
