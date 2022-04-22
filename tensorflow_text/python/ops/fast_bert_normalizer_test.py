@@ -63,7 +63,7 @@ def _OriginalNormalize(text_input, lower_case_nfd_strip_accents):
 @test_util.run_all_in_graph_and_eager_modes
 class FastBertNormalizeTest(test.TestCase, parameterized.TestCase):
 
-  def DISABLED_test_normal(self, lower_case_nfd_strip_accents):
+  def test_normal(self, lower_case_nfd_strip_accents):
     txt = [
         " TExt to loWERcase! ",
         "Punctuation and digits: -*/+$#%@%$123456789#^$*%&",
@@ -93,7 +93,7 @@ class FastBertNormalizeTest(test.TestCase, parameterized.TestCase):
     self.assertAllEqual(
         expected, text_normalizer_lower_case_nfd_strip_accents.normalize(txt))
 
-  def DISABLED_test_one_string_ragged(self, lower_case_nfd_strip_accents):
+  def test_one_string_ragged(self, lower_case_nfd_strip_accents):
     txt = ragged_factory_ops.constant([[" TExt ", "to", " loWERcase! "],
                                        [" TExt to loWERcase! "]])
     expected = _OriginalNormalize(txt, lower_case_nfd_strip_accents)
@@ -146,8 +146,8 @@ class FastBertNormalizeWithOffsetsMapTest(parameterized.TestCase,
                             [[0, 1, 2, 3, 4, 5, 6]]],
       ),
   ])
-  def DISABLED_test_tensor_input(self, txt_input, lower_case_nfd_strip_accents,
-                                 expected_normalized_txt, expected_offsets):
+  def test_tensor_input(self, txt_input, lower_case_nfd_strip_accents,
+                        expected_normalized_txt, expected_offsets):
     normalizer = fast_bert_normalizer.FastBertNormalizer(
         lower_case_nfd_strip_accents)
     normalized_txt, offsets = normalizer.normalize_with_offsets(
