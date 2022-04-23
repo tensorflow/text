@@ -20,6 +20,7 @@
 #include "tensorflow_text/core/kernels/ngrams_tflite.h"
 #include "tensorflow_text/core/kernels/ragged_tensor_to_tensor_tflite.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
+#include "tensorflow_text/core/kernels/mobile/sentencepiece/py_tflite_registerer.h"
 
 PYBIND11_MODULE(tflite_registrar, m) {
   m.doc() = R"pbdoc(
@@ -83,5 +84,14 @@ PYBIND11_MODULE(tflite_registrar, m) {
       },
       R"pbdoc(
       The function that adds AddWhitespaceTokenize to the TFLite interpreter.
+      )pbdoc");
+  m.def(
+      "AddSentencepieceTokenize",
+      [](uintptr_t resolver) {
+        TFLite_SentencepieceTokenizerRegisterer(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      The function that adds AddSentencepieceTokenize to the TFLite interpreter.
       )pbdoc");
 }

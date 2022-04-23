@@ -90,6 +90,24 @@ py_test(
 )
 
 pybind_extension(
+    name = "pywrap_model_converter",
+    srcs = ["pywrap_model_converter.cc"],
+    additional_exported_symbols = [
+        "ConvertSentencepieceModel",
+        "ConvertSentencepieceModelForDecoder",
+        "GetVocabularySize",
+    ],
+    copts = ["-fexceptions"],
+    features = ["-use_header_modules"],
+    module_name = "pywrap_model_converter",
+    srcs_version = "PY3ONLY",
+    deps = [
+        "//tensorflow_text/core/kernels/mobile/sentencepiece:model_converter",
+        "@pybind11",
+    ],
+)
+
+pybind_extension(
     name = "pywrap_whitespace_tokenizer_config_builder",
     srcs = ["pywrap_whitespace_tokenizer_config_builder.cc"],
     additional_exported_symbols = [
