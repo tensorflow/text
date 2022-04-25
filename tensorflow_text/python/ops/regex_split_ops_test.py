@@ -14,7 +14,6 @@
 # limitations under the License.
 
 # encoding=utf-8
-# Lint as: python3
 """Tests for regex_split and regex_split_with_offsets ops."""
 from absl.testing import parameterized
 
