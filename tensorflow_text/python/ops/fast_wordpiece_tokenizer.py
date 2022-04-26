@@ -46,7 +46,7 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
   It employs the linear (as opposed to quadratic) WordPiece algorithm.
 
-  Differences compared to the classic WordpieceTokenizer (as of 11/2020):
+  Differences compared to the classic WordpieceTokenizer (as of 11/2021):
   (1) `unknown_token` cannot be None or empty. That means if a word is too long
       or cannot be tokenized, FastWordpieceTokenizer always returns
       `unknown_token`. In constrast, the original WordpieceTokenizer would
@@ -59,6 +59,12 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
       `unknown_token` string.
   (4) `split_unknown_characters` is not supported.
   (5) `max_chars_per_token` is not used or needed.
+  (6) By default the input is assumed to be general text (i.e., sentences), and
+      FastWordpieceTokenizer first splits it on whitespaces and punctuations and
+      then applies the Wordpiece tokenization (see the parameter
+      `no_pretokenization`). If the input already contains single words only,
+      please set `no_pretokenization=True` to be consistent with the classic
+      WordPieceTokenizer.
   """
 
   def __init__(self,
