@@ -44,27 +44,38 @@ _tf_text_fast_wordpiece_tokenizer_op_create_counter = monitoring.Counter(
 class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
   """Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 
-  It employs the linear (as opposed to quadratic) WordPiece algorithm.
+  It employs the linear (as opposed to quadratic) WordPiece algorithm (see the
+  [paper](http://go/arxiv/2012.15524)).
 
-  Differences compared to the classic WordpieceTokenizer (as of 11/2021):
-  (1) `unknown_token` cannot be None or empty. That means if a word is too long
+  Differences compared to the classic
+  [WordpieceTokenizer](https://www.tensorflow.org/text/api_docs/python/text/WordpieceTokenizer)
+  are as follows (as of 11/2021):
+
+    * `unknown_token` cannot be None or empty. That means if a word is too long
       or cannot be tokenized, FastWordpieceTokenizer always returns
-      `unknown_token`. In constrast, the original WordpieceTokenizer would
-      return the original word if `unknown_token` is empty or None.
-  (2) `unknown_token` must be included in the vocabulary.
-  (3) When `unknown_token` is returned, in tokenize_with_offsets(), the result
+      `unknown_token`. In constrast, the original
+      [WordpieceTokenizer](https://www.tensorflow.org/text/api_docs/python/text/WordpieceTokenizer)
+      would return the original word if `unknown_token` is empty or None.
+
+    * `unknown_token` must be included in the vocabulary.
+
+    * When `unknown_token` is returned, in tokenize_with_offsets(), the result
       end_offset is set to be the length of the original input word. In
       contrast, when `unknown_token` is returned by the original
-      WordpieceTokenizer, the end_offset is set to be the length of the
-      `unknown_token` string.
-  (4) `split_unknown_characters` is not supported.
-  (5) `max_chars_per_token` is not used or needed.
-  (6) By default the input is assumed to be general text (i.e., sentences), and
+      [WordpieceTokenizer](https://www.tensorflow.org/text/api_docs/python/text/WordpieceTokenizer),
+      the end_offset is set to be the length of the `unknown_token` string.
+
+    * `split_unknown_characters` is not supported.
+
+    * `max_chars_per_token` is not used or needed.
+
+    * By default the input is assumed to be general text (i.e., sentences), and
       FastWordpieceTokenizer first splits it on whitespaces and punctuations and
       then applies the Wordpiece tokenization (see the parameter
       `no_pretokenization`). If the input already contains single words only,
       please set `no_pretokenization=True` to be consistent with the classic
-      WordPieceTokenizer.
+      [WordpieceTokenizer](https://www.tensorflow.org/text/api_docs/python/text/WordpieceTokenizer).
+
   """
 
   def __init__(self,
@@ -109,11 +120,12 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
         1)
 
     if model_buffer is None:
-      model_buffer = (pywrap_fast_wordpiece_tokenizer_model_builder
-                      .build_fast_wordpiece_model(
-                          vocab, max_bytes_per_word, suffix_indicator,
-                          unknown_token, no_pretokenization,
-                          support_detokenization))
+      model_buffer = (
+          pywrap_fast_wordpiece_tokenizer_model_builder
+          .build_fast_wordpiece_model(vocab, max_bytes_per_word,
+                                      suffix_indicator, unknown_token,
+                                      no_pretokenization,
+                                      support_detokenization))
     # Use uint8 tensor as a buffer for the model to avoid any possible changes,
     # for example truncation by '\0'.
     if isinstance(model_buffer, ops.Tensor):
