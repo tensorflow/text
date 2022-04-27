@@ -29,6 +29,7 @@ _allowed_symbols = [
     "Detokenizer",
     "FastBertNormalizer",
     "FastBertTokenizer",
+    "FastSentencepieceTokenizer",
     "FastWordpieceTokenizer",
     "FirstNItemSelector",
     "HubModuleSplitter",
