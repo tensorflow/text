@@ -227,6 +227,10 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
  protected:
   inline static Shape OutputValuesTensorShape(const Shape& input_values_shape,
                                               const int64_t width) {
+    // If the input shape is unknown, so is the output shape.
+    if (input_values_shape.Rank() == input_values_shape.kUnknownRank)
+      return input_values_shape;
+
     Shape output_shape(input_values_shape);
     const int last_dim = output_shape->size() - 1;
     if (input_values_shape->at(last_dim) == input_values_shape.kUnknownDim)
