@@ -1463,6 +1463,7 @@ py_test(
     srcs = ["python/benchmarks/tokenizers_benchmarks.py"],
     data = [
         ":python/benchmarks/test_data/uncased_L-12_H-768_A-12/vocab.txt",
+        ":python/ops/test_data/fast_sentencepiece.model",
         ":python/ops/test_data/test_oss_model.model",
         ":test_data_segmenter_hub_module",
     ],
