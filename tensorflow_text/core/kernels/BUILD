@@ -699,12 +699,16 @@ tf_cc_library(
         "ngrams_tflite.h",
         "ragged_tensor_to_tensor_tflite.h",
         "whitespace_tokenizer_tflite.h",
+        "//tensorflow_text/core/kernels/sentencepiece:sp_headers",
     ],
     deps = [
         ":fast_wordpiece_tokenizer_tflite",
         ":ngrams_tflite",
         ":ragged_tensor_to_tensor_tflite",
         ":whitespace_tokenizer_tflite",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        "//tensorflow_text/core/kernels/sentencepiece:py_tflite_registerer",
     ],
 )
 

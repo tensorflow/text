@@ -28,6 +28,7 @@ from tensorflow_text.python.ops import *
 _allowed_symbols = [
     "BertTokenizer",
     "Detokenizer",
+    "FastSentencepieceTokenizer",
     "FastWordpieceTokenizer",
     "FirstNItemSelector",
     "HubModuleSplitter",
@@ -81,6 +82,8 @@ _allowed_symbols = [
 ]
 
 tflite_registrar.SELECT_TFTEXT_OPS = [
+    tflite_registrar.AddFastSentencepieceDetokenize,
+    tflite_registrar.AddFastSentencepieceTokenize,
     tflite_registrar.AddFastWordpieceTokenize,
     tflite_registrar.AddFastWordpieceDetokenize,
     tflite_registrar.AddNgramsStringJoin,

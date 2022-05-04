@@ -18,6 +18,7 @@
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_tflite.h"
 #include "tensorflow_text/core/kernels/ngrams_tflite.h"
 #include "tensorflow_text/core/kernels/ragged_tensor_to_tensor_tflite.h"
+#include "tensorflow_text/core/kernels/sentencepiece/py_tflite_registerer.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
 
 PYBIND11_MODULE(tflite_registrar, m) {
@@ -26,12 +27,29 @@ PYBIND11_MODULE(tflite_registrar, m) {
     A module with a Python wrapper for TFLite TFText ops.
   )pbdoc";
   m.attr("_allowed_symbols") = pybind11::make_tuple(
-      "AddFastWordpieceTokenize",
-      "AddFastWordpieceDetokenize",
-      "AddNgramsStringJoin",
-      "AddRaggedTensorToTensor",
-      "AddWhitespaceTokenize",
+      "AddFastSentencepieceDetokenize",
+      "AddFastSentencepieceTokenize", "AddFastWordpieceTokenize",
+      "AddFastWordpieceDetokenize", "AddNgramsStringJoin",
+      "AddRaggedTensorToTensor", "AddWhitespaceTokenize",
       "SELECT_TFTEXT_OPS");
+  m.def(
+      "AddFastSentencepieceDetokenize",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddFastSentencepieceDetokenize(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      Adds AddFastSentencepieceDetokenize to the TFLite interpreter.
+      )pbdoc");
+  m.def(
+      "AddFastSentencepieceTokenize",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddFastSentencepieceTokenize(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      Adds AddFastSentencepieceTokenize to the TFLite interpreter.
+      )pbdoc");
   m.def(
       "AddFastWordpieceTokenize",
       [](uintptr_t resolver) {
