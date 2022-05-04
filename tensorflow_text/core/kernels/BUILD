@@ -477,6 +477,19 @@ tf_cc_library(
     ],
 )
 
+cc_test(
+    name = "ngrams_kernel_test",
+    srcs = ["ngrams_kernel_test.cc"],
+    deps = [
+        # tf:framework tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:test_main tensorflow dep,
+        # tf/framework:shape_inference_testutil tensorflow dep,
+        # tf/framework:tensor_testutil tensorflow dep,
+        "//tensorflow_text:ngrams_op_cc",
+    ],
+)
+
 tflite_cc_library(
     name = "ngrams_tflite",
     srcs = ["ngrams_tflite.cc"],
