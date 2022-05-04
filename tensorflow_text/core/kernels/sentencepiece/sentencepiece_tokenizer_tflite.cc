@@ -136,7 +136,7 @@ TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
 }  // namespace sentencepiece
 }  // namespace text
 
-TfLiteRegistration* Register_SENTENCEPIECE_TOKENIZER() {
+TfLiteRegistration* Register_FAST_SENTENCEPIECE_TOKENIZER() {
   static TfLiteRegistration r = {
     text::sentencepiece::tokenizer::Initialize,
     text::sentencepiece::tokenizer::Free,

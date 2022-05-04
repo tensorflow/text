@@ -32,8 +32,8 @@ limitations under the License.
 namespace tflite {
 namespace ops {
 namespace custom {
-TfLiteRegistration* Register_SENTENCEPIECE_TOKENIZER();
-TfLiteRegistration* Register_SENTENCEPIECE_DETOKENIZER();
+TfLiteRegistration* Register_FAST_SENTENCEPIECE_TOKENIZER();
+TfLiteRegistration* Register_FAST_SENTENCEPIECE_DETOKENIZER();
 
 namespace text {
 
@@ -41,14 +41,14 @@ extern "C" void AddFastSentencepieceTokenize(
     tflite::MutableOpResolver* resolver) {
   resolver->AddCustom(
       "TFText>FastSentencepieceTokenize",
-      ::tflite::ops::custom::Register_SENTENCEPIECE_TOKENIZER());
+      ::tflite::ops::custom::Register_FAST_SENTENCEPIECE_TOKENIZER());
 }
 
 extern "C" void AddFastSentencepieceDetokenize(
     tflite::MutableOpResolver* resolver) {
   resolver->AddCustom(
       "TFText>FastSentencepieceDetokenize",
-      ::tflite::ops::custom::Register_SENTENCEPIECE_DETOKENIZER());
+      ::tflite::ops::custom::Register_FAST_SENTENCEPIECE_DETOKENIZER());
 }
 
 }  // namespace text
