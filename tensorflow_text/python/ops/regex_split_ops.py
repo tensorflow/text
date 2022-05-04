@@ -101,9 +101,12 @@ def regex_split_with_offsets(input,
     tokens, begin_offsets, end_offsets = regex_split_with_offsets(
         input.flat_values, delim_regex_pattern, keep_delim_regex_pattern, name)
     # Copy outer dimenion partitions from `input` to the output tensors.
-    tokens_rt = input.with_flat_values(tokens)
-    begin_offsets_rt = input.with_flat_values(begin_offsets)
-    end_offsets_rt = input.with_flat_values(end_offsets)
+    tokens_rt = input.with_flat_values(
+        tokens.with_row_splits_dtype(input.row_splits.dtype))
+    begin_offsets_rt = input.with_flat_values(
+        begin_offsets.with_row_splits_dtype(input.row_splits.dtype))
+    end_offsets_rt = input.with_flat_values(
+        end_offsets.with_row_splits_dtype(input.row_splits.dtype))
     return tokens_rt, begin_offsets_rt, end_offsets_rt
 
   delim_regex_pattern = b"".join(
