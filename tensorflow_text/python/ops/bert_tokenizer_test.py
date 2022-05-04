@@ -435,6 +435,34 @@ class BertTokenizerTest(test_util.TensorFlowTestCase, parameterized.TestCase):
       stripped_prefix = expected_rt.with_flat_values(stripped_prefix_flat)
       self.assertAllEqual(extracted_wordpieces, stripped_prefix)
 
+  @parameterized.parameters(
+      dict(row_splits_dtype=dtypes.int32),
+      dict(row_splits_dtype=dtypes.int64))
+  @test_util.run_in_graph_and_eager_modes
+  def test_int32_row_splits(self, row_splits_dtype):
+    table = _create_table(_VOCAB)
+    self.evaluate(table.initializer)
+    tokenizer = bert_tokenizer.BertTokenizer(
+        table,
+        token_out_type=dtypes.string,
+        lower_case=True,
+        preserve_unused_token=False)
+
+    # Construct an input RaggedTensor [[b'candybook']]
+    text_inputs = ragged_tensor.RaggedTensor.from_row_lengths(
+        [b'candybook'], [1])
+    text_inputs = text_inputs.with_row_splits_dtype(row_splits_dtype)
+
+    # The input had shape [1, 1] so the output will have shape
+    # [1, 1, num_word_pieces], where num_word_pieces=2.
+    results = tokenizer.tokenize(text_inputs)
+
+    # Check that the row_splits dtypes for the input and output tensors match.
+    self.assertEqual(results.row_splits.dtype, row_splits_dtype)
+
+    # Verify that the output values are correct (sanity check).
+    self.assertAllEqual(results.flat_values, [b'candy', b'##book'])
+
 
 if __name__ == '__main__':
   test.main()
