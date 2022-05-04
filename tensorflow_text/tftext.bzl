@@ -175,9 +175,10 @@ def tflite_cc_library(
         "@org_tensorflow//tensorflow/core:framework",
         "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
+        "@org_tensorflow//tensorflow/lite:framework",
         "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
         "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim"
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
     ]
     # These are "random" deps likely needed by each library (http://b/142433427)
     oss_deps = [

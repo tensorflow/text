@@ -15,6 +15,8 @@ pybind_extension(
     ],
     additional_exported_symbols = [
         "AddFastBertNormalize",
+        "AddFastSentencepieceTokenize",
+        "AddFastSentencepieceDetokenize",
         "AddFastWordpieceDetokenize",
         "AddFastWordpieceTokenize",
         "AddNgramsStringJoin",
@@ -86,6 +88,24 @@ py_test(
     deps = [
         ":pywrap_fast_wordpiece_tokenizer_model_builder",
         # tensorflow package dep,
+    ],
+)
+
+pybind_extension(
+    name = "pywrap_model_converter",
+    srcs = ["pywrap_model_converter.cc"],
+    additional_exported_symbols = [
+        "ConvertSentencepieceModel",
+        "ConvertSentencepieceModelForDecoder",
+        "GetVocabularySize",
+    ],
+    copts = ["-fexceptions"],
+    features = ["-use_header_modules"],
+    module_name = "pywrap_model_converter",
+    srcs_version = "PY3ONLY",
+    deps = [
+        "//tensorflow_text/core/kernels/sentencepiece:model_converter",
+        "@pybind11",
     ],
 )
 
