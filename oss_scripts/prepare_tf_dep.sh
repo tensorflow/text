@@ -7,6 +7,7 @@ elif (which python3) | grep -q "python3"; then
   installed_python="python3"
 fi
 
+osname="$(uname -s | tr 'A-Z' 'a-z')"
 ext=""
 if [[ "${osname}" == "darwin" ]]; then
   ext='""'
