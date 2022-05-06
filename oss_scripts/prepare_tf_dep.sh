@@ -22,7 +22,13 @@ sed -i $ext "s/project_version = 'REPLACE_ME'/project_version = '${tf_version}'/
 sed -i $ext "s/__version__ = .*\$/__version__ = \"${tf_version}\"/" tensorflow_text/__init__.py
 
 # Get commit sha of installed tensorflow
-short_commit_sha=$($installed_python -c 'import tensorflow as tf; print(tf.__git_version__)' | tail -1 | grep -oP '(?<=-g)[0-9a-f]*$')
+# For some unknown reason this now needs to be split into two commands on Windows
+short_commit_sha=$($installed_python -c 'import tensorflow as tf; print(tf.__git_version__)' | tail -1)
+if [[ "${osname}" == "darwin" ]]; then
+  short_commit_sha=$(echo $short_commit_sha | perl -nle 'print $& while m{(?<=-g)[0-9a-f]*$}g')
+else
+  short_commit_sha=$(echo $short_commit_sha | grep -oP '(?<=-g)[0-9a-f]*$')
+fi
 commit_sha=$(curl -SsL https://github.com/tensorflow/tensorflow/commit/${short_commit_sha} | grep sha-block | grep commit | sed -e 's/.*\([a-f0-9]\{40\}\).*/\1/')
 
 # Update TF dependency to installed tensorflow
