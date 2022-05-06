@@ -86,7 +86,7 @@ class FastSentencepieceTokenizer:
         # normal.
         (output_values, row_splits) = (
             gen_fast_sentencepiece_tokenizer
-            .tf_text_fast_sentencepiece_tokenize(
+            .tf_sentencepiece_tokenize_op(
                 self._converted_model, input_tensor, 0, 0, self._add_bos,
                 self._add_eos, self._reverse))
         tokens = tf.RaggedTensor.from_nested_row_splits(
@@ -122,7 +122,7 @@ class FastSentencepieceTokenizer:
         tokens = self.detokenize(input_tensor.values)
         return input_tensor.with_values(tokens)
       else:
-        return gen_fast_sentencepiece_tokenizer.tf_text_fast_sentencepiece_detokenize(
+        return gen_fast_sentencepiece_tokenizer.tf_sentencepiece_detokenize_op(
             self._converted_model_detokenizer, input_tensor.flat_values,
             input_tensor.row_splits)
     else:
