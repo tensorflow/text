@@ -28,6 +28,13 @@ http_archive(
 )
 
 http_archive(
+    name = "cppitertools",
+    urls = ["https://github.com/ryanhaining/cppitertools/archive/refs/tags/v2.0.zip"],
+    sha256 = "e56741b108d6baced98c4ccd83fd0d5a545937f2845978799c28d0312c0dee3d",
+    strip_prefix = "cppitertools-2.0",
+)
+
+http_archive(
     name = "darts_clone",
     build_file = "//third_party/darts_clone:BUILD.bzl",
     sha256 = "c97f55d05c98da6fcaf7f9ecc6a6dc6bc5b18b8564465f77abff8879d446491c",

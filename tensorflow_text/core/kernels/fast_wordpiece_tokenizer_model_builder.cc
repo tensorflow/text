@@ -25,9 +25,11 @@
 #include "absl/status/status.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/str_join.h"
 #include "absl/strings/str_split.h"
 #include "absl/strings/string_view.h"
 #include "absl/strings/strip.h"
+#include "cppitertools/imap.hpp"
 #include "icu4c/source/common/unicode/umachine.h"
 #include "icu4c/source/common/unicode/utf8.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
@@ -522,10 +524,23 @@ absl::Status FastWordpieceBuilder::BuildOutgoingEdgeLabelsAlongVocabToken(
     if (!trie_->TryTraverseOneStep(cur_node, edge_label)) {
       // Should never happen, since we built trie using all of `vocab_token`.
       return absl::FailedPreconditionError(absl::StrCat(
-          "Error in traversing to child following edge ",
-          absl::string_view(&edge_label, 1), " from the prefix ",
-          token.substr(0, char_pos), " at parent id ", cur_node.node_id,
-          ". The token is ", token, ". The char position is ", char_pos, "."));
+               "Cannot traverse from parent id ", cur_node.node_id,
+               " to child following the edge with label value of ",
+               static_cast<int>(edge_label),
+               " when processing a vocabulary token with token ID ",
+               vocab_token.TokenId(), " (0-based). This error happened at ",
+               "position ", char_pos, " (0-based) of the token. Before that, ",
+               "the prefix \"", token.substr(0, char_pos),
+               "\" of the token had been processed. This should never happen. ",
+               "This probably indicates that there are some unicode ",
+               "issues (e.g., byte '\\x0' in the middle) for the above ",
+               "mentioned token in the vocabulary file. All bytes of this ",
+               "questionable token (ID ", vocab_token.TokenId(), ") are: [",
+               absl::StrJoin(
+                   iter::imap([](auto ch) { return static_cast<int>(ch); },
+                              vocab_token.Token()),
+                   ", "),
+               "]."));
     }
     ++char_pos;
   }
