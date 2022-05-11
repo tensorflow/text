@@ -21,9 +21,15 @@ upper_tabs:
     - name: API
       skip_translation: true
       contents:
+      - title: Overview
+        path: /text/api_overview
+
       - heading: TensorFlow Text
       - include: /text/api_docs/python/text/_toc.yaml
-#     - heading: TensorFlow NLP Modeling
-#     - include: /text/api_docs/python/tfnlp/_toc.yaml
+
+      - heading: TensorFlow Models - NLP
+      - title: tfm.nlp
+        path: /api_docs/python/tfm/nlp
+        status: external
 
 - include: /_upper_tabs_right.yaml
