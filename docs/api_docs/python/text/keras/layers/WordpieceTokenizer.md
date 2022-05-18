@@ -17,7 +17,7 @@ tokens.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/tokenization_layers.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/tokenization_layers.py">View
 source</a>
 
 Splits an already-tokenized tensor of tokens further into WordPiece tokens.
@@ -117,7 +117,7 @@ along that dimension. Defaults to True.
 
 <h3 id="set_vocabulary"><code>set_vocabulary</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/tokenization_layers.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/tokenization_layers.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">

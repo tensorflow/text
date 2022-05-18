@@ -16,9 +16,8 @@ description: RegexSplitter splits text on the given regular expression.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View
+source</a>
 
 `RegexSplitter` splits text on the given regular expression.
 
@@ -78,7 +77,8 @@ delimiter to split on. Default is '\r?\n'.
 
 <h3 id="split"><code>split</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>split(
@@ -134,7 +134,8 @@ the pieces that string was split into.
 
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>split_with_offsets(

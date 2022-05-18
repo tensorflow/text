@@ -11,6 +11,8 @@ toc:
     path: /text/api_docs/python/text/FastBertNormalizer
   - title: FastBertTokenizer
     path: /text/api_docs/python/text/FastBertTokenizer
+  - title: FastSentencepieceTokenizer
+    path: /text/api_docs/python/text/FastSentencepieceTokenizer
   - title: FastWordpieceTokenizer
     path: /text/api_docs/python/text/FastWordpieceTokenizer
   - title: FirstNItemSelector
@@ -59,6 +61,8 @@ toc:
     path: /text/api_docs/python/text/WordShape
   - title: WordpieceTokenizer
     path: /text/api_docs/python/text/WordpieceTokenizer
+  - title: build_fast_bert_normalizer_model
+    path: /text/api_docs/python/text/build_fast_bert_normalizer_model
   - title: build_fast_wordpiece_model
     path: /text/api_docs/python/text/build_fast_wordpiece_model
   - title: case_fold_utf8
@@ -134,6 +138,10 @@ toc:
     path: /text/api_docs/python/text/tflite_registrar
   - title: AddFastBertNormalize
     path: /text/api_docs/python/text/tflite_registrar/AddFastBertNormalize
+  - title: AddFastSentencepieceDetokenize
+    path: /text/api_docs/python/text/tflite_registrar/AddFastSentencepieceDetokenize
+  - title: AddFastSentencepieceTokenize
+    path: /text/api_docs/python/text/tflite_registrar/AddFastSentencepieceTokenize
   - title: AddFastWordpieceDetokenize
     path: /text/api_docs/python/text/tflite_registrar/AddFastWordpieceDetokenize
   - title: AddFastWordpieceTokenize

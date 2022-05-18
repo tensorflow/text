@@ -18,9 +18,8 @@ description: Tokenizes a tensor of UTF-8 string into words according to logits.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_from_logits_tokenizer.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_from_logits_tokenizer.py">View
+source</a>
 
 Tokenizes a tensor of UTF-8 string into words according to logits.
 
@@ -101,7 +100,8 @@ output tokens=[["New", "York"]]
 
 <h3 id="split"><code>split</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>split(
@@ -114,7 +114,8 @@ Alias for
 
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>split_with_offsets(
@@ -127,7 +128,8 @@ Alias for
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_from_logits_tokenizer.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_from_logits_tokenizer.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>tokenize(
@@ -256,7 +258,8 @@ strings.
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_from_logits_tokenizer.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/split_merge_from_logits_tokenizer.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>tokenize_with_offsets(

@@ -16,7 +16,7 @@ description: A Trimmer that truncates the longest segment.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
 source</a>
 
 A `Trimmer` that truncates the longest segment.
@@ -37,7 +37,7 @@ is no larger than the allocated budget. See `generate_mask()` for more details.
 
 <h3 id="generate_mask"><code>generate_mask</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -90,7 +90,7 @@ a list with len(segments) of `RaggedTensor`s, see superclass for details.
 
 <h3 id="trim"><code>trim</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">

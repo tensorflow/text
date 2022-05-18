@@ -13,7 +13,7 @@ description: Create a tensor of n-grams based on the input data data.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
 source</a>
 
 Create a tensor of n-grams based on the input data `data`.

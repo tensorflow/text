@@ -13,9 +13,8 @@ description: Pad model input and generate corresponding input masks.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pad_model_inputs_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pad_model_inputs_ops.py">View
+source</a>
 
 Pad model input and generate corresponding input masks.
 

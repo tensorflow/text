@@ -16,7 +16,7 @@ effortless.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/todense.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/todense.py">View
 source</a>
 
 Layer that makes padding and masking a Composite Tensors effortless.

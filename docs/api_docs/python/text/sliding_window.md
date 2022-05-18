@@ -13,7 +13,7 @@ description: Builds a sliding window for data with a specified width.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sliding_window_op.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sliding_window_op.py">View
 source</a>
 
 Builds a sliding window for `data` with a specified width.

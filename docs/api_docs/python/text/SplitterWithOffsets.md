@@ -16,7 +16,7 @@ description: An abstract base class for splitters that return offsets.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
 source</a>
 
 An abstract base class for splitters that return offsets.
@@ -53,7 +53,7 @@ those pieces occurred in the input string. E.g.:
 
 <h3 id="split"><code>split</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -107,7 +107,7 @@ the pieces that string was split into.
 
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/splitter.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">

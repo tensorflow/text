@@ -16,9 +16,8 @@ description: A Trimmer that allocates a length budget to segments in order.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
+source</a>
 
 A `Trimmer` that allocates a length budget to segments in order.
 
@@ -82,7 +81,8 @@ Axis to apply trimming on.
 
 <h3 id="generate_mask"><code>generate_mask</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>generate_mask(
@@ -148,7 +148,8 @@ a list with len(segments) of `RaggedTensor`s, see superclass for details.
 
 <h3 id="trim"><code>trim</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>trim(

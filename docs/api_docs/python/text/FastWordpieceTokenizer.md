@@ -19,7 +19,7 @@ description: Tokenizes a tensor of UTF-8 string tokens into subword pieces.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_wordpiece_tokenizer.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_wordpiece_tokenizer.py">View
 source</a>
 
 Tokenizes a tensor of UTF-8 string tokens into subword pieces.
@@ -44,19 +44,37 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 
 <!-- Placeholder for "Used in" -->
 
-It employs the linear (as opposed to quadratic) WordPiece algorithm.
+It employs the linear (as opposed to quadratic) WordPiece algorithm (see the
+[paper](http://go/arxiv/2012.15524)).
 
-Differences compared to the classic WordpieceTokenizer (as of 11/2020): (1)
-`unknown_token` cannot be None or empty. That means if a word is too long or
-cannot be tokenized, FastWordpieceTokenizer always returns `unknown_token`. In
-constrast, the original WordpieceTokenizer would return the original word if
-`unknown_token` is empty or None. (2) `unknown_token` must be included in the
-vocabulary. (3) When `unknown_token` is returned, in tokenize_with_offsets(),
-the result end_offset is set to be the length of the original input word. In
-contrast, when `unknown_token` is returned by the original WordpieceTokenizer,
-the end_offset is set to be the length of the `unknown_token` string. (4)
-`split_unknown_characters` is not supported. (5) `max_chars_per_token` is not
-used or needed.
+Differences compared to the classic
+[WordpieceTokenizer](https://www.tensorflow.org/text/api_docs/python/text/WordpieceTokenizer)
+are as follows (as of 11/2021):
+
+*   `unknown_token` cannot be None or empty. That means if a word is too long or
+    cannot be tokenized, FastWordpieceTokenizer always returns `unknown_token`.
+    In constrast, the original
+    [WordpieceTokenizer](https://www.tensorflow.org/text/api_docs/python/text/WordpieceTokenizer)
+    would return the original word if `unknown_token` is empty or None.
+
+*   `unknown_token` must be included in the vocabulary.
+
+*   When `unknown_token` is returned, in tokenize_with_offsets(), the result
+    end_offset is set to be the length of the original input word. In contrast,
+    when `unknown_token` is returned by the original
+    [WordpieceTokenizer](https://www.tensorflow.org/text/api_docs/python/text/WordpieceTokenizer),
+    the end_offset is set to be the length of the `unknown_token` string.
+
+*   `split_unknown_characters` is not supported.
+
+*   `max_chars_per_token` is not used or needed.
+
+*   By default the input is assumed to be general text (i.e., sentences), and
+    FastWordpieceTokenizer first splits it on whitespaces and punctuations and
+    then applies the Wordpiece tokenization (see the parameter
+    `no_pretokenization`). If the input already contains single words only,
+    please set `no_pretokenization=True` to be consistent with the classic
+    [WordpieceTokenizer](https://www.tensorflow.org/text/api_docs/python/text/WordpieceTokenizer).
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -137,7 +155,7 @@ fast_wordpiece_tokenizer_model.fbs). If not `None`, all other arguments
 
 <h3 id="detokenize"><code>detokenize</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_wordpiece_tokenizer.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_wordpiece_tokenizer.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -195,7 +213,7 @@ Otherwise, a string tensor.
 
 <h3 id="split"><code>split</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -209,7 +227,7 @@ Alias for
 
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -223,7 +241,7 @@ Alias for
 
 <h3 id="tokenize"><code>tokenize</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_wordpiece_tokenizer.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_wordpiece_tokenizer.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -291,7 +309,7 @@ method.
 
 <h3 id="tokenize_with_offsets"><code>tokenize_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_wordpiece_tokenizer.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_wordpiece_tokenizer.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">

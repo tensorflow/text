@@ -13,7 +13,7 @@ description: Tensorflow Text Layers for Keras API.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/__init__.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/__init__.py">View
 source</a>
 
 Tensorflow Text Layers for Keras API.

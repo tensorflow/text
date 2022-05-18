@@ -13,7 +13,7 @@ description: Coerce UTF-8 input strings to structurally valid UTF-8.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/string_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/string_ops.py">View
 source</a>
 
 Coerce UTF-8 input strings to structurally valid UTF-8.

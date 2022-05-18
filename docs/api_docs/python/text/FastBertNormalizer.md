@@ -16,7 +16,7 @@ description: Normalizes a tensor of UTF-8 strings.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_normalizer.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_normalizer.py">View
 source</a>
 
 Normalizes a tensor of UTF-8 strings.
@@ -28,8 +28,8 @@ Normalizes a tensor of UTF-8 strings.
 </code></pre>
 
 <!-- Placeholder for "Used in" -->
-<!-- Tabular view -->
 
+<!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
@@ -61,7 +61,7 @@ ignored.
 
 <h3 id="normalize"><code>normalize</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_normalizer.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_normalizer.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -82,7 +82,6 @@ Tokenizes a tensor of UTF-8 strings.
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -98,7 +97,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -112,7 +110,7 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 
 <h3 id="normalize_with_offsets"><code>normalize_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_normalizer.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/fast_bert_normalizer.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
@@ -139,7 +137,6 @@ b'greatest', b'abc'], dtype=object)>
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -155,7 +152,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

@@ -13,9 +13,8 @@ description: Maps the input post-normalized string offsets to pre-normalized off
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/normalize_ops.py">View
+source</a>
 
 Maps the input post-normalized string offsets to pre-normalized offsets.
 

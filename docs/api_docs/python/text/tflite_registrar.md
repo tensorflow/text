@@ -23,6 +23,12 @@ A module with a Python wrapper for TFLite TFText ops.
 [`AddFastBertNormalize(...)`](../text/tflite_registrar/AddFastBertNormalize.md):
 AddFastBertNormalize(arg0: int) -> None
 
+[`AddFastSentencepieceDetokenize(...)`](../text/tflite_registrar/AddFastSentencepieceDetokenize.md):
+AddFastSentencepieceDetokenize(arg0: int) -> None
+
+[`AddFastSentencepieceTokenize(...)`](../text/tflite_registrar/AddFastSentencepieceTokenize.md):
+AddFastSentencepieceTokenize(arg0: int) -> None
+
 [`AddFastWordpieceDetokenize(...)`](../text/tflite_registrar/AddFastWordpieceDetokenize.md):
 AddFastWordpieceDetokenize(arg0: int) -> None
 
@@ -49,6 +55,8 @@ SELECT_TFTEXT_OPS<a id="SELECT_TFTEXT_OPS"></a>
 </td>
 <td>
 `[<built-in method AddFastBertNormalize of PyCapsule object>,
+ <built-in method AddFastSentencepieceDetokenize of PyCapsule object>,
+ <built-in method AddFastSentencepieceTokenize of PyCapsule object>,
  <built-in method AddFastWordpieceTokenize of PyCapsule object>,
  <built-in method AddFastWordpieceDetokenize of PyCapsule object>,
  <built-in method AddNgramsStringJoin of PyCapsule object>,

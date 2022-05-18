@@ -15,9 +15,8 @@ description: A Splitter that uses a state machine to determine sentence breaks.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/state_based_sentence_breaker_op.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/state_based_sentence_breaker_op.py">View
+source</a>
 
 A `Splitter` that uses a state machine to determine sentence breaks.
 
@@ -43,7 +42,8 @@ false, indicating it has moved past the end of a potential sentence fragment.
 
 <h3 id="break_sentences"><code>break_sentences</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/state_based_sentence_breaker_op.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/state_based_sentence_breaker_op.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>break_sentences(
@@ -91,7 +91,8 @@ with each input broken up into its constituent sentence fragments.
 
 <h3 id="break_sentences_with_offsets"><code>break_sentences_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/state_based_sentence_breaker_op.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/state_based_sentence_breaker_op.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>break_sentences_with_offsets(

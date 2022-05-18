@@ -15,7 +15,7 @@ description: Base class for detokenizer implementations.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
 Base class for detokenizer implementations.
@@ -49,7 +49,7 @@ tf.Tensor([b'hello world' b'a b c'], shape=(2,), dtype=string)
 
 <h3 id="detokenize"><code>detokenize</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/tokenization.py">View
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">

@@ -16,7 +16,7 @@ description: Type of reduction to be done by the n-gram op.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/ngrams_op.py">View
 source</a>
 
 Type of reduction to be done by the n-gram op.

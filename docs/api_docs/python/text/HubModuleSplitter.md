@@ -16,9 +16,8 @@ description: Splitter that uses a Hub module.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/hub_module_splitter.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/hub_module_splitter.py">View
+source</a>
 
 Splitter that uses a Hub module.
 
@@ -117,7 +116,8 @@ this class.
 
 <h3 id="split"><code>split</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/hub_module_splitter.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/hub_module_splitter.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>split(
@@ -162,7 +162,8 @@ input tensor with an added ragged dimension for the pieces of each string.
 
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/hub_module_splitter.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/hub_module_splitter.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>split_with_offsets(

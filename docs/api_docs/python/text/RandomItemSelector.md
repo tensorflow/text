@@ -16,9 +16,8 @@ description: An ItemSelector implementation that randomly selects items in a bat
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View
+source</a>
 
 An `ItemSelector` implementation that randomly selects items in a batch.
 
@@ -147,7 +146,8 @@ uses `tf.random.shuffle`.
 
 <h3 id="get_selectable"><code>get_selectable</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>get_selectable(
@@ -206,7 +206,8 @@ selectable.
 
 <h3 id="get_selection_mask"><code>get_selection_mask</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>get_selection_mask(

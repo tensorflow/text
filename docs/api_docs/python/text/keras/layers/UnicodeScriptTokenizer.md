@@ -15,7 +15,7 @@ description: Unicode script tokenization layer.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/tokenization_layers.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/keras/layers/tokenization_layers.py">View
 source</a>
 
 Unicode script tokenization layer.

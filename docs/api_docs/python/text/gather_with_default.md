@@ -13,7 +13,7 @@ description: Gather slices with indices=-1 mapped to default.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/pointer_ops.py">View
 source</a>
 
 Gather slices with `indices=-1` mapped to `default`.

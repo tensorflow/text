@@ -14,9 +14,8 @@ offsets.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/regex_split_ops.py">View
+source</a>
 
 Split `input` by delimiters that match a regex pattern; returns offsets.
 

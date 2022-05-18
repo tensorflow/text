@@ -15,9 +15,8 @@ description: Assigns values to the items chosen for masking.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/masking_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/masking_ops.py">View
+source</a>
 
 Assigns values to the items chosen for masking.
 
@@ -141,7 +140,8 @@ random token is substituted for tokens selected for masking. Default is
 
 <h3 id="get_mask_values"><code>get_mask_values</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/masking_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/masking_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>get_mask_values(

@@ -14,7 +14,7 @@ references.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/metrics/text_similarity_metric_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/metrics/text_similarity_metric_ops.py">View
 source</a>
 
 Computes LCS-based similarity score between the hypotheses and references.

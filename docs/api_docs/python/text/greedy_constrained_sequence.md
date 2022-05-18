@@ -13,7 +13,7 @@ description: Performs greedy constrained sequence on a batch of examples.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/greedy_constrained_sequence_op.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/greedy_constrained_sequence_op.py">View
 source</a>
 
 Performs greedy constrained sequence on a batch of examples.

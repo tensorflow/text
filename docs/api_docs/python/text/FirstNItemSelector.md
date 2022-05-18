@@ -16,9 +16,8 @@ description: An ItemSelector that selects the first n items in the batch.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View
+source</a>
 
 An `ItemSelector` that selects the first `n` items in the batch.
 
@@ -81,7 +80,8 @@ Default is empty list.
 
 <h3 id="get_selectable"><code>get_selectable</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>get_selectable(
@@ -94,7 +94,8 @@ See `get_selectable()` in superclass.
 
 <h3 id="get_selection_mask"><code>get_selection_mask</code></h3>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View source</a>
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/item_selector_ops.py">View
+source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>get_selection_mask(

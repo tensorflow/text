@@ -13,7 +13,7 @@ description: Find the sentence fragments in a given text. (deprecated)
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentence_breaking_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/sentence_breaking_ops.py">View
 source</a>
 
 Find the sentence fragments in a given text. (deprecated)

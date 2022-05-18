@@ -13,9 +13,8 @@ description: Combine one or more input segments for a model's input sequence.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/segment_combiner_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/segment_combiner_ops.py">View
+source</a>
 
 Combine one or more input segments for a model's input sequence.
 

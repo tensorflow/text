@@ -13,7 +13,7 @@ description: Tensorflow text-processing metrics.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/metrics/__init__.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/metrics/__init__.py">View
 source</a>
 
 Tensorflow text-processing metrics.

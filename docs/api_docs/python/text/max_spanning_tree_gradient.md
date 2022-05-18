@@ -13,7 +13,7 @@ description: Returns a subgradient of the MaximumSpanningTree op.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/mst_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/mst_ops.py">View
 source</a>
 
 Returns a subgradient of the MaximumSpanningTree op.

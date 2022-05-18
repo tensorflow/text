@@ -13,7 +13,7 @@ description: Finds the maximum directed spanning tree of a digraph.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/gen_mst_ops.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/gen_mst_ops.py">View
 source</a>
 
 Finds the maximum directed spanning tree of a digraph.

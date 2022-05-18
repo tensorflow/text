@@ -14,7 +14,7 @@ description: Various tensorflow ops related to text-processing.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/__init__.py">View
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/__init__.py">View
 source</a>
 
 Various tensorflow ops related to text-processing.
@@ -39,6 +39,9 @@ of UTF-8 strings.
 
 [`class FastBertTokenizer`](./text/FastBertTokenizer.md): Tokenizer used for
 BERT, a faster version with TFLite support.
+
+[`class FastSentencepieceTokenizer`](./text/FastSentencepieceTokenizer.md):
+Sentencepiece tokenizer with tf.text interface.
 
 [`class FastWordpieceTokenizer`](./text/FastWordpieceTokenizer.md): Tokenizes a
 tensor of UTF-8 string tokens into subword pieces.
@@ -114,6 +117,9 @@ of UTF-8 string tokens into subword pieces.
 
 ## Functions
 
+[`build_fast_bert_normalizer_model(...)`](./text/build_fast_bert_normalizer_model.md):
+build_fast_bert_normalizer_model(arg0: bool) -> bytes
+
 [`build_fast_wordpiece_model(...)`](./text/build_fast_wordpiece_model.md):
 build_fast_wordpiece_model(arg0: List[str], arg1: int, arg2: str, arg3: str,
 arg4: bool, arg5: bool) -> bytes
@@ -184,7 +190,7 @@ fragments in a given text. (deprecated)
 **version**<a id="__version__"></a>
 </td>
 <td>
-`'2.9.0-rc1'`
+`'2.9.0'`
 </td>
 </tr>
 </table>

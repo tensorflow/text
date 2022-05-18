@@ -13,9 +13,8 @@ description: Applies dynamic language model masking.
 
 </table>
 
-<a target="_blank" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/masking_ops.py">View source</a>
-
-
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/masking_ops.py">View
+source</a>
 
 Applies dynamic language model masking.
 
