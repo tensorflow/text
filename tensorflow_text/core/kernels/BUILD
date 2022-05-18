@@ -34,6 +34,45 @@ cc_test(
 )
 
 tf_cc_library(
+    name = "byte_splitter_kernel",
+    srcs = ["byte_splitter_kernel.cc"],
+    hdrs = ["byte_splitter_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":byte_splitter_kernel_template",
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "byte_splitter_kernel_template",
+    hdrs = ["byte_splitter_kernel_template.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":byte_splitter",
+        "@com_google_absl//absl/status",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:shape tensorflow dep,
+    ],
+)
+
+tflite_cc_library(
+    name = "byte_splitter_tflite",
+    srcs = ["byte_splitter_tflite.cc"],
+    hdrs = ["byte_splitter_tflite.h"],
+    deps = [
+        ":byte_splitter_kernel_template",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels/shim:tflite_op_shim tensorflow dep,
+    ],
+)
+
+tf_cc_library(
     name = "constrained_sequence",
     srcs = ["constrained_sequence.cc"],
     hdrs = ["constrained_sequence.h"],

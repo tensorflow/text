@@ -174,7 +174,7 @@ py_test(
 py_tf_text_library(
     name = "constrained_sequence_op",
     srcs = [],
-    cc_op_defs = ["core/ops/constrained_sequence_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:constrained_sequence_op.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:constrained_sequence_kernel",
     ],
@@ -219,7 +219,7 @@ py_test(
 py_tf_text_library(
     name = "fast_bert_normalizer",
     srcs = ["python/ops/fast_bert_normalizer.py"],
-    cc_op_defs = ["core/ops/fast_bert_normalizer_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:fast_bert_normalizer_op.cc"],
     cc_op_kernels = [
         # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:fast_bert_normalizer_tf_kernel",
@@ -299,7 +299,7 @@ py_test(
 py_tf_text_library(
     name = "fast_sentencepiece_tokenizer",
     srcs = ["python/ops/fast_sentencepiece_tokenizer.py"],
-    cc_op_defs = ["core/ops/fast_sentencepiece_ops.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:fast_sentencepiece_ops.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels/sentencepiece:sentencepiece_tokenizer_kernel",
         "//tensorflow_text/core/kernels/sentencepiece:sentencepiece_detokenizer_kernel",
@@ -334,7 +334,7 @@ py_test(
 py_tf_text_library(
     name = "fast_wordpiece_tokenizer",
     srcs = ["python/ops/fast_wordpiece_tokenizer.py"],
-    cc_op_defs = ["core/ops/fast_wordpiece_tokenizer_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:fast_wordpiece_tokenizer_op.cc"],
     cc_op_kernels = [
         # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_kernel",
@@ -545,7 +545,7 @@ py_test(
 py_tf_text_library(
     name = "mst_ops",
     srcs = ["python/ops/mst_ops.py"],
-    cc_op_defs = ["core/ops/mst_ops.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:mst_ops.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:mst_op_kernels",
     ],
@@ -578,7 +578,7 @@ py_test(
 py_tf_text_library(
     name = "ngrams_op",
     srcs = ["python/ops/ngrams_op.py"],
-    cc_op_defs = ["core/ops/ngrams_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:ngrams_op.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:ngrams_kernel",
     ],
@@ -613,7 +613,7 @@ py_test(
 py_tf_text_library(
     name = "normalize_ops",
     srcs = ["python/ops/normalize_ops.py"],
-    cc_op_defs = ["core/ops/normalize_ops.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:normalize_ops.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:normalize_kernels",
     ],
@@ -789,7 +789,7 @@ py_test(
 py_tf_text_library(
     name = "regex_split_ops",
     srcs = ["python/ops/regex_split_ops.py"],
-    cc_op_defs = ["core/ops/regex_split_ops.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:regex_split_ops.cc"],
     cc_op_kernels = ["//tensorflow_text/core/kernels:regex_split_kernels"],
     deps = [
         ":splitter",
@@ -841,7 +841,7 @@ py_tf_text_library(
     name = "sentence_breaking_ops",
     srcs = ["python/ops/sentence_breaking_ops.py"],
     cc_op_defs = [
-        "core/ops/sentence_breaking_ops.cc",
+        "//tensorflow_text/core/ops:sentence_breaking_ops.cc",
     ],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:sentence_breaking_kernels",
@@ -881,7 +881,7 @@ py_test(
 py_tf_text_library(
     name = "sentencepiece_tokenizer",
     srcs = ["python/ops/sentencepiece_tokenizer.py"],
-    cc_op_defs = ["core/ops/sentencepiece_ops.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:sentencepiece_ops.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:sentencepiece_kernels",
     ],
@@ -951,7 +951,7 @@ py_test(
 py_tf_text_library(
     name = "split_merge_from_logits_tokenizer",
     srcs = ["python/ops/split_merge_from_logits_tokenizer.py"],
-    cc_op_defs = ["core/ops/tokenizer_from_logits_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:tokenizer_from_logits_op.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:tokenizer_from_logits_kernel",
     ],
@@ -981,7 +981,7 @@ py_test(
 py_tf_text_library(
     name = "split_merge_tokenizer",
     srcs = ["python/ops/split_merge_tokenizer.py"],
-    cc_op_defs = ["core/ops/split_merge_tokenize_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:split_merge_tokenize_op.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:split_merge_tokenize_kernel",
     ],
@@ -1019,7 +1019,7 @@ py_tf_text_library(
     name = "state_based_sentence_breaker_op",
     srcs = ["python/ops/state_based_sentence_breaker_op.py"],
     cc_op_defs = [
-        "core/ops/sentence_breaking_ops_v2.cc",
+        "//tensorflow_text/core/ops:sentence_breaking_ops_v2.cc",
     ],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:sentence_breaking_kernels_v2",
@@ -1081,7 +1081,7 @@ py_test(
 py_tf_text_library(
     name = "text_similarity_metric_ops",
     srcs = ["python/metrics/text_similarity_metric_ops.py"],
-    cc_op_defs = ["core/ops/rouge_l_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:rouge_l_op.cc"],
     cc_op_kernels = ["//tensorflow_text/core/kernels:rouge_l_kernel"],
     deps = [
         # python:array_ops tensorflow dep,
@@ -1217,7 +1217,7 @@ py_test(
 py_tf_text_library(
     name = "unicode_script_tokenizer",
     srcs = ["python/ops/unicode_script_tokenizer.py"],
-    cc_op_defs = ["core/ops/unicode_script_tokenize_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:unicode_script_tokenize_op.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:unicode_script_tokenize_kernel",
     ],
@@ -1304,7 +1304,7 @@ py_test(
 py_tf_text_library(
     name = "whitespace_tokenizer",
     srcs = [],
-    cc_op_defs = ["core/ops/whitespace_tokenize_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:whitespace_tokenize_op.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:whitespace_tokenize_kernel",
     ],
@@ -1324,7 +1324,7 @@ py_tf_text_library(
 py_tf_text_library(
     name = "whitespace_tokenizer_v2",
     srcs = ["python/ops/whitespace_tokenizer.py"],
-    cc_op_defs = ["core/ops/whitespace_tokenizer_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:whitespace_tokenizer_op.cc"],
     cc_op_kernels = [
         # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:whitespace_tokenizer_kernel",
@@ -1364,7 +1364,7 @@ py_test(
 py_tf_text_library(
     name = "wordpiece_tokenizer",
     srcs = ["python/ops/wordpiece_tokenizer.py"],
-    cc_op_defs = ["core/ops/wordpiece_op.cc"],
+    cc_op_defs = ["//tensorflow_text/core/ops:wordpiece_op.cc"],
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:wordpiece_kernel",
     ],
