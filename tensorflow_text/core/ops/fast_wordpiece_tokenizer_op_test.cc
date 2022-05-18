@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/shape_inference_testutil.h"
-#include "tensorflow/core/framework/tensor.h"
-#include "tensorflow/core/framework/tensor_shape.h"
-#include "tensorflow/core/framework/tensor_testutil.h"
 #include "tensorflow/core/platform/test.h"
 
 namespace tensorflow {

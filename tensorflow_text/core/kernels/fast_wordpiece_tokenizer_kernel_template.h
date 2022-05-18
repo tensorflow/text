@@ -188,15 +188,14 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::ShapeInference(
                       c->GetInputShape(kInputValues));
   SH_ASSIGN_OR_RETURN(const auto wp_model_shape, c->GetInputShape(kWpModel));
   const auto rank_1_shape = Shape({Shape::kUnknownDim});
-  // TODO(b/204148042): Compatible & ToString are not exported by TF
-  /*if (!input_values_shape.Compatible(rank_1_shape)) {
+  if (!input_values_shape.Compatible(rank_1_shape)) {
     return absl::FailedPreconditionError(
         absl::StrCat("Shape must be rank 1: ", input_values_shape.ToString()));
   }
   if (!wp_model_shape.Compatible(rank_1_shape)) {
     return absl::FailedPreconditionError(
         absl::StrCat("Shape must be rank 1: ", wp_model_shape.ToString()));
-  }*/
+  }
   SH_RETURN_IF_ERROR(c->SetOutputShape(kOutputSubwords, rank_1_shape));
   SH_RETURN_IF_ERROR(c->SetOutputShape(kOutputIds, rank_1_shape));
   // row splits size
@@ -366,8 +365,7 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::ShapeInference(
                       c->GetInputShape(kInputRowSplits));
   SH_ASSIGN_OR_RETURN(const auto wp_model_shape, c->GetInputShape(kWpModel));
   const auto rank_1_shape = Shape({Shape::kUnknownDim});
-  // TODO(b/204148042): Compatible & ToString are not exported by TF
-  /*if (!input_values_shape.Compatible(rank_1_shape)) {
+  if (!input_values_shape.Compatible(rank_1_shape)) {
     return absl::FailedPreconditionError(
         absl::StrCat("Shape must be rank 1: ", input_values_shape.ToString()));
   }
@@ -378,7 +376,7 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::ShapeInference(
   if (!wp_model_shape.Compatible(rank_1_shape)) {
     return absl::FailedPreconditionError(
         absl::StrCat("Shape must be rank 1: ", wp_model_shape.ToString()));
-  }*/
+  }
   SH_RETURN_IF_ERROR(c->SetOutputShape(kOutputWords, rank_1_shape));
   return absl::OkStatus();
 }
