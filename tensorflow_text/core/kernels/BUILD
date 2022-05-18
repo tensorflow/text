@@ -11,6 +11,29 @@ package(default_visibility = ["//visibility:public"])
 exports_files(["LICENSE"])
 
 tf_cc_library(
+    name = "byte_splitter",
+    srcs = ["byte_splitter.cc"],
+    hdrs = ["byte_splitter.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+    ],
+    deps = [
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_test(
+    name = "byte_splitter_test",
+    size = "small",
+    srcs = ["byte_splitter_test.cc"],
+    deps = [
+        ":byte_splitter",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+tf_cc_library(
     name = "constrained_sequence",
     srcs = ["constrained_sequence.cc"],
     hdrs = ["constrained_sequence.h"],
