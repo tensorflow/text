@@ -26,6 +26,7 @@ from tensorflow_text.python.ops import *
 # increasing order of their lowercase version.
 _allowed_symbols = [
     "BertTokenizer",
+    "ByteSplitter",
     "Detokenizer",
     "FastBertNormalizer",
     "FastBertTokenizer",

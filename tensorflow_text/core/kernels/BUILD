@@ -10,14 +10,10 @@ package(default_visibility = ["//visibility:public"])
 
 exports_files(["LICENSE"])
 
-tf_cc_library(
+cc_library(
     name = "byte_splitter",
     srcs = ["byte_splitter.cc"],
     hdrs = ["byte_splitter.h"],
-    tf_deps = [
-        # tf:framework tensorflow dep,
-        # tf:lib tensorflow dep,
-    ],
     deps = [
         "@com_google_absl//absl/strings",
     ],
@@ -42,21 +38,21 @@ tf_cc_library(
     ],
     deps = [
         ":byte_splitter_kernel_template",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
         # lite/kernels/shim:tf_op_shim tensorflow dep,
     ],
 )
 
-tf_cc_library(
+cc_library(
     name = "byte_splitter_kernel_template",
     hdrs = ["byte_splitter_kernel_template.h"],
-    tf_deps = [
-        # tf:framework tensorflow dep,
-    ],
     deps = [
         ":byte_splitter",
         "@com_google_absl//absl/status",
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:shape tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
     ],
 )
 
