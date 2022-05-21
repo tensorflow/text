@@ -839,6 +839,7 @@ cc_library(
 tflite_cc_library(
     name = "tflite_ops",
     hdrs = [
+        "byte_splitter_tflite.h",
         "fast_bert_normalizer_tflite.h",
         "fast_wordpiece_tokenizer_tflite.h",
         "ngrams_tflite.h",
@@ -847,6 +848,7 @@ tflite_cc_library(
         "//tensorflow_text/core/kernels/sentencepiece:sp_headers",
     ],
     deps = [
+        ":byte_splitter_tflite",
         ":fast_bert_normalizer_tflite",
         ":fast_wordpiece_tokenizer_tflite",
         ":ngrams_tflite",
