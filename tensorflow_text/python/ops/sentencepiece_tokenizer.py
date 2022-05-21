@@ -26,7 +26,7 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
-from tensorflow.python.training.tracking import tracking
+from tensorflow.python.trackable import resource
 from tensorflow_text.python.ops.tokenization import Detokenizer
 from tensorflow_text.python.ops.tokenization import TokenizerWithOffsets
 
@@ -39,7 +39,7 @@ _tf_text_sentencepiece_tokenizer_op_create_counter = monitoring.Counter(
     "Counter for number of SentencepieceTokenizers created in Python.")
 
 
-class _SentencepieceModelResource(tracking.TrackableResource):
+class _SentencepieceModelResource(resource.TrackableResource):
   """Utility to track the model resource tensor (for SavedModel support)."""
 
   def __init__(self, model, name):

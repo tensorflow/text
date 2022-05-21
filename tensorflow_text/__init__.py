@@ -49,6 +49,7 @@ _allowed_symbols = [
     "StateBasedSentenceBreaker",
     "Tokenizer",
     "TokenizerWithOffsets",
+    "Trimmer",
     "UnicodeCharTokenizer",
     "UnicodeScriptTokenizer",
     "WaterfallTrimmer",
