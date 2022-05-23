@@ -86,6 +86,7 @@ _allowed_symbols = [
 ]
 
 tflite_registrar.SELECT_TFTEXT_OPS = [
+    tflite_registrar.AddByteSplit,
     tflite_registrar.AddFastBertNormalize,
     tflite_registrar.AddFastSentencepieceDetokenize,
     tflite_registrar.AddFastSentencepieceTokenize,
