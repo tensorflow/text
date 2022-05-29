@@ -191,6 +191,7 @@ py_tf_text_library(
 py_test(
     name = "byte_splitter_test",
     size = "small",
+    timeout = "moderate",
     srcs = ["python/ops/byte_splitter_test.py"],
     python_version = "PY3",
     srcs_version = "PY3",
