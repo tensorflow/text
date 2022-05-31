@@ -21,7 +21,10 @@ toc:
   style: divider
 - title: "Fine tune BERT"
   path: /text/tutorials/fine_tune_bert
-- title: "Fine tune BERT with GLUE"
+- title: "Fine Tune Bert on GLUE tasks"
   path: /text/tutorials/bert_glue
+- title: "Fine tune BERT with Orbit"
+  path: /text/tutorials/bert_orbit
+  status: new
 - title: "Quantify uncertainty with BERT"
   path: /text/tutorials/uncertainty_quantification_with_sngp_bert
