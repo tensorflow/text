@@ -45,24 +45,24 @@ void RegexSplitImpl(absl::string_view input, const RE2& re2,
       tokens->push_back(token);
       // Mark the end of the last token
       begin_offsets->push_back(token.data() - input.data());
-      end_offsets->push_back(token.data() + token.length() - input.begin());
+      end_offsets->push_back(token.data() + token.length() - input.data());
     }
 
     if (should_include_delim) {
       // If desired, include the deliminator as a token.
       tokens->push_back(extracted_delim_token);
       // Mark the end of the token at the end of the beginning of the delimiter.
-      begin_offsets->push_back(extracted_delim_token.data() - input.begin());
+      begin_offsets->push_back(extracted_delim_token.data() - input.data());
       end_offsets->push_back(extracted_delim_token.data() +
-                             extracted_delim_token.length() - input.begin());
+                             extracted_delim_token.length() - input.data());
     }
   }
 
   // Close the last token.
   if (!leftover.empty()) {
     tokens->push_back(leftover);
-    begin_offsets->push_back(leftover.data() - input.begin());
-    end_offsets->push_back(leftover.data() + leftover.length() - input.begin());
+    begin_offsets->push_back(leftover.data() - input.data());
+    end_offsets->push_back(leftover.data() + leftover.length() - input.data());
   }
 }
 
