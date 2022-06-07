@@ -54,8 +54,48 @@ class FastWordpieceTokenizeWithOffsetsOp
 
  public:
   FastWordpieceTokenizeWithOffsetsOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr const char kOpName[] = "FastWordpieceTokenizeWithOffsets";
+  static constexpr const char kDoc[] = R"doc(
+  Tokenizes tokens into sub-word pieces based off of a vocabulary using the fast
+  linear WordPiece algorithm.
+
+  `wordpiece_tokenize_with_offsets` returns the relative offsets.
+
+  ### Example:
+
+  ```python
+  >>> tokens = ['don', '\'t', 'treadness']
+  >>> wordpiece, ids, row_splits, start, end = (
+  ...       fast_wordpiece_tokenize_with_offsets(tokens, model_buffer))
+  >>> RaggedTensor.from_row_splits(wordpiece, row_splits)
+  [['don', '\'', 't'], ['tread', '##ness']]
+  >>> RaggedTensor.from_row_splits(ids, row_splits)
+  [[0, 1, 2], [3, 4]]  # Dummy ids.
+  >>> RaggedTensor.from_row_splits(start, row_splits)
+  start = [[[0, 3, 4], [0, 5]]]
+  >>> RaggedTensor.from_row_splits(end, row_splits)
+  end = [[[3, 4, 5], [5, 10]]]
+  ```
+
+  Args:
+    input_values: 1D Tensor of strings to tokenize with.
+    wp_model: Buffer tensor for the FastWordpieceTokenizerConfig flatbuffer.
+
+  Returns:
+    * output_values: 1D tensor containing the wordpieces for all input strings.
+      A 2D RaggedTensor can be constructed from this and output_row_splits.
+    * output_ids: 1D tensor containing the wordpiece ids for all input strings.
+      A 2D RaggedTensor can be constructed from this and output_row_splits.
+    * output_row_splits: 1D int tensor with the row splits that allow us to
+      build RaggedTensors from output_values, output_ids, start_values, and
+      end_values.
+    * start_values: 1D tensor containing the inclusive start byte offset for
+      each wordpiece in all input strings.  Corresponds 1:1 with output_values.
+      A 2D RaggedTensor can be constructed from this and output_row_splits.
+    * end_values: 1D tensor containing the exclusive end byte offset for
+      each wordpiece in all input strings.  Corresponds 1:1 with output_values.
+      A 2D RaggedTensor can be constructed from this and output_row_splits.
+)doc";
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -207,52 +247,6 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::ShapeInference(
   return absl::OkStatus();
 }
 
-template <tflite::shim::Runtime Rt>
-const char FastWordpieceTokenizeWithOffsetsOp<Rt>::kOpName[] =
-    "FastWordpieceTokenizeWithOffsets";
-
-template <tflite::shim::Runtime Rt>
-const char FastWordpieceTokenizeWithOffsetsOp<Rt>::kDoc[] = R"doc(
-  Tokenizes tokens into sub-word pieces based off of a vocabulary using the fast
-  linear WordPiece algorithm.
-
-  `wordpiece_tokenize_with_offsets` returns the relative offsets.
-
-  ### Example:
-
-  ```python
-  >>> tokens = ['don', '\'t', 'treadness']
-  >>> wordpiece, ids, row_splits, start, end = (
-  ...       fast_wordpiece_tokenize_with_offsets(tokens, model_buffer))
-  >>> RaggedTensor.from_row_splits(wordpiece, row_splits)
-  [['don', '\'', 't'], ['tread', '##ness']]
-  >>> RaggedTensor.from_row_splits(ids, row_splits)
-  [[0, 1, 2], [3, 4]]  # Dummy ids.
-  >>> RaggedTensor.from_row_splits(start, row_splits)
-  start = [[[0, 3, 4], [0, 5]]]
-  >>> RaggedTensor.from_row_splits(end, row_splits)
-  end = [[[3, 4, 5], [5, 10]]]
-  ```
-
-  Args:
-    input_values: 1D Tensor of strings to tokenize with.
-    wp_model: Buffer tensor for the FastWordpieceTokenizerConfig flatbuffer.
-
-  Returns:
-    * output_values: 1D tensor containing the wordpieces for all input strings.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-    * output_ids: 1D tensor containing the wordpiece ids for all input strings.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-    * output_row_splits: 1D int tensor with the row splits that allow us to
-      build RaggedTensors from output_values, output_ids, start_values, and
-      end_values.
-    * start_values: 1D tensor containing the inclusive start byte offset for
-      each wordpiece in all input strings.  Corresponds 1:1 with output_values.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-    * end_values: 1D tensor containing the exclusive end byte offset for
-      each wordpiece in all input strings.  Corresponds 1:1 with output_values.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-)doc";
 
 // See `kDoc` data member for the documentation on this op kernel.
 //
@@ -277,8 +271,30 @@ class FastWordpieceDetokenizeOp
 
  public:
   FastWordpieceDetokenizeOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr char kOpName[] = "TFText>FastWordpieceDetokenize";
+  static constexpr char kDoc[] = R"doc(
+  Detokenizes sub-word ids into sentences.
+
+  ### Example:
+
+  ```python
+  >>> # Vocab of the model_buffer: ['a', 'ab', '##c', 'abc', '##d'].
+  >>> wordpiece_ids = [0, 1, 2, 3, 4]
+  >>> row_splits = [0, 3, 5]
+  >>> tokens = fast_wordpiece_tokenizer_detokenize(tokens, row_splits, model_buffer)
+  >>> tokens
+  ['a abc', 'abcd']
+  ```
+
+  Args:
+    input_values: 1D Tensor of sub-word ids.
+    input_row_splits: 1D Tensor of row splits that denotes the boundary of each
+      sentence in the `input_values`.
+    wp_model: Buffer tensor for the FastWordpieceTokenizerConfig flatbuffer.
+
+  Returns:
+    * output_values: 1D tensor containing all the sentences.
+)doc";
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -380,35 +396,6 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::ShapeInference(
   SH_RETURN_IF_ERROR(c->SetOutputShape(kOutputWords, rank_1_shape));
   return absl::OkStatus();
 }
-
-  template <tflite::shim::Runtime Rt>
-  const char FastWordpieceDetokenizeOp<Rt>::kOpName[] =
-      "TFText>FastWordpieceDetokenize";
-
-  template <tflite::shim::Runtime Rt>
-  const char FastWordpieceDetokenizeOp<Rt>::kDoc[] = R"doc(
-  Detokenizes sub-word ids into sentences.
-
-  ### Example:
-
-  ```python
-  >>> # Vocab of the model_buffer: ['a', 'ab', '##c', 'abc', '##d'].
-  >>> wordpiece_ids = [0, 1, 2, 3, 4]
-  >>> row_splits = [0, 3, 5]
-  >>> tokens = fast_wordpiece_tokenizer_detokenize(tokens, row_splits, model_buffer)
-  >>> tokens
-  ['a abc', 'abcd']
-  ```
-
-  Args:
-    input_values: 1D Tensor of sub-word ids.
-    input_row_splits: 1D Tensor of row splits that denotes the boundary of each
-      sentence in the `input_values`.
-    wp_model: Buffer tensor for the FastWordpieceTokenizerConfig flatbuffer.
-
-  Returns:
-    * output_values: 1D tensor containing all the sentences.
-)doc";
 
 }  // namespace text
 }  // namespace tensorflow

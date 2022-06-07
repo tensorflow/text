@@ -54,8 +54,38 @@ class WhitespaceTokenizeWithOffsetsV2Op
 
  public:
   WhitespaceTokenizeWithOffsetsV2Op() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr const char kOpName[] =
+      "TFText>WhitespaceTokenizeWithOffsetsV2";
+  static constexpr const char kDoc[] = R"doc(
+  Splits a string into tokens based off of Unicode whitespaces. It also returns
+  the relative byte offsets for each token.
+
+  ### Example:
+
+  ```python
+  >>> splitter = WhitespaceTokenizer()
+  >>> tokens, starts, ends = splitter.tokenize_with_offsets("a bb ccc")
+  >>> print(tokens.numpy(), starts.numpy(), ends.numpy())
+  [b'a' b'bb' b'ccc'] [0 2 5] [1 4 8]
+  ```
+
+  Args:
+    input_values: 1D Tensor of strings to tokenize.
+    input_config: A string representing a WhitespaceTokenizerConfig.
+
+  Returns:
+    * output_tokens: 1D tensor containing the tokens for all input strings.
+      A 2D RaggedTensor can be constructed from this and output_row_splits.
+    * output_row_splits: 1D int tensor with the row splits that allow us to
+      build RaggedTensors from output_tokens, output_start_offsets, and
+      output_end_offsets.
+    * output_start_offsets: 1D tensor containing the inclusive start byte offset
+      for each token in all input strings.  Corresponds 1:1 with output_tokens.
+      A 2D RaggedTensor can be constructed from this and output_row_splits.
+    * output_end_offsets: 1D tensor containing the exclusive end byte offset for
+      each token in all input strings.  Corresponds 1:1 with output_tokens.
+      A 2D RaggedTensor can be constructed from this and output_row_splits.
+  )doc";
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -176,45 +206,6 @@ absl::Status WhitespaceTokenizeWithOffsetsV2Op<Rt>::FillOutputTensor(
   for (int i = 0; i < buffer.size(); ++i) data(i) = buffer.at(i);
   return absl::OkStatus();
 }
-
-// Static member definitions.
-// These can be inlined once the toolchain is bumped up to C++17
-
-template <tflite::shim::Runtime Rt>
-const char WhitespaceTokenizeWithOffsetsV2Op<Rt>::kOpName[] =
-    "TFText>WhitespaceTokenizeWithOffsetsV2";
-
-template <tflite::shim::Runtime Rt>
-const char WhitespaceTokenizeWithOffsetsV2Op<Rt>::kDoc[] = R"doc(
-  Splits a string into tokens based off of Unicode whitespaces. It also returns
-  the relative byte offsets for each token.
-
-  ### Example:
-
-  ```python
-  >>> splitter = WhitespaceTokenizer()
-  >>> tokens, starts, ends = splitter.tokenize_with_offsets("a bb ccc")
-  >>> print(tokens.numpy(), starts.numpy(), ends.numpy())
-  [b'a' b'bb' b'ccc'] [0 2 5] [1 4 8]
-  ```
-
-  Args:
-    input_values: 1D Tensor of strings to tokenize.
-    input_config: A string representing a WhitespaceTokenizerConfig.
-
-  Returns:
-    * output_tokens: 1D tensor containing the tokens for all input strings.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-    * output_row_splits: 1D int tensor with the row splits that allow us to
-      build RaggedTensors from output_tokens, output_start_offsets, and
-      output_end_offsets.
-    * output_start_offsets: 1D tensor containing the inclusive start byte offset
-      for each token in all input strings.  Corresponds 1:1 with output_tokens.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-    * output_end_offsets: 1D tensor containing the exclusive end byte offset for
-      each token in all input strings.  Corresponds 1:1 with output_tokens.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-  )doc";
 
 }  // namespace text
 }  // namespace tensorflow

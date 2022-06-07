@@ -57,8 +57,35 @@ class FastBertNormalizeOp
 
  public:
   FastBertNormalizeOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr const char kOpName[] = "FastBertNormalize";
+  static constexpr const char kDoc[] = R"doc(
+  Normalizes texts.
+
+  It returns the normalized texts and the relative offsets from the normalized
+  text to the original text.
+
+  Args:
+    * input_values: 1D Tensor of strings to normalize.
+    * fast_bert_normalizer_model: Buffer tensor for the FastBertNormalizerModel
+      flatbuffer.
+
+  Returns:
+    * output_values: 1D tensor containing the normalized text for all input
+      strings. The shape is the same as the input strings.
+    * output_offsets: 1D tensor containing the offset mapping from the
+      normalized text to the original text. A 2D RaggedTensor can be constructed
+      from this and output_row_splits. For example, if the input is
+      `input_values[i1...iN]` with `N` strings, the constructed 2D RaggedTensor
+      `offsets[i1...iN, k]` is the byte offset in `input_values[i1...iN]` for
+      the `kth` byte in `output_values[i1...iN]` after normalization. Note that
+      `offsets[i1...iN, ...]` also covers the position following the last byte
+      in the normalized `output_values[i1...iN]`, so that we know the byte
+      offset position in `input_values[i1...iN]` that corresponds to the end of
+      `output_values[i1...iN]`.
+    * output_row_splits: 1D int tensor with the row splits that allow us to
+      build RaggedTensors from output_offsets.
+)doc";
+
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs();
 
@@ -232,40 +259,6 @@ absl::Status FastBertNormalizeOp<Rt>::ShapeInference(ShapeInferenceContext* c) {
 
   return absl::OkStatus();
 }
-
-template <tflite::shim::Runtime Rt>
-const char FastBertNormalizeOp<Rt>::kOpName[] = "FastBertNormalize";
-
-template <tflite::shim::Runtime Rt>
-const char FastBertNormalizeOp<Rt>::kDoc[] = R"doc(
-  Normalizes texts.
-
-  It returns the normalized texts and the relative offsets from the normalized
-  text to the original text.
-
-  Args:
-    * input_values: 1D Tensor of strings to normalize.
-    * fast_bert_normalizer_model: Buffer tensor for the FastBertNormalizerModel
-      flatbuffer.
-
-  Returns:
-    * output_values: 1D tensor containing the normalized text for all input
-      strings. The shape is the same as the input strings.
-    * output_offsets: 1D tensor containing the offset mapping from the
-      normalized text to the original text. A 2D RaggedTensor can be constructed
-      from this and output_row_splits. For example, if the input is
-      `input_values[i1...iN]` with `N` strings, the constructed 2D RaggedTensor
-      `offsets[i1...iN, k]` is the byte offset in `input_values[i1...iN]` for
-      the `kth` byte in `output_values[i1...iN]` after normalization. Note that
-      `offsets[i1...iN, ...]` also covers the position following the last byte
-      in the normalized `output_values[i1...iN]`, so that we know the byte
-      offset position in `input_values[i1...iN]` that corresponds to the end of
-      `output_values[i1...iN]`.
-      
-      
-    * output_row_splits: 1D int tensor with the row splits that allow us to
-      build RaggedTensors from output_offsets.
-)doc";
 
 }  // namespace text
 }  // namespace tensorflow

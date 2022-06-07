@@ -57,8 +57,27 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
                                             Rt>::ShapeInferenceContext;
 
   NgramsStringJoin() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr const char kOpName[] = "TFText>NgramsStringJoin";
+  static constexpr const char kDoc[] = R"doc(
+  Create a tensor of n-grams based on the string input data.
+
+  Args:
+    input_values: A string tensor, or a ragged string tensor (a 1D string value
+        tensor and one or more 1D int64 row_split tensors).
+    row_splits: List of integer tensors representing the splits of the
+        input_values
+    width:             scalar integer
+        The width of the ngram window.
+    axis:              scalar integer
+        The axis to create ngrams along.  Currently, it must be -1.
+    string_separator:  scalar string
+        The separator string used to join tokens together.
+
+  Returns:
+    output_values: A string tensor that matches the rank of 'data'.  Will be a
+        ragged tensor if 'data' is a ragged tensor.
+    output_row_splits: Splits of above.
+  )doc";
 
   // Attributes declaration
   static std::vector<std::string> Attrs() {
@@ -247,34 +266,6 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
   int64_t width_;
   std::string string_separator_;
 };
-
-// Static member definitions.
-// These can be inlined once the toolchain is bumped up to C++17
-
-template <tflite::shim::Runtime Rt>
-const char NgramsStringJoin<Rt>::kOpName[] = "TFText>NgramsStringJoin";
-
-template <tflite::shim::Runtime Rt>
-const char NgramsStringJoin<Rt>::kDoc[] = R"doc(
-  Create a tensor of n-grams based on the string input data.
-
-  Args:
-    input_values: A string tensor, or a ragged string tensor (a 1D string value
-        tensor and one or more 1D int64 row_split tensors).
-    row_splits: List of integer tensors representing the splits of the
-        input_values
-    width:             scalar integer
-        The width of the ngram window.
-    axis:              scalar integer
-        The axis to create ngrams along.  Currently, it must be -1.
-    string_separator:  scalar string
-        The separator string used to join tokens together.
-
-  Returns:
-    output_values: A string tensor that matches the rank of 'data'.  Will be a
-        ragged tensor if 'data' is a ragged tensor.
-    output_row_splits: Splits of above.
-  )doc";
 
 }  // namespace text
 }  // namespace tensorflow

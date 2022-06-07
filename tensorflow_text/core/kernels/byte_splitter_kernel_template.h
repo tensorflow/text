@@ -50,8 +50,10 @@ class ByteSplitterWithOffsetsOp
 
  public:
   ByteSplitterWithOffsetsOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr char kOpName[] = "TFText>ByteSplitWithOffsets";
+  static constexpr char kDoc[] = R"doc(
+  Splits a string into bytes
+  )doc";
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -168,18 +170,6 @@ absl::Status ByteSplitterWithOffsetsOp<Rt>::FillOutputTensor(
   for (int i = 0; i < buffer.size(); ++i) data(i) = buffer.at(i);
   return absl::OkStatus();
 }
-
-// Static member definitions.
-// These can be inlined once the toolchain is bumped up to C++17
-
-template <tflite::shim::Runtime Rt>
-const char ByteSplitterWithOffsetsOp<Rt>::kOpName[] =
-    "TFText>ByteSplitWithOffsets";
-
-template <tflite::shim::Runtime Rt>
-const char ByteSplitterWithOffsetsOp<Rt>::kDoc[] = R"doc(
-  Splits a string into bytes
-  )doc";
 
 }  // namespace text
 }  // namespace tensorflow
