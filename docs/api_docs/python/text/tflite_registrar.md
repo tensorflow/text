@@ -20,6 +20,9 @@ A module with a Python wrapper for TFLite TFText ops.
 
 ## Functions
 
+[`AddByteSplit(...)`](../text/tflite_registrar/AddByteSplit.md):
+AddByteSplit(arg0: int) -> None
+
 [`AddFastBertNormalize(...)`](../text/tflite_registrar/AddFastBertNormalize.md):
 AddFastBertNormalize(arg0: int) -> None
 
@@ -54,7 +57,8 @@ AddWhitespaceTokenize(arg0: int) -> None
 SELECT_TFTEXT_OPS<a id="SELECT_TFTEXT_OPS"></a>
 </td>
 <td>
-`[<built-in method AddFastBertNormalize of PyCapsule object>,
+`[<built-in method AddByteSplit of PyCapsule object>,
+ <built-in method AddFastBertNormalize of PyCapsule object>,
  <built-in method AddFastSentencepieceDetokenize of PyCapsule object>,
  <built-in method AddFastSentencepieceTokenize of PyCapsule object>,
  <built-in method AddFastWordpieceTokenize of PyCapsule object>,

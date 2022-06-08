@@ -31,6 +31,9 @@ Various tensorflow ops related to text-processing.
 
 [`class BertTokenizer`](./text/BertTokenizer.md): Tokenizer used for BERT.
 
+[`class ByteSplitter`](./text/ByteSplitter.md): Splits a string tensor into
+bytes.
+
 [`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
 implementations.
 
@@ -96,6 +99,9 @@ implementations.
 
 [`class TokenizerWithOffsets`](./text/TokenizerWithOffsets.md): Base class for
 tokenizer implementations that return offsets.
+
+[`class Trimmer`](./text/Trimmer.md): Truncates a list of segments using a
+pre-determined truncation strategy.
 
 [`class UnicodeCharTokenizer`](./text/UnicodeCharTokenizer.md): Tokenizes a
 tensor of UTF-8 strings on Unicode character boundaries.

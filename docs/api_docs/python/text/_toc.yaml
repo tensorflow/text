@@ -5,6 +5,8 @@ toc:
     path: /text/api_docs/python/text
   - title: BertTokenizer
     path: /text/api_docs/python/text/BertTokenizer
+  - title: ByteSplitter
+    path: /text/api_docs/python/text/ByteSplitter
   - title: Detokenizer
     path: /text/api_docs/python/text/Detokenizer
   - title: FastBertNormalizer
@@ -49,6 +51,8 @@ toc:
     path: /text/api_docs/python/text/Tokenizer
   - title: TokenizerWithOffsets
     path: /text/api_docs/python/text/TokenizerWithOffsets
+  - title: Trimmer
+    path: /text/api_docs/python/text/Trimmer
   - title: UnicodeCharTokenizer
     path: /text/api_docs/python/text/UnicodeCharTokenizer
   - title: UnicodeScriptTokenizer
@@ -136,6 +140,8 @@ toc:
   section:
   - title: Overview
     path: /text/api_docs/python/text/tflite_registrar
+  - title: AddByteSplit
+    path: /text/api_docs/python/text/tflite_registrar/AddByteSplit
   - title: AddFastBertNormalize
     path: /text/api_docs/python/text/tflite_registrar/AddFastBertNormalize
   - title: AddFastSentencepieceDetokenize

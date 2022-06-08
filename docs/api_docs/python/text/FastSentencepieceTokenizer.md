@@ -46,7 +46,6 @@ source</a>
 Detokenizes tokens into preprocessed text.
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -63,7 +62,6 @@ A `RaggedTensor` or `Tensor` with int32 encoded text with rank >=
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>

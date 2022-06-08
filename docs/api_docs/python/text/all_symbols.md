@@ -6,6 +6,7 @@
 
 *   <a href="../text.md"><code>text</code></a>
 *   <a href="../text/BertTokenizer.md"><code>text.BertTokenizer</code></a>
+*   <a href="../text/ByteSplitter.md"><code>text.ByteSplitter</code></a>
 *   <a href="../text/Detokenizer.md"><code>text.Detokenizer</code></a>
 *   <a href="../text/FastBertNormalizer.md"><code>text.FastBertNormalizer</code></a>
 *   <a href="../text/FastBertTokenizer.md"><code>text.FastBertTokenizer</code></a>
@@ -28,6 +29,7 @@
 *   <a href="../text/StateBasedSentenceBreaker.md"><code>text.StateBasedSentenceBreaker</code></a>
 *   <a href="../text/Tokenizer.md"><code>text.Tokenizer</code></a>
 *   <a href="../text/TokenizerWithOffsets.md"><code>text.TokenizerWithOffsets</code></a>
+*   <a href="../text/Trimmer.md"><code>text.Trimmer</code></a>
 *   <a href="../text/UnicodeCharTokenizer.md"><code>text.UnicodeCharTokenizer</code></a>
 *   <a href="../text/UnicodeScriptTokenizer.md"><code>text.UnicodeScriptTokenizer</code></a>
 *   <a href="../text/WaterfallTrimmer.md"><code>text.WaterfallTrimmer</code></a>
@@ -65,6 +67,7 @@
 *   <a href="../text/span_alignment.md"><code>text.span_alignment</code></a>
 *   <a href="../text/span_overlaps.md"><code>text.span_overlaps</code></a>
 *   <a href="../text/tflite_registrar.md"><code>text.tflite_registrar</code></a>
+*   <a href="../text/tflite_registrar/AddByteSplit.md"><code>text.tflite_registrar.AddByteSplit</code></a>
 *   <a href="../text/tflite_registrar/AddFastBertNormalize.md"><code>text.tflite_registrar.AddFastBertNormalize</code></a>
 *   <a href="../text/tflite_registrar/AddFastSentencepieceDetokenize.md"><code>text.tflite_registrar.AddFastSentencepieceDetokenize</code></a>
 *   <a href="../text/tflite_registrar/AddFastSentencepieceTokenize.md"><code>text.tflite_registrar.AddFastSentencepieceTokenize</code></a>

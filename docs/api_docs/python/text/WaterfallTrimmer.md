@@ -21,6 +21,8 @@ source</a>
 
 A `Trimmer` that allocates a length budget to segments in order.
 
+Inherits From: [`Trimmer`](../text/Trimmer.md)
+
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.WaterfallTrimmer(
     max_seq_length, axis=-1

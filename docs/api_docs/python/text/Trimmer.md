@@ -1,14 +1,14 @@
-description: A Trimmer that truncates the longest segment.
+description: Truncates a list of segments using a pre-determined truncation
+strategy.
 
 <div itemscope itemtype="http://developers.google.com/ReferenceObject">
-<meta itemprop="name" content="text.ShrinkLongestTrimmer" />
+<meta itemprop="name" content="text.Trimmer" />
 <meta itemprop="path" content="Stable" />
-<meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="generate_mask"/>
 <meta itemprop="property" content="trim"/>
 </div>
 
-# text.ShrinkLongestTrimmer
+# text.Trimmer
 
 <!-- Insert buttons and diff -->
 
@@ -19,21 +19,9 @@ description: A Trimmer that truncates the longest segment.
 <a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/trimmer_ops.py">View
 source</a>
 
-A `Trimmer` that truncates the longest segment.
-
-Inherits From: [`Trimmer`](../text/Trimmer.md)
-
-<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
-<code>text.ShrinkLongestTrimmer(
-    max_seq_length, axis=-1
-)
-</code></pre>
+Truncates a list of segments using a pre-determined truncation strategy.
 
 <!-- Placeholder for "Used in" -->
-
-A `Trimmer` that allocates a length budget to segments by shrinking whatever is
-the longest segment at each round at the end, until the total length of segments
-is no larger than the allocated budget. See `generate_mask()` for more details.
 
 ## Methods
 
@@ -43,26 +31,19 @@ is no larger than the allocated budget. See `generate_mask()` for more details.
 source</a>
 
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>@abc.abstractmethod</code>
 <code>generate_mask(
     segments
 )
 </code></pre>
 
-Calculates a truncation mask given a per-batch budget.
+Generates a boolean mask specifying which portions of `segments` to drop.
 
-Calculate a truncation mask given a budget of the max number of items for each
-batch row. The allocation of the budget is done using a 'shrink the largest
-segment' algorithm. This algorithm identifies the currently longest segment (in
-cases of tie, picking whichever segment occurs first) and reduces its length by
-1 by dropping its last element, repeating until the total length of segments is
-no larger than `_max_seq_length`.
-
-For example if the budget is [7] and we have segments of size [3, 4, 4], the
-truncate budget will be allocated as [2, 2, 3], going through truncation steps #
-Truncate the second segment. [3, 3, 4] # Truncate the last segment. [3, 3, 3] #
-Truncate the first segment. [2, 3, 3] # Truncate the second segment. [2, 2, 3]
+Users should be able to use the results of generate_mask() to drop items in
+segments using `tf.ragged.boolean_mask(seg, mask)`.
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -79,12 +60,17 @@ A list of `RaggedTensor` each w/ a shape of [num_batch,
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
-a list with len(segments) of `RaggedTensor`s, see superclass for details.
+a list with len(segments) number of items and where each item is a
+`RaggedTensor` with the same shape as its counterpart in `segments` and
+with a boolean dtype where each value is True if the corresponding
+value in `segments` should be kept and False if it should be dropped
+instead.
 </td>
 </tr>
 
@@ -107,6 +93,7 @@ Truncate the list of `segments` using the truncation strategy defined by
 `generate_mask`.
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -122,6 +109,7 @@ A list of `RaggedTensor`s w/ shape [num_batch, (num_items)].
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
