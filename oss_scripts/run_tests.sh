@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -x  # print commands as they are executed
 set -e  # fail and exit on any command erroring
 
