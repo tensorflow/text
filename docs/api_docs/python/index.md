@@ -2,6 +2,8 @@
 
 <!-- Insert buttons and diff -->
 
+DO_NOT_SUBMIT
+
 ## Primary symbols
 
 *   <a href="./text.md"><code>text</code></a>
