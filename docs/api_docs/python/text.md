@@ -6,6 +6,8 @@ description: Various tensorflow ops related to text-processing.
 <meta itemprop="property" content="__version__"/>
 </div>
 
+DO_NOT_SUBMIT
+
 # Module: text
 
 <!-- Insert buttons and diff -->
