@@ -18,6 +18,7 @@
 from absl.testing import parameterized
 
 from tensorflow.python.framework import constant_op
+from tensorflow.python.framework import errors_impl
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import string_ops
@@ -231,6 +232,12 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
     if extracted_tokens is not None:
       self.assertAllEqual(extracted_tokens, expected)
 
+  def testRegexSplitWithInvalidRegex(self):
+    with self.assertRaisesRegex(errors_impl.InvalidArgumentError,
+                                "Invalid pattern.*"):
+      result = regex_split_ops.regex_split("<img_1><img_2><img_3>", ">(?=<)")
+      self.evaluate(result)
+
 
 @test_util.run_all_in_graph_and_eager_modes
 class RegexSplitterTestCases(test.TestCase, parameterized.TestCase):
@@ -274,6 +281,7 @@ class RegexSplitterTestCases(test.TestCase, parameterized.TestCase):
     sentence_breaker = regex_split_ops.RegexSplitter(new_sentence_regex)
     actual = sentence_breaker.split(text_input)
     self.assertAllEqual(actual, expected)
+
 
 if __name__ == "__main__":
   test.main()

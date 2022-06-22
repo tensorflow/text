@@ -14,7 +14,6 @@
 
 #include <memory>
 
-#include "absl/memory/memory.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/framework/types.h"
@@ -23,8 +22,6 @@
 
 namespace tensorflow {
 namespace text {
-
-using ::tensorflow::Status;
 
 class RegexSplitOp : public tensorflow::OpKernel {
  public:
@@ -35,7 +32,41 @@ class RegexSplitOp : public tensorflow::OpKernel {
     bool should_keep_delim;
     std::shared_ptr<RE2> delim_re;
     std::shared_ptr<RE2> keep_delim_re;
-    GetRegexFromInput(ctx, &delim_re, &keep_delim_re);
+
+    // get regular expressions from input
+    const Tensor* delim_regex_pattern_tensor;
+    OP_REQUIRES_OK(
+        ctx, ctx->input("delim_regex_pattern", &delim_regex_pattern_tensor));
+    OP_REQUIRES(ctx,
+                TensorShapeUtils::IsScalar(delim_regex_pattern_tensor->shape()),
+                errors::InvalidArgument(
+                    "Pattern must be scalar, but received ",
+                    delim_regex_pattern_tensor->shape().DebugString()));
+    const string delim_regex_pattern =
+        delim_regex_pattern_tensor->flat<tstring>()(0);
+    delim_re = CachedDelimRE2(delim_regex_pattern);
+    OP_REQUIRES(
+        ctx, delim_re->ok(),
+        errors::InvalidArgument("Invalid pattern: ", delim_regex_pattern,
+                                ", error: ", delim_re->error()));
+
+    const Tensor* keep_delim_regex_pattern_tensor;
+    OP_REQUIRES_OK(ctx, ctx->input("keep_delim_regex_pattern",
+                                   &keep_delim_regex_pattern_tensor));
+    OP_REQUIRES(
+        ctx,
+        TensorShapeUtils::IsScalar(keep_delim_regex_pattern_tensor->shape()),
+        errors::InvalidArgument(
+            "Pattern must be scalar, but received ",
+            keep_delim_regex_pattern_tensor->shape().DebugString()));
+    const string keep_delim_regex_pattern =
+        keep_delim_regex_pattern_tensor->flat<tstring>()(0);
+    keep_delim_re = CachedKeepDelimRE2(keep_delim_regex_pattern);
+    OP_REQUIRES(
+        ctx, keep_delim_re->ok(),
+        errors::InvalidArgument("Invalid pattern: ", keep_delim_regex_pattern,
+                                ", error: ", keep_delim_re->error()));
+
     should_keep_delim = keep_delim_re->pattern().empty() ? false : true;
 
     const Tensor* input_tensor;
@@ -110,43 +141,6 @@ class RegexSplitOp : public tensorflow::OpKernel {
   }
 
  private:
-  void GetRegexFromInput(tensorflow::OpKernelContext* ctx,
-                         std::shared_ptr<RE2>* delim_re,
-                         std::shared_ptr<RE2>* keep_delim_re) {
-    const Tensor* delim_regex_pattern_tensor;
-    OP_REQUIRES_OK(
-        ctx, ctx->input("delim_regex_pattern", &delim_regex_pattern_tensor));
-    OP_REQUIRES(ctx,
-                TensorShapeUtils::IsScalar(delim_regex_pattern_tensor->shape()),
-                errors::InvalidArgument(
-                    "Pattern must be scalar, but received ",
-                    delim_regex_pattern_tensor->shape().DebugString()));
-    const string delim_regex_pattern =
-        delim_regex_pattern_tensor->flat<tstring>()(0);
-    *delim_re = CachedDelimRE2(delim_regex_pattern);
-    OP_REQUIRES(
-        ctx, (*delim_re)->ok(),
-        errors::InvalidArgument("Invalid pattern: ", delim_regex_pattern,
-                                ", error: ", (*delim_re)->error()));
-
-    const Tensor* keep_delim_regex_pattern_tensor;
-    OP_REQUIRES_OK(ctx, ctx->input("keep_delim_regex_pattern",
-                                   &keep_delim_regex_pattern_tensor));
-    OP_REQUIRES(
-        ctx,
-        TensorShapeUtils::IsScalar(keep_delim_regex_pattern_tensor->shape()),
-        errors::InvalidArgument(
-            "Pattern must be scalar, but received ",
-            keep_delim_regex_pattern_tensor->shape().DebugString()));
-    const string keep_delim_regex_pattern =
-        keep_delim_regex_pattern_tensor->flat<tstring>()(0);
-    *keep_delim_re = CachedKeepDelimRE2(keep_delim_regex_pattern);
-    OP_REQUIRES(
-        ctx, (*keep_delim_re)->ok(),
-        errors::InvalidArgument("Invalid pattern: ", keep_delim_regex_pattern,
-                                ", error: ", (*keep_delim_re)->error()));
-  }
-
   std::shared_ptr<RE2> CachedDelimRE2(const string& pattern) {
     {
       tf_shared_lock l(delim_mu_);
