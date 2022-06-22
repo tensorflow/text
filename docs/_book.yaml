@@ -16,7 +16,14 @@ upper_tabs:
 
     - name: Guide
       contents:
+
+      - heading: TensorFlow Text
+        style: divider
       - include: /text/guide/_toc.yaml
+
+      - heading: TensorFlow Models - NLP
+        style: Divider
+      - include: /tfmodels/nlp/_guide.yaml
 
     - name: API
       skip_translation: true
@@ -25,9 +32,11 @@ upper_tabs:
         path: /text/api_overview
 
       - heading: TensorFlow Text
+        style: divider
       - include: /text/api_docs/python/text/_toc.yaml
 
       - heading: TensorFlow Models - NLP
+        style: divider
       - title: tfm.nlp
         path: /api_docs/python/tfm/nlp
         status: external
