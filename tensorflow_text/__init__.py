@@ -24,6 +24,7 @@ from tensorflow_text.python.ops import *
 
 # Public symbols in the "tensorflow_text" package.  Symbols are sorted in
 # increasing order of their lowercase version.
+# DO_NOT_SUBMIT
 _allowed_symbols = [
     "BertTokenizer",
     "ByteSplitter",
