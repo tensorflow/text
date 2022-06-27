@@ -19,9 +19,10 @@ toc:
 
 - heading: NLP with BERT
   style: divider
-- title: "Fine tune BERT"
-  path: /text/tutorials/fine_tune_bert
+
 - title: "Fine Tune Bert on GLUE tasks"
   path: /text/tutorials/bert_glue
+- title: "Fine tune BERT"
+  path: /tfmodels/nlp/fine_tune_bert
 - title: "Quantify uncertainty with BERT"
   path: /text/tutorials/uncertainty_quantification_with_sngp_bert
