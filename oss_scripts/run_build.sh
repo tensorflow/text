@@ -10,6 +10,11 @@ if [[ $osname == "Darwin" ]]; then
   export CC_OPT_FLAGS='-mavx'
 fi
 
+# Set tensorflow version
+if [[ $osname != "Darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "Apple" ]]; then
+  source oss_scripts/prepare_tf_dep.sh
+fi
+
 # Run configure.
 source oss_scripts/configure.sh
 
@@ -21,11 +26,6 @@ if [ "$installed_bazel_version" != "$tf_bazel_version" ]; then
   echo "Version $tf_bazel_version should be installed, but found version ${installed_bazel_version}."
   echo "Run oss_scripts/install_bazel.sh or manually install the correct version."
   exit 1
-fi
-
-# Set tensorflow version
-if [[ $osname != "Darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "Apple" ]]; then
-  source oss_scripts/prepare_tf_dep.sh
 fi
 
 # Build the pip package.

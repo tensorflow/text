@@ -20,6 +20,9 @@ sed -i $ext "s/project_version = 'REPLACE_ME'/project_version = '${tf_version}'/
 # update __version__
 sed -i $ext "s/__version__ = .*\$/__version__ = \"${tf_version}\"/" tensorflow_text/__init__.py
 
+# Update TF branch to download .bazelrc and .bazelversion from, according to the TF which is installed
+sed -E -i 's|curl https://raw.githubusercontent.com/tensorflow/tensorflow/master|curl https://raw.githubusercontent.com/tensorflow/tensorflow/v${tf_version}|' oss_scripts/configure.sh
+
 # Get commit sha of installed tensorflow
 # For some unknown reason this now needs to be split into two commands on Windows
 short_commit_sha=$($installed_python -c 'import tensorflow as tf; print(tf.__git_version__)' | tail -1)
