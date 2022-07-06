@@ -1,0 +1,24 @@
+namespace tensorflow.text;
+
+table PhraseTokenizerConfig {
+
+  // The width of ngram, i.e. the "n".
+  width: int;
+
+  // The unknown token string.
+  unk_token: string;
+
+  // The unkown token id.
+  unk_token_id: int;
+
+  // Whether the tokenizer supports detokenization function.
+  support_detokenization: bool;
+
+  // Phrases Vocabulary.
+  vocab_array: [string];
+
+  // // whilte space config.
+  // whitespace_config: string;
+}
+
+root_type PhraseTokenizerConfig;
