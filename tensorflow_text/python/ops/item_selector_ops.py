@@ -290,7 +290,7 @@ def _get_row_lengths_merged_to_axis(segments, axis=-1):
   return row_lengths
 
 
-def _get_selection_mask(original, num_to_select, axis=-1):
+def _get_selection_mask(original, num_to_select, axis=-1, reverse=False):
   """Get a selection mask given how many items to select."""
   num_to_select = ops.convert_to_tensor(num_to_select)
   num_to_select = array_ops.reshape(num_to_select, [-1])
@@ -305,7 +305,10 @@ def _get_selection_mask(original, num_to_select, axis=-1):
   zeros = math_ops.cast(
       array_ops.zeros_like(ragged_math_ops.range(zeros_row_length)),
       dtypes.int32)
-  results = array_ops.concat([ones, zeros], 1)
+  if reverse:
+    results = array_ops.concat([zeros, ones], 1)
+  else:
+    results = array_ops.concat([ones, zeros], 1)
   results = math_ops.cast(results, dtypes.bool)
   return results
 
@@ -352,6 +355,69 @@ class FirstNItemSelector(ItemSelector):
     merged_axis = axis - (axis - 1)
     selection_mask = _get_selection_mask(selectable_positions,
                                          self._num_to_select, merged_axis)
+    # Mask out positions that were not selected.
+    selected_positions = ragged_array_ops.boolean_mask(selectable_positions,
+                                                       selection_mask)
+
+    # Now that we have all the positions which were chosen, we recreate a mask
+    # (matching the original input's shape) where the value is True if it was
+    # selected. We do this by creating a "all false" RT and scattering true
+    # values to the positions chosen for selection.
+    all_true = selected_positions.with_flat_values(
+        array_ops.ones_like(selected_positions.flat_values))
+    all_false = math_ops.cast(
+        array_ops.zeros(array_ops.shape(input_ids.flat_values)), dtypes.int32)
+    results_flat = array_ops.tensor_scatter_update(
+        all_false, array_ops.expand_dims(selected_positions.flat_values, -1),
+        all_true.flat_values)
+    results = input_ids.with_flat_values(results_flat)
+    results = math_ops.cast(results, dtypes.bool)
+
+    # Reduce until input.shape[:axis]
+    for _ in range(input_ids.shape.ndims - axis - 1):
+      results = math_ops.reduce_all(results, -1)
+    return results
+
+
+class LastNItemSelector(ItemSelector):
+  """An `ItemSelector` that selects the last `n` items in the batch."""
+
+  def __init__(self, num_to_select, unselectable_ids=None):
+    """Creates an instance of `LastNItemSelector`.
+
+    Example:
+    >>> selector = LastNItemSelector(2)
+    >>> selection = selector.get_selection_mask(
+    ...     tf.ragged.constant([[1, 2, 3, 4], [5, 6, 7]]), axis=1)
+    >>> print(selection)
+    <tf.RaggedTensor [[False, False, True, True], [False, True, True]]>
+
+    Args:
+      num_to_select: An int which is the leading number of items to select.
+      unselectable_ids: (optional) A list of int ids that cannot be selected.
+        Default is empty list.
+    """
+    super(LastNItemSelector, self).__init__(unselectable_ids)
+    self._num_to_select = num_to_select
+
+  def get_selectable(self, input_ids, axis):
+    """See `get_selectable()` in superclass."""
+    selectable = super(LastNItemSelector, self).get_selectable(input_ids, axis)
+    axis = array_ops.get_positive_axis(
+        axis, input_ids.ragged_rank + input_ids.flat_values.shape.rank)
+    # Create a positions RT and mask out positions that are not selectable
+    positions_flat = math_ops.range(array_ops.size(input_ids.flat_values))
+    positions = input_ids.with_flat_values(positions_flat)
+    selectable_positions = ragged_array_ops.boolean_mask(positions, selectable)
+
+    # merge to the desired axis
+    selectable_positions = selectable_positions.merge_dims(
+        1, axis) if axis > 1 else selectable_positions
+
+    # Get a selection mask based off of how many items are desired for selection
+    merged_axis = axis - (axis - 1)
+    selection_mask = _get_selection_mask(
+        selectable_positions, self._num_to_select, merged_axis, reverse=True)
     # Mask out positions that were not selected.
     selected_positions = ragged_array_ops.boolean_mask(selectable_positions,
                                                        selection_mask)

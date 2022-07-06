@@ -495,6 +495,16 @@ py_test(
 py_library(
     name = "item_selector_ops",
     srcs = ["python/ops/item_selector_ops.py"],
+    visibility = [
+        ":__subpackages__",
+        "//java/com/google/android/apps/inputmethod/libs:__subpackages__",
+        "//learning/tfx/users/convrec_research/user_encoder/bert:__pkg__",
+        "//nlp:__subpackages__",
+        "//third_party/py/language:__subpackages__",
+        "//third_party/tensorflow_models/google/nlp:__subpackages__",
+        "//third_party/tensorflow_models/official/nlp:__subpackages__",
+        "//third_party/tensorflow_serving/model_servers:__pkg__",
+    ],
     deps = [
         # python:array_ops tensorflow dep,
         # python:control_flow_ops tensorflow dep,
