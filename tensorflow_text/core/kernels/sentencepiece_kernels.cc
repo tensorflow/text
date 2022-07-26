@@ -307,39 +307,41 @@ class SentencepieceTokenizeOp : public OpKernel {
     std::vector<std::vector<std::vector<typename std::conditional<
         std::is_same<T, tstring>::value, std::string, T>::type>>>
         nbest_tokens(return_nbest_ ? num_of_input_values : 0);
-    const bool return_nbest = return_nbest_;
-    const auto& worker_threads =
-        *(ctx->device()->tensorflow_cpu_worker_threads());
-    ::tensorflow::Shard(
-        worker_threads.num_threads,  // max parallelism
-        worker_threads.workers,      // thread pool
-        num_of_input_values,         // total number of data to process.
-        kCostPerUnit,                // cost per unit
-        [ctx, sp, &input_values_flat, &tokens, &nbest_tokens,
-         &nbest_size_tensor, &alpha_tensor,
-         return_nbest](int64 start, int64 limit) {
-          absl::ReaderMutexLock lock(&sp->mu);
-          for (int i = start; i < limit; ++i) {
-            const int32 nbest_size = nbest_size_tensor->dims() == 1
+    if (num_of_input_values > 0) {
+      const bool return_nbest = return_nbest_;
+      const auto& worker_threads =
+          *(ctx->device()->tensorflow_cpu_worker_threads());
+      ::tensorflow::Shard(
+          worker_threads.num_threads,  // max parallelism
+          worker_threads.workers,      // thread pool
+          num_of_input_values,         // total number of data to process.
+          kCostPerUnit,                // cost per unit
+          [ctx, sp, &input_values_flat, &tokens, &nbest_tokens,
+          &nbest_size_tensor, &alpha_tensor,
+          return_nbest](int64 start, int64 limit) {
+            absl::ReaderMutexLock lock(&sp->mu);
+            for (int i = start; i < limit; ++i) {
+              const int32 nbest_size = nbest_size_tensor->dims() == 1
                                          ? nbest_size_tensor->vec<int32>()(i)
                                          : nbest_size_tensor->scalar<int32>()();
-            if (return_nbest) {
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.NBestEncode(
-                                      input_values_flat(i), nbest_size,
-                                      &nbest_tokens[i])));
-            } else if (nbest_size == 0 || nbest_size == 1) {
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Encode(
-                                      input_values_flat(i), &tokens[i])));
-            } else {
-              const float alpha = alpha_tensor->dims() == 1
-                                      ? alpha_tensor->vec<float>()(i)
-                                      : alpha_tensor->scalar<float>()();
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.SampleEncode(
-                                      input_values_flat(i), nbest_size, alpha,
-                                      &tokens[i])));
+              if (return_nbest) {
+                OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.NBestEncode(
+                                        input_values_flat(i), nbest_size,
+                                        &nbest_tokens[i])));
+              } else if (nbest_size == 0 || nbest_size == 1) {
+                OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Encode(
+                                        input_values_flat(i), &tokens[i])));
+              } else {
+                const float alpha = alpha_tensor->dims() == 1
+                                        ? alpha_tensor->vec<float>()(i)
+                                        : alpha_tensor->scalar<float>()();
+                OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.SampleEncode(
+                                        input_values_flat(i), nbest_size, alpha,
+                                        &tokens[i])));
+              }
             }
-          }
-        });
+          });
+    }
 
     if (return_nbest_) {
       for (auto& col : nbest_tokens) {
@@ -446,39 +448,41 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
         return_nbest_ ? 0 : num_of_input_values);
     std::vector<sentencepiece::NBestSentencePieceText> nbest_results(
         return_nbest_ ? num_of_input_values : 0);
-    const bool return_nbest = return_nbest_;
-    const auto& worker_threads =
-        *(ctx->device()->tensorflow_cpu_worker_threads());
-    ::tensorflow::Shard(
-        worker_threads.num_threads,  // max parallelism
-        worker_threads.workers,      // thread pool
-        num_of_input_values,         // total number of data to process.
-        kCostPerUnit,
-        [ctx, sp, &input_values_flat, &results, &nbest_results,
-         &nbest_size_tensor, &alpha_tensor,
-         return_nbest](int64 start, int64 limit) {
-          absl::ReaderMutexLock lock(&sp->mu);
-          for (int i = start; i < limit; ++i) {
-            const int32 nbest_size = nbest_size_tensor->dims() == 1
+    if (num_of_input_values > 0) {
+      const bool return_nbest = return_nbest_;
+      const auto& worker_threads =
+          *(ctx->device()->tensorflow_cpu_worker_threads());
+      ::tensorflow::Shard(
+          worker_threads.num_threads,  // max parallelism
+          worker_threads.workers,      // thread pool
+          num_of_input_values,         // total number of data to process.
+          kCostPerUnit,
+          [ctx, sp, &input_values_flat, &results, &nbest_results,
+          &nbest_size_tensor, &alpha_tensor,
+          return_nbest](int64 start, int64 limit) {
+            absl::ReaderMutexLock lock(&sp->mu);
+            for (int i = start; i < limit; ++i) {
+              const int32 nbest_size = nbest_size_tensor->dims() == 1
                                          ? nbest_size_tensor->vec<int32>()(i)
                                          : nbest_size_tensor->scalar<int32>()();
-            if (return_nbest) {
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.NBestEncode(
-                                      input_values_flat(i), nbest_size,
-                                      &nbest_results[i])));
-            } else if (nbest_size == 0 || nbest_size == 1) {
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Encode(
-                                      input_values_flat(i), &results[i])));
-            } else {
-              const float alpha = alpha_tensor->dims() == 1
-                                      ? alpha_tensor->vec<float>()(i)
-                                      : alpha_tensor->scalar<float>()();
-              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.SampleEncode(
-                                      input_values_flat(i), nbest_size, alpha,
-                                      &results[i])));
+              if (return_nbest) {
+                OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.NBestEncode(
+                                        input_values_flat(i), nbest_size,
+                                        &nbest_results[i])));
+              } else if (nbest_size == 0 || nbest_size == 1) {
+                OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Encode(
+                                        input_values_flat(i), &results[i])));
+              } else {
+                const float alpha = alpha_tensor->dims() == 1
+                                        ? alpha_tensor->vec<float>()(i)
+                                        : alpha_tensor->scalar<float>()();
+                OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.SampleEncode(
+                                        input_values_flat(i), nbest_size, alpha,
+                                        &results[i])));
+              }
             }
-          }
-        });
+          });
+    }
 
     if (return_nbest_) {
       for (auto& nbest : nbest_results) {
@@ -580,38 +584,40 @@ class SentencepieceDetokenizeOp : public OpKernel {
                    ctx->allocate_output(0, {num_of_sentences}, &output_tensor));
     auto output_flat = output_tensor->flat<tensorflow::tstring>();
 
-    const auto& worker_threads =
-        *(ctx->device()->tensorflow_cpu_worker_threads());
-    ::tensorflow::Shard(
-        worker_threads.num_threads,  // max parallelism
-        worker_threads.workers,      // thread pool
-        num_of_sentences,            // total number of data to process.
-        kCostPerUnit,
-        [ctx, sp, &input_values_flat, &input_splits_flat, &output_flat](
-            int64 start, int64 limit) {
-          absl::ReaderMutexLock lock(&sp->mu);
-          for (int i = start; i < limit; ++i) {
-            if (i + 1 >= input_splits_flat.size()) {
-              ctx->CtxFailure(errors::OutOfRange("Invalid splits; ", i));
-              return;
+    if (input_values_flat.size() > 0) {
+      const auto& worker_threads =
+          *(ctx->device()->tensorflow_cpu_worker_threads());
+      ::tensorflow::Shard(
+          worker_threads.num_threads,  // max parallelism
+          worker_threads.workers,      // thread pool
+          num_of_sentences,            // total number of data to process.
+          kCostPerUnit,
+          [ctx, sp, &input_values_flat, &input_splits_flat, &output_flat](
+              int64 start, int64 limit) {
+            absl::ReaderMutexLock lock(&sp->mu);
+            for (int i = start; i < limit; ++i) {
+              if (i + 1 >= input_splits_flat.size()) {
+                ctx->CtxFailure(errors::OutOfRange("Invalid splits; ", i));
+                return;
+              }
+              if (input_splits_flat(i) > input_values_flat.size()) {
+                ctx->CtxFailure(errors::OutOfRange(
+                    "Splits and values do not match; split ",
+                    input_splits_flat(i), "but values size is ",
+                    input_values_flat.size()));
+                return;
+              }
+              const std::vector<typename std::conditional<
+                  std::is_same<T, tstring>::value, std::string, T>::type>
+                  pieces(&input_values_flat(input_splits_flat(i)),
+                        &input_values_flat(input_splits_flat(i + 1)));
+              std::string output_flat_str;
+              OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Decode(
+                                      pieces, &output_flat_str)));
+              output_flat(i) = output_flat_str;
             }
-            if (input_splits_flat(i) > input_values_flat.size()) {
-              ctx->CtxFailure(errors::OutOfRange(
-                  "Splits and values do not match; split ",
-                  input_splits_flat(i), "but values size is ",
-                  input_values_flat.size()));
-              return;
-            }
-            const std::vector<typename std::conditional<
-                std::is_same<T, tstring>::value, std::string, T>::type>
-                pieces(&input_values_flat(input_splits_flat(i)),
-                       &input_values_flat(input_splits_flat(i + 1)));
-            std::string output_flat_str;
-            OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Decode(
-                                    pieces, &output_flat_str)));
-            output_flat(i) = output_flat_str;
-          }
-        });
+          });
+    }
   }
 };
 

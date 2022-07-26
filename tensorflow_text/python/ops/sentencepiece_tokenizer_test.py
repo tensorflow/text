@@ -432,6 +432,24 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
     detokenized = sp.detokenize(result)
     self.assertAllEqual(_utf8(sentences), detokenized)
 
+  def testEmptyInputTokenize(self):
+    sp = SentencepieceTokenizer(self.model)
+    result = sp.tokenize(ragged_factory_ops.constant([], dtypes.string))
+    self.assertAllEqual([], result)
+
+  def testEmptyInputTokenizeWithOffsets(self):
+    sp = SentencepieceTokenizer(self.model)
+    t = ragged_factory_ops.constant([], dtypes.string)
+    (result, starts, ends) = sp.tokenize_with_offsets(t)
+    self.assertAllEqual([], result)
+    self.assertAllEqual([], starts)
+    self.assertAllEqual([], ends)
+
+  def testEmptyInputDetokenize(self):
+    sp = SentencepieceTokenizer(self.model)
+    detokenized = sp.detokenize(constant_op.constant([], dtypes.int32))
+    self.assertAllEqual('', detokenized)
+
   def testReturnNbestAndDetokenize(self):
     sp = SentencepieceTokenizer(
         self.model, nbest_size=2, out_type=dtypes.int32, return_nbest=True)
