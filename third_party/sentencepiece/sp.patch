@@ -53,7 +53,7 @@ index 173eb9c..2a43c3a 100644
  
  namespace sentencepiece {
 diff --git a/src/builder.cc b/src/builder.cc
-index 378aaa0..2643836 100644
+index 378aaa0..1557a07 100644
 --- a/src/builder.cc
 +++ b/src/builder.cc
 @@ -18,10 +18,10 @@
@@ -71,6 +71,15 @@ index 378aaa0..2643836 100644
  
  #ifdef ENABLE_NFKC_COMPILE
  #include <unicode/errorcode.h>
+@@ -36,7 +36,7 @@
+ 
+ #include "normalization_rule.h"
+ #include "normalizer.h"
+-#include "third_party/darts_clone/darts.h"
++#include "include/darts.h"
+ #include "util.h"
+ 
+ namespace sentencepiece {
 diff --git a/src/builder.h b/src/builder.h
 index 49d2884..289fab6 100644
 --- a/src/builder.h
@@ -225,20 +234,22 @@ index c49be1e..22c6378 100644
  
  namespace sentencepiece {
 diff --git a/src/model_interface.h b/src/model_interface.h
-index aef5b53..66ca91e 100644
+index aef5b53..fc14257 100644
 --- a/src/model_interface.h
 +++ b/src/model_interface.h
-@@ -25,8 +25,8 @@
+@@ -25,9 +25,9 @@
  #include "normalizer.h"
  #include "sentencepiece_model.pb.h"
  #include "sentencepiece_processor.h"
 -#include "third_party/absl/container/flat_hash_map.h"
 -#include "third_party/absl/strings/string_view.h"
+-#include "third_party/darts_clone/darts.h"
 +#include "absl/container/flat_hash_map.h"
 +#include "absl/strings/string_view.h"
- #include "third_party/darts_clone/darts.h"
++#include "include/darts.h"
  #include "util.h"
  
+ namespace sentencepiece {
 diff --git a/src/model_interface_test.cc b/src/model_interface_test.cc
 index 69ee4e6..26a1e05 100644
 --- a/src/model_interface_test.cc
@@ -253,10 +264,10 @@ index 69ee4e6..26a1e05 100644
  
  namespace sentencepiece {
 diff --git a/src/normalizer.cc b/src/normalizer.cc
-index 100b875..788b87f 100644
+index 100b875..1791bd1 100644
 --- a/src/normalizer.cc
 +++ b/src/normalizer.cc
-@@ -18,10 +18,10 @@
+@@ -18,11 +18,11 @@
  #include <vector>
  
  #include "common.h"
@@ -264,26 +275,30 @@ index 100b875..788b87f 100644
 -#include "third_party/absl/strings/match.h"
 -#include "third_party/absl/strings/string_view.h"
 -#include "third_party/absl/strings/strip.h"
+-#include "third_party/darts_clone/darts.h"
 +#include "absl/memory/memory.h"
 +#include "absl/strings/match.h"
 +#include "absl/strings/string_view.h"
 +#include "absl/strings/strip.h"
- #include "third_party/darts_clone/darts.h"
++#include "include/darts.h"
  #include "util.h"
  
+ namespace sentencepiece {
 diff --git a/src/normalizer.h b/src/normalizer.h
-index 622bbd2..f2ac4cb 100644
+index 622bbd2..1326102 100644
 --- a/src/normalizer.h
 +++ b/src/normalizer.h
-@@ -24,7 +24,7 @@
+@@ -24,8 +24,8 @@
  #include "common.h"
  #include "sentencepiece_model.pb.h"
  #include "sentencepiece_processor.h"
 -#include "third_party/absl/strings/string_view.h"
+-#include "third_party/darts_clone/darts.h"
 +#include "absl/strings/string_view.h"
- #include "third_party/darts_clone/darts.h"
++#include "include/darts.h"
  #include "util.h"
  
+ namespace sentencepiece {
 diff --git a/src/pretokenizer_for_training.cc b/src/pretokenizer_for_training.cc
 index 049658e..8021511 100644
 --- a/src/pretokenizer_for_training.cc
@@ -664,6 +679,19 @@ index 3b99060..9c72fb9 100644
  #include "unigram_model.h"
  #include "util.h"
  
+diff --git a/src/unigram_model.h b/src/unigram_model.h
+index 448e489..9062f12 100644
+--- a/src/unigram_model.h
++++ b/src/unigram_model.h
+@@ -24,7 +24,7 @@
+ #include "freelist.h"
+ #include "model_interface.h"
+ #include "sentencepiece_model.pb.h"
+-#include "third_party/darts_clone/darts.h"
++#include "include/darts.h"
+ 
+ namespace sentencepiece {
+ namespace unigram {
 diff --git a/src/unigram_model_test.cc b/src/unigram_model_test.cc
 index f93b21c..808e907 100644
 --- a/src/unigram_model_test.cc
