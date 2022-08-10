@@ -343,3 +343,28 @@ to do with Homebrew.
    ```Shell
    pip install ./tensorflow_text-*-*-*-os_platform.whl
    ```
+
+### Build or test using TensorFlow's SIG docker image:
+
+1.  Pull image from
+    [Tensorflow SIG docker builds](https://hub.docker.com/r/tensorflow/build/tags).
+
+1.  Run a container based with the pulled image and create a bash session.
+    This can be done by running `docker run -it {image_name} bash`. <br />
+    `{image_name}` can be any name with `{tf_verison}-python{python_version}` format.
+    An example for python 3.10 and TF version 2.10 :- `2.10-python3.10`.
+1.  Clone the TF-Text Github repository inside container:  `git clone https://github.com/tensorflow/text.git`. <br />
+    Once cloned, change to the working directory using `cd text/`.
+1.  Run the configuration script(s): `./oss_scripts/configure.sh` and `./oss_scripts/prepare_tf_dep.sh`. <br />
+    This will update bazel and TF dependencies to installed tensorflow in the container.
+1.  To run the tests, use the bazel command: `bazel test --test_output=errors tensorflow_text:all`. This will run all the tests declared in the `BUILD` file. <br />
+    To run a specific test, modify the above command replacing `:all` with the test name (for example `:fast_bert_normalizer`).
+    
+1.  Build the pip package/wheel: \
+    `bazel build --config=release_cpu_linux
+    oss_scripts/pip_package:build_pip_package` \
+    `./bazel-bin/oss_scripts/pip_package/build_pip_package
+    /{wheel_dir}` <br />
+
+    Once the build is complete, you should see the wheel available under
+    `{wheel_dir}` directory.
