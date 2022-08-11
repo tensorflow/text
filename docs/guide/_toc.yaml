@@ -1,4 +1,6 @@
 toc:
+- heading: TensorFlow Text
+  style: divider
 - title: "Get started with TF-Text"
   path: /text/guide/tf_text_intro
 

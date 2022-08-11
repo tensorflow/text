@@ -16,10 +16,8 @@ upper_tabs:
 
     - name: Guide
       contents:
-
-      - heading: TensorFlow Text
-        style: divider
       - include: /text/guide/_toc.yaml
+      - include: /tfmodels/nlp/_guide_toc.yaml
 
     - name: API
       skip_translation: true
