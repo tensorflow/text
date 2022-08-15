@@ -81,13 +81,13 @@ http_archive(
 
 http_archive(
     name = "pybind11",
-    strip_prefix = "pybind11-2.8.1",
-    sha256 = "f1bcc07caa568eb312411dde5308b1e250bd0e1bc020fae855bf9f43209940cc",
     urls = [
-        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11/archive/v2.8.1.tar.gz",
-        "https://github.com/pybind/pybind11/archive/v2.8.1.tar.gz",
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11/archive/v2.10.0.tar.gz",
+        "https://github.com/pybind/pybind11/archive/v2.10.0.tar.gz",
     ],
-   build_file = "//third_party/pybind11:BUILD.bzl",
+    sha256 = "eacf582fa8f696227988d08cfc46121770823839fe9e301a20fbce67e7cd70ec",
+    strip_prefix = "pybind11-2.10.0",
+    build_file = "//third_party/pybind11:BUILD.bzl",
 )
 
 # Initialize TensorFlow dependencies.
