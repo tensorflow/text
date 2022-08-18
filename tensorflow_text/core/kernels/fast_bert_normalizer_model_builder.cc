@@ -14,6 +14,7 @@
 
 #include "tensorflow_text/core/kernels/fast_bert_normalizer_model_builder.h"
 
+#include <cstdint>
 #include <string>
 #include <utility>
 
@@ -164,7 +165,8 @@ absl::StatusOr<std::string> BuildFastBertNormalizerModelAndExportToFlatBuffer(
               text_norm::kMaximumUtf8LengthOfNormalizedString) {
             LOG(ERROR) << "The length of mapped value exceeds the maximum "
                           "supported. Codepoint: "
-                       << cp << ". Mapped value length: " << cp_norm.size()
+                       << uint32_t{cp}
+                       << ". Mapped value length: " << cp_norm.size()
                        << ". Maximum supported length: "
                        << text_norm::kMaximumUtf8LengthOfNormalizedString;
           }
@@ -172,7 +174,8 @@ absl::StatusOr<std::string> BuildFastBertNormalizerModelAndExportToFlatBuffer(
           if (current_offset > text_norm::kMaximumOffsetOfNormalizedString) {
             LOG(ERROR) << "The offset of mapped value exceeds the maximum "
                           "supported. Codepoint: "
-                       << cp << ". Mapped value offset: " << current_offset
+                       << uint32_t{cp}
+                       << ". Mapped value offset: " << current_offset
                        << ". Maximum supported length: "
                        << text_norm::kMaximumOffsetOfNormalizedString;
           }
