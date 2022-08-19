@@ -731,10 +731,7 @@ tf_cc_library(
     tf_deps = [
         # tf:lib tensorflow dep,
     ],
-    deps = [
-        ":sentence_breaking_utils",
-        "@com_google_absl//absl/status",
-    ],
+    deps = [":sentence_breaking_utils"],
 )
 
 tf_cc_library(
