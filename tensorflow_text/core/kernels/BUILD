@@ -733,6 +733,7 @@ tf_cc_library(
     ],
     deps = [
         ":sentence_breaking_utils",
+        "@com_google_absl//absl/status",
     ],
 )
 
