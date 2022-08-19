@@ -77,6 +77,9 @@ tf_cc_library(
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
     ],
+    deps = [
+        "@com_google_absl//absl/status",
+    ],
 )
 
 tf_cc_library(
