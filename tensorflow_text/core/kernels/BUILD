@@ -757,6 +757,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
