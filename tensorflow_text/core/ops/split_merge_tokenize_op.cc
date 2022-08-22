@@ -14,6 +14,7 @@
 
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
+#include "tensorflow/core/lib/core/status.h"
 
 namespace tensorflow {
 namespace text {

@@ -47,11 +47,13 @@ def py_tf_text_library(
                 "//conditions:default": ["-pthread"],
             }),
             alwayslink = 1,
-            deps = cc_op_kernels + select({
-                "@org_tensorflow//tensorflow:mobile": [
-                    "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+            deps = cc_op_kernels +
+                ["@com_google_absl//absl/status"] +
+                select({
+                    "@org_tensorflow//tensorflow:mobile": [
+                        "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
                 ],
-                "//conditions:default": [],
+                    "//conditions:default": [],
             }),
         )
 
@@ -92,6 +94,11 @@ def py_tf_text_library(
         deps = deps,
     )
 
+def _dedupe(list, item):
+    if item not in list:
+        return [item]
+    else:
+        return []
 
 def tf_cc_library(
         name,
@@ -123,12 +130,12 @@ def tf_cc_library(
     if "kernel" in name:
         alwayslink = 1
     # These are "random" deps likely needed by each library (http://b/142433427)
-    oss_deps = [
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/strings:cord",
-        "@com_google_absl//absl/time",
-        "@com_google_absl//absl/types:variant",
-    ]
+    oss_deps = []
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:flat_hash_map")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/status")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/strings:cord")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/time")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/types:variant")
     deps += select({
         "@org_tensorflow//tensorflow:mobile": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",

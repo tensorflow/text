@@ -77,9 +77,6 @@ tf_cc_library(
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
     ],
-    deps = [
-        "@com_google_absl//absl/status",
-    ],
 )
 
 tf_cc_library(
@@ -706,7 +703,6 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
@@ -733,7 +729,6 @@ tf_cc_library(
     ],
     deps = [
         ":sentence_breaking_utils",
-        "@com_google_absl//absl/status",
     ],
 )
 
@@ -757,7 +752,6 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
