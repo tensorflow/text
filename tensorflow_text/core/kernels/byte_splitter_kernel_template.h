@@ -144,8 +144,8 @@ template <tflite::shim::Runtime Rt>
   }
 
   // Allocate output & fill output tensors.
-  SH_RETURN_IF_ERROR(FillOutputTensor<unsigned char, tensorflow::uint8>(
-      bytes, kOutputBytes, context));
+  SH_RETURN_IF_ERROR(
+      FillOutputTensor<unsigned char, uint8_t>(bytes, kOutputBytes, context));
   SH_RETURN_IF_ERROR(FillOutputTensor<int64_t, int64_t>(
       row_splits, kOutputRowSplits, context));
   SH_RETURN_IF_ERROR(FillOutputTensor<int32_t, int32_t>(
