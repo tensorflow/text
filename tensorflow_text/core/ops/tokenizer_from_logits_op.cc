@@ -115,7 +115,7 @@ Status TokenizerFromLogitsShapeFn(InferenceContext* c) {
   c->set_output(1, c->Vector(num_splits));  // row_splits
   c->set_output(2, c->UnknownShapeOfRank(1));  // start_values
   c->set_output(3, c->UnknownShapeOfRank(1));  // limit_values
-  return Status::OK();
+  return OkStatus();
 }
 
 }  // namespace text

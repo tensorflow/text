@@ -41,7 +41,7 @@ REGISTER_OP("MaxSpanningTree")
 
       context->set_output(0, context->Vector(batch_size));
       context->set_output(1, context->Matrix(batch_size, max_nodes));
-      return tensorflow::Status::OK();
+      return tensorflow::OkStatus();
     })
     .Doc(R"doc(
 Finds the maximum directed spanning tree of a digraph.

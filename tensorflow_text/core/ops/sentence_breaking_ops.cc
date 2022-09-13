@@ -26,7 +26,7 @@ Status SentenceFragmentShapeFn(
     c->set_output(i, c->UnknownShapeOfRank(1));
   }
 
-  return Status::OK();
+  return OkStatus();
 }
 
 REGISTER_OP("SentenceFragments")

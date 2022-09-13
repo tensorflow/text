@@ -471,7 +471,7 @@ Status SentenceFragmenterV2::FindFragments(
     result->push_back(std::move(fragment));
     i_start = match.limit_index();
   }
-  return Status::OK();
+  return OkStatus();
 }
 
 // This method is essentially a control layer on top of a simple state machine

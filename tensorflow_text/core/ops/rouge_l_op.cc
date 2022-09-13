@@ -96,7 +96,7 @@ Status RougeLShapeFn(InferenceContext* c) {
   c->set_output(1, c->Vector(dim));
   c->set_output(2, c->Vector(dim));
 
-  return Status::OK();
+  return OkStatus();
 }
 
 }  // namespace tensorflow

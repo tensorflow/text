@@ -98,7 +98,7 @@ Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
     *container = h(0);
     *table_handle = h(1);
   }
-  return Status::OK();
+  return OkStatus();
 }
 
 // Gets the LookupTable stored in the ctx->resource_manager() with key
@@ -136,7 +136,7 @@ class LookupTableVocab : public WordpieceVocab {
 
 Status ToStatus(const LookupStatus& status) {
   if (status.success) {
-    return Status::OK();
+    return OkStatus();
   }
 
   return errors::InvalidArgument(status.error_msg);

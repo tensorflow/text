@@ -108,7 +108,7 @@ Status TokenizeByLabel(const absl::string_view& text,
     last_character_is_break_character = is_break_character;
   }
 
-  return Status::OK();
+  return OkStatus();
 }
 
 }  // namespace

@@ -83,7 +83,7 @@ struct SentencepieceResource : public ResourceBase {
             .WithName(unique_node_name)
             .WithAttr("model", model)
             .WithAttr("use_node_name_sharing", true));
-    return Status::OK();
+    return OkStatus();
   }
 };
 
@@ -133,13 +133,13 @@ tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
     // the reader lock once and do a quick check first.
     absl::ReaderMutexLock l(&sp->mu);
     if (sp->SameOptions(add_bos, add_eos, reverse)) {
-      return Status::OK();
+      return OkStatus();
     }
   }
 
   absl::WriterMutexLock lock(&sp->mu);
   if (sp->SameOptions(add_bos, add_eos, reverse)) {
-    return Status::OK();
+    return OkStatus();
   }
   string options;
   sp->add_bos = add_bos;
@@ -164,7 +164,7 @@ tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
   TF_RETURN_IF_ERROR(ToTFStatus(sp->processor.SetEncodeExtraOptions(options)));
   TF_RETURN_IF_ERROR(ToTFStatus(sp->processor.SetDecodeExtraOptions(options)));
 
-  return Status::OK();
+  return OkStatus();
 }
 
 }  // namespace
@@ -227,7 +227,7 @@ class SentencepieceOp : public OpKernel {
               }
 
               *resource = sp;
-              return Status::OK();
+              return OkStatus();
             };
 
     // Register the ResourceType alias.
