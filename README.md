@@ -24,9 +24,9 @@ welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CO
 
 # TensorFlow Text - Text processing in Tensorflow
 
-IMPORTANT: When installing TF Text with `pip install`, please note the version
-of TensorFlow you are running, as you should specify the corresponding minor
-version of TF Text (eg. for tensorflow==2.3.x use tensorflow_text==2.3.x).
+**IMPORTANT**: When installing TF Text with `pip install`, please note the
+version of TensorFlow you are running, as you should specify the corresponding
+minor version of TF Text (eg. for tensorflow==2.3.x use tensorflow_text==2.3.x).
 
 ## INDEX
 * [Introduction](#introduction)
@@ -318,6 +318,21 @@ Text, and if you're using TF 1.15, install the 1.15 version of TF Text.
 ```bash
 pip install -U tensorflow-text==<version>
 ```
+
+### A note about different operating system packages
+
+After version 2.10, we will only be providing pip packages for Linux x86_64 and
+Intel-based Macs. TensorFlow Text has always leveraged the release
+infrastructure of the core TensorFlow package to more easily maintain compatible
+releases with minimal maintenance, allowing the team to focus on TF Text itself
+and contributions to other parts of the TensorFlow ecosystem.
+
+For other systems like Windows, Aarch64, and Apple Macs, TensorFlow relies on
+[build collaborators](https://blog.tensorflow.org/2022/09/announcing-tensorflow-official-build-collaborators.html),
+and so we will not be providing packages for them. However, we will continue to
+accept PRs to make building for these OSs easy for users, and will try to point
+to community efforts related to them.
+
 
 ### Build from source steps:
 
