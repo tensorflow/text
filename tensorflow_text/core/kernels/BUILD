@@ -11,6 +11,28 @@ package(default_visibility = ["//visibility:public"])
 exports_files(["LICENSE"])
 
 cc_library(
+    name = "boise_offset_converter",
+    srcs = ["boise_offset_converter.cc"],
+    hdrs = ["boise_offset_converter.h"],
+    deps = [
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_test(
+    name = "boise_offset_converter_test",
+    size = "small",
+    srcs = ["boise_offset_converter_test.cc"],
+    deps = [
+        ":boise_offset_converter",
+        "@com_google_absl//absl/strings",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "byte_splitter",
     srcs = ["byte_splitter.cc"],
     hdrs = ["byte_splitter.h"],
