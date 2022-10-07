@@ -23,6 +23,22 @@ cc_test(
 )
 
 cc_test(
+    name = "boise_offset_converter_op_test",
+    size = "small",
+    srcs = [
+        "boise_offset_converter_op.cc",
+        "boise_offset_converter_op_test.cc",
+    ],
+    deps = [
+        # tf:framework tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:test_main tensorflow dep,
+        # tf/framework:shape_inference_testutil tensorflow dep,
+        "//tensorflow_text/core/kernels:boise_offset_converter_kernel",
+    ],
+)
+
+cc_test(
     name = "fast_wordpiece_tokenizer_op_test",
     size = "small",
     srcs = [

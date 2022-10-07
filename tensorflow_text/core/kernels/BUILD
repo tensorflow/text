@@ -32,6 +32,32 @@ cc_test(
     ],
 )
 
+tf_cc_library(
+    name = "boise_offset_converter_kernel",
+    srcs = ["boise_offset_converter_kernel.cc"],
+    hdrs = ["boise_offset_converter_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":boise_offset_converter_kernel_template",
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "boise_offset_converter_kernel_template",
+    hdrs = ["boise_offset_converter_kernel_template.h"],
+    deps = [
+        ":boise_offset_converter",
+        "@com_google_absl//absl/status",
+        # tf:portable_gif_internal tensorflow dep,
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:shape tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
 cc_library(
     name = "byte_splitter",
     srcs = ["byte_splitter.cc"],

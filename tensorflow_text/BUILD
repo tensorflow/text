@@ -31,6 +31,7 @@ cc_library(
     name = "ops_lib",
     visibility = ["//visibility:public"],
     deps = [
+        ":boise_offset_converter_cc",
         ":byte_splitter_cc",
         ":constrained_sequence_op_cc",
         ":fast_bert_normalizer_cc",
@@ -73,6 +74,7 @@ py_library(
     srcs_version = "PY3",
     deps = [
         ":bert_tokenizer",
+        ":boise_offset_converter",
         ":byte_splitter",
         ":create_feature_bitmask_op",
         ":fast_bert_normalizer",
@@ -170,6 +172,35 @@ py_test(
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "boise_offset_converter",
+    srcs = ["python/ops/boise_offset_converter.py"],
+    cc_op_defs = [
+        "//tensorflow_text/core/ops:boise_offset_converter_op.cc",
+    ],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels:boise_offset_converter_kernel",
+    ],
+    deps = [
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged:ragged_conversion_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "boise_offset_converter_test",
+    size = "medium",
+    srcs = ["python/ops/boise_offset_converter_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":tensorflow_text",
+        # tensorflow package dep,
+        # python:client_testlib tensorflow dep,
     ],
 )
 

@@ -74,6 +74,7 @@ _allowed_symbols = [
     "normalize_utf8_with_offsets_map",
     "pad_along_dimension",
     "pad_model_inputs",
+    "offsets_to_boise_tags",
     "regex_split",
     "regex_split_with_offsets",
     "sentence_fragments",
