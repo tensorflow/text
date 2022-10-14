@@ -47,6 +47,7 @@ from tensorflow_text.python.ops.normalize_ops import normalize_utf8
 from tensorflow_text.python.ops.normalize_ops import normalize_utf8_with_offsets_map
 from tensorflow_text.python.ops.pad_along_dimension_op import pad_along_dimension
 from tensorflow_text.python.ops.pad_model_inputs_ops import pad_model_inputs
+from tensorflow_text.python.ops.phrase_tokenizer import PhraseTokenizer
 from tensorflow_text.python.ops.pointer_ops import gather_with_default
 from tensorflow_text.python.ops.pointer_ops import span_alignment
 from tensorflow_text.python.ops.pointer_ops import span_overlaps

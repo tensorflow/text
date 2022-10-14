@@ -92,6 +92,35 @@ py_test(
 )
 
 pybind_extension(
+    name = "pywrap_phrase_tokenizer_model_builder",
+    srcs = ["pywrap_phrase_tokenizer_model_builder.cc"],
+    additional_exported_symbols = [
+        "BuildPhraseModel",
+    ],
+    copts = ["-fexceptions"],
+    features = ["-use_header_modules"],
+    module_name = "pywrap_phrase_tokenizer_model_builder",
+    srcs_version = "PY3ONLY",
+    deps = [
+        "//tensorflow_text/core/kernels:phrase_tokenizer_model_builder",
+        "@pybind11",
+    ],
+)
+
+py_test(
+    name = "pywrap_phrase_tokenizer_model_builder_test",
+    srcs = ["pywrap_phrase_tokenizer_model_builder_test.py"],
+    data = [
+        "//tensorflow_text:python/ops/test_data/phrase_tokenizer_model.fb",
+    ],
+    python_version = "PY3",
+    deps = [
+        ":pywrap_phrase_tokenizer_model_builder",
+        # tensorflow package dep,
+    ],
+)
+
+pybind_extension(
     name = "pywrap_model_converter",
     srcs = ["pywrap_model_converter.cc"],
     additional_exported_symbols = [

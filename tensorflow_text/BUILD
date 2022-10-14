@@ -14,6 +14,7 @@ exports_files(["LICENSE"])
 
 exports_files([
     "python/ops/test_data/fast_sentencepiece.model",
+    "python/ops/test_data/phrase.model",
 ])
 
 ####################################
@@ -40,6 +41,7 @@ cc_library(
         ":mst_ops_cc",
         ":ngrams_op_cc",
         ":normalize_ops_cc",
+        ":phrase_tokenizer_cc",
         ":regex_split_ops_cc",
         ":sentence_breaking_ops_cc",
         ":sentencepiece_tokenizer_cc",
@@ -91,6 +93,7 @@ py_library(
         ":normalize_ops",
         ":pad_along_dimension_op",
         ":pad_model_inputs_ops",
+        ":phrase_tokenizer",
         ":pointer_ops",
         ":regex_split_ops",
         ":segment_combiner_ops",
@@ -417,6 +420,48 @@ py_test(
     srcs = ["python/ops/fast_wordpiece_tokenizer_test.py"],
     data = [
         ":python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
+    ],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":tensorflow_text",
+        "@absl_py//absl/testing:parameterized",
+        # tensorflow package dep,
+        # python:array_ops tensorflow dep,
+        # python:client_testlib tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
+        # python/compat tensorflow dep,
+        # python/data/kernel_tests:test_base tensorflow dep,
+        # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "phrase_tokenizer",
+    srcs = ["python/ops/phrase_tokenizer.py"],
+    cc_op_defs = ["//tensorflow_text/core/ops:phrase_tokenizer_op.cc"],
+    cc_op_kernels = [
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+        "//tensorflow_text/core/kernels:phrase_tokenizer_kernel",
+    ],
+    deps = [
+        ":tokenization",
+        # python:array_ops tensorflow dep,
+        # python:dtypes tensorflow dep,
+        # python:framework_ops tensorflow dep,
+        # python/ops/ragged:ragged_tensor tensorflow dep,
+        "//tensorflow_text/core/pybinds:pywrap_phrase_tokenizer_model_builder",
+    ],
+)
+
+py_test(
+    name = "phrase_tokenizer_test",
+    size = "small",
+    timeout = "moderate",
+    srcs = ["python/ops/phrase_tokenizer_test.py"],
+    data = [
+        ":python/ops/test_data/phrase_tokenizer_model.fb",
     ],
     python_version = "PY3",
     srcs_version = "PY3",
