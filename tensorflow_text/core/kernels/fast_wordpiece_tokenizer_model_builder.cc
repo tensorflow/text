@@ -33,12 +33,12 @@
 #include "icu4c/source/common/unicode/umachine.h"
 #include "icu4c/source/common/unicode/utf8.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
-#include "tensorflow_text/core/kernels/sentence_fragmenter_v2.h"
-#include "tensorflow_text/core/kernels/wordpiece_tokenizer.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_builder.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_wrapper.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_generated.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_utils.h"
+#include "tensorflow_text/core/kernels/sentence_fragmenter_v2.h"
+#include "tensorflow_text/core/kernels/string_vocab.h"
 
 namespace tensorflow {
 namespace text {
@@ -126,46 +126,6 @@ struct FailureStruct {
   // EncodeFailurePopList() in fast_wordpiece_tokenizer_utils.h.
   uint32_t failure_pops_offset_length =
       fast_wordpiece_tokenizer_utils::kNullFailurePopsList;
-};
-
-// An implementation of WordpieceVocab, used (1) to store the input vocabulary
-// and (2) to call the original implementation of WordPiece tokenization to
-// pre-compute the result for the suffix indicator string.
-class StringVocab : public WordpieceVocab {
- public:
-  explicit StringVocab(const std::vector<std::string>& vocab) : vocab_(vocab) {
-    for (int i = 0; i < vocab.size(); ++i) {
-      index_map_[vocab_[i]] = i;
-    }
-  }
-
-  LookupStatus Contains(absl::string_view key, bool* value) const override {
-    *value = index_map_.contains(key);
-    return LookupStatus();
-  }
-
-  absl::optional<int> LookupId(absl::string_view key) const {
-    auto it = index_map_.find(key);
-    if (it == index_map_.end()) {
-      return absl::nullopt;
-    } else {
-      return it->second;
-    }
-  }
-
-  // Returns the key of `vocab_id` or empty if `vocab_id` is not valid.
-  absl::optional<absl::string_view> LookupWord(int vocab_id) const {
-    if (vocab_id >= vocab_.size() || vocab_id < 0) {
-      return absl::nullopt;
-    }
-    return vocab_[vocab_id];
-  }
-
-  int Size() const { return index_map_.size(); }
-
- private:
-  std::vector<std::string> vocab_;
-  absl::flat_hash_map<absl::string_view, int> index_map_;
 };
 
 // Builds the FastWordpieceTokenizer model.

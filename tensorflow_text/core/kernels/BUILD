@@ -408,6 +408,13 @@ flatbuffer_cc_library(
     ],
 )
 
+flatbuffer_cc_library(
+    name = "phrase_tokenizer_model",
+    srcs = [
+        "phrase_tokenizer_model.fbs",
+    ],
+)
+
 tf_cc_library(
     name = "fast_wordpiece_tokenizer_model_builder",
     srcs = ["fast_wordpiece_tokenizer_model_builder.cc"],
@@ -420,7 +427,7 @@ tf_cc_library(
         ":fast_wordpiece_tokenizer_model",
         ":fast_wordpiece_tokenizer_utils",
         ":sentence_fragmenter_v2",
-        ":wordpiece_tokenizer",
+        ":string_vocab",
         "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
@@ -1063,6 +1070,52 @@ cc_test(
         ":whitespace_tokenizer_config_builder",
         "@com_google_googletest//:gtest_main",
         "@icu//:common",
+        # tf:lib tensorflow dep,
+        # tf:test_main tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "string_vocab",
+    srcs = ["string_vocab.cc"],
+    hdrs = ["string_vocab.h"],
+    deps = [
+        ":wordpiece_tokenizer",
+        "@com_google_absl//absl/container:flat_hash_map",
+    ],
+)
+
+cc_library(
+    name = "phrase_tokenizer",
+    srcs = ["phrase_tokenizer.cc"],
+    hdrs = ["phrase_tokenizer.h"],
+    deps = [
+        ":phrase_tokenizer_model",
+        ":string_vocab",
+        ":whitespace_tokenizer",
+        ":whitespace_tokenizer_config_builder",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "//third_party/absl/random",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        # lite/kernels/shim:status_macros tensorflow dep,
+        "//tensorflow_text/core/kernels/sentencepiece:double_array_trie",
+    ],
+)
+
+cc_test(
+    name = "phrase_tokenizer_test",
+    size = "small",
+    srcs = ["phrase_tokenizer_test.cc"],
+    data = [
+        "//tensorflow_text:python/ops/test_data/phrase_tokenizer_model.fb",
+    ],
+    deps = [
+        ":phrase_tokenizer",
+        "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
         # tf:lib tensorflow dep,
         # tf:test_main tensorflow dep,
     ],
