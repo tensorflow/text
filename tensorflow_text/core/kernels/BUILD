@@ -439,6 +439,32 @@ tf_cc_library(
 )
 
 tf_cc_library(
+    name = "phrase_tokenizer_model_builder",
+    srcs = ["phrase_tokenizer_model_builder.cc"],
+    hdrs = [
+        "phrase_tokenizer_model_builder.h",
+    ],
+    deps = [
+        ":darts_clone_trie_builder",
+        ":darts_clone_trie_wrapper",
+        ":fast_wordpiece_tokenizer_utils",
+        ":phrase_tokenizer_model",
+        ":sentence_fragmenter_v2",
+        ":string_vocab",
+        ":whitespace_tokenizer_config_builder",
+        ":wordpiece_tokenizer",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@icu//:nfkc",
+        # lite/kernels/shim:status_macros tensorflow dep,
+        "//tensorflow_text/core/kernels/sentencepiece:double_array_trie_builder",
+    ],
+)
+
+tf_cc_library(
     name = "fast_wordpiece_tokenizer_kernel",
     srcs = ["fast_wordpiece_tokenizer_kernel.cc"],
     hdrs = ["fast_wordpiece_tokenizer_kernel.h"],
