@@ -14,6 +14,8 @@
 
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer.h"
 
+#include <memory>
+
 #include "absl/base/attributes.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
@@ -54,7 +56,7 @@ FastWordpieceTokenizer::Create(const void* config_flatbuffer) {
         "FastWordpieceTokenizerConfig.trie_array.");
   }
   tokenizer.trie_ =
-      absl::make_unique<trie_utils::DartsCloneTrieWrapper>(*std::move(trie_or));
+      std::make_unique<trie_utils::DartsCloneTrieWrapper>(*std::move(trie_or));
   return std::move(tokenizer);
 }
 

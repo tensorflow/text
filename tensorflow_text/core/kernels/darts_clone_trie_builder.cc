@@ -15,6 +15,7 @@
 #include "tensorflow_text/core/kernels/darts_clone_trie_builder.h"
 
 #include <algorithm>
+#include <memory>
 #include <numeric>
 
 #include "absl/container/flat_hash_set.h"
@@ -84,7 +85,7 @@ absl::StatusOr<std::vector<uint32_t>> BuildDartsCloneTrie(
   }
 
   // Build the trie.
-  auto trie = absl::make_unique<Darts::DoubleArray>();
+  auto trie = std::make_unique<Darts::DoubleArray>();
   trie->build(trie_keys.size(), const_cast<char**>(&trie_keys[0]), nullptr,
               const_cast<int*>(&trie_values[0]));
 

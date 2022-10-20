@@ -15,6 +15,7 @@
 #include "tensorflow_text/core/kernels/fast_bert_normalizer_model_builder.h"
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -235,7 +236,7 @@ FastBertNormalizerFactory::FastBertNormalizerFactory(
                   "FastBertNormalizer from the data.";
     return;
   }
-  char_set_normalizer_ = absl::make_unique<FastBertNormalizer>(
+  char_set_normalizer_ = std::make_unique<FastBertNormalizer>(
       *std::move(char_set_recognizer_mapper));
 }
 }  // namespace text

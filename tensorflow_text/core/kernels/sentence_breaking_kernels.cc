@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -138,7 +139,7 @@ class SentenceFragmentsOp : public OpKernel {
     // at execution time (and to warm any data caches the converter needs).
     // This instance is not used.
     std::unique_ptr<WrappedConverter> input_encoder =
-        absl::make_unique<WrappedConverter>();
+        std::make_unique<WrappedConverter>();
     input_encoder->init(input_encoding_);
     OP_REQUIRES(
         context, input_encoder->converter_,
@@ -166,7 +167,7 @@ class SentenceFragmentsOp : public OpKernel {
 
     static thread_local std::unique_ptr<WrappedConverter> input_encoder;
     if (!input_encoder) {
-      input_encoder = absl::make_unique<WrappedConverter>();
+      input_encoder = std::make_unique<WrappedConverter>();
     }
     input_encoder->init(input_encoding_);
     OP_REQUIRES(
