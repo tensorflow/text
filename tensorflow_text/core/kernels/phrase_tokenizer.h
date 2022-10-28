@@ -83,7 +83,7 @@ class PhraseTokenizer {
 
   std::unique_ptr<StringVocab> vocab_ = nullptr;
   const PhraseTokenizerConfig* phrase_config_;
-  std::string whitespace_config_str_;
+  absl::string_view whitespace_config_str_;
   std::unique_ptr<sentencepiece::DoubleArrayTrie> trie_ = nullptr;
   float prob_;
   absl::BitGen gen_;

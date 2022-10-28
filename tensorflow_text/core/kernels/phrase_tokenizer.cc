@@ -36,7 +36,8 @@ namespace text {
   tokenizer.trie_ = absl::make_unique<sentencepiece::DoubleArrayTrie>(
       tokenizer.phrase_config_->vocab_trie()->nodes());
   tokenizer.prob_ = static_cast<float>(tokenizer.phrase_config_->prob()) / 100;
-  tokenizer.whitespace_config_str_ = BuildWhitespaceTokenizerConfig();
+  tokenizer.whitespace_config_str_ =
+      tokenizer.phrase_config_->whitespace_config()->string_view();
   tokenizer.whitespace_tokenizer_ = absl::make_unique<WhitespaceTokenizer>(
       WhitespaceTokenizerConfig(tokenizer.whitespace_config_str_));
   return std::move(tokenizer);
@@ -124,7 +125,7 @@ void PhraseTokenizer::PhraseLookup(const std::string& token, int cur,
         matched_phrase_id = m.id;
         matched_phrase_length = m.match_length;
         *in_trie = true;
-        if (absl::Bernoulli(*gen, prob)) {
+        if ((prob > 0) && absl::Bernoulli(*gen, prob)) {
           // Emit the current phrase.
           *emitted_phrase_id = m.id;
           *emitted_phrase_length = m.match_length;
