@@ -45,7 +45,7 @@ class PhraseBuilder {
 
  private:
   absl::optional<StringVocab> vocab_;
-  std::vector<uint32> trie_data_;
+  std::vector<uint32_t> trie_data_;
   std::string unk_token_;
   int unk_token_id_;
   // Whether the tokenizer supports the detokenization function.

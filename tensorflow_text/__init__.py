@@ -36,6 +36,7 @@ _allowed_symbols = [
     "HubModuleSplitter",
     "HubModuleTokenizer",
     "MaskValuesChooser",
+    "PhraseTokenizer",
     "RandomItemSelector",
     "Reduction",
     "RegexSplitter",

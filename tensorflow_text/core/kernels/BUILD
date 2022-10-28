@@ -1121,7 +1121,7 @@ cc_library(
         ":whitespace_tokenizer",
         ":whitespace_tokenizer_config_builder",
         "@com_google_absl//absl/container:flat_hash_map",
-        "//third_party/absl/random",
+        "@com_google_absl//absl/random",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         # lite/kernels/shim:status_macros tensorflow dep,
@@ -1144,6 +1144,32 @@ cc_test(
         "@com_google_absl//absl/status:statusor",
         # tf:lib tensorflow dep,
         # tf:test_main tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "phrase_tokenizer_kernel_template",
+    hdrs = ["phrase_tokenizer_kernel_template.h"],
+    deps = [
+        ":phrase_tokenizer",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "phrase_tokenizer_kernel",
+    srcs = ["phrase_tokenizer_kernel.cc"],
+    hdrs = ["phrase_tokenizer_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":phrase_tokenizer_kernel_template",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
     ],
 )
 
