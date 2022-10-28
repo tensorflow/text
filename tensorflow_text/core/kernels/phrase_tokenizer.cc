@@ -36,8 +36,9 @@ namespace text {
   tokenizer.trie_ = absl::make_unique<sentencepiece::DoubleArrayTrie>(
       tokenizer.phrase_config_->vocab_trie()->nodes());
   tokenizer.prob_ = static_cast<float>(tokenizer.phrase_config_->prob()) / 100;
+  const auto& ws_config = tokenizer.phrase_config_->whitespace_config();
   tokenizer.whitespace_config_str_ =
-      tokenizer.phrase_config_->whitespace_config()->string_view();
+      absl::string_view(ws_config->c_str(), ws_config->size());
   tokenizer.whitespace_tokenizer_ = absl::make_unique<WhitespaceTokenizer>(
       WhitespaceTokenizerConfig(tokenizer.whitespace_config_str_));
   return std::move(tokenizer);
