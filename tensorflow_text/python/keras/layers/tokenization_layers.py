@@ -19,7 +19,6 @@ import os
 
 import tensorflow as tf
 
-from tensorflow.python.keras.utils import tf_utils
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow_text.python.ops import unicode_script_tokenizer
@@ -75,7 +74,6 @@ class TokenizerBase(tf.keras.layers.Layer):
           text, default_value=self._pad_value)
     return text
 
-  @tf_utils.shape_type_conversion
   def compute_output_shape(self, input_shape):
     """Computes output shape for the layer.
 

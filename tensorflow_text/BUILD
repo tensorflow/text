@@ -1225,24 +1225,7 @@ py_library(
     ],
 )
 
-py_test(
-    name = "todense_test",
-    size = "large",
-    srcs = ["python/keras/layers/todense_test.py"],
-    python_version = "PY3",
-    shard_count = 2,
-    srcs_version = "PY3",
-    deps = [
-        ":todense_layer",
-        "@absl_py//absl/testing:parameterized",
-        "//third_party/py/keras/testing_infra:test_combinations",
-        "//third_party/py/keras/testing_infra:test_utils",
-        #  numpy dep,
-        # tensorflow package dep,
-        # python:framework_test_lib tensorflow dep,
-        # python/keras tensorflow dep,
-    ],
-)
+# todense_py_test
 
 py_library(
     name = "tokenization",
@@ -1267,22 +1250,7 @@ py_library(
     ],
 )
 
-py_test(
-    name = "tokenization_layers_test",
-    size = "large",
-    srcs = ["python/keras/layers/tokenization_layers_test.py"],
-    python_version = "PY3",
-    shard_count = 20,
-    deps = [
-        ":tokenization_layers",
-        "@absl_py//absl/testing:parameterized",
-        "//third_party/py/keras/testing_infra:test_combinations",
-        "//third_party/py/keras/testing_infra:test_utils",
-        #  numpy dep,
-        # tensorflow package dep,
-        # python/keras tensorflow dep,
-    ],
-)
+# tokenization_layers_py_test
 
 py_library(
     name = "trimmer_ops",
