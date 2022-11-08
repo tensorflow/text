@@ -259,7 +259,7 @@ class TokenizationLayersTest(test_combinations.TestCase, tf.test.TestCase):
     # create a functional API model
     i = tf.keras.layers.Input(shape=(1,), dtype=tf.string)
     splitter = tokenization_layers.UnicodeScriptTokenizer()
-    layer = tf.keras.layers.experimental.preprocessing.TextVectorization(
+    layer = tf.keras.layers.TextVectorization(
         split=splitter, output_mode=None)
     o = layer(i)
     model = tf.keras.models.Model(i, o)
