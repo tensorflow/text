@@ -290,7 +290,7 @@ def _get_row_lengths_merged_to_axis(segments, axis=-1):
   return row_lengths
 
 
-def _get_selection_mask(original, num_to_select, axis=-1):
+def _get_selection_mask(original, num_to_select, axis=-1, reverse=False):
   """Get a selection mask given how many items to select."""
   num_to_select = ops.convert_to_tensor(num_to_select)
   num_to_select = array_ops.reshape(num_to_select, [-1])
@@ -305,7 +305,7 @@ def _get_selection_mask(original, num_to_select, axis=-1):
   zeros = math_ops.cast(
       array_ops.zeros_like(ragged_math_ops.range(zeros_row_length)),
       dtypes.int32)
-  results = array_ops.concat([ones, zeros], 1)
+  results = array_ops.concat([ones, zeros] if not reverse else [zeros, ones], 1)
   results = math_ops.cast(results, dtypes.bool)
   return results
 
@@ -313,7 +313,7 @@ def _get_selection_mask(original, num_to_select, axis=-1):
 class FirstNItemSelector(ItemSelector):
   """An `ItemSelector` that selects the first `n` items in the batch."""
 
-  def __init__(self, num_to_select, unselectable_ids=None):
+  def __init__(self, num_to_select, unselectable_ids=None, reverse=False):
     """Creates an instance of `FirstNItemSelector`.
 
     Example:
@@ -330,9 +330,11 @@ class FirstNItemSelector(ItemSelector):
       num_to_select: An int which is the leading number of items to select.
       unselectable_ids: (optional) A list of int ids that cannot be selected.
         Default is empty list.
+      reverse: whether to select the last N items instead of the first.
     """
     super(FirstNItemSelector, self).__init__(unselectable_ids)
     self._num_to_select = num_to_select
+    self._reverse = reverse
 
   def get_selectable(self, input_ids, axis):
     """See `get_selectable()` in superclass."""
@@ -351,7 +353,8 @@ class FirstNItemSelector(ItemSelector):
     # Get a selection mask based off of how many items are desired for selection
     merged_axis = axis - (axis - 1)
     selection_mask = _get_selection_mask(selectable_positions,
-                                         self._num_to_select, merged_axis)
+                                         self._num_to_select, merged_axis,
+                                         self._reverse)
     # Mask out positions that were not selected.
     selected_positions = ragged_array_ops.boolean_mask(selectable_positions,
                                                        selection_mask)
