@@ -45,7 +45,7 @@ result[i1...iaxis, -R:] = right_pad
 
 <tr>
 <td>
-`data`
+`data`<a id="data"></a>
 </td>
 <td>
 `<dtype>[O1...ON, A, I1...IM]` A potentially ragged `K` dimensional
@@ -55,7 +55,7 @@ tensor with outer dimensions of size `O1...ON`; axis dimension of size
 </td>
 </tr><tr>
 <td>
-`axis`
+`axis`<a id="axis"></a>
 </td>
 <td>
 An integer constant specifying the axis along which padding is added.
@@ -63,7 +63,7 @@ Negative axis values from `-K` to `-1` are supported.
 </td>
 </tr><tr>
 <td>
-`left_pad`
+`left_pad`<a id="left_pad"></a>
 </td>
 <td>
 `<dtype>[L, I1...IM]` An `M+1` dimensional tensor that should be
@@ -72,7 +72,7 @@ should be added to the left side.
 </td>
 </tr><tr>
 <td>
-`right_pad`
+`right_pad`<a id="right_pad"></a>
 </td>
 <td>
 `<dtype>[R, I1...IM]` An `M+1` dimensional tensor that should be
@@ -81,7 +81,7 @@ should be added to the right side.
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 The name of this op (optional).

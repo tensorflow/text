@@ -6,6 +6,7 @@
 
 *   <a href="../text.md"><code>text</code></a>
 *   <a href="../text/BertTokenizer.md"><code>text.BertTokenizer</code></a>
+*   <a href="../text/ByteSplitter.md"><code>text.ByteSplitter</code></a>
 *   <a href="../text/Detokenizer.md"><code>text.Detokenizer</code></a>
 *   <a href="../text/FastBertNormalizer.md"><code>text.FastBertNormalizer</code></a>
 *   <a href="../text/FastBertTokenizer.md"><code>text.FastBertTokenizer</code></a>
@@ -15,6 +16,7 @@
 *   <a href="../text/HubModuleSplitter.md"><code>text.HubModuleSplitter</code></a>
 *   <a href="../text/HubModuleTokenizer.md"><code>text.HubModuleTokenizer</code></a>
 *   <a href="../text/MaskValuesChooser.md"><code>text.MaskValuesChooser</code></a>
+*   <a href="../text/PhraseTokenizer.md"><code>text.PhraseTokenizer</code></a>
 *   <a href="../text/RandomItemSelector.md"><code>text.RandomItemSelector</code></a>
 *   <a href="../text/Reduction.md"><code>text.Reduction</code></a>
 *   <a href="../text/RegexSplitter.md"><code>text.RegexSplitter</code></a>
@@ -28,6 +30,7 @@
 *   <a href="../text/StateBasedSentenceBreaker.md"><code>text.StateBasedSentenceBreaker</code></a>
 *   <a href="../text/Tokenizer.md"><code>text.Tokenizer</code></a>
 *   <a href="../text/TokenizerWithOffsets.md"><code>text.TokenizerWithOffsets</code></a>
+*   <a href="../text/Trimmer.md"><code>text.Trimmer</code></a>
 *   <a href="../text/UnicodeCharTokenizer.md"><code>text.UnicodeCharTokenizer</code></a>
 *   <a href="../text/UnicodeScriptTokenizer.md"><code>text.UnicodeScriptTokenizer</code></a>
 *   <a href="../text/WaterfallTrimmer.md"><code>text.WaterfallTrimmer</code></a>
@@ -56,6 +59,7 @@
 *   <a href="../text/ngrams.md"><code>text.ngrams</code></a>
 *   <a href="../text/normalize_utf8.md"><code>text.normalize_utf8</code></a>
 *   <a href="../text/normalize_utf8_with_offsets_map.md"><code>text.normalize_utf8_with_offsets_map</code></a>
+*   <a href="../text/offsets_to_boise_tags.md"><code>text.offsets_to_boise_tags</code></a>
 *   <a href="../text/pad_along_dimension.md"><code>text.pad_along_dimension</code></a>
 *   <a href="../text/pad_model_inputs.md"><code>text.pad_model_inputs</code></a>
 *   <a href="../text/regex_split.md"><code>text.regex_split</code></a>
@@ -65,6 +69,7 @@
 *   <a href="../text/span_alignment.md"><code>text.span_alignment</code></a>
 *   <a href="../text/span_overlaps.md"><code>text.span_overlaps</code></a>
 *   <a href="../text/tflite_registrar.md"><code>text.tflite_registrar</code></a>
+*   <a href="../text/tflite_registrar/AddByteSplit.md"><code>text.tflite_registrar.AddByteSplit</code></a>
 *   <a href="../text/tflite_registrar/AddFastBertNormalize.md"><code>text.tflite_registrar.AddFastBertNormalize</code></a>
 *   <a href="../text/tflite_registrar/AddFastSentencepieceDetokenize.md"><code>text.tflite_registrar.AddFastSentencepieceDetokenize</code></a>
 *   <a href="../text/tflite_registrar/AddFastSentencepieceTokenize.md"><code>text.tflite_registrar.AddFastSentencepieceTokenize</code></a>

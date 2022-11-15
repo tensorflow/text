@@ -63,7 +63,7 @@ https://www.tensorflow.org/text/guide/bert_preprocessing_guide
 
 <tr>
 <td>
-`vocab_lookup_table`
+`vocab_lookup_table`<a id="vocab_lookup_table"></a>
 </td>
 <td>
 A lookup table implementing the LookupInterface
@@ -72,7 +72,7 @@ to the vocab.txt file.
 </td>
 </tr><tr>
 <td>
-`suffix_indicator`
+`suffix_indicator`<a id="suffix_indicator"></a>
 </td>
 <td>
 (optional) The characters prepended to a wordpiece to
@@ -80,14 +80,14 @@ indicate that it is a suffix to another subword. Default is '##'.
 </td>
 </tr><tr>
 <td>
-`max_bytes_per_word`
+`max_bytes_per_word`<a id="max_bytes_per_word"></a>
 </td>
 <td>
 (optional) Max size of input token. Default is 100.
 </td>
 </tr><tr>
 <td>
-`max_chars_per_token`
+`max_chars_per_token`<a id="max_chars_per_token"></a>
 </td>
 <td>
 (optional) Max size of subwords, excluding suffix
@@ -96,7 +96,7 @@ long words.
 </td>
 </tr><tr>
 <td>
-`token_out_type`
+`token_out_type`<a id="token_out_type"></a>
 </td>
 <td>
 (optional) The type of the token to return. This can be
@@ -104,7 +104,7 @@ long words.
 </td>
 </tr><tr>
 <td>
-`unknown_token`
+`unknown_token`<a id="unknown_token"></a>
 </td>
 <td>
 (optional) The value to use when an unknown token is found.
@@ -115,7 +115,7 @@ tokens are left as is.
 </td>
 </tr><tr>
 <td>
-`split_unknown_characters`
+`split_unknown_characters`<a id="split_unknown_characters"></a>
 </td>
 <td>
 (optional) Whether to split out single unknown
@@ -124,7 +124,7 @@ characters will be treated as single unknown tokens.
 </td>
 </tr><tr>
 <td>
-`lower_case`
+`lower_case`<a id="lower_case"></a>
 </td>
 <td>
 bool - If true, a preprocessing step is added to lowercase the
@@ -132,7 +132,7 @@ text, apply NFD normalization, and strip accents characters.
 </td>
 </tr><tr>
 <td>
-`keep_whitespace`
+`keep_whitespace`<a id="keep_whitespace"></a>
 </td>
 <td>
 bool - If true, preserves whitespace characters instead of
@@ -140,7 +140,7 @@ stripping them away.
 </td>
 </tr><tr>
 <td>
-`normalization_form`
+`normalization_form`<a id="normalization_form"></a>
 </td>
 <td>
 If set to a valid value and lower_case=False, the input
@@ -149,7 +149,7 @@ for a list of valid values.
 </td>
 </tr><tr>
 <td>
-`preserve_unused_token`
+`preserve_unused_token`<a id="preserve_unused_token"></a>
 </td>
 <td>
 If true, text in the regex format `\\[unused\\d+\\]`
@@ -158,7 +158,7 @@ in the vocabulary.
 </td>
 </tr><tr>
 <td>
-`basic_tokenizer_class`
+`basic_tokenizer_class`<a id="basic_tokenizer_class"></a>
 </td>
 <td>
 If set, the class to use instead of BasicTokenizer

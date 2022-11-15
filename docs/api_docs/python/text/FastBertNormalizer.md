@@ -36,7 +36,7 @@ Normalizes a tensor of UTF-8 strings.
 
 <tr>
 <td>
-`lower_case_nfd_strip_accents`
+`lower_case_nfd_strip_accents`<a id="lower_case_nfd_strip_accents"></a>
 </td>
 <td>
 (optional). - If true, it first lowercases
@@ -46,7 +46,7 @@ replaces control characters with whitespaces.
 </td>
 </tr><tr>
 <td>
-`model_buffer`
+`model_buffer`<a id="model_buffer"></a>
 </td>
 <td>
 (optional) bytes object (or a uint8 tf.Tenosr) that contains

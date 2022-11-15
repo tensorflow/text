@@ -47,14 +47,14 @@ the default replacement character encoding. ```
 
 <tr>
 <td>
-`input`
+`input`<a id="input"></a>
 </td>
 <td>
 UTF-8 string tensor to coerce to valid UTF-8.
 </td>
 </tr><tr>
 <td>
-`replacement_char`
+`replacement_char`<a id="replacement_char"></a>
 </td>
 <td>
 The replacement character to be used in place of any
@@ -67,7 +67,7 @@ with a 1-byte replacement. (optional)
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 A name for the operation (optional).

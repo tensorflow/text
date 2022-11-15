@@ -68,21 +68,21 @@ overriding `get_mask_values()`.
 
 <tr>
 <td>
-`vocab_size`
+`vocab_size`<a id="vocab_size"></a>
 </td>
 <td>
 size of vocabulary.
 </td>
 </tr><tr>
 <td>
-`mask_token`
+`mask_token`<a id="mask_token"></a>
 </td>
 <td>
 The id of the mask token.
 </td>
 </tr><tr>
 <td>
-`mask_token_rate`
+`mask_token_rate`<a id="mask_token_rate"></a>
 </td>
 <td>
 (optional) A float between 0 and 1 which indicates how
@@ -91,7 +91,7 @@ Default is 0.8, NOTE: `mask_token_rate` + `random_token_rate` <= 1.
 </td>
 </tr><tr>
 <td>
-`random_token_rate`
+`random_token_rate`<a id="random_token_rate"></a>
 </td>
 <td>
 A float between 0 and 1 which indicates how often a
@@ -101,34 +101,17 @@ random token is substituted for tokens selected for masking. Default is
 </tr>
 </table>
 
-
-
-
-
 <!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
 
-<tr>
-<td>
-`mask_token`
-</td>
+<tr> <td> `mask_token`<a id="mask_token"></a> </td> <td>
+
+</td> </tr><tr> <td> `random_token_rate`<a id="random_token_rate"></a> </td>
 <td>
 
-</td>
-</tr><tr>
-<td>
-`random_token_rate`
-</td>
-<td>
-
-</td>
-</tr><tr>
-<td>
-`vocab_size`
-</td>
-<td>
+</td> </tr><tr> <td> `vocab_size`<a id="vocab_size"></a> </td> <td>
 
 </td>
 </tr>

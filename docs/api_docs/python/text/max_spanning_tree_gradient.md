@@ -36,14 +36,14 @@ and its |max_scores| output.
 
 <tr>
 <td>
-`mst_op`
+`mst_op`<a id="mst_op"></a>
 </td>
 <td>
 The MaximumSpanningTree op being differentiated.
 </td>
 </tr><tr>
 <td>
-`d_loss_d_max_scores`
+`d_loss_d_max_scores`<a id="d_loss_d_max_scores"></a>
 </td>
 <td>
 [B] vector where entry b is the gradient of the network
@@ -51,7 +51,7 @@ loss w.r.t. entry b of the |max_scores| output of the |mst_op|.
 </td>
 </tr><tr>
 <td>
-`*_`
+`*_`<a id="*_"></a>
 </td>
 <td>
 The gradients w.r.t. the other outputs; ignored.

@@ -5,6 +5,8 @@ toc:
     path: /text/api_docs/python/text
   - title: BertTokenizer
     path: /text/api_docs/python/text/BertTokenizer
+  - title: ByteSplitter
+    path: /text/api_docs/python/text/ByteSplitter
   - title: Detokenizer
     path: /text/api_docs/python/text/Detokenizer
   - title: FastBertNormalizer
@@ -23,6 +25,8 @@ toc:
     path: /text/api_docs/python/text/HubModuleTokenizer
   - title: MaskValuesChooser
     path: /text/api_docs/python/text/MaskValuesChooser
+  - title: PhraseTokenizer
+    path: /text/api_docs/python/text/PhraseTokenizer
   - title: RandomItemSelector
     path: /text/api_docs/python/text/RandomItemSelector
   - title: Reduction
@@ -49,6 +53,8 @@ toc:
     path: /text/api_docs/python/text/Tokenizer
   - title: TokenizerWithOffsets
     path: /text/api_docs/python/text/TokenizerWithOffsets
+  - title: Trimmer
+    path: /text/api_docs/python/text/Trimmer
   - title: UnicodeCharTokenizer
     path: /text/api_docs/python/text/UnicodeCharTokenizer
   - title: UnicodeScriptTokenizer
@@ -89,6 +95,8 @@ toc:
     path: /text/api_docs/python/text/normalize_utf8
   - title: normalize_utf8_with_offsets_map
     path: /text/api_docs/python/text/normalize_utf8_with_offsets_map
+  - title: offsets_to_boise_tags
+    path: /text/api_docs/python/text/offsets_to_boise_tags
   - title: pad_along_dimension
     path: /text/api_docs/python/text/pad_along_dimension
   - title: pad_model_inputs
@@ -136,6 +144,8 @@ toc:
   section:
   - title: Overview
     path: /text/api_docs/python/text/tflite_registrar
+  - title: AddByteSplit
+    path: /text/api_docs/python/text/tflite_registrar/AddByteSplit
   - title: AddFastBertNormalize
     path: /text/api_docs/python/text/tflite_registrar/AddFastBertNormalize
   - title: AddFastSentencepieceDetokenize

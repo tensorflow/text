@@ -39,14 +39,14 @@ An `ItemSelector` that selects the first `n` items in the batch.
 
 <tr>
 <td>
-`num_to_select`
+`num_to_select`<a id="num_to_select"></a>
 </td>
 <td>
 An int which is the leading number of items to select.
 </td>
 </tr><tr>
 <td>
-`unselectable_ids`
+`unselectable_ids`<a id="unselectable_ids"></a>
 </td>
 <td>
 (optional) A list of int ids that cannot be selected.
@@ -55,20 +55,12 @@ Default is empty list.
 </tr>
 </table>
 
-
-
-
-
 <!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
 
-<tr>
-<td>
-`unselectable_ids`
-</td>
-<td>
+<tr> <td> `unselectable_ids`<a id="unselectable_ids"></a> </td> <td>
 
 </td>
 </tr>

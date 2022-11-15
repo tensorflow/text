@@ -31,6 +31,9 @@ Various tensorflow ops related to text-processing.
 
 [`class BertTokenizer`](./text/BertTokenizer.md): Tokenizer used for BERT.
 
+[`class ByteSplitter`](./text/ByteSplitter.md): Splits a string tensor into
+bytes.
+
 [`class Detokenizer`](./text/Detokenizer.md): Base class for detokenizer
 implementations.
 
@@ -57,6 +60,9 @@ a Hub module.
 
 [`class MaskValuesChooser`](./text/MaskValuesChooser.md): Assigns values to the
 items chosen for masking.
+
+[`class PhraseTokenizer`](./text/PhraseTokenizer.md): Tokenizes a tensor of
+UTF-8 string tokens into phrases.
 
 [`class RandomItemSelector`](./text/RandomItemSelector.md): An `ItemSelector`
 implementation that randomly selects items in a batch.
@@ -96,6 +102,9 @@ implementations.
 
 [`class TokenizerWithOffsets`](./text/TokenizerWithOffsets.md): Base class for
 tokenizer implementations that return offsets.
+
+[`class Trimmer`](./text/Trimmer.md): Truncates a list of segments using a
+pre-determined truncation strategy.
 
 [`class UnicodeCharTokenizer`](./text/UnicodeCharTokenizer.md): Tokenizes a
 tensor of UTF-8 strings on Unicode character boundaries.
@@ -156,6 +165,9 @@ in the input tensor using the specified rule.
 [`normalize_utf8_with_offsets_map(...)`](./text/normalize_utf8_with_offsets_map.md):
 Normalizes each UTF-8 string in the input tensor using the specified rule.
 
+[`offsets_to_boise_tags(...)`](./text/offsets_to_boise_tags.md): Converts the
+given tokens and spans in offsets format into BOISE tags.
+
 [`pad_along_dimension(...)`](./text/pad_along_dimension.md): Add padding to the beginning and end of data in a specific dimension.
 
 [`pad_model_inputs(...)`](./text/pad_model_inputs.md): Pad model input and
@@ -190,7 +202,7 @@ fragments in a given text. (deprecated)
 **version**<a id="__version__"></a>
 </td>
 <td>
-`'2.9.0'`
+`'2.10.0'`
 </td>
 </tr>
 </table>

@@ -55,7 +55,7 @@ sliced along with the input_offsets.
 
 <tr>
 <td>
-`offsets_map`
+`offsets_map`<a id="offsets_map"></a>
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of type `variant`, used to map the
@@ -64,7 +64,7 @@ offsets_map is an output from `normalize_utf8_with_offsets_map` function.
 </td>
 </tr><tr>
 <td>
-`input_offsets`
+`input_offsets`<a id="input_offsets"></a>
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of type int64 representing the
@@ -72,15 +72,13 @@ the post-normalized string offsets,
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 The name for this op (optional).
 </td>
 </tr>
 </table>
-
-
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -89,7 +87,7 @@ The name for this op (optional).
 
 <tr>
 <td>
-`results`
+`results`<a id="results"></a>
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of type int64, with pre-normalized
@@ -97,4 +95,3 @@ string offsets.
 </td>
 </tr>
 </table>
-

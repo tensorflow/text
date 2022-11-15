@@ -4,7 +4,6 @@ description: Whitespace tokenization layer.
 <meta itemprop="name" content="text.keras.layers.WhitespaceTokenizer" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
-<meta itemprop="property" content="__new__"/>
 </div>
 
 # text.keras.layers.WhitespaceTokenizer
@@ -37,7 +36,7 @@ Splits a string into substrings at ICU whitespace boundaries.
 
 <tr>
 <td>
-`pad_value`
+`pad_value`<a id="pad_value"></a>
 </td>
 <td>
 if not None, performs the padding (using pad_value) at the
@@ -46,7 +45,7 @@ tensor (default=None).
 </td>
 </tr><tr>
 <td>
-`squeeze_token_dim`
+`squeeze_token_dim`<a id="squeeze_token_dim"></a>
 </td>
 <td>
 Whether to squeeze the dimension added by tokenization.

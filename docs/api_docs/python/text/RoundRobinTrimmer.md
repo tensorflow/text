@@ -22,6 +22,8 @@ source</a>
 
 A `Trimmer` that allocates a length budget to segments via round robin.
 
+Inherits From: [`Trimmer`](../text/Trimmer.md)
+
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.RoundRobinTrimmer(
     max_seq_length, axis=-1
@@ -41,7 +43,7 @@ strategy, then drops elements outside of the segment's allocated budget. See
 
 <tr>
 <td>
-`max_seq_length`
+`max_seq_length`<a id="max_seq_length"></a>
 </td>
 <td>
 a scalar `Tensor` int32 that describes the number max
@@ -49,7 +51,7 @@ number of elements allowed in a batch.
 </td>
 </tr><tr>
 <td>
-`axis`
+`axis`<a id="axis"></a>
 </td>
 <td>
 Axis to apply trimming on.

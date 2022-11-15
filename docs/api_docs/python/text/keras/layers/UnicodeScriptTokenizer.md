@@ -4,7 +4,6 @@ description: Unicode script tokenization layer.
 <meta itemprop="name" content="text.keras.layers.UnicodeScriptTokenizer" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
-<meta itemprop="property" content="__new__"/>
 </div>
 
 # text.keras.layers.UnicodeScriptTokenizer
@@ -42,7 +41,7 @@ boundaries).
 
 <tr>
 <td>
-`keep_whitespace`
+`keep_whitespace`<a id="keep_whitespace"></a>
 </td>
 <td>
 A boolean that specifices whether to emit whitespace
@@ -50,7 +49,7 @@ tokens (default `False`).
 </td>
 </tr><tr>
 <td>
-`pad_value`
+`pad_value`<a id="pad_value"></a>
 </td>
 <td>
 if not None, performs the padding (using pad_value) at the
@@ -59,7 +58,7 @@ tensor (default=None).
 </td>
 </tr><tr>
 <td>
-`squeeze_token_dim`
+`squeeze_token_dim`<a id="squeeze_token_dim"></a>
 </td>
 <td>
 Whether to squeeze the dimension added by tokenization.

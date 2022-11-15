@@ -69,21 +69,21 @@ different random seed the selections might be different.
 
 <tr>
 <td>
-`max_selections_per_batch`
+`max_selections_per_batch`<a id="max_selections_per_batch"></a>
 </td>
 <td>
 An int of the max number of items to mask out.
 </td>
 </tr><tr>
 <td>
-`selection_rate`
+`selection_rate`<a id="selection_rate"></a>
 </td>
 <td>
 The rate at which items are randomly selected.
 </td>
 </tr><tr>
 <td>
-`unselectable_ids`
+`unselectable_ids`<a id="unselectable_ids"></a>
 </td>
 <td>
 (optional) A list of python ints or 1D `Tensor` of ints
@@ -91,7 +91,7 @@ which are ids that will be not be masked.
 </td>
 </tr><tr>
 <td>
-`shuffle_fn`
+`shuffle_fn`<a id="shuffle_fn"></a>
 </td>
 <td>
 (optional) A function that shuffles a 1D `Tensor`. Default
@@ -100,41 +100,19 @@ uses `tf.random.shuffle`.
 </tr>
 </table>
 
-
-
-
-
 <!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Attributes</h2></th></tr>
 
-<tr>
-<td>
-`max_selections_per_batch`
-</td>
+<tr> <td> `max_selections_per_batch`<a id="max_selections_per_batch"></a> </td>
 <td>
 
-</td>
-</tr><tr>
-<td>
-`selection_rate`
-</td>
-<td>
+</td> </tr><tr> <td> `selection_rate`<a id="selection_rate"></a> </td> <td>
 
-</td>
-</tr><tr>
-<td>
-`shuffle_fn`
-</td>
-<td>
+</td> </tr><tr> <td> `shuffle_fn`<a id="shuffle_fn"></a> </td> <td>
 
-</td>
-</tr><tr>
-<td>
-`unselectable_ids`
-</td>
-<td>
+</td> </tr><tr> <td> `unselectable_ids`<a id="unselectable_ids"></a> </td> <td>
 
 </td>
 </tr>

@@ -53,14 +53,15 @@ created using the sliding_window op.
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-<tr> <td> `data` </td> <td> The data to reduce. </td> </tr><tr> <td> `width`
-</td> <td> The width of the ngram window. If there is not sufficient data to
-fill out the ngram window, the resulting ngram will be empty. </td> </tr><tr>
-<td> `axis` </td> <td> The axis to create ngrams along. Note that for string
-join reductions, only axis '-1' is supported; for other reductions, any positive
-or negative axis can be used. Should be a constant. </td> </tr><tr> <td>
-`reduction_type` </td> <td> A member of the Reduction enum. Should be a
-constant. Currently supports:
+<tr> <td> `data`<a id="data"></a> </td> <td> The data to reduce. </td> </tr><tr>
+<td> `width`<a id="width"></a> </td> <td> The width of the ngram window. If
+there is not sufficient data to fill out the ngram window, the resulting ngram
+will be empty. </td> </tr><tr> <td> `axis`<a id="axis"></a> </td> <td> The axis
+to create ngrams along. Note that for string join reductions, only axis '-1' is
+supported; for other reductions, any positive or negative axis can be used.
+Should be a constant. </td> </tr><tr> <td>
+`reduction_type`<a id="reduction_type"></a> </td> <td> A member of the Reduction
+enum. Should be a constant. Currently supports:
 
 *   <a href="../text/Reduction.md#SUM"><code>Reduction.SUM</code></a>: Add
     values in the window.
@@ -71,7 +72,7 @@ constant. Currently supports:
     </td>
     </tr><tr>
     <td>
-    `string_separator`
+    `string_separator`<a id="string_separator"></a>
     </td>
     <td>
     The separator string used for <a href="../text/Reduction.md#STRING_JOIN"><code>Reduction.STRING_JOIN</code></a>.
@@ -79,7 +80,7 @@ constant. Currently supports:
     </td>
     </tr><tr>
     <td>
-    `name`
+    `name`<a id="name"></a>
     </td>
     <td>
     The op name.
@@ -108,7 +109,7 @@ a tf.RaggedTensor.
 
 <tr>
 <td>
-`InvalidArgumentError`
+`InvalidArgumentError`<a id="InvalidArgumentError"></a>
 </td>
 <td>
 if `reduction_type` is either None or not a Reduction,

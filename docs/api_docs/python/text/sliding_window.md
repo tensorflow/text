@@ -111,7 +111,7 @@ sequences of embedding vectors:
 
 <tr>
 <td>
-`data`
+`data`<a id="data"></a>
 </td>
 <td>
 `<dtype> [O1...ON, A, I1...IM]`
@@ -121,7 +121,7 @@ A potentially ragged K-dimensional tensor with outer dimensions of size
 </td>
 </tr><tr>
 <td>
-`width`
+`width`<a id="width"></a>
 </td>
 <td>
 An integer constant specifying the width of the window. Must be
@@ -129,7 +129,7 @@ greater than zero.
 </td>
 </tr><tr>
 <td>
-`axis`
+`axis`<a id="axis"></a>
 </td>
 <td>
 An integer constant specifying the axis along which sliding window
@@ -137,7 +137,7 @@ is computed. Negative axis values from `-K` to `-1` are supported.
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 The name for this op (optional).

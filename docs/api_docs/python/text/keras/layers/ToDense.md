@@ -5,7 +5,6 @@ effortless.
 <meta itemprop="name" content="text.keras.layers.ToDense" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
-<meta itemprop="property" content="__new__"/>
 </div>
 
 # text.keras.layers.ToDense
@@ -56,7 +55,7 @@ model.predict(rt)
 
 <tr>
 <td>
-`pad_value`
+`pad_value`<a id="pad_value"></a>
 </td>
 <td>
 A value used to pad and fill in the missing values. Should be a
@@ -64,7 +63,7 @@ meaningless value for the input data. Default is '0'.
 </td>
 </tr><tr>
 <td>
-`mask`
+`mask`<a id="mask"></a>
 </td>
 <td>
 A Boolean value representing whether to mask the padded values. If
@@ -73,7 +72,7 @@ mask_zero=True should be added. Default is 'False'.
 </td>
 </tr><tr>
 <td>
-`shape`
+`shape`<a id="shape"></a>
 </td>
 <td>
 If not `None`, the resulting dense tensor will be guaranteed to have
@@ -83,7 +82,7 @@ added to assert that the output has this shape.
 </td>
 </tr><tr>
 <td>
-`**kwargs`
+`**kwargs`<a id="**kwargs"></a>
 </td>
 <td>
 kwargs of parent class.

@@ -47,13 +47,15 @@ NOTE: This op is deprecated. Use `StateBasedSentenceBreaker` instead.
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-<tr> <td> `token_word` </td> <td> A Tensor (w/ rank=2) or a RaggedTensor (w/
-ragged_rank=1) containing the token strings. </td> </tr><tr> <td> `token_starts`
-</td> <td> A Tensor (w/ rank=2) or a RaggedTensor (w/ ragged_rank=1) containing
-offsets where the token starts. </td> </tr><tr> <td> `token_ends` </td> <td> A
-Tensor (w/ rank=2) or a RaggedTensor (w/ ragged_rank=1) containing offsets where
-the token ends. </td> </tr><tr> <td> `token_properties` </td> <td> A Tensor (w/
-rank=2) or a RaggedTensor (w/ ragged_rank=1) containing a bitmask.
+<tr> <td> `token_word`<a id="token_word"></a> </td> <td> A Tensor (w/ rank=2) or
+a RaggedTensor (w/ ragged_rank=1) containing the token strings. </td> </tr><tr>
+<td> `token_starts`<a id="token_starts"></a> </td> <td> A Tensor (w/ rank=2) or
+a RaggedTensor (w/ ragged_rank=1) containing offsets where the token starts.
+</td> </tr><tr> <td> `token_ends`<a id="token_ends"></a> </td> <td> A Tensor (w/
+rank=2) or a RaggedTensor (w/ ragged_rank=1) containing offsets where the token
+ends. </td> </tr><tr> <td> `token_properties`<a id="token_properties"></a> </td>
+<td> A Tensor (w/ rank=2) or a RaggedTensor (w/ ragged_rank=1) containing a
+bitmask.
 
 The values of the bitmask are:
 
@@ -68,11 +70,11 @@ The values of the bitmask are:
 *   0x100 (ACRONYM) - Token was identified as an acronym. Period-, hyphen-, and
     space-separated acronyms: "U.S.", "U-S", and "U S".
 *   0x200 (HYPERLINK) - Indicates that the token (or part of the token) is
-    covered by at least one hyperlink. </td> </tr><tr> <td> `input_encoding`
-    </td> <td> String name for the unicode encoding that should be used to
-    decode each string. </td> </tr><tr> <td> `errors` </td> <td> Specifies the
-    response when an input string can't be converted using the indicated
-    encoding. One of:
+    covered by at least one hyperlink. </td> </tr><tr> <td>
+    `input_encoding`<a id="input_encoding"></a> </td> <td> String name for the
+    unicode encoding that should be used to decode each string. </td> </tr><tr>
+    <td> `errors`<a id="errors"></a> </td> <td> Specifies the response when an
+    input string can't be converted using the indicated encoding. One of:
 
 *   `'strict'`: Raise an exception for any illegal substrings.
 
@@ -82,7 +84,7 @@ The values of the bitmask are:
     </td>
     </tr><tr>
     <td>
-    `replacement_char`
+    `replacement_char`<a id="replacement_char"></a>
     </td>
     <td>
     The replacement codepoint to be used in place of invalid
@@ -91,7 +93,7 @@ The values of the bitmask are:
     </td>
     </tr><tr>
     <td>
-    `replace_control_characters`
+    `replace_control_characters`<a id="replace_control_characters"></a>
     </td>
     <td>
     Whether to replace the C0 control characters

@@ -42,21 +42,21 @@ case, and the remaining characters are lowercase). ```
 
 <tr>
 <td>
-`input_tensor`
+`input_tensor`<a id="input_tensor"></a>
 </td>
 <td>
 string `Tensor` with any shape.
 </td>
 </tr><tr>
 <td>
-`pattern`
+`pattern`<a id="pattern"></a>
 </td>
 <td>
 A `tftext.WordShape` or a list of WordShapes.
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 A name for the operation (optional).
@@ -85,7 +85,7 @@ specified by `pattern[j]`.
 
 <tr>
 <td>
-`ValueError`
+`ValueError`<a id="ValueError"></a>
 </td>
 <td>
 If `pattern` contains an unknown identifier.

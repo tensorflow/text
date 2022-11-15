@@ -74,21 +74,21 @@ expressions.
 
 <tr>
 <td>
-`input`
+`input`<a id="input"></a>
 </td>
 <td>
 A Tensor or RaggedTensor of string input.
 </td>
 </tr><tr>
 <td>
-`delim_regex_pattern`
+`delim_regex_pattern`<a id="delim_regex_pattern"></a>
 </td>
 <td>
 A string containing the regex pattern of a delimiter.
 </td>
 </tr><tr>
 <td>
-`keep_delim_regex_pattern`
+`keep_delim_regex_pattern`<a id="keep_delim_regex_pattern"></a>
 </td>
 <td>
 (optional) Regex pattern of delimiters that should
@@ -96,7 +96,7 @@ be kept in the result.
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 (optional) Name of the op.

@@ -84,7 +84,7 @@ expected_ids=[
 
 <tr>
 <td>
-`segments`
+`segments`<a id="segments"></a>
 </td>
 <td>
 A list of `RaggedTensor`s with the tokens of the input segments.
@@ -95,7 +95,7 @@ batch.
 </td>
 </tr><tr>
 <td>
-`start_of_sequence_id`
+`start_of_sequence_id`<a id="start_of_sequence_id"></a>
 </td>
 <td>
 a python int or scalar Tensor containing the id used
@@ -104,7 +104,7 @@ terminology).
 </td>
 </tr><tr>
 <td>
-`end_of_segment_id`
+`end_of_segment_id`<a id="end_of_segment_id"></a>
 </td>
 <td>
 a python int or scalar Tensor containing the id used to
@@ -114,6 +114,7 @@ denote end of a segment (e.g. the `[SEP]` token in BERT terminology).
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
@@ -124,7 +125,7 @@ a tuple of (combined_segments, segment_ids), where:
 </tr>
 <tr>
 <td>
-`combined_segments`
+`combined_segments`<a id="combined_segments"></a>
 </td>
 <td>
 A `RaggedTensor` with segments combined and special
@@ -132,7 +133,7 @@ tokens inserted.
 </td>
 </tr><tr>
 <td>
-`segment_ids`
+`segment_ids`<a id="segment_ids"></a>
 </td>
 <td>
  A `RaggedTensor` w/ the same shape as `combined_segments`

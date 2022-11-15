@@ -50,14 +50,14 @@ applied to the strings.
 
 <tr>
 <td>
-`input`
+`input`<a id="input"></a>
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of UTF-8 encoded strings.
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 The name for this op (optional).

@@ -83,14 +83,14 @@ are as follows (as of 11/2021):
 
 <tr>
 <td>
-`vocab`
+`vocab`<a id="vocab"></a>
 </td>
 <td>
 (optional) The list of tokens in the vocabulary.
 </td>
 </tr><tr>
 <td>
-`suffix_indicator`
+`suffix_indicator`<a id="suffix_indicator"></a>
 </td>
 <td>
 (optional) The characters prepended to a wordpiece to
@@ -98,14 +98,14 @@ indicate that it is a suffix to another subword.
 </td>
 </tr><tr>
 <td>
-`max_bytes_per_word`
+`max_bytes_per_word`<a id="max_bytes_per_word"></a>
 </td>
 <td>
 (optional) Max size of input token.
 </td>
 </tr><tr>
 <td>
-`token_out_type`
+`token_out_type`<a id="token_out_type"></a>
 </td>
 <td>
 (optional) The type of the token to return. This can be
@@ -113,7 +113,7 @@ indicate that it is a suffix to another subword.
 </td>
 </tr><tr>
 <td>
-`unknown_token`
+`unknown_token`<a id="unknown_token"></a>
 </td>
 <td>
 (optional) The string value to substitute for an unknown
@@ -121,7 +121,7 @@ token. It must be included in `vocab`.
 </td>
 </tr><tr>
 <td>
-`no_pretokenization`
+`no_pretokenization`<a id="no_pretokenization"></a>
 </td>
 <td>
 (optional) By default, the input is split on
@@ -130,7 +130,7 @@ When true, the input is assumed to be pretokenized already.
 </td>
 </tr><tr>
 <td>
-`support_detokenization`
+`support_detokenization`<a id="support_detokenization"></a>
 </td>
 <td>
 (optional) Whether to make the tokenizer support
@@ -140,7 +140,7 @@ vocab, the flatbuffer's size increases from ~5MB to ~6MB.
 </td>
 </tr><tr>
 <td>
-`model_buffer`
+`model_buffer`<a id="model_buffer"></a>
 </td>
 <td>
 (optional) Bytes object (or a uint8 tf.Tenosr) that contains

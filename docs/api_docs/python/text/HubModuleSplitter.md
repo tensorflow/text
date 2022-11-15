@@ -98,7 +98,7 @@ use the API described above.
 
 <tr>
 <td>
-`hub_module_handle`
+`hub_module_handle`<a id="hub_module_handle"></a>
 </td>
 <td>
 A string handle accepted by hub.load().  Supported
@@ -109,8 +109,6 @@ this class.
 </td>
 </tr>
 </table>
-
-
 
 ## Methods
 

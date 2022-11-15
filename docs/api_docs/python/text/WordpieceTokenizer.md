@@ -119,7 +119,7 @@ Empty strings are tokenized into empty (ragged) tensors.
 
 <tr>
 <td>
-`vocab_lookup_table`
+`vocab_lookup_table`<a id="vocab_lookup_table"></a>
 </td>
 <td>
 A lookup table implementing the LookupInterface
@@ -128,7 +128,7 @@ to the vocab.txt file.
 </td>
 </tr><tr>
 <td>
-`suffix_indicator`
+`suffix_indicator`<a id="suffix_indicator"></a>
 </td>
 <td>
 (optional) The characters prepended to a wordpiece to
@@ -136,14 +136,14 @@ indicate that it is a suffix to another subword. Default is '##'.
 </td>
 </tr><tr>
 <td>
-`max_bytes_per_word`
+`max_bytes_per_word`<a id="max_bytes_per_word"></a>
 </td>
 <td>
 (optional) Max size of input token. Default is 100.
 </td>
 </tr><tr>
 <td>
-`max_chars_per_token`
+`max_chars_per_token`<a id="max_chars_per_token"></a>
 </td>
 <td>
 (optional) Max size of subwords, excluding suffix
@@ -152,7 +152,7 @@ long words.
 </td>
 </tr><tr>
 <td>
-`token_out_type`
+`token_out_type`<a id="token_out_type"></a>
 </td>
 <td>
 (optional) The type of the token to return. This can be
@@ -161,7 +161,7 @@ long words.
 </td>
 </tr><tr>
 <td>
-`unknown_token`
+`unknown_token`<a id="unknown_token"></a>
 </td>
 <td>
 (optional) The string value to substitute for an unknown
@@ -171,7 +171,7 @@ is used (after substitution) to convert the unknown token to an integer.
 </td>
 </tr><tr>
 <td>
-`split_unknown_characters`
+`split_unknown_characters`<a id="split_unknown_characters"></a>
 </td>
 <td>
 (optional) Whether to split out single unknown

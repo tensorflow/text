@@ -21,6 +21,8 @@ source</a>
 
 A `Trimmer` that allocates a length budget to segments in order.
 
+Inherits From: [`Trimmer`](../text/Trimmer.md)
+
 <pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
 <code>text.WaterfallTrimmer(
     max_seq_length, axis=-1
@@ -57,7 +59,7 @@ length budget.
 
 <tr>
 <td>
-`max_seq_length`
+`max_seq_length`<a id="max_seq_length"></a>
 </td>
 <td>
 a scalar `Tensor` or a 1D `Tensor` of type int32 that
@@ -67,15 +69,13 @@ across the batch.
 </td>
 </tr><tr>
 <td>
-`axis`
+`axis`<a id="axis"></a>
 </td>
 <td>
 Axis to apply trimming on.
 </td>
 </tr>
 </table>
-
-
 
 ## Methods
 

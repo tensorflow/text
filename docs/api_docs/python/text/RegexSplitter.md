@@ -62,7 +62,7 @@ any string, but we're using a single character (tab) in this example. ```
 
 <tr>
 <td>
-`split_regex`
+`split_regex`<a id="split_regex"></a>
 </td>
 <td>
 (optional) A string containing the regex pattern of a
@@ -70,8 +70,6 @@ delimiter to split on. Default is '\r?\n'.
 </td>
 </tr>
 </table>
-
-
 
 ## Methods
 

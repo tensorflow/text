@@ -99,7 +99,7 @@ Given the following source and target spans (with no batch dimensions):
 
 <tr>
 <td>
-`source_start`
+`source_start`<a id="source_start"></a>
 </td>
 <td>
 A B+1 dimensional potentially ragged tensor with shape
@@ -107,7 +107,7 @@ A B+1 dimensional potentially ragged tensor with shape
 </td>
 </tr><tr>
 <td>
-`source_limit`
+`source_limit`<a id="source_limit"></a>
 </td>
 <td>
 A B+1 dimensional potentially ragged tensor with shape
@@ -115,7 +115,7 @@ A B+1 dimensional potentially ragged tensor with shape
 </td>
 </tr><tr>
 <td>
-`target_start`
+`target_start`<a id="target_start"></a>
 </td>
 <td>
 A B+1 dimensional potentially ragged tensor with shape
@@ -123,7 +123,7 @@ A B+1 dimensional potentially ragged tensor with shape
 </td>
 </tr><tr>
 <td>
-`target_limit`
+`target_limit`<a id="target_limit"></a>
 </td>
 <td>
 A B+1 dimensional potentially ragged tensor with shape
@@ -131,7 +131,7 @@ A B+1 dimensional potentially ragged tensor with shape
 </td>
 </tr><tr>
 <td>
-`contains`
+`contains`<a id="contains"></a>
 </td>
 <td>
 If true, then a source span is considered to overlap a target span
@@ -139,7 +139,7 @@ when the source span contains the target span.
 </td>
 </tr><tr>
 <td>
-`contained_by`
+`contained_by`<a id="contained_by"></a>
 </td>
 <td>
 If true, then a source span is considered to overlap a target
@@ -147,7 +147,7 @@ span when the source span is contained by the target span.
 </td>
 </tr><tr>
 <td>
-`partial_overlap`
+`partial_overlap`<a id="partial_overlap"></a>
 </td>
 <td>
 If true, then a source span is considered to overlap a
@@ -155,7 +155,7 @@ target span when the source span partially overlaps the target span.
 </td>
 </tr><tr>
 <td>
-`multivalent_result`
+`multivalent_result`<a id="multivalent_result"></a>
 </td>
 <td>
 Whether the result should contain a single target span
@@ -164,7 +164,7 @@ index (if `multivalent_result=False`) or a list of target span indices (if
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 A name for the operation (optional).

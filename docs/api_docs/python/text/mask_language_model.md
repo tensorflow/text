@@ -108,7 +108,7 @@ or insert random items in spans:
 
 <tr>
 <td>
-`input_ids`
+`input_ids`<a id="input_ids"></a>
 </td>
 <td>
 A `RaggedTensor` of n dimensions (where n >= 2) on which
@@ -116,7 +116,7 @@ masking will be applied to items up to dimension 1.
 </td>
 </tr><tr>
 <td>
-`item_selector`
+`item_selector`<a id="item_selector"></a>
 </td>
 <td>
 An instance of `ItemSelector` that is used for selecting
@@ -124,7 +124,7 @@ items to be masked.
 </td>
 </tr><tr>
 <td>
-`mask_values_chooser`
+`mask_values_chooser`<a id="mask_values_chooser"></a>
 </td>
 <td>
 An instance of `MaskValuesChooser` which determines the
@@ -132,7 +132,7 @@ values assigned to the ids chosen for masking.
 </td>
 </tr><tr>
 <td>
-`axis`
+`axis`<a id="axis"></a>
 </td>
 <td>
 the axis where items will be treated atomically for masking.
@@ -140,9 +140,8 @@ the axis where items will be treated atomically for masking.
 </tr>
 </table>
 
-
-
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
@@ -153,7 +152,7 @@ A tuple of (masked_input_ids, masked_positions, masked_ids) where:
 </tr>
 <tr>
 <td>
-`masked_input_ids`
+`masked_input_ids`<a id="masked_input_ids"></a>
 </td>
 <td>
 A `RaggedTensor` in the same shape and dtype as
@@ -162,7 +161,7 @@ with `mask_token`, random id, or no change.
 </td>
 </tr><tr>
 <td>
-`masked_positions`
+`masked_positions`<a id="masked_positions"></a>
 </td>
 <td>
 A `RaggedTensor` of ints with shape
@@ -171,7 +170,7 @@ masking.
 </td>
 </tr><tr>
 <td>
-`masked_ids`
+`masked_ids`<a id="masked_ids"></a>
 </td>
 <td>
 A `RaggedTensor` with shape [batch, (num_masked)] and same
@@ -180,4 +179,3 @@ and thus used as labels for the task.
 </td>
 </tr>
 </table>
-

@@ -47,14 +47,14 @@ array([b'\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe', b'KADOKAWA'],
 
 <tr>
 <td>
-`input`
+`input`<a id="input"></a>
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of type string. (Must be UTF-8.)
 </td>
 </tr><tr>
 <td>
-`normalization_form`
+`normalization_form`<a id="normalization_form"></a>
 </td>
 <td>
 One of the following string values ('NFC', 'NFKC',
@@ -62,7 +62,7 @@ One of the following string values ('NFC', 'NFKC',
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 The name for this op (optional).

@@ -5,7 +5,6 @@ tokens.
 <meta itemprop="name" content="text.keras.layers.WordpieceTokenizer" />
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
-<meta itemprop="property" content="__new__"/>
 <meta itemprop="property" content="set_vocabulary"/>
 </div>
 
@@ -49,7 +48,7 @@ init call or by calling set_vocabulary() after the layer is constructed.
 
 <tr>
 <td>
-`vocabulary`
+`vocabulary`<a id="vocabulary"></a>
 </td>
 <td>
 An optional list of vocabulary terms, or a path to a text file
@@ -59,7 +58,7 @@ times, an error will be thrown.
 </td>
 </tr><tr>
 <td>
-`suffix_indicator`
+`suffix_indicator`<a id="suffix_indicator"></a>
 </td>
 <td>
 (optional) The characters prepended to a wordpiece to
@@ -67,14 +66,14 @@ indicate that it is a suffix to another subword. Default is '##'.
 </td>
 </tr><tr>
 <td>
-`max_bytes_per_word`
+`max_bytes_per_word`<a id="max_bytes_per_word"></a>
 </td>
 <td>
 (optional) Max size of input token. Default is 100.
 </td>
 </tr><tr>
 <td>
-`token_out_type`
+`token_out_type`<a id="token_out_type"></a>
 </td>
 <td>
 (optional) The type of the token to return. This can be
@@ -82,7 +81,7 @@ indicate that it is a suffix to another subword. Default is '##'.
 </td>
 </tr><tr>
 <td>
-`unknown_token`
+`unknown_token`<a id="unknown_token"></a>
 </td>
 <td>
 (optional) The string value to substitute for an unknown
@@ -93,7 +92,7 @@ if `unknown_token` is set to `None` or not contained in the `vocabulary`.
 </td>
 </tr><tr>
 <td>
-`pad_value`
+`pad_value`<a id="pad_value"></a>
 </td>
 <td>
 if not None, performs the padding (using pad_value) at the
@@ -102,7 +101,7 @@ tensor (default=None).
 </td>
 </tr><tr>
 <td>
-`merge_wordpiece_dim`
+`merge_wordpiece_dim`<a id="merge_wordpiece_dim"></a>
 </td>
 <td>
 If False, this layer will output a RaggedTensor

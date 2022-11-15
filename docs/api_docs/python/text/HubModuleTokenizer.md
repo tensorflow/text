@@ -72,7 +72,7 @@ ends: <tf.RaggedTensor [[9, 15]]>
 
 <tr>
 <td>
-`hub_module_handle`
+`hub_module_handle`<a id="hub_module_handle"></a>
 </td>
 <td>
 A string handle accepted by hub.load().  Supported
@@ -81,8 +81,6 @@ cases include (1) a local path to a directory containing a module, and
 </td>
 </tr>
 </table>
-
-
 
 ## Methods
 

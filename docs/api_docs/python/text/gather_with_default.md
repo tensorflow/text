@@ -42,7 +42,7 @@ in `indices` will be mapped to `default`.  Example:
 
 <tr>
 <td>
-`params`
+`params`<a id="params"></a>
 </td>
 <td>
 The `Tensor` from which to gather values.  Must be at least rank
@@ -50,7 +50,7 @@ The `Tensor` from which to gather values.  Must be at least rank
 </td>
 </tr><tr>
 <td>
-`indices`
+`indices`<a id="indices"></a>
 </td>
 <td>
 The index `Tensor`.  Must have dtype `int32` or `int64`, and values
@@ -58,7 +58,7 @@ must be in the range `[-1, params.shape[axis])`.
 </td>
 </tr><tr>
 <td>
-`default`
+`default`<a id="default"></a>
 </td>
 <td>
 The value to use when `indices` is `-1`.  `default.shape` must
@@ -66,14 +66,14 @@ be equal to `params.shape[axis + 1:]`.
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 A name for the operation (optional).
 </td>
 </tr><tr>
 <td>
-`axis`
+`axis`<a id="axis"></a>
 </td>
 <td>
 The axis in `params` to gather `indices` from.  Must be a scalar

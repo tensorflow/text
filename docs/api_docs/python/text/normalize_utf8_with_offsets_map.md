@@ -53,18 +53,24 @@ array([b'\xe6\xa0\xaa\xe5\xbc\x8f\xe4\xbc\x9a\xe7\xa4\xbe', b'KADOKAWA'],
 
 <tr>
 <td>
-`input`
+`input`<a id="input"></a>
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of type string. (Must be UTF-8.)
-normalization_form: One of the following string values ('NFC', 'NFKC',
-'NFD', 'NFKD'). Default is 'NFKC'. NOTE: `NFD` and `NFKD` for
-  `normalize_utf8_with_offsets_map` will not be available until the
-  tf.text release w/ ICU 69 (scheduled after 4/2021).
 </td>
 </tr><tr>
 <td>
-`name`
+`normalization_form`<a id="normalization_form"></a>
+</td>
+<td>
+One of the following string values ('NFC', 'NFKC',
+'NFD', 'NFKD'). Default is 'NFKC'. NOTE: `NFD` and `NFKD` for
+`normalize_utf8_with_offsets_map` will not be available until the
+tf.text release w/ ICU 69 (scheduled after 4/2021).
+</td>
+</tr><tr>
+<td>
+`name`<a id="name"></a>
 </td>
 <td>
 The name for this op (optional).
@@ -73,6 +79,7 @@ The name for this op (optional).
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
@@ -83,7 +90,7 @@ A tuple of (results, offsets_map) where:
 </tr>
 <tr>
 <td>
-`results`
+`results`<a id="results"></a>
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of type string, with normalized
@@ -91,7 +98,7 @@ contents.
 </td>
 </tr><tr>
 <td>
-`offsets_map`
+`offsets_map`<a id="offsets_map"></a>
 </td>
 <td>
 A `Tensor` or `RaggedTensor` of type `variant`, used to map
@@ -101,4 +108,3 @@ has the same shape as the results tensor. offsets_map is an input to
 </td>
 </tr>
 </table>
-

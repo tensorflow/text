@@ -47,7 +47,7 @@ to particular NLP tasks (such as dependency parsing).
 
 <tr>
 <td>
-`num_nodes`
+`num_nodes`<a id="num_nodes"></a>
 </td>
 <td>
 A `Tensor` of type `int32`.
@@ -55,7 +55,7 @@ A `Tensor` of type `int32`.
 </td>
 </tr><tr>
 <td>
-`scores`
+`scores`<a id="scores"></a>
 </td>
 <td>
 A `Tensor`. Must be one of the following types: `int32`, `float32`, `float64`.
@@ -69,7 +69,7 @@ nonexistent.
 </td>
 </tr><tr>
 <td>
-`forest`
+`forest`<a id="forest"></a>
 </td>
 <td>
 An optional `bool`. Defaults to `False`.
@@ -79,7 +79,7 @@ span the nodes of the digraph.
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 A name for the operation (optional).
@@ -88,6 +88,7 @@ A name for the operation (optional).
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
@@ -98,7 +99,7 @@ A tuple of `Tensor` objects (max_scores, argmax_sources).
 </tr>
 <tr>
 <td>
-`max_scores`
+`max_scores`<a id="max_scores"></a>
 </td>
 <td>
 A `Tensor`. Has the same type as `scores`. [B] vector where entry b is the score of the maximum spanning tree
@@ -106,7 +107,7 @@ of the b'th digraph.
 </td>
 </tr><tr>
 <td>
-`argmax_sources`
+`argmax_sources`<a id="argmax_sources"></a>
 </td>
 <td>
 A `Tensor` of type `int32`. [B,M] matrix where entry b,t is the source of the arc inbound to

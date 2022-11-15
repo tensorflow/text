@@ -64,14 +64,14 @@ large inputs.
 
 <tr>
 <td>
-`input`
+`input`<a id="input"></a>
 </td>
 <td>
 A `RaggedTensor` with rank >= 2.
 </td>
 </tr><tr>
 <td>
-`max_seq_length`
+`max_seq_length`<a id="max_seq_length"></a>
 </td>
 <td>
 An int, or scalar `Tensor`. The "input" `Tensor` will be
@@ -80,7 +80,7 @@ padded out or truncated to this size.
 </td>
 </tr><tr>
 <td>
-`pad_value`
+`pad_value`<a id="pad_value"></a>
 </td>
 <td>
 An int or scalar `Tensor` specifying the value used for padding.
@@ -88,9 +88,8 @@ An int or scalar `Tensor` specifying the value used for padding.
 </tr>
 </table>
 
-
-
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
@@ -101,7 +100,7 @@ A tuple of (padded_input, pad_mask) where:
 </tr>
 <tr>
 <td>
-`padded_input`
+`padded_input`<a id="padded_input"></a>
 </td>
 <td>
 A `Tensor` corresponding to `inputs` that has been
@@ -110,7 +109,7 @@ dimensions.
 </td>
 </tr><tr>
 <td>
-`pad_mask`
+`pad_mask`<a id="pad_mask"></a>
 </td>
 <td>
 A `Tensor` corresponding to `padded_input` whose values are
@@ -118,4 +117,3 @@ A `Tensor` corresponding to `padded_input` whose values are
 </td>
 </tr>
 </table>
-

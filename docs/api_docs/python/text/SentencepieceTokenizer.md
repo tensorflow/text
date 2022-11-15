@@ -66,14 +66,14 @@ for the most up-to-date instructions on this process.
 
 <tr>
 <td>
-`model`
+`model`<a id="model"></a>
 </td>
 <td>
 The sentencepiece model serialized proto.
 </td>
 </tr><tr>
 <td>
-`out_type`
+`out_type`<a id="out_type"></a>
 </td>
 <td>
 output type. tf.int32 or tf.string (Default = tf.int32) Setting
@@ -81,7 +81,7 @@ tf.int32 directly encodes the string into an id sequence.
 </td>
 </tr><tr>
 <td>
-`nbest_size`
+`nbest_size`<a id="nbest_size"></a>
 </td>
 <td>
 A scalar for sampling.
@@ -93,7 +93,7 @@ A scalar for sampling.
 </td>
 </tr><tr>
 <td>
-`alpha`
+`alpha`<a id="alpha"></a>
 </td>
 <td>
 A scalar for a smoothing parameter. Inverse temperature for
@@ -101,21 +101,21 @@ probability rescaling.
 </td>
 </tr><tr>
 <td>
-`reverse`
+`reverse`<a id="reverse"></a>
 </td>
 <td>
 Reverses the tokenized sequence (Default = false)
 </td>
 </tr><tr>
 <td>
-`add_bos`
+`add_bos`<a id="add_bos"></a>
 </td>
 <td>
 Add beginning of sentence token to the result (Default = false)
 </td>
 </tr><tr>
 <td>
-`add_eos`
+`add_eos`<a id="add_eos"></a>
 </td>
 <td>
 Add end of sentence token to the result (Default = false). When
@@ -124,7 +124,7 @@ reversing.
 </td>
 </tr><tr>
 <td>
-`return_nbest`
+`return_nbest`<a id="return_nbest"></a>
 </td>
 <td>
 If True requires that `nbest_size` is a scalar and `> 1`.
@@ -134,7 +134,7 @@ of a single one. The returned tensor has shape
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 The name argument that is passed to the op function.

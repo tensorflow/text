@@ -44,14 +44,15 @@ Inherits From: [`TokenizerWithOffsets`](../text/TokenizerWithOffsets.md),
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
 
-<tr> <td> `force_split_at_break_character` </td> <td> a bool that indicates
-whether to force start a new word after an ICU-defined whitespace character.
-Regardless of this parameter, we never include a whitespace into a token, and we
-always ignore the split/merge action for the whitespace character itself. This
-parameter indicates what happens after a whitespace. * if
-force_split_at_break_character is true, create a new word starting at the first
-non-space character, regardless of the 0/1 label for that character, for
-instance:
+<tr> <td>
+`force_split_at_break_character`<a id="force_split_at_break_character"></a>
+</td> <td> a bool that indicates whether to force start a new word after an
+ICU-defined whitespace character. Regardless of this parameter, we never include
+a whitespace into a token, and we always ignore the split/merge action for the
+whitespace character itself. This parameter indicates what happens after a
+whitespace. * if force_split_at_break_character is true, create a new word
+starting at the first non-space character, regardless of the 0/1 label for that
+character, for instance:
 
 ~~~
 ```python

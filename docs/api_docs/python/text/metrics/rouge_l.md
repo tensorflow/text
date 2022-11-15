@@ -62,7 +62,7 @@ r: tf.Tensor([1.], shape=(1,), dtype=float32)
 
 <tr>
 <td>
-`hypotheses`
+`hypotheses`<a id="hypotheses"></a>
 </td>
 <td>
 A RaggedTensor with shape [N, (hyp_sentence_len)] and integer or
@@ -70,7 +70,7 @@ string values.
 </td>
 </tr><tr>
 <td>
-`references`
+`references`<a id="references"></a>
 </td>
 <td>
 A RaggedTensor with shape [N, (ref_sentence_len)] and integer or
@@ -78,7 +78,7 @@ string values.
 </td>
 </tr><tr>
 <td>
-`alpha`
+`alpha`<a id="alpha"></a>
 </td>
 <td>
 optional float parameter for weighting

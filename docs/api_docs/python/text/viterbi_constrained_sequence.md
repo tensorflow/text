@@ -84,7 +84,7 @@ sequences in the RaggedTensor will be used.
 
 <tr>
 <td>
-`scores`
+`scores`<a id="scores"></a>
 </td>
 <td>
 `<float32> [batch_size, num_steps, |num_states|]`
@@ -96,7 +96,7 @@ same structure [b, t, s] and only axis 1 should be ragged.
 </td>
 </tr><tr>
 <td>
-`sequence_length`
+`sequence_length`<a id="sequence_length"></a>
 </td>
 <td>
 `<{int32, int64}>[batch_size]`
@@ -106,7 +106,7 @@ to be the length of the score tensor.
 </td>
 </tr><tr>
 <td>
-`allowed_transitions`
+`allowed_transitions`<a id="allowed_transitions"></a>
 </td>
 <td>
   if use_start_and_end_states is TRUE:
@@ -127,7 +127,7 @@ Default - An empty tensor. This allows all sequence states to transition
 </td>
 </tr><tr>
 <td>
-`transition_weights`
+`transition_weights`<a id="transition_weights"></a>
 </td>
 <td>
   if use_start_and_end_states is TRUE:
@@ -148,7 +148,7 @@ Default - An empty tensor. This assigns a wieght of 1.0 all transitions
 </td>
 </tr><tr>
 <td>
-`use_log_space`
+`use_log_space`<a id="use_log_space"></a>
 </td>
 <td>
 Whether to use log space for the calculation. If false,
@@ -156,7 +156,7 @@ calculations will be done in exp-space.
 </td>
 </tr><tr>
 <td>
-`use_start_and_end_states`
+`use_start_and_end_states`<a id="use_start_and_end_states"></a>
 </td>
 <td>
 If True, sequences will have an implicit start
@@ -164,7 +164,7 @@ and end state added.
 </td>
 </tr><tr>
 <td>
-`name`
+`name`<a id="name"></a>
 </td>
 <td>
 The name scope within which this op should be constructed.
