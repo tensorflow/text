@@ -87,6 +87,7 @@ _allowed_symbols = [
     "wordshape",
 ]
 
+# Update guide/text_tf_lite.ipynb when adding op here
 tflite_registrar.SELECT_TFTEXT_OPS = [
     tflite_registrar.AddByteSplit,
     tflite_registrar.AddFastBertNormalize,
