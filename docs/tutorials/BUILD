@@ -34,7 +34,7 @@ tf_org_notebook_test(
 
 tf_org_notebook_test(
     name = "transformer",
-    size = "large",
+    size = "enormous",
     ipynb = "transformer.ipynb",
     tags = ["requires-net:external"],
     deps = [
