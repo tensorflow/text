@@ -202,7 +202,7 @@ fragments in a given text. (deprecated)
 **version**<a id="__version__"></a>
 </td>
 <td>
-`'2.10.0'`
+`'2.11.0'`
 </td>
 </tr>
 </table>

@@ -79,7 +79,6 @@ std::vector<int> span_end_offsets = { 5, 12 }; std::vector<string> span_type = {
 Foo will produce the following labels: ["B-loc"]
 
 ### Example:
-
 ```
 >>> token_begin_offsets = tf.ragged.constant(
 ...   [[0, 4, 8, 12, 17], [0, 4, 8, 12]])
@@ -96,7 +95,6 @@ Foo will produce the following labels: ["B-loc"]
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
@@ -153,7 +151,6 @@ begin/end byte range partially overlaps with the span range.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>

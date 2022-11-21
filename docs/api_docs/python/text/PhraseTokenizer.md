@@ -37,8 +37,8 @@ Inherits From: [`Tokenizer`](../text/Tokenizer.md),
 </code></pre>
 
 <!-- Placeholder for "Used in" -->
-<!-- Tabular view -->
 
+<!-- Tabular view -->
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Args</h2></th></tr>
@@ -114,7 +114,6 @@ Detokenize and tokenize an input string returns itself when the input string is
 normalized and the tokenized phrases don't contain `<unk>`.
 
 ### Example:
-
 ```
 >>> vocab = ["I", "have", "a", "dream", "a dream", "I have a", "<UNK>"]
 >>> tokenizer = PhraseTokenizer(vocab, support_detokenization=True)
@@ -125,7 +124,6 @@ normalized and the tokenized phrases don't contain `<unk>`.
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -141,7 +139,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of int64 or int32.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
@@ -182,7 +179,6 @@ source</a>
 Tokenizes a tensor of UTF-8 string tokens further into phrase tokens.
 
 ### Example, single string tokenization:
-
 ```
 >>> vocab = ["I", "have", "a", "dream", "a dream", "I have a", "<UNK>"]
 >>> tokenizer = PhraseTokenizer(vocab, token_out_type=tf.string)
@@ -193,7 +189,6 @@ Tokenizes a tensor of UTF-8 string tokens further into phrase tokens.
 ```
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Args</th></tr>
@@ -209,7 +204,6 @@ An N-dimensional `Tensor` or `RaggedTensor` of UTF-8 strings.
 </table>
 
 <!-- Tabular view -->
-
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
