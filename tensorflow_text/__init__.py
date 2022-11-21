@@ -35,6 +35,7 @@ _allowed_symbols = [
     "FirstNItemSelector",
     "HubModuleSplitter",
     "HubModuleTokenizer",
+    "LastNItemSelector",
     "MaskValuesChooser",
     "PhraseTokenizer",
     "RandomItemSelector",
