@@ -208,7 +208,7 @@ class RandomItemSelector(ItemSelector):
 
     self._max_selections_per_batch = max_selections_per_batch
     self._selection_rate = selection_rate
-    super(RandomItemSelector, self).__init__(unselectable_ids)
+    super().__init__(unselectable_ids)
 
   @property
   def shuffle_fn(self):
@@ -290,8 +290,8 @@ def _get_row_lengths_merged_to_axis(segments, axis=-1):
   return row_lengths
 
 
-def _get_selection_mask(original, num_to_select, axis=-1):
-  """Get a selection mask given how many items to select."""
+def _get_selection_mask(original, num_to_select, axis=-1, reverse=False):
+  """Computes a selection mask given how many items to select."""
   num_to_select = ops.convert_to_tensor(num_to_select)
   num_to_select = array_ops.reshape(num_to_select, [-1])
   row_lengths = _get_row_lengths_merged_to_axis(original, axis)
@@ -305,8 +305,74 @@ def _get_selection_mask(original, num_to_select, axis=-1):
   zeros = math_ops.cast(
       array_ops.zeros_like(ragged_math_ops.range(zeros_row_length)),
       dtypes.int32)
-  results = array_ops.concat([ones, zeros], 1)
+  if reverse:
+    results = array_ops.concat([zeros, ones], 1)
+  else:
+    results = array_ops.concat([ones, zeros], 1)
   results = math_ops.cast(results, dtypes.bool)
+  return results
+
+
+def _get_first_or_last_n_item_selectable(input_ids,
+                                         axis,
+                                         all_selectable,
+                                         num_to_select,
+                                         reverse=False):
+  """Selects the first or last N selectable items.
+
+  reverse=True means select last. Otherwise select the first N items.
+
+  Args:
+    input_ids: a `RaggedTensor`.
+    axis: axis to apply selection on.
+    all_selectable: a `RaggedTensor` with dtype of bool and with shape
+      `input_ids.shape[:axis]`. Used to identify all selectable ids that could
+      be selectable.
+    num_to_select: An int which is the number of ids to select.
+    reverse: boolean when False means select the first N selectable ids.
+      Otherwise `reverse=True` means select the last N selectable ids.
+
+  Returns:
+    a `RaggedTensor` with dtype of bool and with shape `input_ids.shape[:axis]`.
+    Its values are True for the first or last N selectable items.
+  """
+  axis = array_ops.get_positive_axis(
+      axis, input_ids.ragged_rank + input_ids.flat_values.shape.rank)
+  # Create a positions RT and mask out positions that are not selectable
+  positions_flat = math_ops.range(array_ops.size(input_ids.flat_values))
+  positions = input_ids.with_flat_values(positions_flat)
+  selectable_positions = ragged_array_ops.boolean_mask(positions,
+                                                       all_selectable)
+
+  # merge to the desired axis
+  selectable_positions = selectable_positions.merge_dims(
+      1, axis) if axis > 1 else selectable_positions
+
+  # Get a selection mask based off of how many items are desired for selection
+  merged_axis = axis - (axis - 1)
+  selection_mask = _get_selection_mask(selectable_positions, num_to_select,
+                                       merged_axis, reverse)
+  # Mask out positions that were not selected.
+  selected_positions = ragged_array_ops.boolean_mask(selectable_positions,
+                                                     selection_mask)
+
+  # Now that we have all the positions which were chosen, we recreate a mask
+  # (matching the original input's shape) where the value is True if it was
+  # selected. We do this by creating a "all false" RT and scattering true
+  # values to the positions chosen for selection.
+  all_true = selected_positions.with_flat_values(
+      array_ops.ones_like(selected_positions.flat_values))
+  all_false = array_ops.zeros(
+      array_ops.shape(input_ids.flat_values), dtypes.int32)
+  results_flat = array_ops.tensor_scatter_update(
+      all_false, array_ops.expand_dims(selected_positions.flat_values, -1),
+      all_true.flat_values)
+  results = input_ids.with_flat_values(results_flat)
+  results = math_ops.cast(results, dtypes.bool)
+
+  # Reduce until input.shape[:axis]
+  for _ in range(input_ids.shape.ndims - axis - 1):
+    results = math_ops.reduce_all(results, -1)
   return results
 
 
@@ -319,9 +385,9 @@ class FirstNItemSelector(ItemSelector):
     Example:
     >>> selector = FirstNItemSelector(2)
     >>> selection = selector.get_selection_mask(
-    ...     tf.ragged.constant([[1, 2, 3, 4], [5, 6, 7, 8]]), axis=1)
+    ...     tf.ragged.constant([[1, 2, 3], [5, 6, 7, 8]]), axis=1)
     >>> print(selection)
-    <tf.RaggedTensor [[True, True, False, False], [True, True, False, False]]>
+    <tf.RaggedTensor [[True, True, False], [True, True, False, False]]>
 
     This kind of selection mechanism is useful for batch trimming operations,
     e.g. for `RoundRobinTrimmer`.
@@ -331,62 +397,57 @@ class FirstNItemSelector(ItemSelector):
       unselectable_ids: (optional) A list of int ids that cannot be selected.
         Default is empty list.
     """
-    super(FirstNItemSelector, self).__init__(unselectable_ids)
+    super().__init__(unselectable_ids)
     self._num_to_select = num_to_select
 
   def get_selectable(self, input_ids, axis):
     """See `get_selectable()` in superclass."""
-    selectable = super(FirstNItemSelector, self).get_selectable(input_ids, axis)
-    axis = array_ops.get_positive_axis(
-        axis, input_ids.ragged_rank + input_ids.flat_values.shape.rank)
-    # Create a positions RT and mask out positions that are not selectable
-    positions_flat = math_ops.range(array_ops.size(input_ids.flat_values))
-    positions = input_ids.with_flat_values(positions_flat)
-    selectable_positions = ragged_array_ops.boolean_mask(positions, selectable)
+    all_selectable = super().get_selectable(input_ids, axis)
+    return _get_first_or_last_n_item_selectable(
+        input_ids=input_ids, axis=axis, all_selectable=all_selectable,
+        num_to_select=self._num_to_select, reverse=False)
 
-    # merge to the desired axis
-    selectable_positions = selectable_positions.merge_dims(
-        1, axis) if axis > 1 else selectable_positions
 
-    # Get a selection mask based off of how many items are desired for selection
-    merged_axis = axis - (axis - 1)
-    selection_mask = _get_selection_mask(selectable_positions,
-                                         self._num_to_select, merged_axis)
-    # Mask out positions that were not selected.
-    selected_positions = ragged_array_ops.boolean_mask(selectable_positions,
-                                                       selection_mask)
+class LastNItemSelector(ItemSelector):
+  """An `ItemSelector` that selects the last `n` items in the batch."""
 
-    # Now that we have all the positions which were chosen, we recreate a mask
-    # (matching the original input's shape) where the value is True if it was
-    # selected. We do this by creating a "all false" RT and scattering true
-    # values to the positions chosen for selection.
-    all_true = selected_positions.with_flat_values(
-        array_ops.ones_like(selected_positions.flat_values))
-    all_false = math_ops.cast(
-        array_ops.zeros(array_ops.shape(input_ids.flat_values)), dtypes.int32)
-    results_flat = array_ops.tensor_scatter_update(
-        all_false, array_ops.expand_dims(selected_positions.flat_values, -1),
-        all_true.flat_values)
-    results = input_ids.with_flat_values(results_flat)
-    results = math_ops.cast(results, dtypes.bool)
+  def __init__(self, num_to_select, unselectable_ids=None):
+    """Creates an instance of `LastNItemSelector`.
 
-    # Reduce until input.shape[:axis]
-    for _ in range(input_ids.shape.ndims - axis - 1):
-      results = math_ops.reduce_all(results, -1)
-    return results
+    Example:
+    >>> selector = LastNItemSelector(2)
+    >>> selection = selector.get_selection_mask(
+    ...     tf.ragged.constant([[1, 2, 3, 4], [5, 6, 7]]), axis=1)
+    >>> print(selection)
+    <tf.RaggedTensor [[False, False, True, True], [False, True, True]]>
+
+    Args:
+      num_to_select: An int which is the leading number of items to select.
+      unselectable_ids: (optional) A list of int ids that cannot be selected.
+        Default is empty list.
+    """
+    super().__init__(unselectable_ids)
+    self._num_to_select = num_to_select
+
+  def get_selectable(self, input_ids, axis):
+    """See `get_selectable()` in superclass."""
+    all_selectable = super().get_selectable(input_ids, axis)
+    return _get_first_or_last_n_item_selectable(
+        input_ids=input_ids, axis=axis, all_selectable=all_selectable,
+        num_to_select=self._num_to_select, reverse=True)
 
 
 class NothingSelector(ItemSelector):
   """An `ItemSelector` that selects nothing."""
 
   def __init__(self):
-    super(NothingSelector, self).__init__([])
+    super().__init__([])
 
-  def get_selectable(self, tokens, axis):
+  def get_selectable(self, input_ids, axis):
     """Returns a prefilter mask which excludes all items."""
     flat_false_values = math_ops.cast(
-        array_ops.zeros_like(tokens.flat_values), dtypes.bool)
-    results = tokens.with_flat_values(flat_false_values)
-    for _ in range(tokens.ragged_rank - axis):
+        array_ops.zeros_like(input_ids.flat_values), dtypes.bool)
+    results = input_ids.with_flat_values(flat_false_values)
+    for _ in range(input_ids.ragged_rank - axis):
       results = math_ops.reduce_all(results, -1)
     return results

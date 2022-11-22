@@ -132,6 +132,114 @@ class FirstNItemSelectorTest(test.TestCase, parameterized.TestCase):
 
 
 @test_util.run_all_in_graph_and_eager_modes
+class LastNItemSelectorTest(test.TestCase, parameterized.TestCase):
+  # pyformat: disable
+  @parameterized.parameters([
+      dict(
+          description="Basic test on 2D `RaggedTensor`",
+          masking_inputs=[
+              [1, 2, 3, 4, 5, 6],
+              [10, 20, 30, 40],
+              [21],
+              [100, 200, 300, 400, 500]
+          ],
+          expected_selectable=[
+              [5, 6],
+              [30, 40],
+              [21],
+              [400, 500]
+          ],
+      ),
+      dict(
+          description="Test broadcast",
+          masking_inputs=[
+              [[1, 2], [3], [4, 5, 6]],
+              [[10, 20], [30, 40]],
+              [[100, 200], [300, 400, 500]]
+          ],
+          expected_selectable=[
+              [[3], [4, 5, 6]],
+              [[10, 20], [30, 40]],
+              [[100, 200], [300, 400, 500]]
+          ],
+      ),
+      dict(
+          description="Select the last two items. Test broadcast and " +
+          "dropping nonselectable ids.",
+          masking_inputs=[
+              [[1, 2], [3], [4, 5, 6]],
+              [[10, 20], [30, 40]],
+              [[100, 200], [300, 400, 500]]
+          ],
+          unselectable_ids=[1, 200],
+          expected_selectable=[
+              [[3], [4, 5, 6]],
+              [[10, 20], [30, 40]],
+              [[300, 400, 500]]],
+          axis=1,
+      ),
+      dict(
+          description="Select the last two items on axis=-1.",
+          masking_inputs=[
+              [[b"hello"], [b"there"]],
+              [[b"name", b"is"]],
+              [[b"what"], [b"time"], [b"is", b"it"], [b"?"], []],
+          ],
+          expected_selectable=[
+              [[b"hello"], [b"there"]],
+              [[b"name", b"is"]],
+              [[], [], [b"it"], [b"?"], []]
+              ],
+          axis=-1,
+      ),
+      dict(
+          description="Select the last two items on axis=1.",
+          masking_inputs=[
+              [[b"hello"], [b"there"]],
+              [[b"name", b"is"]],
+              [[b"is"], [b"it"], [b"?", b"what"], [b"time"]],
+          ],
+          expected_selectable=[
+              [[b"hello"], [b"there"]],
+              [[b"name", b"is"]],
+              [[b"?", b"what"], [b"time"]]
+          ],
+          axis=1,
+      ),
+      dict(
+          description="num_to_select is a 2D Tensor",
+          masking_inputs=[
+              [1, 2, 3],
+              [4, 5],
+              [6]
+          ],
+          expected_selectable=[
+              [2, 3],
+              [5],
+              [6],
+          ],
+          num_to_select=[[2], [1], [1]],
+          axis=-1,
+      ),
+  ])
+  # pyformat: enable
+
+  def testGetSelectable(self,
+                        masking_inputs,
+                        expected_selectable,
+                        num_to_select=2,
+                        unselectable_ids=None,
+                        axis=1,
+                        description=""):
+    masking_inputs = ragged_factory_ops.constant(masking_inputs)
+    item_selector = item_selector_ops.LastNItemSelector(
+        num_to_select=num_to_select, unselectable_ids=unselectable_ids)
+    selectable = item_selector.get_selectable(masking_inputs, axis)
+    actual_selection = ragged_array_ops.boolean_mask(masking_inputs, selectable)
+    self.assertAllEqual(actual_selection, expected_selectable)
+
+
+@test_util.run_all_in_graph_and_eager_modes
 class RandomItemSelectorTest(test.TestCase, parameterized.TestCase):
 
   # pyformat: disable

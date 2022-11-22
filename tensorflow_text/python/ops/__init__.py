@@ -34,6 +34,7 @@ from tensorflow_text.python.ops.greedy_constrained_sequence_op import greedy_con
 from tensorflow_text.python.ops.hub_module_splitter import HubModuleSplitter
 from tensorflow_text.python.ops.hub_module_tokenizer import HubModuleTokenizer
 from tensorflow_text.python.ops.item_selector_ops import FirstNItemSelector
+from tensorflow_text.python.ops.item_selector_ops import LastNItemSelector
 from tensorflow_text.python.ops.item_selector_ops import RandomItemSelector
 from tensorflow_text.python.ops.masking_ops import mask_language_model
 from tensorflow_text.python.ops.masking_ops import MaskValuesChooser
