@@ -23,9 +23,5 @@ REGISTER_KERNEL_BUILDER(Name(ByteSplitterWithOffsetsOpKernel::OpName())
                             .Device(tensorflow::DEVICE_CPU),
                         ByteSplitterWithOffsetsOpKernel);
 
-REGISTER_KERNEL_BUILDER(Name(ByteSplitByOffsetsOpKernel::OpName())
-                            .Device(tensorflow::DEVICE_CPU),
-                        ByteSplitByOffsetsOpKernel);
-
 }  // namespace text
 }  // namespace tensorflow

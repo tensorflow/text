@@ -28,11 +28,6 @@ extern "C" void AddByteSplit(tflite::MutableOpResolver* resolver) {
       tensorflow::text::ByteSplitterWithOffsetsOp>::Add(resolver);
 }
 
-extern "C" void AddByteSplitByOffsets(tflite::MutableOpResolver* resolver) {
-  tflite::shim::TfLiteOpKernel<
-      tensorflow::text::ByteSplitByOffsetsOp>::Add(resolver);
-}
-
 }  // namespace text
 }  // namespace custom
 }  // namespace ops

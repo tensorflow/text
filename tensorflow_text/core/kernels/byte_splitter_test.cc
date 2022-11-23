@@ -65,13 +65,6 @@ TEST(ByteSplitterTest, SplitHanzi) {
   EXPECT_THAT(output_offsets, ElementsAre(0, 1, 2, 3, 4, 5, 6));
 }
 
-TEST(ByteSplitterTest, SplitByBytesHanzi) {
-  ByteSplitter s;
-  auto output = s.SplitByOffsets("你好", {0, 3}, {3, 6});
-  EXPECT_TRUE(output.ok());
-  EXPECT_THAT(output.value(), ElementsAre("你", "好"));
-}
-
 }  // namespace
 }  // namespace text
 }  // namespace tensorflow

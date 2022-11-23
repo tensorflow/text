@@ -29,16 +29,10 @@ PYBIND11_MODULE(tflite_registrar, m) {
     A module with a Python wrapper for TFLite TFText ops.
   )pbdoc";
   m.attr("_allowed_symbols") = pybind11::make_tuple(
-      "AddByteSplit",
-      "AddByteSplitByOffsets",
-      "AddFastBertNormalize",
-      "AddFastSentencepieceDetokenize",
-      "AddFastSentencepieceTokenize",
-      "AddFastWordpieceTokenize",
-      "AddFastWordpieceDetokenize",
-      "AddNgramsStringJoin",
-      "AddRaggedTensorToTensor",
-      "AddWhitespaceTokenize",
+      "AddByteSplit", "AddFastBertNormalize", "AddFastSentencepieceDetokenize",
+      "AddFastSentencepieceTokenize", "AddFastWordpieceTokenize",
+      "AddFastWordpieceDetokenize", "AddNgramsStringJoin",
+      "AddRaggedTensorToTensor", "AddWhitespaceTokenize",
       "SELECT_TFTEXT_OPS");
   m.def(
       "AddByteSplit",
@@ -48,15 +42,6 @@ PYBIND11_MODULE(tflite_registrar, m) {
       },
       R"pbdoc(
       The function that adds AddByteSplit to the TFLite interpreter.
-      )pbdoc");
-  m.def(
-      "AddByteSplitByOffsets",
-      [](uintptr_t resolver) {
-        tflite::ops::custom::text::AddByteSplitByOffsets(
-            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
-      },
-      R"pbdoc(
-      The function that adds AddByteSplitByOffsets to the TFLite interpreter.
       )pbdoc");
   m.def(
       "AddFastBertNormalize",

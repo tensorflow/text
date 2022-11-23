@@ -18,7 +18,6 @@
 #include <string>
 #include <vector>
 
-#include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
 
 namespace tensorflow {
@@ -77,26 +76,6 @@ class ByteSplitter {
   //  * bytes: The output bytes.
   void Split(const absl::string_view input,
              std::vector<unsigned char>* bytes) const;
-
-  // Splits a string by the given start and end offsets.
-  //
-  // Example:
-  // input = "uñ"
-  // start_offsets = [0, 1]
-  // end_offsets = [1, 3]
-  // string = ["u", "ñ"]
-  //
-  // Args:
-  //  * input: The string of an input.
-  //  * start_offsets: Input byte index where the new strings start (inclusive).
-  //  * end_offsets: Input byte index where the new strings end. (exclusive)
-  //
-  // Return:
-  //  The split substrings.
-  absl::StatusOr<std::vector<std::string>> SplitByOffsets(
-      absl::string_view input,
-      const std::vector<int32_t>& start_offsets,
-      const std::vector<int32_t>& end_offsets) const;
 };
 
 }  // namespace text

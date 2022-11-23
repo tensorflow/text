@@ -22,7 +22,6 @@ namespace tensorflow {
 namespace text {
 
 REGISTER_TF_OP_SHIM(ByteSplitterWithOffsetsOpKernel);
-REGISTER_TF_OP_SHIM(ByteSplitByOffsetsOpKernel);
 
 }  // namespace text
 }  // namespace tensorflow
