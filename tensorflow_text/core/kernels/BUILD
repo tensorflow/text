@@ -63,6 +63,7 @@ cc_library(
     srcs = ["byte_splitter.cc"],
     hdrs = ["byte_splitter.h"],
     deps = [
+        "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
     ],
 )
@@ -98,6 +99,7 @@ cc_library(
     deps = [
         ":byte_splitter",
         "@com_google_absl//absl/status",
+        # tf:portable_gif_internal tensorflow dep,
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,

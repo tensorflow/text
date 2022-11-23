@@ -25,9 +25,22 @@ TEST(ByteSplitterWithOffsetsOpTest, ShapeFn) {
   INFER_OK(op, "?", "[?];[?];[?];[?]");
   INFER_OK(op, "[?]", "[?];[?];[?];[?]");
   INFER_OK(op, "[4]", "[?];[5];[?];[?]");
-  INFER_ERROR("Shape must be rank 1", op, "[]");
-  INFER_ERROR("Shape must be rank 1", op, "[1,2]");
-  INFER_ERROR("Shape must be rank 1", op, "[?,?]");
+  INFER_ERROR("shape must be rank 1", op, "[]");
+  INFER_ERROR("shape must be rank 1", op, "[1,2]");
+  INFER_ERROR("shape must be rank 1", op, "[?,?]");
+}
+
+TEST(ByteSpliByOffsetsOpTest, ShapeFn) {
+  // ByteSplitWithOffsets(input_values, starts, ends, input_row_splits)
+  //     -> [output_values, output_row_splits]
+  ShapeInferenceTestOp op("TFText>ByteSplitByOffsets");
+  INFER_OK(op, "?;[?];[?];[?]", "[?];[?]");
+  INFER_OK(op, "[?];[?];[?];[?]", "[?];[?]");
+  INFER_OK(op, "[?];[?];[?];[5]", "[?];[5]");
+  INFER_OK(op, "[?];[3];[?];[?]", "[3];[?]");
+  INFER_ERROR("shape must be rank 1", op, "[];[?];[?];[?]");
+  INFER_ERROR("shape must be rank 1", op, "[1,2];[?];[?];[?]");
+  INFER_ERROR("shape must be rank 1", op, "[?,?];[?];[?];[?]");
 }
 
 }  // namespace

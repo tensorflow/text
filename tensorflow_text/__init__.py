@@ -91,6 +91,7 @@ _allowed_symbols = [
 # Update guide/text_tf_lite.ipynb when adding op here
 tflite_registrar.SELECT_TFTEXT_OPS = [
     tflite_registrar.AddByteSplit,
+    tflite_registrar.AddByteSplitByOffsets,
     tflite_registrar.AddFastBertNormalize,
     tflite_registrar.AddFastSentencepieceDetokenize,
     tflite_registrar.AddFastSentencepieceTokenize,
