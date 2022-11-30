@@ -182,26 +182,10 @@ absl::Status FastBertNormalizeOp<Rt>::InvokeRealWork(InvokeContext* context) {
   }
 
   if constexpr (kGetOffsets) {
-    SH_ASSIGN_OR_RETURN(
-        auto output_offsets,
-        context->GetOutput(kOutputOffsets,
-                           Shape({static_cast<int>(offsets.size())})));
-    auto output_offsets_vec =
-        output_offsets->template As<int64, 1>();
-
-    SH_ASSIGN_OR_RETURN(
-        auto output_row_splits,
-        context->GetOutput(kOutputRowSplitsOfOffsets,
-                           Shape({static_cast<int>(row_splits.size())})));
-    auto output_row_splits_vec = output_row_splits->template As<int64, 1>();
-
-    for (int i = 0; i < row_splits.size(); ++i) {
-      output_row_splits_vec(i) = row_splits[i];
-    }
-
-    for (int i = 0; i < offsets.size(); ++i) {
-      output_offsets_vec(i) = offsets[i];
-    }
+    SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+        offsets, kOutputOffsets, context));
+    SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+        row_splits, kOutputRowSplitsOfOffsets, context));
   }
   return absl::OkStatus();
 }

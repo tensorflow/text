@@ -78,11 +78,6 @@ class OffsetsToBoiseTagsOp
 
   // Shape inference
   static absl::Status ShapeInference(ShapeInferenceContext* c);
-
- protected:
-  template <typename BufferType, typename DType>
-  inline absl::Status FillOutputTensor(const std::vector<BufferType>& buffer,
-                                       const int index, InvokeContext* context);
 };
 
 ////////////////////////// Implementation
@@ -349,24 +344,10 @@ absl::Status OffsetsToBoiseTagsOp<Rt>::Invoke(InvokeContext* context) {
   }
 
   // Allocate output & fill output tensors.
-  SH_RETURN_IF_ERROR(FillOutputTensor<std::string, tensorflow::tstring>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<std::string,
+                                                     tensorflow::tstring>(
       boise_tags, kOutputBoiseTags, context));
 
-  return absl::OkStatus();
-}
-
-template <tflite::shim::Runtime Rt>
-template <typename BufferType, typename DType>
-absl::Status OffsetsToBoiseTagsOp<Rt>::FillOutputTensor(
-    const std::vector<BufferType>& buffer, const int index,
-    InvokeContext* context) {
-  SH_ASSIGN_OR_RETURN(
-      const auto tensorview,
-      context->GetOutput(
-          index, tflite::shim::Shape({static_cast<int>(buffer.size())})));
-  auto data = tensorview->template As<DType, 1>();
-  // TODO(broken): investigate using memcpy like previous WST
-  for (int i = 0; i < buffer.size(); ++i) data(i) = buffer.at(i);
   return absl::OkStatus();
 }
 

@@ -299,14 +299,9 @@ absl::Status PhraseDetokenizeOp<Rt>::Invoke(InvokeContext* context) {
     sentences.push_back(sentence);
   }
 
-  const int words_size = sentences.size();
-  SH_ASSIGN_OR_RETURN(auto output_words,
-                      context->GetOutput(kOutputWords, Shape({words_size})));
-  auto output_words_vec = output_words->template As<tensorflow::tstring, 1>();
-
-  for (int i = 0; i < words_size; ++i) {
-    output_words_vec(i) = sentences[i];
-  }
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<std::string,
+                                                     tensorflow::tstring>(
+      sentences, kOutputWords, context));
 
   return absl::OkStatus();
 }

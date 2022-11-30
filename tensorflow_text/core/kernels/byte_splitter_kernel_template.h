@@ -70,12 +70,6 @@ class ByteSplitterWithOffsetsOp
 
   // Shape inference
   static absl::Status ShapeInference(ShapeInferenceContext* c);
-
- protected:
-  template <typename BufferType, typename DType>
-  inline absl::Status FillOutputTensor(
-    const std::vector<BufferType>& buffer, const int index,
-    InvokeContext* context);
 };
 
 template <tflite::shim::Runtime Rt>
@@ -144,28 +138,15 @@ template <tflite::shim::Runtime Rt>
   }
 
   // Allocate output & fill output tensors.
-  SH_RETURN_IF_ERROR(
-      FillOutputTensor<unsigned char, uint8_t>(bytes, kOutputBytes, context));
-  SH_RETURN_IF_ERROR(FillOutputTensor<int64_t, int64_t>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<unsigned char, uint8_t>(
+      bytes, kOutputBytes, context));
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int64_t, int64_t>(
       row_splits, kOutputRowSplits, context));
-  SH_RETURN_IF_ERROR(FillOutputTensor<int32_t, int32_t>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int32_t, int32_t>(
       start_offsets, kOutputStartOffsets, context));
-  SH_RETURN_IF_ERROR(FillOutputTensor<int32_t, int32_t>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int32_t, int32_t>(
       end_offsets, kOutputEndOffsets, context));
 
-  return absl::OkStatus();
-}
-
-template <tflite::shim::Runtime Rt>
-template <typename BufferType, typename DType>
-absl::Status ByteSplitterWithOffsetsOp<Rt>::FillOutputTensor(
-    const std::vector<BufferType>& buffer, const int index,
-    InvokeContext* context) {
-  SH_ASSIGN_OR_RETURN(const auto tensorview, context->GetOutput(
-      index, tflite::shim::Shape({static_cast<int>(buffer.size())})));
-  auto data = tensorview->template As<DType, 1>();
-  // TODO(broken): investigate using memcpy like previous WST
-  for (int i = 0; i < buffer.size(); ++i) data(i) = buffer.at(i);
   return absl::OkStatus();
 }
 

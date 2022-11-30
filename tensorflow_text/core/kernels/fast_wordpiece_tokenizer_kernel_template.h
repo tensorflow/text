@@ -128,54 +128,17 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Invoke(
     row_splits.push_back(delta_num_wordpieces + row_splits.back());
   }
 
-  const int subwords_size = subwords.size();
-  SH_ASSIGN_OR_RETURN(
-      auto output_subwords,
-      context->GetOutput(kOutputSubwords, Shape({subwords_size})));
-  auto output_subwords_vec =
-      output_subwords->template As<tensorflow::tstring, 1>();
-
-  SH_ASSIGN_OR_RETURN(
-      auto output_ids,
-      context->GetOutput(
-          kOutputIds,
-          Shape({static_cast<int>(
-              subword_ids.size())}))); /* same shape as `output_subwords` */
-  auto output_ids_vec = output_ids->template As<int64, 1>();
-
-  SH_ASSIGN_OR_RETURN(
-      auto output_row_splits,
-      context->GetOutput(kOutputRowSplits,
-                         Shape({static_cast<int>(row_splits.size())})));
-  auto output_row_splits_vec = output_row_splits->template As<int64, 1>();
-
-  SH_ASSIGN_OR_RETURN(auto start_values,
-                      context->GetOutput(kStartValues, Shape({subwords_size})));
-  auto start_values_vec = start_values->template As<int64, 1>();
-
-  SH_ASSIGN_OR_RETURN(auto end_values,
-                      context->GetOutput(kEndValues, Shape({subwords_size})));
-  auto end_values_vec = end_values->template As<int64, 1>();
-
-  for (int i = 0; i < subwords.size(); ++i) {
-    output_subwords_vec(i) = subwords[i];
-  }
-
-  for (int i = 0; i < subword_ids.size(); ++i) {
-    output_ids_vec(i) = subword_ids[i];
-  }
-
-  for (int i = 0; i < row_splits.size(); ++i) {
-    output_row_splits_vec(i) = row_splits[i];
-  }
-
-  for (int i = 0; i < begin_offset.size(); ++i) {
-    start_values_vec(i) = begin_offset[i];
-  }
-
-  for (int i = 0; i < end_offset.size(); ++i) {
-    end_values_vec(i) = end_offset[i];
-  }
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<std::string,
+                                                     tensorflow::tstring>(
+      subwords, kOutputSubwords, context));
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+      subword_ids, kOutputIds, context));
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+      row_splits, kOutputRowSplits, context));
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+      begin_offset, kStartValues, context));
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+      end_offset, kEndValues, context));
 
   return absl::OkStatus();
 }
