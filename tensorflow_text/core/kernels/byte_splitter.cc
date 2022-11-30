@@ -50,5 +50,27 @@ void ByteSplitter::Split(const absl::string_view input,
   }
 }
 
+absl::StatusOr<std::vector<absl::string_view>> ByteSplitter::SplitByOffsets(
+      absl::string_view input,
+      absl::Span<const int> start_offsets,
+      absl::Span<const int> end_offsets) const {
+  std::vector<absl::string_view> result;
+  int num = std::min(start_offsets.size(), end_offsets.size());
+  for (int i = 0; i < num; ++i) {
+    if (start_offsets[i] < 0 || start_offsets[i] > input.size()) {
+      return absl::InvalidArgumentError("Start offsets out of range.");
+    }
+    if (end_offsets[i] < 0 || end_offsets[i] > input.size()) {
+      return absl::InvalidArgumentError("End offsets out of range.");
+    }
+    if (start_offsets[i] > end_offsets[i]) {
+      return absl::InvalidArgumentError("Start offset after end offset.");
+    }
+    result.push_back(input.substr(start_offsets[i],
+                                  end_offsets[i] - start_offsets[i]));
+  }
+  return result;
+}
+
 }  // namespace text
 }  // namespace tensorflow

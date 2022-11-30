@@ -27,6 +27,12 @@ class ByteSplitterWithOffsetsOpKernel
   using TfOpKernel::TfOpKernel;
 };
 
+class ByteSplitByOffsetsOpKernel
+    : public tflite::shim::TfOpKernel<ByteSplitByOffsetsOp> {
+ public:
+  using TfOpKernel::TfOpKernel;
+};
+
 }  // namespace text
 }  // namespace tensorflow
 

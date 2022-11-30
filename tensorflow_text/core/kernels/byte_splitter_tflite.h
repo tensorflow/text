@@ -25,6 +25,8 @@ namespace text {
 
 extern "C" void AddByteSplit(::tflite::MutableOpResolver* resolver);
 
+extern "C" void AddByteSplitByOffsets(::tflite::MutableOpResolver* resolver);
+
 }  // namespace text
 }  // namespace custom
 }  // namespace ops
