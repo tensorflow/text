@@ -23,6 +23,8 @@ namespace text {
 
 REGISTER_TF_OP_SHIM(OffsetsToBoiseTagsOpKernel);
 
+REGISTER_TF_OP_SHIM(BoiseTagsToOffsetsOpKernel);
+
 }  // namespace text
 }  // namespace tensorflow
 

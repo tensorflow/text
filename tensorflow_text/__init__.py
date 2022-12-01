@@ -58,6 +58,7 @@ _allowed_symbols = [
     "WhitespaceTokenizer",
     "WordShape",
     "WordpieceTokenizer",
+    "boise_tags_to_offsets",
     "build_fast_bert_normalizer_model",
     "build_fast_wordpiece_model",
     "case_fold_utf8",

@@ -23,9 +23,9 @@ REGISTER_KERNEL_BUILDER(
     Name(OffsetsToBoiseTagsOpKernel::OpName()).Device(tensorflow::DEVICE_CPU),
     OffsetsToBoiseTagsOpKernel);
 
-// REGISTER_KERNEL_BUILDER(
-//     Name(BoiseTagsToOffsetsOpKernel::OpName()).Device(tensorflow::DEVICE_CPU),
-//     BoiseTagsToOffsetsOpKernel);
+REGISTER_KERNEL_BUILDER(
+    Name(BoiseTagsToOffsetsOpKernel::OpName()).Device(tensorflow::DEVICE_CPU),
+    BoiseTagsToOffsetsOpKernel);
 
 }  // namespace text
 }  // namespace tensorflow

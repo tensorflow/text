@@ -23,6 +23,7 @@ except ImportError:
 from tensorflow_text.core.pybinds.pywrap_fast_bert_normalizer_model_builder import build_fast_bert_normalizer_model
 from tensorflow_text.core.pybinds.pywrap_fast_wordpiece_tokenizer_model_builder import build_fast_wordpiece_model
 from tensorflow_text.python.ops.bert_tokenizer import BertTokenizer
+from tensorflow_text.python.ops.boise_offset_converter import boise_tags_to_offsets
 from tensorflow_text.python.ops.boise_offset_converter import offsets_to_boise_tags
 from tensorflow_text.python.ops.byte_splitter import ByteSplitter
 from tensorflow_text.python.ops.create_feature_bitmask_op import create_feature_bitmask

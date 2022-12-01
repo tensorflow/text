@@ -27,12 +27,11 @@ class OffsetsToBoiseTagsOpKernel
   using TfOpKernel::TfOpKernel;
 };
 
-// class BoiseTagsToOffsetsOpKernel
-//     : public tflite::shim::TfOpKernel<BoiseTagsToOffsetsOpKernel> {
-//  public:
-//   using TfOpKernel::TfOpKernel;
-// };
-
+class BoiseTagsToOffsetsOpKernel
+    : public tflite::shim::TfOpKernel<BoiseTagsToOffsetsOp> {
+ public:
+  using TfOpKernel::TfOpKernel;
+};
 
 }  // namespace text
 }  // namespace tensorflow

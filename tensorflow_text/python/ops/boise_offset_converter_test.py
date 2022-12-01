@@ -27,7 +27,7 @@ from tensorflow.python.platform import test
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class OffsetsToBoiseTagsTest(test_util.TensorFlowTestCase):
+class OffsetsToBoiseTagsTest(tf.test.TestCase):
 
   def test_ragged_input_2d(self):
     token_begin_offsets = tf.ragged.constant([[0, 4, 8, 12, 17], [0, 4, 8, 12]])
@@ -299,6 +299,162 @@ class OffsetsToBoiseTagsTest(test_util.TensorFlowTestCase):
 
   #   # Assert the results are identical.
   #   self.assertAllEqual(tflite_result, tf_result)
+
+
+@test_util.run_all_in_graph_and_eager_modes
+class BoiseTagsToOffsetsTest(tf.test.TestCase):
+
+  def test_ragged_input_2d(self):
+    token_begin_offsets = tf.ragged.constant([[0, 4, 8, 12, 17], [0, 4, 8, 12]])
+    token_end_offsets = tf.ragged.constant([[3, 7, 11, 16, 20], [3, 7, 11, 16]])
+    boise_tags = tf.ragged.constant(
+        [['O', 'B-animal', 'I-animal', 'E-animal', 'O'],
+         ['B-person', 'E-person', 'O', 'S-loc']])
+
+    expected_span_begin_offsets = tf.ragged.constant([[4], [0, 12]])
+    expected_span_end_offsets = tf.ragged.constant([[16], [7, 16]])
+    expected_span_type = tf.ragged.constant([['animal'], ['person', 'loc']])
+    (span_begin_offsets, span_end_offsets, span_type) = (
+        tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                      boise_tags))
+
+    self.assertAllEqual(span_begin_offsets, expected_span_begin_offsets)
+    self.assertAllEqual(span_end_offsets, expected_span_end_offsets)
+    self.assertAllEqual(span_type, expected_span_type)
+
+  def test_ragged_input_2d_empty_span(self):
+    token_begin_offsets = tf.ragged.constant([[0, 4, 8, 12, 17], [1],
+                                              [0, 4, 8, 12]])
+    token_end_offsets = tf.ragged.constant([[3, 7, 11, 16, 20], [2],
+                                            [3, 7, 11, 16]])
+    boise_tags = tf.ragged.constant(
+        [['O', 'B-animal', 'I-animal', 'E-animal', 'O'], ['O'],
+         ['O', 'O', 'O', 'S-loc']])
+
+    expected_span_begin_offsets = tf.ragged.constant([[4], [], [12]])
+    expected_span_end_offsets = tf.ragged.constant([[16], [], [16]])
+    expected_span_type = tf.ragged.constant([['animal'], [], ['loc']])
+    (span_begin_offsets, span_end_offsets, span_type) = (
+        tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                      boise_tags))
+
+    self.assertAllEqual(span_begin_offsets, expected_span_begin_offsets)
+    self.assertAllEqual(span_end_offsets, expected_span_end_offsets)
+    self.assertAllEqual(span_type, expected_span_type)
+
+  def test_ragged_input_2d_empty_token(self):
+    token_begin_offsets = tf.ragged.constant([[0, 4, 8, 12, 17], [],
+                                              [0, 4, 8, 12]])
+    token_end_offsets = tf.ragged.constant([[3, 7, 11, 16, 20], [],
+                                            [3, 7, 11, 16]])
+    boise_tags = tf.ragged.constant(
+        [['O', 'B-animal', 'I-animal', 'E-animal', 'O'], [],
+         ['O', 'O', 'O', 'S-loc']])
+
+    expected_span_begin_offsets = tf.ragged.constant([[4], [], [12]])
+    expected_span_end_offsets = tf.ragged.constant([[16], [], [16]])
+    expected_span_type = tf.ragged.constant([['animal'], [], ['loc']])
+    (span_begin_offsets, span_end_offsets, span_type) = (
+        tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                      boise_tags))
+
+    self.assertAllEqual(span_begin_offsets, expected_span_begin_offsets)
+    self.assertAllEqual(span_end_offsets, expected_span_end_offsets)
+    self.assertAllEqual(span_type, expected_span_type)
+
+  def test_ragged_input_1d(self):
+    token_begin_offsets = tf.ragged.constant([0, 4, 8, 12, 17])
+    token_end_offsets = tf.ragged.constant([3, 7, 11, 16, 20])
+    boise_tags = tf.ragged.constant(
+        ['O', 'B-animal', 'I-animal', 'E-animal', 'O'])
+
+    expected_span_begin_offsets = tf.ragged.constant([4])
+    expected_span_end_offsets = tf.ragged.constant([16])
+    expected_span_type = tf.ragged.constant(['animal'])
+    (span_begin_offsets, span_end_offsets, span_type) = (
+        tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                      boise_tags))
+
+    self.assertAllEqual(span_begin_offsets, expected_span_begin_offsets)
+    self.assertAllEqual(span_end_offsets, expected_span_end_offsets)
+    self.assertAllEqual(span_type, expected_span_type)
+
+  def test_ragged_input_0d(self):
+    token_begin_offsets = tf.ragged.constant(0)
+    token_end_offsets = tf.ragged.constant(3)
+    boise_tags = tf.ragged.constant('S-animal')
+
+    expected_span_begin_offsets = tf.ragged.constant(0)
+    expected_span_end_offsets = tf.ragged.constant(3)
+    expected_span_type = tf.ragged.constant('animal')
+    (span_begin_offsets, span_end_offsets, span_type) = (
+        tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                      boise_tags))
+
+    self.assertAllEqual(span_begin_offsets, expected_span_begin_offsets)
+    self.assertAllEqual(span_end_offsets, expected_span_end_offsets)
+    self.assertAllEqual(span_type, expected_span_type)
+
+  def test_tensor_input_2d(self):
+    token_begin_offsets = tf.constant([[0, 4, 8, 12, 17], [0, 4, 8, 12, 17]])
+    token_end_offsets = tf.constant([[3, 7, 11, 16, 20], [3, 7, 11, 16, 19]])
+    boise_tags = tf.constant([['O', 'B-animal', 'I-animal', 'E-animal', 'O'],
+                              ['O', 'O', 'O', 'S-loc', 'O']])
+
+    expected_span_begin_offsets = tf.ragged.constant([[4], [12]])
+    expected_span_end_offsets = tf.ragged.constant([[16], [16]])
+    expected_span_type = tf.ragged.constant([['animal'], ['loc']])
+    (span_begin_offsets, span_end_offsets, span_type) = (
+        tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                      boise_tags))
+
+    self.assertAllEqual(span_begin_offsets, expected_span_begin_offsets)
+    self.assertAllEqual(span_end_offsets, expected_span_end_offsets)
+    self.assertAllEqual(span_type, expected_span_type)
+
+  def test_tensor_input_1d(self):
+    token_begin_offsets = tf.constant([0, 4, 8, 12, 17])
+    token_end_offsets = tf.constant([3, 7, 11, 16, 20])
+    boise_tags = tf.constant(['O', 'B-animal', 'I-animal', 'E-animal', 'O'])
+
+    expected_span_begin_offsets = tf.constant([4])
+    expected_span_end_offsets = tf.constant([16])
+    expected_span_type = tf.constant(['animal'])
+    (span_begin_offsets, span_end_offsets, span_type) = (
+        tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                      boise_tags))
+
+    self.assertAllEqual(span_begin_offsets, expected_span_begin_offsets)
+    self.assertAllEqual(span_end_offsets, expected_span_end_offsets)
+    self.assertAllEqual(span_type, expected_span_type)
+
+  def test_tensor_input_0d(self):
+    token_begin_offsets = tf.constant(0)
+    token_end_offsets = tf.constant(3)
+    boise_tags = tf.constant('S-animal')
+
+    expected_span_begin_offsets = tf.constant(0)
+    expected_span_end_offsets = tf.constant(3)
+    expected_span_type = tf.constant('animal')
+    (span_begin_offsets, span_end_offsets, span_type) = (
+        tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                      boise_tags))
+
+    self.assertAllEqual(span_begin_offsets, expected_span_begin_offsets)
+    self.assertAllEqual(span_end_offsets, expected_span_end_offsets)
+    self.assertAllEqual(span_type, expected_span_type)
+
+  def test_ragged_input_tensor_type_error(self):
+    token_begin_offsets = tf.ragged.constant([[0, 4, 8, 12, 17],
+                                              [0, 4, 8, 12, 17]])
+    token_end_offsets = tf.ragged.constant([[3, 7, 11, 16, 20],
+                                            [3, 7, 11, 16, 20]])
+    # not same as token offsets tensor type, causing error
+    boise_tags = tf.constant([['O', 'B-animal', 'I-animal', 'E-animal', 'O'],
+                              ['O', 'O', 'O', 'S-loc', 'O']])
+    with self.assertRaises(ValueError):
+      tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
+                                    boise_tags)
 
 
 if __name__ == '__main__':

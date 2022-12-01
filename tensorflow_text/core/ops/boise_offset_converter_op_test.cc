@@ -18,7 +18,7 @@
 namespace tensorflow {
 namespace {
 
-TEST(BoiseOffsetConverterOpTest, ShapeFn) {
+TEST(OffsetsToBoiseTagsOpTest, ShapeFn) {
   // OffsetsToBoiseTagsOp(input_token_begin_offsets,
   //                      input_token_end_offsets,
   //                      input_span_begin_offsets,
@@ -40,6 +40,22 @@ TEST(BoiseOffsetConverterOpTest, ShapeFn) {
               "[1,2];[1];[1];[1];[?];[?];[?];[?];[?];[?];[?]");
   INFER_ERROR("Shape must be rank 1", op,
               "[?,?];[1];[1];[1];[?];[?];[?];[?];[?];[?];[?]");
+}
+
+TEST(BoiseTagsToOffsetsOpTest, ShapeFn) {
+  // BoiseTagsToOffsetsOp(input_token_begin_offsets,
+  //                      input_token_end_offsets,
+  //                      input_boise_tags,
+  //                      input_token_begin_row_splits,
+  //                      input_token_end_row_splits,
+  //                      input_boise_tags_row_splits)
+  //   -> [output_span_begin_offsets, output_span_end_offsets, output_span_type,
+  //   output_row_splits]
+  ShapeInferenceTestOp op("TFText>BoiseTagsToOffsets");
+  INFER_OK(op, "[?];[?];[?];[?];[?];[?]", "[?];[?];[?];[?]");
+  INFER_ERROR("Shape must be rank 1", op, "[];[5];[5];[2];[2];[2]");
+  INFER_ERROR("Shape must be rank 1", op, "[3,4];[5];[5];[2];[2];[2]");
+  INFER_ERROR("Shape must be rank 1", op, "[?,?];[5];[5];[2];[2];[2]");
 }
 
 }  // namespace
