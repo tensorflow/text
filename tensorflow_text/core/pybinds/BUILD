@@ -6,6 +6,7 @@ licenses(["notice"])
 
 package(default_visibility = [
     "//nlp/sage/nlu/features/python:__pkg__",
+    "//nlp/semantic_parsing/learning/neural/portable/tools/release:__pkg__",
     "//tensorflow_text:__subpackages__",
 ])
 
