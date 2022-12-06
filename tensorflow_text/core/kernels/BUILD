@@ -1,3 +1,5 @@
+load("//tools/build_defs/license:license.bzl", "license")
+
 # Kernels for tf.text ops.
 # [internal] load cc_proto_library.bzl
 load("@flatbuffers//:build_defs.bzl", "flatbuffer_cc_library")
@@ -6,7 +8,15 @@ load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
 licenses(["notice"])
 
 # Visibility rules
-package(default_visibility = ["//visibility:public"])
+package(
+    default_applicable_licenses = ["//tensorflow_text/core/kernels:license"],
+    default_visibility = ["//visibility:public"],
+)
+
+license(
+    name = "license",
+    package_name = "kernels",
+)
 
 exports_files(["LICENSE"])
 
