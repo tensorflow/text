@@ -5,6 +5,7 @@ load("@org_tensorflow//tensorflow:tensorflow.bzl", "pybind_extension")
 licenses(["notice"])
 
 package(default_visibility = [
+    "//nlp/sage/nlu/features/python:__pkg__",
     "//tensorflow_text:__subpackages__",
 ])
 
