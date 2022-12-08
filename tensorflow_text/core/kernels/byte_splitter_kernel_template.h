@@ -208,8 +208,8 @@ class ByteSplitByOffsetsOp
 
 template <tflite::shim::Runtime Rt>
 std::vector<std::string> ByteSplitByOffsetsOp<Rt>::Inputs() {
-  return {"input_values: string", "input_start_offsets: int32",
-          "input_end_offsets: int32", "input_row_splits: int64"};
+  return {"input_values: string", "input_start_offsets: int32,int64",
+          "input_end_offsets: int32,int64", "input_row_splits: int32,int64"};
 }
 
 template <tflite::shim::Runtime Rt>
