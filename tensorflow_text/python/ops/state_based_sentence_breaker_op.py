@@ -16,13 +16,12 @@
 """Break sentence ops."""
 
 from tensorflow.python.framework import dtypes
-from tensorflow.python.ops import map_fn
 from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_state_based_sentence_breaker_op = load_library.load_op_library(resource_loader.get_path_to_datafile('_state_based_sentence_breaker_op.so'))
+from tensorflow_text.python.ops import byte_splitter
 from tensorflow_text.python.ops import sentence_breaking_ops
 
 
@@ -111,18 +110,11 @@ class StateBasedSentenceBreaker(sentence_breaking_ops.SentenceBreakerWithOffsets
         ragged_tensor.RaggedTensor.from_row_lengths(value, row_lengths)
         for value in [start, end, properties, terminal_punc_token])
 
-    # Helper for use within map_fn (function must only take in one argument)
-    def _substring(x):
-      s, pos, length = x
-      return string_ops.substr(s, pos, length)
-
     # Extract fragment text using offsets
-    fragment_text = map_fn.map_fn(
-        _substring, (doc_flat, start, math_ops.subtract(end, start)),
-        fn_output_signature=ragged_tensor.RaggedTensorSpec(
-            shape=[None], dtype=dtypes.string),
-        infer_shape=False,
-        dtype=dtypes.string)
+    splitter = byte_splitter.ByteSplitter()
+    fragment_text = splitter.split_by_offsets(
+        doc_flat, math_ops.cast(start, dtypes.int32),
+        math_ops.cast(end, dtypes.int32))
 
     # Repack back into original shape (if necessary)
     if doc.shape.ndims == 1:

@@ -21,6 +21,7 @@
 #include "tensorflow_text/core/kernels/ngrams_tflite.h"
 #include "tensorflow_text/core/kernels/ragged_tensor_to_tensor_tflite.h"
 #include "tensorflow_text/core/kernels/sentencepiece/py_tflite_registerer.h"
+#include "tensorflow_text/core/kernels/sentence_fragmenter_v2_tflite.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
 
 PYBIND11_MODULE(tflite_registrar, m) {
@@ -38,6 +39,7 @@ PYBIND11_MODULE(tflite_registrar, m) {
       "AddFastWordpieceDetokenize",
       "AddNgramsStringJoin",
       "AddRaggedTensorToTensor",
+      "AddSentenceFragmenterV2",
       "AddWhitespaceTokenize",
       "SELECT_TFTEXT_OPS");
   m.def(
@@ -120,6 +122,15 @@ PYBIND11_MODULE(tflite_registrar, m) {
       },
       R"pbdoc(
       The function that adds AddRaggedTensorToTensor to the TFLite interpreter.
+      )pbdoc");
+  m.def(
+      "AddSentenceFragmenterV2",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddSentenceFragmenterV2(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      The function that adds AddSentenceFragmenterV2 to the TFLite interpreter.
       )pbdoc");
   m.def(
       "AddWhitespaceTokenize",

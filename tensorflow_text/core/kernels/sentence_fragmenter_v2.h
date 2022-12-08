@@ -36,6 +36,7 @@
 
 #include <vector>
 
+#include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "icu4c/source/common/unicode/utypes.h"
 #include "tensorflow/core/lib/core/status.h"
@@ -151,7 +152,7 @@ class SentenceFragmenterV2 {
 
   // Finds sentence fragments in the [start_, limit_) range of the associated
   // document.
-  ::tensorflow::Status FindFragments(std::vector<SentenceFragment>* result);
+  absl::Status FindFragments(std::vector<SentenceFragment>* result);
 
  private:
   // State for matching a fragment-boundary regexp against a character sequence.

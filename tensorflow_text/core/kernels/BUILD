@@ -813,18 +813,7 @@ tf_cc_library(
     ],
     deps = [
         ":sentence_breaking_utils",
-    ],
-)
-
-tf_cc_library(
-    name = "sentence_breaking_kernels_v2",
-    srcs = ["sentence_breaking_kernels_v2.cc"],
-    tf_deps = [
-        # tf:framework tensorflow dep,
-    ],
-    deps = [
-        ":sentence_fragmenter_v2",
-        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/status",
     ],
 )
 
@@ -836,6 +825,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
@@ -849,6 +839,47 @@ cc_test(
         "@com_google_absl//absl/strings",
         "@com_google_googletest//:gtest_main",
         "@icu//:common",
+    ],
+)
+
+tf_cc_library(
+    name = "sentence_fragmenter_v2_kernel",
+    srcs = ["sentence_fragmenter_v2_kernel.cc"],
+    hdrs = ["sentence_fragmenter_v2_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":sentence_fragmenter_v2_kernel_template",
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "sentence_fragmenter_v2_kernel_template",
+    hdrs = ["sentence_fragmenter_v2_kernel_template.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":sentence_fragmenter_v2",
+        "@com_google_absl//absl/status",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:shape tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
+        # lite/kernels/shim:tensor_view tensorflow dep,
+    ],
+)
+
+tflite_cc_library(
+    name = "sentence_fragmenter_v2_tflite",
+    srcs = ["sentence_fragmenter_v2_tflite.cc"],
+    hdrs = ["sentence_fragmenter_v2_tflite.h"],
+    deps = [
+        ":sentence_fragmenter_v2_kernel_template",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels/shim:tflite_op_shim tensorflow dep,
     ],
 )
 
@@ -928,6 +959,7 @@ tflite_cc_library(
         "fast_wordpiece_tokenizer_tflite.h",
         "ngrams_tflite.h",
         "ragged_tensor_to_tensor_tflite.h",
+        "sentence_fragmenter_v2_tflite.h",
         "whitespace_tokenizer_tflite.h",
         "//tensorflow_text/core/kernels/sentencepiece:sp_headers",
     ],
@@ -937,6 +969,7 @@ tflite_cc_library(
         ":fast_wordpiece_tokenizer_tflite",
         ":ngrams_tflite",
         ":ragged_tensor_to_tensor_tflite",
+        ":sentence_fragmenter_v2_tflite",
         ":whitespace_tokenizer_tflite",
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,

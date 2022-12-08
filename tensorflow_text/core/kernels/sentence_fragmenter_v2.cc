@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include "absl/status/status.h"
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "icu4c/source/common/unicode/uchar.h"
@@ -447,7 +448,7 @@ void SetFragmentProperty(SentenceFragment::Property property,
   fragment->properties = fragment->properties | property;
 }
 
-Status SentenceFragmenterV2::FindFragments(
+absl::Status SentenceFragmenterV2::FindFragments(
     std::vector<SentenceFragment>* result) {
   // Partition document into sentence fragments.
   for (int i_start = 0; i_start < static_cast<int>(document_.size());) {
@@ -471,7 +472,7 @@ Status SentenceFragmenterV2::FindFragments(
     result->push_back(std::move(fragment));
     i_start = match.limit_index();
   }
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 // This method is essentially a control layer on top of a simple state machine

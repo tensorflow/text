@@ -285,7 +285,6 @@ py_tf_text_library(
     srcs = ["python/ops/fast_bert_normalizer.py"],
     cc_op_defs = ["//tensorflow_text/core/ops:fast_bert_normalizer_op.cc"],
     cc_op_kernels = [
-        # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:fast_bert_normalizer_tf_kernel",
     ],
     deps = [
@@ -400,7 +399,6 @@ py_tf_text_library(
     srcs = ["python/ops/fast_wordpiece_tokenizer.py"],
     cc_op_defs = ["//tensorflow_text/core/ops:fast_wordpiece_tokenizer_op.cc"],
     cc_op_kernels = [
-        # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_kernel",
     ],
     deps = [
@@ -442,7 +440,6 @@ py_tf_text_library(
     srcs = ["python/ops/phrase_tokenizer.py"],
     cc_op_defs = ["//tensorflow_text/core/ops:phrase_tokenizer_op.cc"],
     cc_op_kernels = [
-        # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:phrase_tokenizer_kernel",
     ],
     deps = [
@@ -1125,12 +1122,13 @@ py_tf_text_library(
     name = "state_based_sentence_breaker_op",
     srcs = ["python/ops/state_based_sentence_breaker_op.py"],
     cc_op_defs = [
-        "//tensorflow_text/core/ops:sentence_breaking_ops_v2.cc",
+        "//tensorflow_text/core/ops:sentence_fragmenter_v2_op.cc",
     ],
     cc_op_kernels = [
-        "//tensorflow_text/core/kernels:sentence_breaking_kernels_v2",
+        "//tensorflow_text/core/kernels:sentence_fragmenter_v2_kernel",
     ],
     deps = [
+        ":byte_splitter",
         ":sentence_breaking_ops",
         # tf:lib tensorflow dep,
         # python:dtypes tensorflow dep,
@@ -1149,7 +1147,9 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":state_based_sentence_breaker_op",
+        ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
+        # tensorflow package dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:dtypes tensorflow dep,
@@ -1432,7 +1432,6 @@ py_tf_text_library(
     srcs = ["python/ops/whitespace_tokenizer.py"],
     cc_op_defs = ["//tensorflow_text/core/ops:whitespace_tokenizer_op.cc"],
     cc_op_kernels = [
-        # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:whitespace_tokenizer_kernel",
     ],
     deps = [

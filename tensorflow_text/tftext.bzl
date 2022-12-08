@@ -48,7 +48,7 @@ def py_tf_text_library(
             }),
             alwayslink = 1,
             deps = cc_op_kernels +
-                ["@com_google_absl//absl/status"] +
+                ["@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim"] +
                 select({
                     "@org_tensorflow//tensorflow:mobile": [
                         "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
@@ -133,6 +133,7 @@ def tf_cc_library(
     oss_deps = []
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:flat_hash_map")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/status")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/status:statusor")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/strings:cord")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/time")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/types:variant")

@@ -100,6 +100,7 @@ tflite_registrar.SELECT_TFTEXT_OPS = [
     tflite_registrar.AddFastWordpieceDetokenize,
     tflite_registrar.AddNgramsStringJoin,
     tflite_registrar.AddRaggedTensorToTensor,
+    tflite_registrar.AddSentenceFragmenterV2,
     tflite_registrar.AddWhitespaceTokenize
 ]
 

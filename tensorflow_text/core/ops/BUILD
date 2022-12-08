@@ -53,3 +53,19 @@ cc_test(
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_kernel",
     ],
 )
+
+cc_test(
+    name = "sentence_fragmenter_v2_op_test",
+    size = "small",
+    srcs = [
+        "sentence_fragmenter_v2_op.cc",
+        "sentence_fragmenter_v2_op_test.cc",
+    ],
+    deps = [
+        # tf:framework tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:test_main tensorflow dep,
+        # tf/framework:shape_inference_testutil tensorflow dep,
+        "//tensorflow_text/core/kernels:sentence_fragmenter_v2_kernel",
+    ],
+)

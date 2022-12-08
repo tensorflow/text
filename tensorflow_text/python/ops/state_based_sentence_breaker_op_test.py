@@ -19,7 +19,11 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
+import numpy as np
+import tensorflow as tf
+import tensorflow_text as tf_text
 
+from tensorflow.lite.python import interpreter
 from tensorflow.python.framework import constant_op
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import string_ops
@@ -140,6 +144,48 @@ class SentenceFragmenterTestCasesV2(test.TestCase, parameterized.TestCase):
       d = array_ops.broadcast_to(d, start.shape)
       self.assertAllEqual(string_ops.substr(d, start, end - start), text)
 
+  def testTfLite(self):
+    """Checks TFLite conversion and inference."""
+
+    class Model(tf.keras.Model):
+
+      def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.sb = tf_text.StateBasedSentenceBreaker()
+
+      @tf.function(input_signature=[
+          tf.TensorSpec(shape=[None], dtype=tf.string, name="input")
+      ])
+      def call(self, input_tensor):
+        return {"result": self.sb.break_sentences(input_tensor).flat_values}
+    # Test input data.
+    input_data = np.array(["Some minds are better kept apart"])
+
+    # Define a model.
+    model = Model()
+    # Do TF inference.
+    tf_result = model(tf.constant(input_data))["result"]
+
+    # Convert to TFLite.
+    converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS]
+    converter.allow_custom_ops = True
+    tflite_model = converter.convert()
+
+    # Do TFLite inference.
+    interp = interpreter.InterpreterWithCustomOps(
+        model_content=tflite_model,
+        custom_op_registerers=tf_text.tflite_registrar.SELECT_TFTEXT_OPS)
+    print(interp.get_signature_list())
+    split = interp.get_signature_runner("serving_default")
+    output = split(input=input_data)
+    if tf.executing_eagerly():
+      tflite_result = output["result"]
+    else:
+      tflite_result = output["output_1"]
+
+    # Assert the results are identical.
+    self.assertAllEqual(tflite_result, tf_result)
 
 if __name__ == "__main__":
   test.main()
