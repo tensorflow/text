@@ -168,7 +168,7 @@ inline bool IsAcronymComponent(const absl::string_view& input, int index) {
 
 bool IsPeriodSeparatedAcronym(const absl::string_view& input, int* offset) {
   bool result = false;
-  string data = input.data();
+
   for (int i = 0; i < static_cast<int>(input.length()) - 1; i += 2) {
     if (IsAcronymComponent(input, i)) {
       *offset = i + 2;
@@ -552,7 +552,7 @@ void SentenceFragmenterV2::UpdateLatestOpenParenForFragment(int i_start,
                                                             int i_end) {
   for (int i = i_end; i > i_start; --i) {
     absl::string_view slice = document_.substr(i);
-    if (IsOpenParen(slice)) {
+    if (slice.length() > 0 && IsOpenParen(slice)) {
       // Make the approximation that this open paren is sentence-initial iff it
       // is fragment-initial.
       latest_open_paren_is_sentential_ = (i == i_start);
