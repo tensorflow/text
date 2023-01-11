@@ -45,13 +45,15 @@ tf_cc_library(
     ],
 )
 
-cc_library(
+tf_cc_library(
     name = "boise_offset_converter_kernel_template",
     hdrs = ["boise_offset_converter_kernel_template.h"],
+    tf_deps = [
+        # tf/platform:tstring tensorflow dep,
+    ],
     deps = [
         ":boise_offset_converter",
         "@com_google_absl//absl/status",
-        # tf:portable_gif_internal tensorflow dep,
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,
@@ -93,13 +95,15 @@ tf_cc_library(
     ],
 )
 
-cc_library(
+tf_cc_library(
     name = "byte_splitter_kernel_template",
     hdrs = ["byte_splitter_kernel_template.h"],
+    tf_deps = [
+        # tf/platform:tstring tensorflow dep,
+    ],
     deps = [
         ":byte_splitter",
         "@com_google_absl//absl/status",
-        # tf:portable_gif_internal tensorflow dep,
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,
