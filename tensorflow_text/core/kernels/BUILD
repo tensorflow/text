@@ -217,6 +217,9 @@ tf_cc_library(
     name = "fast_bert_normalizer_model_builder",
     srcs = ["fast_bert_normalizer_model_builder.cc"],
     hdrs = ["fast_bert_normalizer_model_builder.h"],
+    tf_deps = [
+        # tf:lib tensorflow dep,
+    ],
     deps = [
         ":darts_clone_trie_builder",
         ":fast_bert_normalizer",
@@ -229,7 +232,6 @@ tf_cc_library(
         "@icu//:common",
         "@icu//:nfkc_cf",  # Needed for NFKC_Casefold Unicode Normalization form.
         "@com_googlesource_code_re2//:re2",
-        # tf:lib tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,
     ],
 )
