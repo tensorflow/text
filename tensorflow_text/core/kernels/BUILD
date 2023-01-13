@@ -744,6 +744,31 @@ cc_test(
     ],
 )
 
+cc_library(
+    name = "round_robin_trimmer",
+    hdrs = ["round_robin_trimmer.h"],
+    deps = [
+        ":trimmer",
+        "@com_google_absl//absl/types:span",
+        # tf:framework tensorflow dep,
+    ],
+)
+
+cc_test(
+    name = "round_robin_trimmer_test",
+    size = "small",
+    srcs = ["round_robin_trimmer_test.cc"],
+    deps = [
+        ":round_robin_trimmer",
+        "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        # tf:lib tensorflow dep,
+        # tf:test_main tensorflow dep,
+    ],
+)
+
 tf_cc_library(
     name = "rouge_l_kernel",
     srcs = ["rouge_l_kernel.cc"],
@@ -994,6 +1019,14 @@ tf_cc_library(
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/strings",
         "@icu//:common",
+    ],
+)
+
+cc_library(
+    name = "trimmer",
+    hdrs = ["trimmer.h"],
+    deps = [
+        "@com_google_absl//absl/types:span",
     ],
 )
 
