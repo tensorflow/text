@@ -69,3 +69,20 @@ cc_test(
         "//tensorflow_text/core/kernels:sentence_fragmenter_v2_kernel",
     ],
 )
+
+cc_test(
+    name = "trimmer_ops_test",
+    size = "small",
+    srcs = [
+        "trimmer_ops.cc",
+        "trimmer_ops_test.cc",
+    ],
+    deps = [
+        # tf:framework tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:test_main tensorflow dep,
+        # tf/framework:shape_inference_testutil tensorflow dep,
+        # tf/framework:tensor_testutil tensorflow dep,
+        "//tensorflow_text/core/kernels:round_robin_trimmer_kernel",
+    ],
+)

@@ -750,7 +750,7 @@ cc_library(
     deps = [
         ":trimmer",
         "@com_google_absl//absl/types:span",
-        # tf:framework tensorflow dep,
+        # tf/platform:status tensorflow dep,
     ],
 )
 
@@ -766,6 +766,49 @@ cc_test(
         "@com_google_absl//absl/status:statusor",
         # tf:lib tensorflow dep,
         # tf:test_main tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "round_robin_trimmer_kernel",
+    srcs = ["round_robin_trimmer_kernel.cc"],
+    hdrs = ["round_robin_trimmer_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":round_robin_trimmer_kernel_template",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "round_robin_trimmer_kernel_template",
+    hdrs = ["round_robin_trimmer_kernel_template.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":round_robin_trimmer",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/types:span",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:shape tensorflow dep,
+        # lite/kernels/shim:tensor_view tensorflow dep,
+    ],
+)
+
+tflite_cc_library(
+    name = "round_robin_trimmer_tflite",
+    srcs = ["round_robin_trimmer_tflite.cc"],
+    hdrs = ["round_robin_trimmer_tflite.h"],
+    deps = [
+        ":round_robin_trimmer_kernel_template",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels/shim:tflite_op_shim tensorflow dep,
     ],
 )
 
