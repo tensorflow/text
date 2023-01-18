@@ -50,8 +50,37 @@ class PhraseTokenizeOp
 
  public:
   PhraseTokenizeOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr char kOpName[] = "PhraseTokenize";
+  static constexpr char kDoc[] = R"doc(
+    Tokenizes tokens into phrases based off of a vocabulary.
+
+    ### Example:
+
+    ```python
+    >>> tokens = ['I have a dream', 'I like coffee']
+    >>> phrase, ids, row_splits = (
+    ...       phrase_tokenize(tokens, model_buffer))
+    >>> RaggedTensor.from_row_splits(phrase, row_splits)
+    [['I', 'have', 'a dream'], ['I like', 'coffee']]
+    >>> RaggedTensor.from_row_splits(ids, row_splits)
+    [[0, 1, 2], [3, 4]]  # Dummy ids.
+    ```
+
+    Args:
+      input_values: 1D Tensor of strings to tokenize with.
+      phrase_model: Buffer tensor for the PhraseTokenizerConfig flatbuffer.
+
+    Returns:
+      * output_values: 1D tensor containing the phrases for all input strings.
+        A 2D RaggedTensor can be constructed from this and output_row_splits.
+      * output_ids: 1D tensor containing the phrase ids for all input strings.
+        A 2D RaggedTensor can be constructed from this and output_row_splits.
+      * output_row_splits: 1D int tensor with the row splits that allow us to
+        build RaggedTensors from output_values, output_ids.
+  )doc";
+
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -178,38 +207,6 @@ absl::Status PhraseTokenizeOp<Rt>::ShapeInference(ShapeInferenceContext* c) {
   return absl::OkStatus();
 }
 
-template <tflite::shim::Runtime Rt>
-const char PhraseTokenizeOp<Rt>::kOpName[] = "PhraseTokenize";
-
-template <tflite::shim::Runtime Rt>
-const char PhraseTokenizeOp<Rt>::kDoc[] = R"doc(
-  Tokenizes tokens into phrases based off of a vocabulary.
-
-  ### Example:
-
-  ```python
-  >>> tokens = ['I have a dream', 'I like coffee']
-  >>> phrase, ids, row_splits = (
-  ...       phrase_tokenize(tokens, model_buffer))
-  >>> RaggedTensor.from_row_splits(phrase, row_splits)
-  [['I', 'have', 'a dream'], ['I like', 'coffee']]
-  >>> RaggedTensor.from_row_splits(ids, row_splits)
-  [[0, 1, 2], [3, 4]]  # Dummy ids.
-  ```
-
-  Args:
-    input_values: 1D Tensor of strings to tokenize with.
-    phrase_model: Buffer tensor for the PhraseTokenizerConfig flatbuffer.
-
-  Returns:
-    * output_values: 1D tensor containing the phrases for all input strings.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-    * output_ids: 1D tensor containing the phrase ids for all input strings.
-      A 2D RaggedTensor can be constructed from this and output_row_splits.
-    * output_row_splits: 1D int tensor with the row splits that allow us to
-      build RaggedTensors from output_values, output_ids.
-)doc";
-
 // See `kDoc` data member for the documentation on this op kernel.
 //
 // This template class can be instantiated into a kernel for either TF or
@@ -233,8 +230,33 @@ class PhraseDetokenizeOp
 
  public:
   PhraseDetokenizeOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr char kOpName[] = "TFText>PhraseDetokenize";
+  static constexpr char kDoc[] = R"doc(
+    Detokenizes phrase ids into sentences.
+
+    ### Example:
+
+    ```python
+    >>> # Vocab of the model_buffer: ['I', 'have', 'a dream'].
+    >>> wordpiece_ids = [2, 3, 4]
+    >>> row_splits = [0, 2, 3]
+    >>> tokens = phrase_tokenizer_detokenize(tokens, row_splits, model_buffer)
+    >>> tokens
+    ['I have', 'a dream']
+    ```
+
+    Args:
+      input_values: 1D Tensor of phrase ids.
+      input_row_splits: 1D Tensor of row splits that denotes the boundary of each
+        sentence in the `input_values`.
+      phrase_model: Buffer tensor for the PhraseTokenizerConfig flatbuffer.
+
+    Returns:
+      * output_values: 1D tensor containing all the sentences.
+  )doc";
+
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -331,34 +353,6 @@ absl::Status PhraseDetokenizeOp<Rt>::ShapeInference(ShapeInferenceContext* c) {
   SH_RETURN_IF_ERROR(c->SetOutputShape(kOutputWords, rank_1_shape));
   return absl::OkStatus();
 }
-
-template <tflite::shim::Runtime Rt>
-const char PhraseDetokenizeOp<Rt>::kOpName[] = "TFText>PhraseDetokenize";
-
-template <tflite::shim::Runtime Rt>
-const char PhraseDetokenizeOp<Rt>::kDoc[] = R"doc(
-  Detokenizes phrase ids into sentences.
-
-  ### Example:
-
-  ```python
-  >>> # Vocab of the model_buffer: ['I', 'have', 'a dream'].
-  >>> wordpiece_ids = [2, 3, 4]
-  >>> row_splits = [0, 2, 3]
-  >>> tokens = phrase_tokenizer_detokenize(tokens, row_splits, model_buffer)
-  >>> tokens
-  ['I have', 'a dream']
-  ```
-
-  Args:
-    input_values: 1D Tensor of phrase ids.
-    input_row_splits: 1D Tensor of row splits that denotes the boundary of each
-      sentence in the `input_values`.
-    phrase_model: Buffer tensor for the PhraseTokenizerConfig flatbuffer.
-
-  Returns:
-    * output_values: 1D tensor containing all the sentences.
-)doc";
 
 }  // namespace text
 }  // namespace tensorflow

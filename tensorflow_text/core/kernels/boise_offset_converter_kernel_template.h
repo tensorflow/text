@@ -58,8 +58,13 @@ class OffsetsToBoiseTagsOp
 
  public:
   OffsetsToBoiseTagsOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr char kOpName[] = "TFText>OffsetsToBoiseTags";
+  static constexpr char kDoc[] = R"doc(
+  Converts token/span begin/end offsets into BOISE tags.
+  )doc";
+
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -351,16 +356,6 @@ absl::Status OffsetsToBoiseTagsOp<Rt>::Invoke(InvokeContext* context) {
   return absl::OkStatus();
 }
 
-// Static member definitions.
-// These can be inlined once the toolchain is bumped up to C++17
-
-template <tflite::shim::Runtime Rt>
-const char OffsetsToBoiseTagsOp<Rt>::kOpName[] = "TFText>OffsetsToBoiseTags";
-
-template <tflite::shim::Runtime Rt>
-const char OffsetsToBoiseTagsOp<Rt>::kDoc[] = R"doc(
-  Converts token/span begin/end offsets into BOISE tags.
-  )doc";
 
 template <tflite::shim::Runtime Rt>
 class BoiseTagsToOffsetsOp
@@ -390,8 +385,13 @@ class BoiseTagsToOffsetsOp
 
  public:
   BoiseTagsToOffsetsOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr char kOpName[] = "TFText>BoiseTagsToOffsets";
+  static constexpr char kDoc[] = R"doc(
+  Converts BOISE tags into span begin/end offsets and span type.
+  )doc";
+
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -632,17 +632,6 @@ absl::Status BoiseTagsToOffsetsOp<Rt>::FillOutputTensor(
   for (int i = 0; i < buffer.size(); ++i) data(i) = buffer.at(i);
   return absl::OkStatus();
 }
-
-// Static member definitions.
-// These can be inlined once the toolchain is bumped up to C++17
-
-template <tflite::shim::Runtime Rt>
-const char BoiseTagsToOffsetsOp<Rt>::kOpName[] = "TFText>BoiseTagsToOffsets";
-
-template <tflite::shim::Runtime Rt>
-const char BoiseTagsToOffsetsOp<Rt>::kDoc[] = R"doc(
-  Converts BOISE tags into span begin/end offsets and span type.
-  )doc";
 
 }  // namespace text
 }  // namespace tensorflow

@@ -51,8 +51,13 @@ class ByteSplitterWithOffsetsOp
 
  public:
   ByteSplitterWithOffsetsOp() = default;
-  static const char kOpName[];
-  static const char kDoc[];
+  static constexpr char kOpName[] = "TFText>ByteSplitWithOffsets";
+  static constexpr char kDoc[] = R"doc(
+  Splits a string into bytes
+  )doc";
+
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
@@ -146,17 +151,6 @@ template <tflite::shim::Runtime Rt>
   return absl::OkStatus();
 }
 
-// Static member definitions.
-// These can be inlined once the toolchain is bumped up to C++17
-
-template <tflite::shim::Runtime Rt>
-const char ByteSplitterWithOffsetsOp<Rt>::kOpName[] =
-    "TFText>ByteSplitWithOffsets";
-
-template <tflite::shim::Runtime Rt>
-const char ByteSplitterWithOffsetsOp<Rt>::kDoc[] = R"doc(
-  Splits a string into bytes
-  )doc";
 
 template <tflite::shim::Runtime Rt>
 class ByteSplitByOffsetsOp
@@ -186,6 +180,9 @@ class ByteSplitByOffsetsOp
   static constexpr char kDoc[] = R"doc(
       Splits a string into bytes using the given start and end offsets.
       )doc";
+
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }

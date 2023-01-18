@@ -57,6 +57,9 @@ class SentenceFragmenterV2Op
       Splits a string into sentence fragments
       )doc";
 
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
+
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs() { return {}; }
 

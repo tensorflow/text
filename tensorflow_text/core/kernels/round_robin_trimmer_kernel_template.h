@@ -57,6 +57,9 @@ class RoundRobinTrimOp
       Trims a tensor.
       )doc";
 
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
+
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs();
 
@@ -202,6 +205,9 @@ class RoundRobinGenerateMasksOp
   static constexpr char kDoc[] = R"doc(
       Generates a mask for trimming a tensor.
       )doc";
+
+  static const char* OpName() { return kOpName; }
+  static const char* Doc() { return kDoc; }
 
   // Attributes declaration (syntax: https://www.tensorflow.org/guide/create_op)
   static std::vector<std::string> Attrs();
