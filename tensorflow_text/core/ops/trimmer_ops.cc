@@ -21,9 +21,11 @@
 namespace tensorflow {
 namespace text {
 
-REGISTER_TF_OP_SHIM(RoundRobinGenerateMasksOpKernel);
+using RoundRobinGenerateMaskInstance = RoundRobinGenerateMasksOpKernel<int32_t>;
+using RoundRobinTrimInstance = RoundRobinTrimOpKernel<int32_t>;
 
-REGISTER_TF_OP_SHIM(RoundRobinTrimOpKernel);
+REGISTER_TF_OP_SHIM(RoundRobinGenerateMaskInstance);
+REGISTER_TF_OP_SHIM(RoundRobinTrimInstance);
 
 }  // namespace text
 }  // namespace tensorflow

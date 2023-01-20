@@ -808,7 +808,9 @@ tflite_cc_library(
         ":round_robin_trimmer_kernel_template",
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
+        # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:tflite_op_shim tensorflow dep,
+        # lite/kernels/shim:tflite_op_wrapper tensorflow dep,
     ],
 )
 

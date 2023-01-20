@@ -14,24 +14,47 @@
 
 #include "tensorflow_text/core/kernels/round_robin_trimmer_tflite.h"
 
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <variant>
+#include <vector>
+
 #include "tensorflow/lite/c/common.h"
+#include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/tflite_op_shim.h"
+#include "tensorflow/lite/kernels/shim/tflite_op_wrapper.h"
+#include "tensorflow/lite/mutable_op_resolver.h"
 #include "tensorflow_text/core/kernels/round_robin_trimmer_kernel_template.h"
 
 namespace tflite {
 namespace ops {
 namespace custom {
 namespace text {
+namespace {
+const char splits_type[]("Tsplits");
+}  // namespace
+
+using ::tflite::shim::op_wrapper::Attr;
+using ::tflite::shim::op_wrapper::AttrName;
+using ::tflite::shim::op_wrapper::OpWrapper;
+
+template <shim::Runtime Rt>
+using GenerateMasksOp =
+    OpWrapper<Rt, tensorflow::text::RoundRobinGenerateMasksOp,
+              Attr<AttrName<splits_type>, int32_t, int64_t>>;
 
 extern "C" void AddRoundRobinGenerateMasks(
     tflite::MutableOpResolver* resolver) {
-  tflite::shim::TfLiteOpKernel<
-      tensorflow::text::RoundRobinGenerateMasksOp>::Add(resolver);
+  tflite::shim::TfLiteOpKernel<GenerateMasksOp>::Add(resolver);
 }
 
+template <shim::Runtime Rt>
+using TrimOp = OpWrapper<Rt, tensorflow::text::RoundRobinTrimOp,
+                         Attr<AttrName<splits_type>, int32_t, int64_t>>;
+
 extern "C" void AddRoundRobinTrim(tflite::MutableOpResolver* resolver) {
-  tflite::shim::TfLiteOpKernel<
-      tensorflow::text::RoundRobinTrimOp>::Add(resolver);
+  tflite::shim::TfLiteOpKernel<TrimOp>::Add(resolver);
 }
 
 }  // namespace text

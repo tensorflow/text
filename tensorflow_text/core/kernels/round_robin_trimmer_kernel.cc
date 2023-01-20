@@ -14,18 +14,40 @@
 
 #include "tensorflow_text/core/kernels/round_robin_trimmer_kernel.h"
 
+#include <cstdint>
+
 #include "tensorflow/core/framework/op_kernel.h"
 
 namespace tensorflow {
 namespace text {
 
-REGISTER_KERNEL_BUILDER(Name(RoundRobinGenerateMasksOpKernel::OpName())
-                            .Device(tensorflow::DEVICE_CPU),
-                        RoundRobinGenerateMasksOpKernel);
+using RoundRobinGenerateMasksOpKernelInstance =
+    RoundRobinGenerateMasksOpKernel<int32_t>;
 
-REGISTER_KERNEL_BUILDER(Name(RoundRobinTrimOpKernel::OpName())
-                            .Device(tensorflow::DEVICE_CPU),
-                        RoundRobinTrimOpKernel);
+#define REGISTER_ROUND_ROBIN_GENERATE_MASKS(splits_type)      \
+  REGISTER_KERNEL_BUILDER(                                    \
+      Name(RoundRobinGenerateMasksOpKernelInstance::OpName()) \
+          .Device(tensorflow::DEVICE_CPU)                     \
+          .TypeConstraint<splits_type>("Tsplits"),            \
+      RoundRobinGenerateMasksOpKernel<splits_type>);
+
+REGISTER_ROUND_ROBIN_GENERATE_MASKS(int32_t)
+REGISTER_ROUND_ROBIN_GENERATE_MASKS(int64_t)
+
+#undef REGISTER_ROUND_ROBIN_GENERATE_MASKS
+
+using RoundRobinTrimOpKernelInstance = RoundRobinTrimOpKernel<int32_t>;
+
+#define REGISTER_ROUND_ROBIN_TRIM(splits_type)                           \
+  REGISTER_KERNEL_BUILDER(Name(RoundRobinTrimOpKernelInstance::OpName()) \
+                              .Device(tensorflow::DEVICE_CPU)            \
+                              .TypeConstraint<splits_type>("Tsplits"),   \
+                          RoundRobinTrimOpKernel<splits_type>);
+
+REGISTER_ROUND_ROBIN_TRIM(int32_t)
+REGISTER_ROUND_ROBIN_TRIM(int64_t)
+
+#undef REGISTER_ROUND_ROBIN_TRIM
 
 }  // namespace text
 }  // namespace tensorflow
