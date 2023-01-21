@@ -17,37 +17,57 @@
 #include <cstdint>
 
 #include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/register_types.h"
 
 namespace tensorflow {
 namespace text {
 
 using RoundRobinGenerateMasksOpKernelInstance =
-    RoundRobinGenerateMasksOpKernel<int32_t>;
+    RoundRobinGenerateMasksOpKernel<int32_t, int32_t>;
 
-#define REGISTER_ROUND_ROBIN_GENERATE_MASKS(splits_type)      \
-  REGISTER_KERNEL_BUILDER(                                    \
-      Name(RoundRobinGenerateMasksOpKernelInstance::OpName()) \
-          .Device(tensorflow::DEVICE_CPU)                     \
-          .TypeConstraint<splits_type>("Tsplits"),            \
-      RoundRobinGenerateMasksOpKernel<splits_type>);
+#define REGISTER_ROUND_ROBIN_GENERATE_MASKS_SPLITS(vals_type, splits_type) \
+  REGISTER_KERNEL_BUILDER(                                                 \
+      Name(RoundRobinGenerateMasksOpKernelInstance::OpName())              \
+          .Device(tensorflow::DEVICE_CPU)                                  \
+          .TypeConstraint<vals_type>("T")                                  \
+          .TypeConstraint<splits_type>("Tsplits"),                         \
+      RoundRobinGenerateMasksOpKernel<vals_type, splits_type>);
 
-REGISTER_ROUND_ROBIN_GENERATE_MASKS(int32_t)
-REGISTER_ROUND_ROBIN_GENERATE_MASKS(int64_t)
+#define REGISTER_ROUND_ROBIN_GENERATE_MASKS(vals_type)           \
+  REGISTER_ROUND_ROBIN_GENERATE_MASKS_SPLITS(vals_type, int32_t) \
+  REGISTER_ROUND_ROBIN_GENERATE_MASKS_SPLITS(vals_type, int64_t)
+
+TF_CALL_tstring(REGISTER_ROUND_ROBIN_GENERATE_MASKS)
+TF_CALL_bool(REGISTER_ROUND_ROBIN_GENERATE_MASKS)
+TF_CALL_float(REGISTER_ROUND_ROBIN_GENERATE_MASKS)
+TF_CALL_double(REGISTER_ROUND_ROBIN_GENERATE_MASKS)
+TF_CALL_INTEGRAL_TYPES(REGISTER_ROUND_ROBIN_GENERATE_MASKS)
 
 #undef REGISTER_ROUND_ROBIN_GENERATE_MASKS
+#undef REGISTER_ROUND_ROBIN_GENERATE_MASKS_SPLITS
 
-using RoundRobinTrimOpKernelInstance = RoundRobinTrimOpKernel<int32_t>;
+                using RoundRobinTrimOpKernelInstance =
+                    RoundRobinTrimOpKernel<int32_t, int32_t>;
 
-#define REGISTER_ROUND_ROBIN_TRIM(splits_type)                           \
+#define REGISTER_ROUND_ROBIN_TRIM_SPLITS(vals_type, splits_type)         \
   REGISTER_KERNEL_BUILDER(Name(RoundRobinTrimOpKernelInstance::OpName()) \
                               .Device(tensorflow::DEVICE_CPU)            \
+                              .TypeConstraint<vals_type>("T")            \
                               .TypeConstraint<splits_type>("Tsplits"),   \
-                          RoundRobinTrimOpKernel<splits_type>);
+                          RoundRobinTrimOpKernel<vals_type, splits_type>);
 
-REGISTER_ROUND_ROBIN_TRIM(int32_t)
-REGISTER_ROUND_ROBIN_TRIM(int64_t)
+#define REGISTER_ROUND_ROBIN_TRIM(vals_type)           \
+  REGISTER_ROUND_ROBIN_TRIM_SPLITS(vals_type, int32_t) \
+  REGISTER_ROUND_ROBIN_TRIM_SPLITS(vals_type, int64_t)
+
+TF_CALL_tstring(REGISTER_ROUND_ROBIN_TRIM)
+TF_CALL_bool(REGISTER_ROUND_ROBIN_TRIM)
+TF_CALL_float(REGISTER_ROUND_ROBIN_TRIM)
+TF_CALL_double(REGISTER_ROUND_ROBIN_TRIM)
+TF_CALL_INTEGRAL_TYPES(REGISTER_ROUND_ROBIN_TRIM)
 
 #undef REGISTER_ROUND_ROBIN_TRIM
+#undef REGISTER_ROUND_ROBIN_TRIM_SPLITS
 
 }  // namespace text
 }  // namespace tensorflow

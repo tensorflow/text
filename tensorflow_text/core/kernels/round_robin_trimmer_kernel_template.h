@@ -29,9 +29,9 @@
 namespace tensorflow {
 namespace text {
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
 class RoundRobinTrimOp
-    : public tflite::shim::OpKernelShim<RoundRobinTrimOp, Rt, Tsplits> {
+    : public tflite::shim::OpKernelShim<RoundRobinTrimOp, Rt, T, Tsplits> {
  private:
   enum Inputs {
     kMaxSeqLength = 0,
@@ -44,11 +44,11 @@ class RoundRobinTrimOp
   };
   int64_t number_of_segments_;
 
-  using typename tflite::shim::OpKernelShim<RoundRobinTrimOp, Rt,
+  using typename tflite::shim::OpKernelShim<RoundRobinTrimOp, Rt, T,
                                             Tsplits>::InitContext;
-  using typename tflite::shim::OpKernelShim<RoundRobinTrimOp, Rt,
+  using typename tflite::shim::OpKernelShim<RoundRobinTrimOp, Rt, T,
                                             Tsplits>::InvokeContext;
-  using typename tflite::shim::OpKernelShim<RoundRobinTrimOp, Rt,
+  using typename tflite::shim::OpKernelShim<RoundRobinTrimOp, Rt, T,
                                             Tsplits>::ShapeInferenceContext;
 
  public:
@@ -84,25 +84,24 @@ class RoundRobinTrimOp
   static absl::Status ShapeInference(ShapeInferenceContext* c);
 };
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-std::vector<std::string> RoundRobinTrimOp<Rt, Tsplits>::Attrs() {
-  return {"N: int >= 1", "Tsplits: {int32, int64}"};
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+std::vector<std::string> RoundRobinTrimOp<Rt, T, Tsplits>::Attrs() {
+  return {"N: int >= 1", "T: type", "Tsplits: {int32, int64}"};
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-std::vector<std::string> RoundRobinTrimOp<Rt, Tsplits>::Inputs() {
-  // TODO(broken): use templated value
-  return {"max_sequence_length: int32", "input_values: N * int32",
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+std::vector<std::string> RoundRobinTrimOp<Rt, T, Tsplits>::Inputs() {
+  return {"max_sequence_length: int32", "input_values: N * T",
           "input_row_splits: N * Tsplits"};
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-std::vector<std::string> RoundRobinTrimOp<Rt, Tsplits>::Outputs() {
-  return {"values: N * int32", "row_splits: N * Tsplits"};
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+std::vector<std::string> RoundRobinTrimOp<Rt, T, Tsplits>::Outputs() {
+  return {"values: N * T", "row_splits: N * Tsplits"};
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-absl::Status RoundRobinTrimOp<Rt, Tsplits>::ShapeInference(
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+absl::Status RoundRobinTrimOp<Rt, T, Tsplits>::ShapeInference(
     ShapeInferenceContext* c) {
   using tflite::shim::Shape;
   const auto rank_1_shape = Shape({Shape::kUnknownDim});
@@ -144,9 +143,8 @@ absl::Status RoundRobinTrimOp<Rt, Tsplits>::ShapeInference(
   return absl::OkStatus();
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-absl::Status RoundRobinTrimOp<Rt, Tsplits>::Invoke(InvokeContext* context) {
-  using T = int;
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+absl::Status RoundRobinTrimOp<Rt, T, Tsplits>::Invoke(InvokeContext* context) {
   // Inputs
   SH_ASSIGN_OR_RETURN(const auto msl, context->GetInput(kMaxSeqLength));
   const int max_sequence_length = msl->template AsScalar<tensorflow::int32>();
@@ -169,7 +167,7 @@ absl::Status RoundRobinTrimOp<Rt, Tsplits>::Invoke(InvokeContext* context) {
 
   for (int i = 0; i < number_of_segments_; ++i) {
     // Allocate output & fill output tensors.
-    SH_RETURN_IF_ERROR(this->template FillOutputTensor<int32_t, int32_t>(
+    SH_RETURN_IF_ERROR(this->template FillOutputTensor<T, T>(
         trimmed_vals[i], (kOutputValues * number_of_segments_) + i, context));
     SH_RETURN_IF_ERROR(
         this->template FillOutputTensor<Tsplits, Tsplits>(trimmed_splits[i],
@@ -179,9 +177,9 @@ absl::Status RoundRobinTrimOp<Rt, Tsplits>::Invoke(InvokeContext* context) {
   return absl::OkStatus();
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
 class RoundRobinGenerateMasksOp
-    : public tflite::shim::OpKernelShim<RoundRobinGenerateMasksOp, Rt,
+    : public tflite::shim::OpKernelShim<RoundRobinGenerateMasksOp, Rt, T,
                                         Tsplits> {
  private:
   enum Inputs {
@@ -194,11 +192,11 @@ class RoundRobinGenerateMasksOp
   };
   int64_t number_of_segments_;
 
-  using typename tflite::shim::OpKernelShim<RoundRobinGenerateMasksOp, Rt,
+  using typename tflite::shim::OpKernelShim<RoundRobinGenerateMasksOp, Rt, T,
                                             Tsplits>::InitContext;
-  using typename tflite::shim::OpKernelShim<RoundRobinGenerateMasksOp, Rt,
+  using typename tflite::shim::OpKernelShim<RoundRobinGenerateMasksOp, Rt, T,
                                             Tsplits>::InvokeContext;
-  using typename tflite::shim::OpKernelShim<RoundRobinGenerateMasksOp, Rt,
+  using typename tflite::shim::OpKernelShim<RoundRobinGenerateMasksOp, Rt, T,
                                             Tsplits>::ShapeInferenceContext;
 
  public:
@@ -234,25 +232,25 @@ class RoundRobinGenerateMasksOp
   static absl::Status ShapeInference(ShapeInferenceContext* c);
 };
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-std::vector<std::string> RoundRobinGenerateMasksOp<Rt, Tsplits>::Attrs() {
-  return {"N: int >= 1", "Tsplits: {int32, int64}"};
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+std::vector<std::string> RoundRobinGenerateMasksOp<Rt, T, Tsplits>::Attrs() {
+  return {"N: int >= 1", "T: type", "Tsplits: {int32, int64}"};
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-std::vector<std::string> RoundRobinGenerateMasksOp<Rt, Tsplits>::Inputs() {
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+std::vector<std::string> RoundRobinGenerateMasksOp<Rt, T, Tsplits>::Inputs() {
   // TODO(broken): use templated value
-  return {"max_sequence_length: int32", "input_values: N * int32",
+  return {"max_sequence_length: int32", "input_values: N * T",
           "input_row_splits: N * Tsplits"};
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-std::vector<std::string> RoundRobinGenerateMasksOp<Rt, Tsplits>::Outputs() {
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+std::vector<std::string> RoundRobinGenerateMasksOp<Rt, T, Tsplits>::Outputs() {
   return {"masks: N * bool"};
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-absl::Status RoundRobinGenerateMasksOp<Rt, Tsplits>::ShapeInference(
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+absl::Status RoundRobinGenerateMasksOp<Rt, T, Tsplits>::ShapeInference(
     ShapeInferenceContext* c) {
   using tflite::shim::Shape;
   const auto rank_1_shape = Shape({Shape::kUnknownDim});
@@ -292,10 +290,9 @@ absl::Status RoundRobinGenerateMasksOp<Rt, Tsplits>::ShapeInference(
   return absl::OkStatus();
 }
 
-template <tflite::shim::Runtime Rt, typename Tsplits>
-absl::Status RoundRobinGenerateMasksOp<Rt, Tsplits>::Invoke(
+template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
+absl::Status RoundRobinGenerateMasksOp<Rt, T, Tsplits>::Invoke(
     InvokeContext* context) {
-  using T = int;
   // Inputs
   SH_ASSIGN_OR_RETURN(const auto msl, context->GetInput(kMaxSeqLength));
   const int max_sequence_length = msl->template AsScalar<tensorflow::int32>();

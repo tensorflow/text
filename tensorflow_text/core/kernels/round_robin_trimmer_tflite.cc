@@ -32,7 +32,7 @@ namespace ops {
 namespace custom {
 namespace text {
 namespace {
-const char splits_type[]("Tsplits");
+const char splits_type[]("Tsplits"), vals_type[]("T");
 }  // namespace
 
 using ::tflite::shim::op_wrapper::Attr;
@@ -42,6 +42,9 @@ using ::tflite::shim::op_wrapper::OpWrapper;
 template <shim::Runtime Rt>
 using GenerateMasksOp =
     OpWrapper<Rt, tensorflow::text::RoundRobinGenerateMasksOp,
+              Attr<AttrName<vals_type>, ::tensorflow::tstring, float, double,
+                   int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t,
+                   int64_t, uint64_t, bool>,
               Attr<AttrName<splits_type>, int32_t, int64_t>>;
 
 extern "C" void AddRoundRobinGenerateMasks(
@@ -50,8 +53,12 @@ extern "C" void AddRoundRobinGenerateMasks(
 }
 
 template <shim::Runtime Rt>
-using TrimOp = OpWrapper<Rt, tensorflow::text::RoundRobinTrimOp,
-                         Attr<AttrName<splits_type>, int32_t, int64_t>>;
+using TrimOp =
+    OpWrapper<Rt, tensorflow::text::RoundRobinTrimOp,
+              Attr<AttrName<vals_type>, ::tensorflow::tstring, float, double,
+                   int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t,
+                   int64_t, uint64_t, bool>,
+              Attr<AttrName<splits_type>, int32_t, int64_t>>;
 
 extern "C" void AddRoundRobinTrim(tflite::MutableOpResolver* resolver) {
   tflite::shim::TfLiteOpKernel<TrimOp>::Add(resolver);

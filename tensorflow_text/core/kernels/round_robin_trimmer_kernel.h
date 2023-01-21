@@ -21,19 +21,19 @@
 namespace tensorflow {
 namespace text {
 
-template <typename Tsplits>
+template <typename T, typename Tsplits>
 class RoundRobinGenerateMasksOpKernel
-    : public tflite::shim::TfOpKernel<RoundRobinGenerateMasksOp, Tsplits> {
+    : public tflite::shim::TfOpKernel<RoundRobinGenerateMasksOp, T, Tsplits> {
  public:
-  using tflite::shim::TfOpKernel<RoundRobinGenerateMasksOp,
+  using tflite::shim::TfOpKernel<RoundRobinGenerateMasksOp, T,
                                  Tsplits>::TfOpKernel;
 };
 
-template <typename Tsplits>
+template <typename T, typename Tsplits>
 class RoundRobinTrimOpKernel
-    : public tflite::shim::TfOpKernel<RoundRobinTrimOp, Tsplits> {
+    : public tflite::shim::TfOpKernel<RoundRobinTrimOp, T, Tsplits> {
  public:
-  using tflite::shim::TfOpKernel<RoundRobinTrimOp, Tsplits>::TfOpKernel;
+  using tflite::shim::TfOpKernel<RoundRobinTrimOp, T, Tsplits>::TfOpKernel;
 };
 
 }  // namespace text
