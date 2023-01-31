@@ -1,3 +1,4 @@
+load("//tools/build_defs/license:license.bzl", "license")
 load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
 
 # [internal] load build_test.bzl
@@ -5,7 +6,13 @@ load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object"
 
 # Visibility rules
 package(
+    default_applicable_licenses = ["//tensorflow_text:license"],
     default_visibility = ["//visibility:public"],
+)
+
+license(
+    name = "license",
+    package_name = "tensorflow_text",
 )
 
 licenses(["notice"])
