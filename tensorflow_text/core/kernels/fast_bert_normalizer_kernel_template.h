@@ -218,6 +218,12 @@ absl::Status FastBertNormalizeOp<Rt>::InvokeRealWork(InvokeContext* context) {
         offsets, kOutputOffsets, context));
     SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
         row_splits, kOutputRowSplitsOfOffsets, context));
+  } else {
+    SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+        offsets, kOutputOffsets, context));
+    row_splits.resize(1+values_vec.Dim(0));
+    SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+        row_splits, kOutputRowSplitsOfOffsets, context));
   }
   return absl::OkStatus();
 }
