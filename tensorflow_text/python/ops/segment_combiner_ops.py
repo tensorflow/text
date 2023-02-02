@@ -136,3 +136,89 @@ def combine_segments(segments, start_of_sequence_id, end_of_segment_id):
 
   segment_ids = array_ops.concat(segment_ids_to_combine, 1)
   return segments_combined, segment_ids
+
+
+def concatenate_segments(segments):
+  """Concatenate input segments for a model's input sequence.
+
+  `concatenate_segments` combines the tokens of one or more input segments to a
+  single sequence of token values and generates matching segment ids.
+  `concatenate_segments` can follow a `Trimmer`, who limit segment lengths and
+  emit `RaggedTensor` outputs, and can be followed up by `ModelInputPacker`.
+
+  `concatenate_segments` first flattens and combines a list of one or more
+  segments
+  (`RaggedTensor`s of n dimensions) together along the 1st axis, then packages
+  any special tokens  into a final n dimensional `RaggedTensor`.
+
+  And finally `concatenate_segments` generates another `RaggedTensor` (with the
+  same rank as the final combined `RaggedTensor`) that contains a distinct int
+  id for each segment.
+
+  Example usage:
+
+  ```
+  segment_a = [[1, 2],
+               [3, 4,],
+               [5, 6, 7, 8, 9]]
+
+  segment_b = [[10, 20,],
+               [30, 40, 50, 60,],
+               [70, 80]]
+  expected_combined, expected_ids = concatenate_segments([segment_a, segment_b])
+
+  # segment_a and segment_b have been concatenated as is.
+  expected_combined=[
+   [1, 2, 10, 20],
+   [3, 4, 30, 40, 50, 60],
+   [5, 6, 7, 8, 9, 70, 80],
+  ]
+
+  # ids describing which items belong to which segment.
+  expected_ids=[
+   [0, 0, 1, 1],
+   [0, 0, 1, 1, 1, 1],
+   [0, 0, 0, 0, 0, 1, 1]]
+  ```
+
+  Args:
+    segments: A list of `RaggedTensor`s with the tokens of the input segments.
+      All elements must have the same dtype (int32 or int64), same rank, and
+      same dimension 0 (namely batch size). Slice `segments[i][j, ...]`
+      contains the tokens of the i-th input segment to the j-th example in the
+      batch.
+
+  Returns:
+    a tuple of (combined_segments, segment_ids), where:
+
+    combined_segments: A `RaggedTensor` with segments combined and special
+      tokens inserted.
+    segment_ids:  A `RaggedTensor` w/ the same shape as `combined_segments`
+      and containing int ids for each item detailing the segment that they
+      correspond to.
+  """
+
+  # Create special tokens ([CLS] and [SEP]) that will be combined with the
+  # segments
+  if len(segments) <= 0:
+    raise ValueError("`segments` must be a nonempty list.")
+  segment_dtype = segments[0].dtype
+  if segment_dtype not in (dtypes.int32, dtypes.int64):
+    raise ValueError("`segments` must have elements with dtype of int32 or " +
+                     "int64")
+
+  # Combine all segments.
+  segments_to_combine = []
+  for seg in segments:
+    segments_to_combine.append(seg)
+  segments_combined = array_ops.concat(segments_to_combine, 1)
+
+  # Create the segment ids, making sure to account for special tokens.
+  segment_ids_to_combine = []
+  for i, item in enumerate(segments):
+    # Add segment id
+    segment_id = array_ops.ones_like(item) * i
+    segment_ids_to_combine.append(segment_id)
+
+  segment_ids = array_ops.concat(segment_ids_to_combine, 1)
+  return segments_combined, segment_ids

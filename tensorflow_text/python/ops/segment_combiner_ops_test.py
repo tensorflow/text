@@ -180,6 +180,145 @@ class SegmentBuilderTest(test.TestCase, parameterized.TestCase):
       self.assertAllEqual(expected_combined, actual_combined)
       self.assertAllEqual(expected_segment_ids, actual_segment_ids)
 
+  @parameterized.parameters([
+      dict(
+          descr="Test empty",
+          segments=[
+              # first segment
+              [[], [], []],
+          ],
+          expected_combined=[
+              [],
+              [],
+              [],
+          ],
+          expected_segment_ids=[[], [], []],
+      ),
+      dict(
+          descr="Single segment: test rank 3 input segments",
+          segments=[
+              # first segment
+              [[[1], [2]], [[3], [4]], [[5], [6], [7], [8], [9]]],
+          ],
+          expected_combined=[
+              [[1], [2]],
+              [[3], [4]],
+              [[5], [6], [7], [8], [9]],
+          ],
+          expected_segment_ids=[
+              [[0], [0]],
+              [[0], [0]],
+              [[0], [0], [0], [0], [0]],
+          ],
+      ),
+      dict(
+          descr="Test single segment",
+          segments=[
+              # first segment
+              [
+                  [1, 2],
+                  [3, 4],
+                  [5, 6, 7, 8, 9],
+              ],
+          ],
+          expected_combined=[
+              [1, 2],
+              [3, 4],
+              [5, 6, 7, 8, 9],
+          ],
+          expected_segment_ids=[
+              [0, 0],
+              [0, 0],
+              [0, 0, 0, 0, 0],
+          ],
+      ),
+      dict(
+          descr="Test two segments",
+          segments=[
+              # first segment
+              [
+                  [1, 2],
+                  [3, 4],
+                  [5, 6, 7, 8, 9],
+              ],
+              # second segment
+              [
+                  [10, 20],
+                  [30, 40, 50, 60],
+                  [70, 80],
+              ],
+          ],
+          expected_combined=[
+              [1, 2, 10, 20],
+              [3, 4, 30, 40, 50, 60],
+              [5, 6, 7, 8, 9, 70, 80],
+          ],
+          expected_segment_ids=[
+              [0, 0, 1, 1],
+              [0, 0, 1, 1, 1, 1],
+              [0, 0, 0, 0, 0, 1, 1],
+          ],
+      ),
+      dict(
+          descr="Test two rank 3 segments",
+          segments=[
+              # first segment
+              [[[1], [2]], [[3], [4]], [[5], [6], [7], [8], [9]]],
+              # second segment
+              [[[10], [20]], [[30], [40], [50], [60]], [[70], [80]]],
+          ],
+          expected_combined=[
+              [[1], [2], [10], [20]],
+              [[3], [4], [30], [40], [50], [60]],
+              [[5], [6], [7], [8], [9], [70], [80]],
+          ],
+          expected_segment_ids=[
+              [[0], [0], [1], [1]],
+              [[0], [0], [1], [1], [1], [1]],
+              [[0], [0], [0], [0], [0], [1], [1]],
+          ],
+      ),
+      dict(
+          descr="Test that if we have 3 or more segments in the list, the "
+          + "segment ids are correct",
+          segments=[
+              # first segment
+              [[1, 2], [3, 4], [5, 6, 7, 8, 9]],
+              # second segment
+              [[10, 20], [30, 40, 50, 60], [70, 80]],
+              # third segment
+              [
+                  [100, 200, 300, 400],
+                  [500, 600],
+                  [700, 800],
+              ],
+          ],
+          expected_combined=[
+              [1, 2, 10, 20, 100, 200, 300, 400],
+              [3, 4, 30, 40, 50, 60, 500, 600],
+              [5, 6, 7, 8, 9, 70, 80, 700, 800],
+          ],
+          expected_segment_ids=[
+              [0, 0, 1, 1, 2, 2, 2, 2],
+              [0, 0, 1, 1, 1, 1, 2, 2],
+              [0, 0, 0, 0, 0, 1, 1, 2, 2],
+          ],
+      ),
+  ])
+  def testConcatenateSegments(
+      self, segments, expected_combined, expected_segment_ids, descr=None
+  ):
+    for segment_dtype in [dtypes.int32, dtypes.int64]:
+      segments_as_tensors = [
+          ragged_factory_ops.constant(seg, dtype=segment_dtype)
+          for seg in segments
+      ]
+      actual_combined, actual_segment_ids = (
+          segment_combiner_ops.concatenate_segments(segments_as_tensors)
+      )
+      self.assertAllEqual(expected_combined, actual_combined)
+      self.assertAllEqual(expected_segment_ids, actual_segment_ids)
+
 
 if __name__ == "__main__":
   test.main()

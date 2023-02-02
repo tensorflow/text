@@ -63,6 +63,7 @@ _allowed_symbols = [
     "build_fast_wordpiece_model",
     "case_fold_utf8",
     "coerce_to_structurally_valid_utf8",
+    "concatenate_segments",
     "combine_segments",
     "find_source_offsets",
     "gather_with_default",
