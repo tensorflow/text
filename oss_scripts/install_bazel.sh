@@ -47,7 +47,7 @@ function update_bazel_version {
 
   # Due to --user, the installer puts the bazel binary into $HOME/bin (where we
   # have access rights).  We add that at the top of our $PATH.
-  ./${BAZEL_INSTALLER} --user
+  ./${BAZEL_INSTALLER} --user --skip-uncompress
   PATH=$HOME/bin:$PATH
   rm -f ${BAZEL_INSTALLER}
 }
