@@ -28,7 +28,7 @@ if [[ "${osname}" == "darwin" ]]; then
 else
   short_commit_sha=$(echo $short_commit_sha | grep -oP '(?<=-g)[0-9a-f]*$')
 fi
-commit_sha=$(curl -SsL https://github.com/tensorflow/tensorflow/commit/${short_commit_sha} | grep sha-block | grep commit | sed -e 's/.*\([a-f0-9]\{40\}\).*/\1/')
+commit_sha=$(curl -SsL https://github.com/tensorflow/tensorflow/commit/${short_commit_sha} | grep "Browse the repository" | sed -e 's/.*\([a-f0-9]\{40\}\).*/\1/')
 
 # Update TF dependency to installed tensorflow
 sed -E -i $ext "s/strip_prefix = \"tensorflow-2.+\",/strip_prefix = \"tensorflow-${commit_sha}\",/" WORKSPACE
