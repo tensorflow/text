@@ -5,7 +5,7 @@ set -x  # print evaluated commands
 # Read the bazel version from the path; slowly moving up parents
 while [[ $PWD != / && -z $(find ~+/ -maxdepth 1 -type f -name .bazelversion) ]]
 do cd ..; done
-BAZEL_VERSION=$(<.bazelversion)
+BAZEL_VERSION=$(head -n 1 .bazelversion)
 if [[ -z "$BAZEL_VERSION" ]]; then exit 1; fi
 
 # If (due to e.g., $PATH settings), bazel is actually running bazelisk,
