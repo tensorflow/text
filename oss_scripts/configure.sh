@@ -48,10 +48,10 @@ else
     if [[ x"$(arch)" == x"arm64" ]]; then
       pip install tensorflow-macos==2.9.0
     else
-      pip install tensorflow==2.11.0
+      pip install tensorflow==2.12.0rc0
     fi
   else
-    pip install tensorflow==2.11.0
+    pip install tensorflow==2.12.0rc0
   fi
 fi
 
@@ -61,10 +61,10 @@ if is_windows; then
 fi
 
 # Copy the current bazelversion of TF.
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/master/.bazelversion -o .bazelversion
+curl https://raw.githubusercontent.com/tensorflow/tensorflow/r2.12/.bazelversion -o .bazelversion
 
 # Copy the building configuration of TF.
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/master/.bazelrc -o .bazelrc
+curl https://raw.githubusercontent.com/tensorflow/tensorflow/r2.12/.bazelrc -o .bazelrc
 # This line breaks Windows builds, so we remove it.
 sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 
