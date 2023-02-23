@@ -24,7 +24,7 @@ if [ "$installed_bazel_version" != "$tf_bazel_version" ]; then
 fi
 
 # Set tensorflow version
-if [[ $osname != "Darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "Apple" ]]; then
+if [[ $osname != "darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "Apple" ]]; then
   source oss_scripts/prepare_tf_dep.sh
 fi
 
