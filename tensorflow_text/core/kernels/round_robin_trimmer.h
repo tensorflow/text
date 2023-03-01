@@ -27,11 +27,10 @@ namespace text {
 
 template <typename T, typename Tsplits = int32_t>
 class RoundRobinTrimmer : Trimmer<T>, BatchTrimmer<T, Tsplits> {
-  using Mask = std::vector<bool>;
-  using Values = Values<T>;
-  using ValuesSpan = ValuesSpan<T>;
-  using RowSplits = RowSplits<Tsplits>;
-  using RowSplitsSpan = RowSplitsSpan<Tsplits>;
+  using Values_ = Values<T>;
+  using ValuesSpan_ = ValuesSpan<T>;
+  using RowSplits_ = RowSplits<Tsplits>;
+  using RowSplitsSpan_ = RowSplitsSpan<Tsplits>;
 
  public:
   RoundRobinTrimmer(int max_sequence_length)
@@ -40,7 +39,7 @@ class RoundRobinTrimmer : Trimmer<T>, BatchTrimmer<T, Tsplits> {
 
   // Generates masks for a single batch of values.
   std::vector<Mask> GenerateMasks(
-      const std::vector<Values>& values) const;
+      const std::vector<Values_>& values) const;
 
   // Generates masks for a batch of values row splits.
   //
@@ -51,12 +50,12 @@ class RoundRobinTrimmer : Trimmer<T>, BatchTrimmer<T, Tsplits> {
   //   The returned value is a flattened list of mask values which can be split
   //   into batches using the same input row splits.
   std::vector<Mask> GenerateMasksBatch(
-      const std::vector<RowSplits>& row_splits) const;
+      const std::vector<RowSplits_>& row_splits) const;
   std::vector<Mask> GenerateMasksBatch(
-      const std::vector<RowSplitsSpan>& row_splits) const;
+      const std::vector<RowSplitsSpan_>& row_splits) const;
 
   // Trims a single batch of values.
-  void Trim(std::vector<Values>* values) const;
+  void Trim(std::vector<Values_>* values) const;
 
   // Trims a batch of values given their flattened values and row splits.
   //
@@ -66,12 +65,12 @@ class RoundRobinTrimmer : Trimmer<T>, BatchTrimmer<T, Tsplits> {
   //
   // Returns:
   //    The returned values are the flattened trimmed values and new row splits.
-  std::pair<std::vector<Values>, std::vector<RowSplits>> TrimBatch(
-      const std::vector<Values>& flat_values,
-      const std::vector<RowSplits>& row_splits) const;
-  std::pair<std::vector<Values>, std::vector<RowSplits>> TrimBatch(
-      const std::vector<ValuesSpan>& flat_values,
-      const std::vector<RowSplitsSpan>& row_splits) const;
+  std::pair<std::vector<Values_>, std::vector<RowSplits_>> TrimBatch(
+      const std::vector<Values_>& flat_values,
+      const std::vector<RowSplits_>& row_splits) const;
+  std::pair<std::vector<Values_>, std::vector<RowSplits_>> TrimBatch(
+      const std::vector<ValuesSpan_>& flat_values,
+      const std::vector<RowSplitsSpan_>& row_splits) const;
 
  protected:
   // Used for holding data about value sizes and how much of it is used.
@@ -89,7 +88,7 @@ class RoundRobinTrimmer : Trimmer<T>, BatchTrimmer<T, Tsplits> {
 
   // Internal execution to share code for Span & Vector row_splits.
   template <typename ValuesIterator, typename RowSplitsIterator>
-  std::pair<std::vector<Values>, std::vector<RowSplits>> TrimInternal(
+  std::pair<std::vector<Values_>, std::vector<RowSplits_>> TrimInternal(
     ValuesIterator flat_values_begin,
     ValuesIterator flat_values_end,
     RowSplitsIterator row_splits_begin,
@@ -119,7 +118,7 @@ class RoundRobinTrimmer : Trimmer<T>, BatchTrimmer<T, Tsplits> {
 
 template <typename T, typename Tsplits>
 std::vector<Mask> RoundRobinTrimmer<T, Tsplits>::GenerateMasks(
-    const std::vector<Values>& values) const {
+    const std::vector<Values_>& values) const {
   std::vector<Mask> masks(values.size());
   ProcessBatch(values.begin(), values.end(),
                [&masks](std::vector<Row>* value_row_sizes) {
@@ -136,13 +135,13 @@ std::vector<Mask> RoundRobinTrimmer<T, Tsplits>::GenerateMasks(
 
 template <typename T, typename Tsplits>
 std::vector<Mask> RoundRobinTrimmer<T, Tsplits>::GenerateMasksBatch(
-    const std::vector<RowSplits>& row_splits) const {
+    const std::vector<RowSplits_>& row_splits) const {
   return GenerateMasksInternal(row_splits.begin(), row_splits.end());
 }
 
 template <typename T, typename Tsplits>
 std::vector<Mask> RoundRobinTrimmer<T, Tsplits>::GenerateMasksBatch(
-    const std::vector<RowSplitsSpan>& row_splits) const {
+    const std::vector<RowSplitsSpan_>& row_splits) const {
   return GenerateMasksInternal(row_splits.begin(), row_splits.end());
 }
 
@@ -169,7 +168,7 @@ std::vector<Mask> RoundRobinTrimmer<T, Tsplits>::GenerateMasksInternal(
 }
 
 template <typename T, typename Tsplits>
-void RoundRobinTrimmer<T, Tsplits>::Trim(std::vector<Values>* values) const {
+void RoundRobinTrimmer<T, Tsplits>::Trim(std::vector<Values_>* values) const {
   ProcessBatch(values->begin(), values->end(),
                [values] (std::vector<Row>* value_row_sizes) {
     for (int s = 0; s < values->size(); ++s) {
@@ -181,8 +180,8 @@ void RoundRobinTrimmer<T, Tsplits>::Trim(std::vector<Values>* values) const {
 template <typename T, typename Tsplits>
 std::pair<std::vector<Values<T>>, std::vector<RowSplits<Tsplits>>>
 RoundRobinTrimmer<T, Tsplits>::TrimBatch(
-    const std::vector<Values>& flat_values,
-    const std::vector<RowSplits>& row_splits) const {
+    const std::vector<Values_>& flat_values,
+    const std::vector<RowSplits_>& row_splits) const {
   return TrimInternal(
       flat_values.begin(), flat_values.end(),
       row_splits.begin(), row_splits.end());
@@ -191,8 +190,8 @@ RoundRobinTrimmer<T, Tsplits>::TrimBatch(
 template <typename T, typename Tsplits>
 std::pair<std::vector<Values<T>>, std::vector<RowSplits<Tsplits>>>
 RoundRobinTrimmer<T, Tsplits>::TrimBatch(
-    const std::vector<ValuesSpan>& flat_values,
-    const std::vector<RowSplitsSpan>& row_splits) const {
+    const std::vector<ValuesSpan_>& flat_values,
+    const std::vector<RowSplitsSpan_>& row_splits) const {
   return TrimInternal(
       flat_values.begin(), flat_values.end(),
       row_splits.begin(), row_splits.end());
@@ -206,9 +205,9 @@ RoundRobinTrimmer<T, Tsplits>::TrimInternal(
     ValuesIterator flat_values_end,
     RowSplitsIterator splits_begin,
     RowSplitsIterator splits_end) const {
-  std::pair<std::vector<Values>, std::vector<RowSplits>> trimmed(
-      {std::vector<Values>(flat_values_end - flat_values_begin),
-       std::vector<RowSplits>(splits_end - splits_begin)});
+  std::pair<std::vector<Values_>, std::vector<RowSplits_>> trimmed(
+      {std::vector<Values_>(flat_values_end - flat_values_begin),
+       std::vector<RowSplits_>(splits_end - splits_begin)});
   // All row splits start at index 0
   for (int i = 0; i < trimmed.second.size(); ++i) {
     trimmed.second[i].push_back({0});
@@ -219,8 +218,8 @@ RoundRobinTrimmer<T, Tsplits>::TrimInternal(
     auto values_it = flat_values_begin;
     auto splits_it = splits_begin;
     for (int s = 0; s < values_row->size(); ++s, ++values_it, ++splits_it) {
-      Values* vals = &trimmed.first[s];
-      RowSplits* splits = &trimmed.second[s];
+      Values_* vals = &trimmed.first[s];
+      RowSplits_* splits = &trimmed.second[s];
       auto start = values_it->begin() + (*splits_it)[splits->size()-1];
       vals->insert(vals->end(), start, start + (*values_row)[s].used);
       splits->insert(splits->end(), splits->back() + (*values_row)[s].used);

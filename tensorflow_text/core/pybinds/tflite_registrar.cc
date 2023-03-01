@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/pytypes.h"
 #include "tensorflow_text/core/kernels/byte_splitter_tflite.h"
@@ -20,8 +19,9 @@
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_tflite.h"
 #include "tensorflow_text/core/kernels/ngrams_tflite.h"
 #include "tensorflow_text/core/kernels/ragged_tensor_to_tensor_tflite.h"
-#include "tensorflow_text/core/kernels/sentencepiece/py_tflite_registerer.h"
+#include "tensorflow_text/core/kernels/round_robin_trimmer_tflite.h"
 #include "tensorflow_text/core/kernels/sentence_fragmenter_v2_tflite.h"
+#include "tensorflow_text/core/kernels/sentencepiece/py_tflite_registerer.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
 
 PYBIND11_MODULE(tflite_registrar, m) {
@@ -30,18 +30,12 @@ PYBIND11_MODULE(tflite_registrar, m) {
     A module with a Python wrapper for TFLite TFText ops.
   )pbdoc";
   m.attr("_allowed_symbols") = pybind11::make_tuple(
-      "AddByteSplit",
-      "AddByteSplitByOffsets",
-      "AddFastBertNormalize",
-      "AddFastSentencepieceDetokenize",
-      "AddFastSentencepieceTokenize",
-      "AddFastWordpieceTokenize",
-      "AddFastWordpieceDetokenize",
-      "AddNgramsStringJoin",
-      "AddRaggedTensorToTensor",
-      "AddSentenceFragmenterV2",
-      "AddWhitespaceTokenize",
-      "SELECT_TFTEXT_OPS");
+      "AddByteSplit", "AddByteSplitByOffsets", "AddFastBertNormalize",
+      "AddFastSentencepieceDetokenize", "AddFastSentencepieceTokenize",
+      "AddFastWordpieceTokenize", "AddFastWordpieceDetokenize",
+      "AddNgramsStringJoin", "AddRaggedTensorToTensor",
+      "AddRoundRobinGenerateMasks", "AddRoundRobinTrim",
+      "AddSentenceFragmenterV2", "AddWhitespaceTokenize", "SELECT_TFTEXT_OPS");
   m.def(
       "AddByteSplit",
       [](uintptr_t resolver) {
@@ -122,6 +116,25 @@ PYBIND11_MODULE(tflite_registrar, m) {
       },
       R"pbdoc(
       The function that adds AddRaggedTensorToTensor to the TFLite interpreter.
+      )pbdoc");
+  m.def(
+      "AddRoundRobinGenerateMasks",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddRoundRobinGenerateMasks(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      The function that adds AddRoundRobinGenerateMasks to the TFLite
+      interpreter.
+      )pbdoc");
+  m.def(
+      "AddRoundRobinTrim",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddRoundRobinTrim(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      The function that adds AddRoundRobinTrim to the TFLite interpreter.
       )pbdoc");
   m.def(
       "AddSentenceFragmenterV2",

@@ -34,25 +34,25 @@ using RowSplitsSpan = absl::Span<Tsplits>;
 
 template <typename T>
 class Trimmer {
-  using Values = Values<T>;
+  using ValuesT = Values<T>;
 
  public:
   // Generates masks for a single batch of values.
   virtual std::vector<Mask> GenerateMasks(
-      const std::vector<Values>& values) const = 0;
+      const std::vector<ValuesT>& values) const = 0;
 
   // Trims a single batch of values.
-  virtual void Trim(std::vector<Values>* values) const = 0;
+  virtual void Trim(std::vector<ValuesT>* values) const = 0;
 
   virtual ~Trimmer() = default;
 };
 
 template <typename T, typename Tsplits>
 class BatchTrimmer {
-  using Values = Values<T>;
-  using ValuesSpan = ValuesSpan<T>;
-  using RowSplits = RowSplits<Tsplits>;
-  using RowSplitsSpan = RowSplitsSpan<Tsplits>;
+  using Values_ = Values<T>;
+  using ValuesSpan_ = ValuesSpan<T>;
+  using RowSplits_ = RowSplits<Tsplits>;
+  using RowSplitsSpan_ = RowSplitsSpan<Tsplits>;
 
  public:
   // Generates masks for a batch of value row splits.
@@ -64,9 +64,9 @@ class BatchTrimmer {
   //   The returned value is a flattened list of mask values which can be split
   //   into batches using the same input row splits.
   virtual std::vector<Mask> GenerateMasksBatch(
-      const std::vector<RowSplits>& row_splits) const = 0;
+      const std::vector<RowSplits_>& row_splits) const = 0;
   virtual std::vector<Mask> GenerateMasksBatch(
-      const std::vector<RowSplitsSpan>& row_splits) const = 0;
+      const std::vector<RowSplitsSpan_>& row_splits) const = 0;
 
   // Trims a batch of values given their flattened values and row splits.
   //
@@ -76,12 +76,12 @@ class BatchTrimmer {
   //
   // Returns:
   //    The returned values are the flattened trimmed values and new row splits.
-  virtual std::pair<std::vector<Values>, std::vector<RowSplits>> TrimBatch(
-      const std::vector<Values>& flat_values,
-      const std::vector<RowSplits>& row_splits) const = 0;
-  virtual std::pair<std::vector<Values>, std::vector<RowSplits>> TrimBatch(
-      const std::vector<ValuesSpan>& flat_values,
-      const std::vector<RowSplitsSpan>& row_splits) const = 0;
+  virtual std::pair<std::vector<Values_>, std::vector<RowSplits_>> TrimBatch(
+      const std::vector<Values_>& flat_values,
+      const std::vector<RowSplits_>& row_splits) const = 0;
+  virtual std::pair<std::vector<Values_>, std::vector<RowSplits_>> TrimBatch(
+      const std::vector<ValuesSpan_>& flat_values,
+      const std::vector<RowSplitsSpan_>& row_splits) const = 0;
 
   virtual ~BatchTrimmer() = default;
 };
