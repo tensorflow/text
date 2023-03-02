@@ -376,6 +376,20 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
                [21, 22, 23]]],
       ),
       dict(
+          descr="Test rank 1 max sequence length",
+          segments=[[[11, 12, 13],
+                     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]],
+                    [[11, 12, 13],
+                     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]]],
+          max_seq_length=[7],
+          axis=-1,
+          expected=[
+              [[11, 12, 13],
+               [21, 22, 23, 24]],
+              [[11, 12, 13],
+               [21, 22, 23]]],
+      ),
+      dict(
           descr="Test wordpiece trimming across 2 segments",
           segments=[
               # first segment

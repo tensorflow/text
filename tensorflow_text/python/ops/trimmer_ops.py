@@ -237,7 +237,11 @@ class RoundRobinTrimmer(Trimmer):
         number of elements allowed in a batch.
       axis: Axis to apply trimming on.
     """
-    self._max_seq_length = max_seq_length
+    if (isinstance(max_seq_length, ops.Tensor) and
+        max_seq_length.shape.ndims > 0):
+      self._max_seq_length = array_ops.reshape(max_seq_length, ())
+    else:
+      self._max_seq_length = max_seq_length
     self._axis = axis
 
   def generate_mask(self, segments):
