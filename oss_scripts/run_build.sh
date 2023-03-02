@@ -2,8 +2,9 @@
 set -e  # fail and exit on any command erroring
 set -x  # print evaluated commands
 
-osname="$(uname -s)"
-if [[ $osname == "Darwin" ]]; then
+osname="$(uname -s | tr 'A-Z' 'a-z')"
+
+if [[ $osname == "darwin" ]]; then
   # Update to macos extensions
   sed -i '' 's/".so"/".dylib"/' tensorflow_text/tftext.bzl
   perl -pi -e "s/(load_library.load_op_library.*)\\.so'/\$1.dylib'/" $(find tensorflow_text/python -type f)
