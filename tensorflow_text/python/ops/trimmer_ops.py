@@ -26,11 +26,6 @@ from tensorflow.python.ops.ragged import ragged_array_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow_text.python.ops import item_selector_ops
 
-# pylint: disable=g-bad-import-order
-from tensorflow.python.framework import load_library
-from tensorflow.python.platform import resource_loader
-gen_trimmer_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_trimmer_ops.so'))
-
 
 class Trimmer(metaclass=abc.ABCMeta):
   """Truncates a list of segments using a pre-determined truncation strategy."""
@@ -252,95 +247,27 @@ class RoundRobinTrimmer(Trimmer):
     [3, 4, 2], the truncate budget will be allocated as [2, 2, 1].
 
     Args:
-      segments: A list of `RaggedTensor`s each with a shape of [num_batch,
+      segments: A list of `RaggedTensor` each w/ a shape of [num_batch,
         (num_items)].
 
     Returns:
-      A list with len(segments) of `RaggedTensor`s, see superclass for details.
+      a list with len(segments) of `RaggedTensor`s, see superclass for details.
     """
     with ops.name_scope("RoundRobinTrimmer/generate_mask"):
-      segments = list(
-          map(ragged_tensor.convert_to_tensor_or_ragged_tensor, segments)
-      )
-      # The docs state that the segments argument is required to be a list of
-      # RaggedTensors of rank 2. However, the python-only op worked with other
-      # ranks, so we continue to execute that code for other ranks so as to not
-      # break current models.
-      rank_2 = segments[0].shape.ndims == 2
-      last_axis = self._axis == -1 or self._axis == 1
-      if not last_axis or not rank_2:
-        segment_row_lengths = [
-            _get_row_lengths(s, self._axis) for s in segments
-        ]
-        segment_row_lengths = array_ops.stack(segment_row_lengths, axis=-1)
-        segment_row_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
-        budget = ops.convert_to_tensor(self._max_seq_length)
-        results = _round_robin_allocation(segment_row_lengths, budget)
+      segment_row_lengths = [_get_row_lengths(s, self._axis) for s in segments]
+      segment_row_lengths = array_ops.stack(segment_row_lengths, axis=-1)
+      segment_row_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
+      budget = ops.convert_to_tensor(self._max_seq_length)
+      results = _round_robin_allocation(segment_row_lengths, budget)
 
-        results = array_ops.unstack(results, axis=-1)
-        item_selectors = [
-            item_selector_ops.FirstNItemSelector(i) for i in results
-        ]
-        return [
-            i.get_selectable(s, self._axis)
-            for s, i in zip(segments, item_selectors)
-        ]
-      else:
-        values = list(map(lambda x: x.values, segments))
-        row_splits = list(map(lambda x: x.row_splits, segments))
-        o_masks = gen_trimmer_ops.tf_text_round_robin_generate_masks(
-            self._max_seq_length, values, row_splits
-        )
-        return [
-            ragged_tensor.RaggedTensor.from_row_splits(m, s)
-            for m, s in zip(o_masks, row_splits)
-        ]
-
-  def trim(self, segments):
-    """Truncate the list of `segments`.
-
-    Truncate the list of `segments` using the 'round-robin' strategy which
-    allocates quota in each bucket, left-to-right repeatedly until all buckets
-    are filled.
-
-    For example if the budget of [5] and we have segments of size
-    [3, 4, 2], the truncate budget will be allocated as [2, 2, 1].
-
-    Args:
-      segments: A list of `RaggedTensor`s w/ shape [num_batch, (num_items)].
-
-    Returns:
-      A list with len(segments) of `RaggedTensor`s, see superclass for details.
-    """
-    with ops.name_scope("RoundRobinTrimmer/trim"):
-      segments = [
-          ragged_tensor.convert_to_tensor_or_ragged_tensor(s) for s in segments
+      results = array_ops.unstack(results, axis=-1)
+      item_selectors = [
+          item_selector_ops.FirstNItemSelector(i) for i in results
       ]
-      # The docs state that the segments argument is required to be a list of
-      # RaggedTensors of rank 2. However, the python-only op worked with other
-      # ranks, so we continue to execute that code for other ranks so as to not
-      # break current models.
-      rank_2 = segments[0].shape.ndims == 2
-      last_axis = self._axis == -1 or self._axis == 1
-      if not last_axis or not rank_2:
-        truncate_masks = self.generate_mask(segments)
-        truncated_segments = [
-            ragged_array_ops.boolean_mask(
-                seg, mask.with_row_splits_dtype(seg.row_splits.dtype)
-            )
-            for seg, mask in zip(segments, truncate_masks)
-        ]
-        return truncated_segments
-      else:
-        values = list(map(lambda x: x.values, segments))
-        row_splits = list(map(lambda x: x.row_splits, segments))
-        (o_values, o_splits) = gen_trimmer_ops.tf_text_round_robin_trim(
-            self._max_seq_length, values, row_splits
-        )
-        return [
-            ragged_tensor.RaggedTensor.from_row_splits(m, s)
-            for m, s in zip(o_values, o_splits)
-        ]
+      return [
+          i.get_selectable(s, self._axis)
+          for s, i in zip(segments, item_selectors)
+      ]
 
 
 def _shrink_longest_allocation(segment_lengths, max_row_length):

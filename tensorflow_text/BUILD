@@ -1252,11 +1252,9 @@ py_library(
 
 # tokenization_layers_py_test
 
-py_tf_text_library(
+py_library(
     name = "trimmer_ops",
     srcs = ["python/ops/trimmer_ops.py"],
-    cc_op_defs = ["//tensorflow_text/core/ops:trimmer_ops.cc"],
-    cc_op_kernels = ["//tensorflow_text/core/kernels:round_robin_trimmer_kernel"],
     deps = [
         ":item_selector_ops",
         # python:array_ops tensorflow dep,
@@ -1275,10 +1273,8 @@ py_test(
     python_version = "PY3",
     srcs_version = "PY3",
     deps = [
-        ":tensorflow_text",
         ":trimmer_ops",
         "@absl_py//absl/testing:parameterized",
-        # tensorflow package dep,
         # python:client_testlib tensorflow dep,
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,

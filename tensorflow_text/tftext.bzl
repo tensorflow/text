@@ -187,7 +187,6 @@ def tflite_cc_library(
         "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
         "@org_tensorflow//tensorflow/lite/c:common",
         "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_wrapper",
     ]
     # These are "random" deps likely needed by each library (http://b/142433427)
     oss_deps = [

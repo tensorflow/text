@@ -101,10 +101,8 @@ tflite_registrar.SELECT_TFTEXT_OPS = [
     tflite_registrar.AddFastWordpieceDetokenize,
     tflite_registrar.AddNgramsStringJoin,
     tflite_registrar.AddRaggedTensorToTensor,
-    tflite_registrar.AddRoundRobinGenerateMasks,
-    tflite_registrar.AddRoundRobinTrim,
     tflite_registrar.AddSentenceFragmenterV2,
-    tflite_registrar.AddWhitespaceTokenize,
+    tflite_registrar.AddWhitespaceTokenize
 ]
 
 remove_undocumented(__name__, _allowed_symbols)
