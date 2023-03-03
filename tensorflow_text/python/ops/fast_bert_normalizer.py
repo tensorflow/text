@@ -152,8 +152,7 @@ class FastBertNormalizer(module.Module):
       if rank == 0:
         normalized_texts, offsets = self._normalize_with_offsets_helper(
             array_ops.stack([input]), get_offsets)
-        return (normalized_texts.values,
-                offsets.values if get_offsets else None)
+        return (normalized_texts, offsets if get_offsets else None)
 
       elif rank > 1:
         if not ragged_tensor.is_ragged(input):
