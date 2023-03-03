@@ -49,6 +49,7 @@ cc_library(
         ":split_merge_tokenizer_cc",
         ":state_based_sentence_breaker_op_cc",
         ":text_similarity_metric_ops_cc",
+        ":trimmer_ops_cc",
         ":unicode_script_tokenizer_cc",
         ":whitespace_tokenizer_cc",
         ":whitespace_tokenizer_v2_cc",
