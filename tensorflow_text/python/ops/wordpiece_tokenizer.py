@@ -27,7 +27,7 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import check_ops
-from tensorflow.python.ops import control_flow_ops
+from tensorflow.python.ops import control_flow_assert
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import sort_ops
@@ -363,7 +363,7 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
     steps = ids[1:] - ids[:-1]
     all_one_step = math_ops.reduce_all(math_ops.equal(steps, 1))
 
-    check = control_flow_ops.Assert(
+    check = control_flow_assert.Assert(
         first_is_zero & all_one_step,
         data=[('`detokenize` only works with vocabulary tables where the '
                'indices are dense on the interval `[0, vocab_size)`')])

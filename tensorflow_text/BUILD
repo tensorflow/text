@@ -614,6 +614,7 @@ py_library(
     srcs = ["python/ops/masking_ops.py"],
     deps = [
         # python:array_ops tensorflow dep,
+        # python:control_flow_assert tensorflow dep,
         # python:dtypes tensorflow dep,
         # python:map_fn tensorflow dep,
         # python:math_ops tensorflow dep,
@@ -1482,6 +1483,7 @@ py_tf_text_library(
         ":tokenization",
         # python:array_ops tensorflow dep,
         # python:check_ops tensorflow dep,
+        # python:control_flow_assert tensorflow dep,
         # python:dtypes tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python:lookup_ops tensorflow dep,

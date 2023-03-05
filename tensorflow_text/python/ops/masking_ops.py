@@ -18,7 +18,7 @@
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import control_flow_ops
+from tensorflow.python.ops import control_flow_assert
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import random_ops
 from tensorflow.python.ops.ragged import ragged_array_ops
@@ -308,7 +308,7 @@ class MaskValuesChooser(object):
       values contain either the mask token, randomly injected token or original
       value.
     """
-    validate_rates = control_flow_ops.Assert(
+    validate_rates = control_flow_assert.Assert(
         self._mask_token_rate + self._random_token_rate <= 1,
         ["mask_token_rate + random_token_rate must be <= 1"])
     with ops.control_dependencies([validate_rates]):
