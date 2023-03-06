@@ -67,12 +67,10 @@ class TFSentencepieceDetokenizerOp : public tensorflow::OpKernel {
       }
       const auto res = sentencepiece::DecodeString(
           codes_for_split, model_tensor.data());
-      OP_REQUIRES(
-          ctx,
-          res.type ==
-              sentencepiece::DecoderResultType::SUCCESS,
-          tensorflow::Status(tensorflow::error::INTERNAL,
-                             "Sentencepiece conversion failed"));
+      OP_REQUIRES(ctx, res.type == sentencepiece::DecoderResultType::SUCCESS,
+                  tensorflow::Status(static_cast<tsl::errors::Code>(
+                                         absl::StatusCode::kInternal),
+                                     "Sentencepiece conversion failed"));
       output_flat(i) = res.decoded;
     }
   }
