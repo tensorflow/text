@@ -16,7 +16,7 @@ source oss_scripts/configure.sh
 
 # Verify correct version of Bazel
 installed_bazel_version=$(bazel version | grep label | sed -e 's/.*: //')
-tf_bazel_version=$(cat .bazelversion)
+tf_bazel_version=$(head -1 .bazelversion)
 if [ "$installed_bazel_version" != "$tf_bazel_version" ]; then
   echo "Incorrect version of Bazel installed."
   echo "Version $tf_bazel_version should be installed, but found version ${installed_bazel_version}."
