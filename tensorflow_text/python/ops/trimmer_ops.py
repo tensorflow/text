@@ -20,7 +20,6 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import control_flow_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_array_ops
 from tensorflow.python.ops.ragged import ragged_tensor
@@ -30,6 +29,7 @@ from tensorflow_text.python.ops import item_selector_ops
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
 gen_trimmer_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_trimmer_ops.so'))
+from tensorflow.python.ops import while_loop
 
 
 class Trimmer(metaclass=abc.ABCMeta):
@@ -216,8 +216,8 @@ def _round_robin_allocation(row_lengths, max_seq_length):
     new_dist = array_ops.tensor_scatter_add(dist, scatter_index_2d, updates)
     return i + 1, new_dist, quota_used + updates
 
-  _, results, _ = control_flow_ops.while_loop(_cond, _body,
-                                              (i, distribution, quota_used))
+  _, results, _ = while_loop.while_loop(_cond, _body,
+                                        (i, distribution, quota_used))
   return results
 
 
@@ -364,7 +364,7 @@ def _shrink_longest_allocation(segment_lengths, max_row_length):
         math_ops.argmax(l, axis=-1), depth=depth, dtype=dtypes.int32)
     return (l + minus_ones_or_zeros * one_hot_to_max_position,)
 
-  return control_flow_ops.while_loop_v2(
+  return while_loop.while_loop_v2(
       cond=_condition, body=_body, loop_vars=[segment_lengths])
 
 
