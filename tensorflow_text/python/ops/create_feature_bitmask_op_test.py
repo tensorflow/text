@@ -24,6 +24,7 @@ from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import create_feature_bitmask_op
 
@@ -54,7 +55,7 @@ class CreateFeatureBitmaskOpTest(test_util.TensorFlowTestCase):
     """Test that the op can reduce a stacked list of tensors."""
     data_1 = constant_op.constant([True, False])
     data_2 = constant_op.constant([False, True])
-    stack_data = array_ops.stack([data_1, data_2], -1)
+    stack_data = array_ops_stack.stack([data_1, data_2], -1)
 
     expected_result = constant_op.constant([2, 1])
     result = create_feature_bitmask_op.create_feature_bitmask(stack_data)
@@ -81,7 +82,7 @@ class CreateFeatureBitmaskOpTest(test_util.TensorFlowTestCase):
     """Test that the op can reduce a stacked list of multi-dim tensors."""
     data_1 = constant_op.constant([[True, False], [False, True]])
     data_2 = constant_op.constant([[False, True], [True, True]])
-    stack_data = array_ops.stack([data_1, data_2], -1)
+    stack_data = array_ops_stack.stack([data_1, data_2], -1)
 
     expected_result = constant_op.constant([[2, 1], [1, 3]])
     result = create_feature_bitmask_op.create_feature_bitmask(stack_data)

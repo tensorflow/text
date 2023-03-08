@@ -20,6 +20,7 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_array_ops
 from tensorflow.python.ops.ragged import ragged_tensor
@@ -162,7 +163,7 @@ class WaterfallTrimmer(Trimmer):
     """
     with ops.name_scope("WaterfallTrimmer/generate_mask"):
       segment_row_lengths = [_get_row_lengths(s, self._axis) for s in segments]
-      segment_row_lengths = array_ops.stack(segment_row_lengths, axis=-1)
+      segment_row_lengths = array_ops_stack.stack(segment_row_lengths, axis=-1)
 
       # Broadcast budget to match the rank of segments[0]
       budget = ops.convert_to_tensor(self._max_seq_length)
@@ -179,7 +180,7 @@ class WaterfallTrimmer(Trimmer):
 
       # Translate the results into boolean masks that match the shape of each
       # segment
-      results = array_ops.unstack(results, axis=-1)
+      results = array_ops_stack.unstack(results, axis=-1)
       item_selectors = [
           item_selector_ops.FirstNItemSelector(i) for i in results
       ]
@@ -276,12 +277,13 @@ class RoundRobinTrimmer(Trimmer):
         segment_row_lengths = [
             _get_row_lengths(s, self._axis) for s in segments
         ]
-        segment_row_lengths = array_ops.stack(segment_row_lengths, axis=-1)
+        segment_row_lengths = array_ops_stack.stack(
+            segment_row_lengths, axis=-1)
         segment_row_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
         budget = ops.convert_to_tensor(self._max_seq_length)
         results = _round_robin_allocation(segment_row_lengths, budget)
 
-        results = array_ops.unstack(results, axis=-1)
+        results = array_ops_stack.unstack(results, axis=-1)
         item_selectors = [
             item_selector_ops.FirstNItemSelector(i) for i in results
         ]
@@ -412,10 +414,10 @@ class ShrinkLongestTrimmer(Trimmer):
     """
     with ops.name_scope("ShrinkLongestTrimmer/generate_mask"):
       segment_row_lengths = [_get_row_lengths(s, self._axis) for s in segments]
-      segment_row_lengths = array_ops.stack(segment_row_lengths, axis=-1)
+      segment_row_lengths = array_ops_stack.stack(segment_row_lengths, axis=-1)
       segment_row_lengths = math_ops.cast(segment_row_lengths, dtypes.int32)
       budget = ops.convert_to_tensor(self._max_seq_length)
-      results = array_ops.unstack(
+      results = array_ops_stack.unstack(
           _shrink_longest_allocation(segment_row_lengths, budget), axis=-1)
 
       item_selectors = [

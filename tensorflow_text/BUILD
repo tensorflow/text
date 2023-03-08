@@ -289,7 +289,7 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:fast_bert_normalizer_tf_kernel",
     ],
     deps = [
-        # python:array_ops tensorflow dep,
+        # python:array_ops_stack tensorflow dep,
         # python:dtypes tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -404,7 +404,7 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:array_ops tensorflow dep,
+        # python:array_ops_stack tensorflow dep,
         # python:dtypes tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -445,7 +445,7 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:array_ops tensorflow dep,
+        # python:array_ops_stack tensorflow dep,
         # python:dtypes tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -512,7 +512,7 @@ py_library(
     deps = [
         ":splitter",
         "@org_tensorflow_hub//tensorflow_hub",
-        # python:array_ops tensorflow dep,
+        # python:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -1028,7 +1028,7 @@ py_library(
     name = "sliding_window_op",
     srcs = ["python/ops/sliding_window_op.py"],
     deps = [
-        # python:array_ops tensorflow dep,
+        # python:array_ops_stack tensorflow dep,
         # python:errors tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -1443,7 +1443,7 @@ py_tf_text_library(
     deps = [
         ":tokenization",
         ":whitespace_tokenizer",
-        # python:array_ops tensorflow dep,
+        # python:array_ops_stack tensorflow dep,
         # python:dtypes tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python:math_ops tensorflow dep,
@@ -1522,7 +1522,7 @@ py_library(
     name = "wordshape_ops",
     srcs = ["python/ops/wordshape_ops.py"],
     deps = [
-        # python:array_ops tensorflow dep,
+        # python:array_ops_stack tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python:string_ops tensorflow dep,
     ],

@@ -23,6 +23,7 @@ from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_conversion_ops
@@ -173,7 +174,7 @@ class UnicodeScriptTokenizer(TokenizerWithOffsets):
               ragged_conversion_ops.from_tensor(input_tensor))
         elif input_tensor.shape.ndims == 0:
           (tokens, starts, ends) = self.tokenize_with_offsets(
-              array_ops.stack([input_tensor]))
+              array_ops_stack.stack([input_tensor]))
           return tokens.values, starts.values, ends.values
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as

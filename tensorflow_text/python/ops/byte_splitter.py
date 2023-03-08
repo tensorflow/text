@@ -21,7 +21,7 @@ from __future__ import print_function
 
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import ops
-from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
@@ -126,7 +126,7 @@ class ByteSplitter(SplitterWithOffsets):
               ragged_conversion_ops.from_tensor(input_tensor))
         elif input_tensor.shape.ndims == 0:
           (bytez, start_offsets, end_offsets) = self.split_with_offsets(
-              array_ops.stack([input_tensor]))
+              array_ops_stack.stack([input_tensor]))
           return bytez.values, start_offsets.values, end_offsets.values
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
@@ -225,9 +225,9 @@ class ByteSplitter(SplitterWithOffsets):
           input_tensor = ragged_conversion_ops.from_tensor(input_tensor)
           return self.split_by_offsets(input_tensor, starts, ends)
         elif input_tensor.shape.ndims == 0:
-          stacked_inputs = array_ops.stack([input_tensor])
-          stacked_starts = array_ops.stack([starts])
-          stacked_ends = array_ops.stack([ends])
+          stacked_inputs = array_ops_stack.stack([input_tensor])
+          stacked_starts = array_ops_stack.stack([starts])
+          stacked_ends = array_ops_stack.stack([ends])
           result = self.split_by_offsets(
               stacked_inputs, stacked_starts, stacked_ends)
           return result.values

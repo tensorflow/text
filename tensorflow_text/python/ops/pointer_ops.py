@@ -24,6 +24,7 @@ import functools
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import check_ops
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_functional_ops
@@ -73,7 +74,7 @@ def gather_with_default(params, indices, default, name=None, axis=0):
     default = ops.convert_to_tensor(default, name='default', dtype=params.dtype)
 
     if axis == 0:
-      tiled_default = array_ops.stack([default])
+      tiled_default = array_ops_stack.stack([default])
 
     else:
       # Get ranks & shapes of inputs.

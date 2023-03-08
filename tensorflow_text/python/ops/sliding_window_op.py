@@ -23,7 +23,7 @@ from __future__ import print_function
 
 from tensorflow.python.framework import errors
 from tensorflow.python.framework import ops
-from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops.ragged import ragged_tensor
 
 
@@ -154,4 +154,4 @@ def sliding_window(data, width, axis=-1, name=None):
 
     # Stack the slices.
     stack_axis = axis + 1 if axis >= 0 else axis
-    return array_ops.stack(slices, stack_axis)
+    return array_ops_stack.stack(slices, stack_axis)

@@ -17,7 +17,7 @@
 
 import tensorflow_hub as hub
 from tensorflow.python.eager import monitoring
-from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow_text.python.ops.splitter import SplitterWithOffsets
 
@@ -151,7 +151,7 @@ class HubModuleSplitter(SplitterWithOffsets):
     # module, and finally convert the output back to the expected shape.
     if rank == 0:
       # Build a rank 1 input batch with one string.
-      input_batch = array_ops.stack([input_strs])
+      input_batch = array_ops_stack.stack([input_strs])
       # [1, (number pieces)]
       pieces, starts, ends = self._predict_pieces(input_batch)
       return pieces.flat_values, starts.flat_values, ends.flat_values

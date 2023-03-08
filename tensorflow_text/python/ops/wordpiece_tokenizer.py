@@ -26,6 +26,7 @@ from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import check_ops
 from tensorflow.python.ops import control_flow_assert
 from tensorflow.python.ops import lookup_ops
@@ -270,7 +271,7 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
       if rank == 0:
         wordpieces, starts, ends = self.tokenize_with_offsets(
-            array_ops.stack([tokens]))
+            array_ops_stack.stack([tokens]))
         return wordpieces.values, starts.values, ends.values
 
       elif rank > 1:

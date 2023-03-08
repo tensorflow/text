@@ -24,7 +24,7 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.module import module
-from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
 from tensorflow_text.core.pybinds import pywrap_fast_bert_normalizer_model_builder
@@ -151,7 +151,7 @@ class FastBertNormalizer(module.Module):
 
       if rank == 0:
         normalized_texts, offsets = self._normalize_with_offsets_helper(
-            array_ops.stack([input]), get_offsets)
+            array_ops_stack.stack([input]), get_offsets)
         return (normalized_texts.values,
                 offsets.values if get_offsets else None)
 

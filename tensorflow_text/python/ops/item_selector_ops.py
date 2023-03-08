@@ -17,6 +17,7 @@
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import gen_array_ops
 from tensorflow.python.ops import map_fn
 from tensorflow.python.ops import math_ops
@@ -76,7 +77,7 @@ class ItemSelector(object):
       if unselectable_ids.shape.rank not in (1, None):
         raise ValueError(f"`unselectable_ids` must have a rank of 1 or None, "
                          f"but was: {unselectable_ids.shape.rank}")
-      self._unselectable_ids = array_ops.unstack(unselectable_ids)
+      self._unselectable_ids = array_ops_stack.unstack(unselectable_ids)
     else:
       raise ValueError("`unselectable_ids` must be either a list or " +
                        "`1 dimensional Tensor`, instead it is a " +

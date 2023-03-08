@@ -23,7 +23,7 @@ from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
-from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
@@ -233,7 +233,7 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
 
       if rank == 0:
         wordpieces, starts, ends = self.tokenize_with_offsets(
-            array_ops.stack([tokens]))
+            array_ops_stack.stack([tokens]))
         return wordpieces.values, starts.values, ends.values
 
       elif rank > 1:
@@ -303,7 +303,7 @@ class FastWordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
         raise ValueError('input must have a known rank.')
 
       if rank < 2:
-        words = self.detokenize(array_ops.stack([subword_ids]))
+        words = self.detokenize(array_ops_stack.stack([subword_ids]))
         return words[0]
 
       if not ragged_tensor.is_ragged(subword_ids):

@@ -23,6 +23,7 @@ from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
@@ -221,8 +222,8 @@ class SplitMergeTokenizer(TokenizerWithOffsets):
 
       if rank == 0:
         words, starts, ends = self.tokenize_with_offsets(
-            array_ops.stack([tokens]),
-            array_ops.stack([labels]),
+            array_ops_stack.stack([tokens]),
+            array_ops_stack.stack([labels]),
             force_split_at_break_character)
         return words.values, starts.values, ends.values
 

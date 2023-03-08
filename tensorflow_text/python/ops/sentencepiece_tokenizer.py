@@ -23,6 +23,7 @@ from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops.ragged import ragged_conversion_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
@@ -142,7 +143,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
           # Convert the input tensor to ragged and process it.
           return self.tokenize(ragged_conversion_ops.from_tensor(input_tensor))
         elif input_tensor.shape.ndims == 0:
-          tokens = self.tokenize(array_ops.stack([input_tensor]))
+          tokens = self.tokenize(array_ops_stack.stack([input_tensor]))
           return tokens.values
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
@@ -200,7 +201,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
               ragged_conversion_ops.from_tensor(input_tensor))
         elif input_tensor.shape.ndims == 0:
           (tokens, starts, ends) = self.tokenize_with_offsets(
-              array_ops.stack([input_tensor]))
+              array_ops_stack.stack([input_tensor]))
           tokens = tokens.values
           starts = starts.values
           ends = ends.values
@@ -270,7 +271,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
           return self.detokenize(
               ragged_conversion_ops.from_tensor(input_tensor))
         else:
-          tokens = self.detokenize(array_ops.stack([input_tensor]))
+          tokens = self.detokenize(array_ops_stack.stack([input_tensor]))
           return array_ops.reshape(tokens, [])
 
   def vocab_size(self, name=None):
@@ -305,7 +306,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       if input_tensor.shape.ndims is None:
         raise ValueError("Rank of input_tensor must be statically known.")
       if input_tensor.shape.ndims == 0:
-        strings = self.id_to_string(array_ops.stack([input_tensor]))
+        strings = self.id_to_string(array_ops_stack.stack([input_tensor]))
         return strings[0]
       if ragged_tensor.is_ragged(input_tensor):
         strings = self.id_to_string(input_tensor.flat_values)
@@ -336,7 +337,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       if input_tensor.shape.ndims is None:
         raise ValueError("Rank of input_tensor must be statically known.")
       if input_tensor.shape.ndims == 0:
-        strings = self.string_to_id(array_ops.stack([input_tensor]))
+        strings = self.string_to_id(array_ops_stack.stack([input_tensor]))
         return strings[0]
       if ragged_tensor.is_ragged(input_tensor):
         strings = self.string_to_id(input_tensor.flat_values)

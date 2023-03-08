@@ -23,7 +23,7 @@ from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
-from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.ops.ragged.ragged_tensor import RaggedTensor
@@ -117,7 +117,7 @@ class PhraseTokenizer(Tokenizer, Detokenizer):
         raise ValueError('input must have a known rank.')
 
       if rank == 0:
-        phrases = self.tokenize(array_ops.stack([tokens]))
+        phrases = self.tokenize(array_ops_stack.stack([tokens]))
         return phrases.values
 
       elif rank > 1:
@@ -175,7 +175,7 @@ class PhraseTokenizer(Tokenizer, Detokenizer):
         raise ValueError('input must have a known rank.')
 
       if rank < 2:
-        words = self.detokenize(array_ops.stack([phrase_ids]))
+        words = self.detokenize(array_ops_stack.stack([phrase_ids]))
         return words[0]
 
       if not ragged_tensor.is_ragged(phrase_ids):
