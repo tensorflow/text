@@ -514,6 +514,19 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
               [[[b"unos", b"dos"], []]],
           ],
       ),
+      dict(
+          descr="Test a negative max_sequence_length.",
+          segments=[
+              # first segment
+              [[-1]],
+          ],
+          max_seq_length=-1,
+          axis=-1,
+          expected=[
+              # first segment
+              [[]],
+          ],
+      ),
       # pyformat: enable
   ])
   def testPerBatchBudgetTrimmer(self,

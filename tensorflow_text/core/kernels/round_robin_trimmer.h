@@ -34,7 +34,7 @@ class RoundRobinTrimmer : Trimmer<T>, BatchTrimmer<T, Tsplits> {
 
  public:
   RoundRobinTrimmer(int max_sequence_length)
-      : max_sequence_length_(max_sequence_length) {}
+      : max_sequence_length_(std::max(max_sequence_length, 0)) {}
   virtual ~RoundRobinTrimmer() = default;
 
   // Generates masks for a single batch of values.
