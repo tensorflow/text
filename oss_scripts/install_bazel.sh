@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e  # fail and exit on any command erroring
-set -x  # print evaluated commands
 
 # Read the bazel version from the path; slowly moving up parents
 while [[ $PWD != / && -z $(find ~+/ -maxdepth 1 -type f -name .bazelversion) ]]
