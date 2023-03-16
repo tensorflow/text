@@ -95,7 +95,7 @@ constexpr int64 kCostPerUnit = 10000;
 
 ::tensorflow::Status ToTFStatus(const sentencepiece::util::Status& s) {
   if (s.ok()) return ::tensorflow::Status();
-  return ::tensorflow::Status(static_cast<::tensorflow::error::Code>(s.code()),
+  return ::tensorflow::Status(static_cast<::tensorflow::errors::Code>(s.code()),
                               ::tensorflow::string(s.message()));
 }
 
