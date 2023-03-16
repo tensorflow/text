@@ -72,12 +72,14 @@ Status TokenizeByLabel(const absl::string_view& text,
                        std::vector<int>* end_offset, int* num_tokens) {
   std::vector<absl::string_view> chars;
   if (!GetUTF8Chars(text, &chars)) {
-    return Status(error::Code::INVALID_ARGUMENT,
+    return Status(static_cast<tensorflow::errors::Code>(
+                      absl::StatusCode::kInvalidArgument),
                   absl::StrCat("Input string is not utf8 valid: ", text));
   }
 
   if (chars.size() > labels_tensor.dim_size(0)) {
-    return Status(error::Code::INVALID_ARGUMENT,
+    return Status(static_cast<tensorflow::errors::Code>(
+                      absl::StatusCode::kInvalidArgument),
                   absl::StrCat("Number of labels ", labels_tensor.dim_size(0),
                                " is insufficient for text ", text));
   }
