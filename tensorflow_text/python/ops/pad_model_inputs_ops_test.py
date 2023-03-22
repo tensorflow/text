@@ -97,6 +97,91 @@ class ModelInputPackerTest(test.TestCase, parameterized.TestCase):
     self.assertAllEqual(expected, actual_padded)
     self.assertAllEqual(expected_mask, actual_mask)
 
+  @parameterized.parameters([
+      # Test out padding out when sequence length < max_seq_length.
+      dict(
+          pack_inputs=[
+              [101, 1, 2, 102, 10, 20, 102],
+              [101, 3, 4, 102, 30, 40, 50],
+              [101, 5, 6, 700, 80, 90, 102],
+          ],
+          max_seq_length=10,
+          expected=[[101, 1, 2, 102, 10, 20, 102, 0, 0, 0],
+                    [101, 3, 4, 102, 30, 40, 50, 0, 0, 0],
+                    [101, 5, 6, 700, 80, 90, 102, 0, 0, 0]],
+          expected_mask=[[1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                         [1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                         [1, 1, 1, 1, 1, 1, 1, 0, 0, 0]],
+      ),
+      dict(
+          pack_inputs=[
+              [0, 0, 0, 0, 1, 1, 1, 0],
+              [0, 0, 0, 0, 1, 1, 1, 1],
+              [0, 0, 0, 0, 0, 0, 0, 1],
+          ],
+          expected=[
+              [0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+              [0, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+          ],
+          expected_mask=[
+              [1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+              [1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+              [1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+          ],
+          max_seq_length=10,
+      ),
+      # Test out truncation when sequence length > max_seq_length.
+      dict(
+          pack_inputs=[
+              [0, 0, 0, 0, 1, 1, 1, 0],
+              [0, 0, 0, 0, 1, 1, 1, 1],
+              [0, 0, 0, 0, 0, 0, 0, 1],
+          ],
+          expected=[
+              [0, 0, 0, 0, 1],
+              [0, 0, 0, 0, 1],
+              [0, 0, 0, 0, 0],
+          ],
+          expected_mask=[
+              [1, 1, 1, 1, 1],
+              [1, 1, 1, 1, 1],
+              [1, 1, 1, 1, 1],
+          ],
+          max_seq_length=5,
+      ),
+      # Test out single dimension < max_seq_length.
+      dict(
+          pack_inputs=[101, 1, 2, 102, 10, 20, 102],
+          max_seq_length=10,
+          expected=[101, 1, 2, 102, 10, 20, 102, 0, 0, 0],
+          expected_mask=[1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+      ),
+      # Test out single dimension when sequence length > max_seq_length.
+      dict(
+          pack_inputs=[101, 1, 2, 102, 10, 20, 102],
+          max_seq_length=4,
+          expected=[101, 1, 2, 102],
+          expected_mask=[1, 1, 1, 1],
+      ),
+  ])
+  def testPadModelInputsTensor(self,
+                               pack_inputs,
+                               expected,
+                               expected_mask,
+                               max_seq_length=10):
+    # Pack everything as a RaggedTensor.
+    pack_inputs = constant_op.constant(pack_inputs)
+
+    # Pad to max_seq_length and construct input_mask
+    actual_padded, actual_mask = pad_model_inputs_ops.pad_model_inputs(
+        pack_inputs, max_seq_length=max_seq_length, pad_value=0)
+
+    # Verify the contents of all the padded (and maybe truncated) values as well
+    # as the mask.
+    self.assertAllEqual(expected, actual_padded)
+    self.assertAllEqual(expected_mask, actual_mask)
+
   @parameterized.named_parameters([
       ("PythonInt", lambda l: l),
       ("NpInt32", lambda l: np.array(l, np.int32)),
