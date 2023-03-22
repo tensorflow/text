@@ -22,6 +22,7 @@
 #include "tensorflow_text/core/kernels/round_robin_trimmer_tflite.h"
 #include "tensorflow_text/core/kernels/sentence_fragmenter_v2_tflite.h"
 #include "tensorflow_text/core/kernels/sentencepiece/py_tflite_registerer.h"
+#include "tensorflow_text/core/kernels/utf8_binarize_tflite.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
 
 PYBIND11_MODULE(tflite_registrar, m) {
@@ -35,7 +36,8 @@ PYBIND11_MODULE(tflite_registrar, m) {
       "AddFastWordpieceTokenize", "AddFastWordpieceDetokenize",
       "AddNgramsStringJoin", "AddRaggedTensorToTensor",
       "AddRoundRobinGenerateMasks", "AddRoundRobinTrim",
-      "AddSentenceFragmenterV2", "AddWhitespaceTokenize", "SELECT_TFTEXT_OPS");
+      "AddSentenceFragmenterV2", "AddUtf8Binarize", "AddWhitespaceTokenize",
+      "SELECT_TFTEXT_OPS");
   m.def(
       "AddByteSplit",
       [](uintptr_t resolver) {
@@ -144,6 +146,15 @@ PYBIND11_MODULE(tflite_registrar, m) {
       },
       R"pbdoc(
       The function that adds AddSentenceFragmenterV2 to the TFLite interpreter.
+      )pbdoc");
+  m.def(
+      "AddUtf8Binarize",
+      [](uintptr_t resolver) {
+        tflite::ops::custom::text::AddUtf8Binarize(
+            reinterpret_cast<tflite::MutableOpResolver*>(resolver));
+      },
+      R"pbdoc(
+      The function that adds AddUtf8Binarize to the TFLite interpreter.
       )pbdoc");
   m.def(
       "AddWhitespaceTokenize",

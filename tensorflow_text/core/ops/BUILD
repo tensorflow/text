@@ -86,3 +86,20 @@ cc_test(
         "//tensorflow_text/core/kernels:round_robin_trimmer_kernel",
     ],
 )
+
+cc_test(
+    name = "utf8_binarize_op_test",
+    size = "small",
+    srcs = [
+        "utf8_binarize_op.cc",
+        "utf8_binarize_op_test.cc",
+    ],
+    deps = [
+        # tf:framework tensorflow dep,
+        # tf:protos_all_cc tensorflow dep,
+        # tf:test tensorflow dep,
+        # tf:test_main tensorflow dep,
+        # tf/framework:shape_inference_testutil tensorflow dep,
+        "//tensorflow_text/core/kernels:utf8_binarize_kernel",
+    ],
+)

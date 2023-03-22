@@ -86,6 +86,7 @@ _allowed_symbols = [
     "span_alignment",
     "span_overlaps",
     "tflite_registrar",
+    "utf8_binarize",
     "viterbi_constrained_sequence",
     "wordshape",
 ]
@@ -104,8 +105,9 @@ tflite_registrar.SELECT_TFTEXT_OPS = [
     tflite_registrar.AddRoundRobinGenerateMasks,
     tflite_registrar.AddRoundRobinTrim,
     tflite_registrar.AddSentenceFragmenterV2,
+    tflite_registrar.AddUtf8Binarize,
     tflite_registrar.AddWhitespaceTokenize,
 ]
 
 remove_undocumented(__name__, _allowed_symbols)
-__version__ = "2.11.0"
+__version__ = "2.12.0"

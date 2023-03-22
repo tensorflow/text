@@ -76,6 +76,7 @@ from tensorflow_text.python.ops.trimmer_ops import Trimmer
 from tensorflow_text.python.ops.trimmer_ops import WaterfallTrimmer
 from tensorflow_text.python.ops.unicode_char_tokenizer import UnicodeCharTokenizer
 from tensorflow_text.python.ops.unicode_script_tokenizer import UnicodeScriptTokenizer
+from tensorflow_text.python.ops.utf8_binarize_op import utf8_binarize
 from tensorflow_text.python.ops.viterbi_constrained_sequence_op import viterbi_constrained_sequence
 from tensorflow_text.python.ops.whitespace_tokenizer import WhitespaceTokenizer
 from tensorflow_text.python.ops.wordpiece_tokenizer import WordpieceTokenizer

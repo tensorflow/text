@@ -51,6 +51,7 @@ cc_library(
         ":text_similarity_metric_ops_cc",
         ":trimmer_ops_cc",
         ":unicode_script_tokenizer_cc",
+        ":utf8_binarize_op_cc",
         ":whitespace_tokenizer_cc",
         ":whitespace_tokenizer_v2_cc",
         ":wordpiece_tokenizer_cc",
@@ -113,6 +114,7 @@ py_library(
         ":trimmer_ops",
         ":unicode_char_tokenizer",
         ":unicode_script_tokenizer",
+        ":utf8_binarize_op",
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
         ":whitespace_tokenizer",
@@ -1359,6 +1361,37 @@ py_test(
         # python:constant_op tensorflow dep,
         # python:framework_test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+    ],
+)
+
+py_tf_text_library(
+    name = "utf8_binarize_op",
+    srcs = ["python/ops/utf8_binarize_op.py"],
+    cc_op_defs = ["//tensorflow_text/core/ops:utf8_binarize_op.cc"],
+    cc_op_kernels = [
+        "//tensorflow_text/core/kernels:utf8_binarize_kernel",
+    ],
+    visibility = [
+        "//third_party/py/tensorflow_retvec:__subpackages__",
+    ],
+    deps = [
+        # python:array_ops tensorflow dep,
+        # python:framework_ops tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "utf8_binarize_op_test",
+    size = "small",
+    srcs = ["python/ops/utf8_binarize_op_test.py"],
+    python_version = "PY3",
+    srcs_version = "PY3",
+    deps = [
+        ":tensorflow_text",
+        ":utf8_binarize_op",
+        # tensorflow package dep,
+        # python:client_testlib tensorflow dep,
+        # python:framework_test_lib tensorflow dep,
     ],
 )
 

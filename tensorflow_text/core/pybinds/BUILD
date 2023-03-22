@@ -28,6 +28,7 @@ pybind_extension(
         "AddRoundRobinGenerateMasks",
         "AddRoundRobinTrim",
         "AddSentenceFragmenterV2",
+        "AddUtf8Binarize",
         "AddWhitespaceTokenize",
         "SELECT_TFTEXT_OPS",
     ],

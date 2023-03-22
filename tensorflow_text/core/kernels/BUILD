@@ -1037,6 +1037,7 @@ tflite_cc_library(
         "ragged_tensor_to_tensor_tflite.h",
         "round_robin_trimmer_tflite.h",
         "sentence_fragmenter_v2_tflite.h",
+        "utf8_binarize_tflite.h",
         "whitespace_tokenizer_tflite.h",
         "//tensorflow_text/core/kernels/sentencepiece:sp_headers",
     ],
@@ -1048,6 +1049,7 @@ tflite_cc_library(
         ":ragged_tensor_to_tensor_tflite",
         ":round_robin_trimmer_tflite",
         ":sentence_fragmenter_v2_tflite",
+        ":utf8_binarize_tflite",
         ":whitespace_tokenizer_tflite",
         # lite:mutable_op_resolver tensorflow dep,
         # lite/c:common tensorflow dep,
@@ -1291,6 +1293,70 @@ tf_cc_library(
         ":phrase_tokenizer_kernel_template",
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "utf8_binarize",
+    srcs = ["utf8_binarize.cc"],
+    hdrs = ["utf8_binarize.h"],
+    deps = [
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
+        "@icu//:common",
+    ],
+)
+
+cc_test(
+    name = "utf8_binarize_test",
+    size = "small",
+    srcs = ["utf8_binarize_test.cc"],
+    deps = [
+        ":utf8_binarize",
+        "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/types:span",
+        # tf:lib tensorflow dep,
+        # tf:test_main tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "utf8_binarize_kernel_template",
+    hdrs = ["utf8_binarize_kernel_template.h"],
+    deps = [
+        ":utf8_binarize",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+        # tf/platform:tstring tensorflow dep,
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:shape tensorflow dep,
+        # lite/kernels/shim:status_macros tensorflow dep,
+    ],
+)
+
+tf_cc_library(
+    name = "utf8_binarize_kernel",
+    srcs = ["utf8_binarize_kernel.cc"],
+    hdrs = ["utf8_binarize_kernel.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
+    deps = [
+        ":utf8_binarize_kernel_template",
+        # lite/kernels/shim:op_kernel tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
+    ],
+)
+
+tflite_cc_library(
+    name = "utf8_binarize_tflite",
+    srcs = ["utf8_binarize_tflite.cc"],
+    hdrs = ["utf8_binarize_tflite.h"],
+    deps = [
+        ":utf8_binarize_kernel_template",
+        # lite:mutable_op_resolver tensorflow dep,
+        # lite/c:common tensorflow dep,
+        # lite/kernels/shim:tflite_op_shim tensorflow dep,
     ],
 )
 
