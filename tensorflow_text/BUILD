@@ -121,7 +121,7 @@ py_library(
         ":whitespace_tokenizer_v2",
         ":wordpiece_tokenizer",
         ":wordshape_ops",
-        # python:util tensorflow dep,
+        # python/util:all_util tensorflow dep,
         "//tensorflow_text/core/pybinds:tflite_registrar",
         "//tensorflow_text/tools/wordpiece_vocab",
     ],
@@ -961,6 +961,7 @@ py_tf_text_library(
         # python:string_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/util:deprecation tensorflow dep,
     ],
 )
 
@@ -1599,6 +1600,7 @@ py_library(
         # python/data/ops:dataset_ops tensorflow dep,
         # python/eager:context tensorflow dep,
         # python/eager:def_function tensorflow dep,
+        # python/util:tf_inspect tensorflow dep,
     ],
 )
 
