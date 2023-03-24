@@ -70,10 +70,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    strip_prefix = "tensorflow-2.11.0",
-    sha256 = "e52cda3bae45f0ae0fccd4055e9fa29892b414f70e2df94df9a3a10319c75fff",
+    strip_prefix = "tensorflow-2.12.0",
+    sha256 = "af0584df1a4e28763c32c218b39f8c4f3784fabb6a8859b00c02d743864dc191",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/v2.11.0.zip"
+        "https://github.com/tensorflow/tensorflow/archive/v2.12.0.zip"
     ],
 )
 

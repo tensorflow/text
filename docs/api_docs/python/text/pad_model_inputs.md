@@ -30,9 +30,9 @@ Pad model input and generate corresponding input masks.
 
 `pad_model_inputs` performs the final packaging of a model's inputs commonly
 found in text models. This includes padding out (or simply truncating) to a
-fixed-size, 2-dimensional `Tensor` and generating mask `Tensor`s (of the same 2D
-shape) with values of 0 if the corresponding item is a pad value and 1 if it is
-part of the original input.
+fixed-size, max 2-dimensional `Tensor` and generating mask `Tensor`s (of the
+same shape) with values of 0 if the corresponding item is a pad value and 1 if
+it is part of the original input.
 
 Note that a simple truncation strategy (drop everything after max sequence
 length) is used to force the inputs to the specified shape. This may be
@@ -67,7 +67,7 @@ large inputs.
 `input`<a id="input"></a>
 </td>
 <td>
-A `RaggedTensor` with rank >= 2.
+A `RaggedTensor` or `Tensor` with rank >= 1.
 </td>
 </tr><tr>
 <td>
@@ -75,8 +75,8 @@ A `RaggedTensor` with rank >= 2.
 </td>
 <td>
 An int, or scalar `Tensor`. The "input" `Tensor` will be
-flattened down to 2 dimensions and then have its 2nd dimension either
-padded out or truncated to this size.
+flattened down to 2 dimensions (if needed), and then have its inner
+dimension either padded out or truncated to this size.
 </td>
 </tr><tr>
 <td>
@@ -89,6 +89,7 @@ An int or scalar `Tensor` specifying the value used for padding.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2"><h2 class="add-link">Returns</h2></th></tr>
@@ -103,7 +104,7 @@ A tuple of (padded_input, pad_mask) where:
 </td>
 <td>
 A `Tensor` corresponding to `inputs` that has been
-padded/truncated out to a fixed size and flattened to 2
+padded/truncated out to a fixed size and flattened to max 2
 dimensions.
 </td>
 </tr><tr>

@@ -15,6 +15,7 @@
 *   <a href="../text/FirstNItemSelector.md"><code>text.FirstNItemSelector</code></a>
 *   <a href="../text/HubModuleSplitter.md"><code>text.HubModuleSplitter</code></a>
 *   <a href="../text/HubModuleTokenizer.md"><code>text.HubModuleTokenizer</code></a>
+*   <a href="../text/LastNItemSelector.md"><code>text.LastNItemSelector</code></a>
 *   <a href="../text/MaskValuesChooser.md"><code>text.MaskValuesChooser</code></a>
 *   <a href="../text/PhraseTokenizer.md"><code>text.PhraseTokenizer</code></a>
 *   <a href="../text/RandomItemSelector.md"><code>text.RandomItemSelector</code></a>
@@ -37,11 +38,13 @@
 *   <a href="../text/WhitespaceTokenizer.md"><code>text.WhitespaceTokenizer</code></a>
 *   <a href="../text/WordShape_cls.md"><code>text.WordShape</code></a>
 *   <a href="../text/WordpieceTokenizer.md"><code>text.WordpieceTokenizer</code></a>
+*   <a href="../text/boise_tags_to_offsets.md"><code>text.boise_tags_to_offsets</code></a>
 *   <a href="../text/build_fast_bert_normalizer_model.md"><code>text.build_fast_bert_normalizer_model</code></a>
 *   <a href="../text/build_fast_wordpiece_model.md"><code>text.build_fast_wordpiece_model</code></a>
 *   <a href="../text/case_fold_utf8.md"><code>text.case_fold_utf8</code></a>
 *   <a href="../text/coerce_to_structurally_valid_utf8.md"><code>text.coerce_to_structurally_valid_utf8</code></a>
 *   <a href="../text/combine_segments.md"><code>text.combine_segments</code></a>
+*   <a href="../text/concatenate_segments.md"><code>text.concatenate_segments</code></a>
 *   <a href="../text/find_source_offsets.md"><code>text.find_source_offsets</code></a>
 *   <a href="../text/gather_with_default.md"><code>text.gather_with_default</code></a>
 *   <a href="../text/greedy_constrained_sequence.md"><code>text.greedy_constrained_sequence</code></a>
@@ -70,6 +73,7 @@
 *   <a href="../text/span_overlaps.md"><code>text.span_overlaps</code></a>
 *   <a href="../text/tflite_registrar.md"><code>text.tflite_registrar</code></a>
 *   <a href="../text/tflite_registrar/AddByteSplit.md"><code>text.tflite_registrar.AddByteSplit</code></a>
+*   <a href="../text/tflite_registrar/AddByteSplitByOffsets.md"><code>text.tflite_registrar.AddByteSplitByOffsets</code></a>
 *   <a href="../text/tflite_registrar/AddFastBertNormalize.md"><code>text.tflite_registrar.AddFastBertNormalize</code></a>
 *   <a href="../text/tflite_registrar/AddFastSentencepieceDetokenize.md"><code>text.tflite_registrar.AddFastSentencepieceDetokenize</code></a>
 *   <a href="../text/tflite_registrar/AddFastSentencepieceTokenize.md"><code>text.tflite_registrar.AddFastSentencepieceTokenize</code></a>
@@ -77,6 +81,11 @@
 *   <a href="../text/tflite_registrar/AddFastWordpieceTokenize.md"><code>text.tflite_registrar.AddFastWordpieceTokenize</code></a>
 *   <a href="../text/tflite_registrar/AddNgramsStringJoin.md"><code>text.tflite_registrar.AddNgramsStringJoin</code></a>
 *   <a href="../text/tflite_registrar/AddRaggedTensorToTensor.md"><code>text.tflite_registrar.AddRaggedTensorToTensor</code></a>
+*   <a href="../text/tflite_registrar/AddRoundRobinGenerateMasks.md"><code>text.tflite_registrar.AddRoundRobinGenerateMasks</code></a>
+*   <a href="../text/tflite_registrar/AddRoundRobinTrim.md"><code>text.tflite_registrar.AddRoundRobinTrim</code></a>
+*   <a href="../text/tflite_registrar/AddSentenceFragmenterV2.md"><code>text.tflite_registrar.AddSentenceFragmenterV2</code></a>
+*   <a href="../text/tflite_registrar/AddUtf8Binarize.md"><code>text.tflite_registrar.AddUtf8Binarize</code></a>
 *   <a href="../text/tflite_registrar/AddWhitespaceTokenize.md"><code>text.tflite_registrar.AddWhitespaceTokenize</code></a>
+*   <a href="../text/utf8_binarize.md"><code>text.utf8_binarize</code></a>
 *   <a href="../text/viterbi_constrained_sequence.md"><code>text.viterbi_constrained_sequence</code></a>
 *   <a href="../text/wordshape.md"><code>text.wordshape</code></a>

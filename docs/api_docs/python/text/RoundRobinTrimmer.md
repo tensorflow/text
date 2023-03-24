@@ -92,19 +92,20 @@ truncate budget will be allocated as [2, 2, 1].
 `segments`
 </td>
 <td>
-A list of `RaggedTensor` each w/ a shape of [num_batch,
+A list of `RaggedTensor`s each with a shape of [num_batch,
 (num_items)].
 </td>
 </tr>
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
-a list with len(segments) of `RaggedTensor`s, see superclass for details.
+A list with len(segments) of `RaggedTensor`s, see superclass for details.
 </td>
 </tr>
 
@@ -123,8 +124,11 @@ source</a>
 
 Truncate the list of `segments`.
 
-Truncate the list of `segments` using the truncation strategy defined by
-`generate_mask`.
+Truncate the list of `segments` using the 'round-robin' strategy which allocates
+quota in each bucket, left-to-right repeatedly until all buckets are filled.
+
+For example if the budget of [5] and we have segments of size [3, 4, 2], the
+truncate budget will be allocated as [2, 2, 1].
 
 <!-- Tabular view -->
  <table class="responsive fixed orange">
@@ -142,15 +146,13 @@ A list of `RaggedTensor`s w/ shape [num_batch, (num_items)].
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
-a list of `RaggedTensor`s with len(segments) number of items and where
-each item has the same shape as its counterpart in `segments` and
-with unwanted values dropped. The values are dropped according to the
-`TruncationStrategy` defined.
+A list with len(segments) of `RaggedTensor`s, see superclass for details.
 </td>
 </tr>
 

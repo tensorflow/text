@@ -5,6 +5,7 @@ description: Splits a string tensor into bytes.
 <meta itemprop="path" content="Stable" />
 <meta itemprop="property" content="__init__"/>
 <meta itemprop="property" content="split"/>
+<meta itemprop="property" content="split_by_offsets"/>
 <meta itemprop="property" content="split_with_offsets"/>
 </div>
 
@@ -85,6 +86,76 @@ each string.
 
 </table>
 
+<h3 id="split_by_offsets"><code>split_by_offsets</code></h3>
+
+<a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/byte_splitter.py">View
+source</a>
+
+<pre class="devsite-click-to-copy prettyprint lang-py tfo-signature-link">
+<code>split_by_offsets(
+    input, start_offsets, end_offsets
+)
+</code></pre>
+
+Splits a string tensor into sub-strings.
+
+The strings are split based upon the provided byte offsets.
+
+#### Example:
+
+```
+>>> splitter = ByteSplitter()
+>>> substrings = splitter.split_by_offsets("hello", [0, 4], [4, 5])
+>>> print(substrings.numpy())
+[b'hell' b'o']
+```
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Args</th></tr>
+
+<tr>
+<td>
+`input`
+</td>
+<td>
+`Tensor` or `RaggedTensor` of strings of any shape to split.
+</td>
+</tr><tr>
+<td>
+`start_offsets`
+</td>
+<td>
+`Tensor` or `RaggedTensor` of byte offsets to start splits
+on (inclusive). This should be one more than the rank of `input`.
+</td>
+</tr><tr>
+<td>
+`end_offsets`
+</td>
+<td>
+`Tensor` or `RaggedTensor` of byte offsets to end splits
+on (exclusive). This should be one more than the rank of `input`.
+</td>
+</tr>
+</table>
+
+<!-- Tabular view -->
+
+ <table class="responsive fixed orange">
+<colgroup><col width="214px"><col></colgroup>
+<tr><th colspan="2">Returns</th></tr>
+<tr class="alt">
+<td colspan="2">
+A `RaggedTensor` or `Tensor` of substrings. The returned shape is the
+shape of the offsets.
+</td>
+</tr>
+
+</table>
+
 <h3 id="split_with_offsets"><code>split_with_offsets</code></h3>
 
 <a target="_blank" class="external" href="https://github.com/tensorflow/text/tree/master/tensorflow_text/python/ops/byte_splitter.py">View
@@ -126,12 +197,13 @@ A `RaggedTensor` or `Tensor` of strings with any shape.
 </table>
 
 <!-- Tabular view -->
+
  <table class="responsive fixed orange">
 <colgroup><col width="214px"><col></colgroup>
 <tr><th colspan="2">Returns</th></tr>
 <tr class="alt">
 <td colspan="2">
-A `RaggedTensor` of bytest. The returned shape is the shape of the
+A `RaggedTensor` of bytes. The returned shape is the shape of the
 input tensor with an added ragged dimension for the bytes that make up
 each string.
 </td>

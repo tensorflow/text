@@ -58,6 +58,9 @@ Hub module.
 [`class HubModuleTokenizer`](./text/HubModuleTokenizer.md): Tokenizer that uses
 a Hub module.
 
+[`class LastNItemSelector`](./text/LastNItemSelector.md): An `ItemSelector` that
+selects the last `n` items in the batch.
+
 [`class MaskValuesChooser`](./text/MaskValuesChooser.md): Assigns values to the
 items chosen for masking.
 
@@ -126,6 +129,9 @@ of UTF-8 string tokens into subword pieces.
 
 ## Functions
 
+[`boise_tags_to_offsets(...)`](./text/boise_tags_to_offsets.md): Converts the
+token offsets and BOISE tags into span offsets and span type.
+
 [`build_fast_bert_normalizer_model(...)`](./text/build_fast_bert_normalizer_model.md):
 build_fast_bert_normalizer_model(arg0: bool) -> bytes
 
@@ -139,6 +145,9 @@ UTF-8 string in the input.
 [`coerce_to_structurally_valid_utf8(...)`](./text/coerce_to_structurally_valid_utf8.md): Coerce UTF-8 input strings to structurally valid UTF-8.
 
 [`combine_segments(...)`](./text/combine_segments.md): Combine one or more input
+segments for a model's input sequence.
+
+[`concatenate_segments(...)`](./text/concatenate_segments.md): Concatenate input
 segments for a model's input sequence.
 
 [`find_source_offsets(...)`](./text/find_source_offsets.md): Maps the input
@@ -188,6 +197,9 @@ fragments in a given text. (deprecated)
 
 [`span_overlaps(...)`](./text/span_overlaps.md): Returns a boolean tensor indicating which source and target spans overlap.
 
+[`utf8_binarize(...)`](./text/utf8_binarize.md): Decode UTF8 tokens into code
+points and return their bits.
+
 [`viterbi_constrained_sequence(...)`](./text/viterbi_constrained_sequence.md): Performs greedy constrained sequence on a batch of examples.
 
 [`wordshape(...)`](./text/wordshape.md): Determine wordshape features for each input string.
@@ -202,7 +214,7 @@ fragments in a given text. (deprecated)
 **version**<a id="__version__"></a>
 </td>
 <td>
-`'2.11.0'`
+`'2.12.0'`
 </td>
 </tr>
 </table>

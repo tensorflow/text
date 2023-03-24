@@ -23,6 +23,8 @@ toc:
     path: /text/api_docs/python/text/HubModuleSplitter
   - title: HubModuleTokenizer
     path: /text/api_docs/python/text/HubModuleTokenizer
+  - title: LastNItemSelector
+    path: /text/api_docs/python/text/LastNItemSelector
   - title: MaskValuesChooser
     path: /text/api_docs/python/text/MaskValuesChooser
   - title: PhraseTokenizer
@@ -67,6 +69,8 @@ toc:
     path: /text/api_docs/python/text/WordShape
   - title: WordpieceTokenizer
     path: /text/api_docs/python/text/WordpieceTokenizer
+  - title: boise_tags_to_offsets
+    path: /text/api_docs/python/text/boise_tags_to_offsets
   - title: build_fast_bert_normalizer_model
     path: /text/api_docs/python/text/build_fast_bert_normalizer_model
   - title: build_fast_wordpiece_model
@@ -77,6 +81,8 @@ toc:
     path: /text/api_docs/python/text/coerce_to_structurally_valid_utf8
   - title: combine_segments
     path: /text/api_docs/python/text/combine_segments
+  - title: concatenate_segments
+    path: /text/api_docs/python/text/concatenate_segments
   - title: find_source_offsets
     path: /text/api_docs/python/text/find_source_offsets
   - title: gather_with_default
@@ -114,6 +120,8 @@ toc:
     path: /text/api_docs/python/text/span_alignment
   - title: span_overlaps
     path: /text/api_docs/python/text/span_overlaps
+  - title: utf8_binarize
+    path: /text/api_docs/python/text/utf8_binarize
   - title: viterbi_constrained_sequence
     path: /text/api_docs/python/text/viterbi_constrained_sequence
   - title: wordshape
@@ -146,6 +154,8 @@ toc:
     path: /text/api_docs/python/text/tflite_registrar
   - title: AddByteSplit
     path: /text/api_docs/python/text/tflite_registrar/AddByteSplit
+  - title: AddByteSplitByOffsets
+    path: /text/api_docs/python/text/tflite_registrar/AddByteSplitByOffsets
   - title: AddFastBertNormalize
     path: /text/api_docs/python/text/tflite_registrar/AddFastBertNormalize
   - title: AddFastSentencepieceDetokenize
@@ -160,5 +170,13 @@ toc:
     path: /text/api_docs/python/text/tflite_registrar/AddNgramsStringJoin
   - title: AddRaggedTensorToTensor
     path: /text/api_docs/python/text/tflite_registrar/AddRaggedTensorToTensor
+  - title: AddRoundRobinGenerateMasks
+    path: /text/api_docs/python/text/tflite_registrar/AddRoundRobinGenerateMasks
+  - title: AddRoundRobinTrim
+    path: /text/api_docs/python/text/tflite_registrar/AddRoundRobinTrim
+  - title: AddSentenceFragmenterV2
+    path: /text/api_docs/python/text/tflite_registrar/AddSentenceFragmenterV2
+  - title: AddUtf8Binarize
+    path: /text/api_docs/python/text/tflite_registrar/AddUtf8Binarize
   - title: AddWhitespaceTokenize
     path: /text/api_docs/python/text/tflite_registrar/AddWhitespaceTokenize

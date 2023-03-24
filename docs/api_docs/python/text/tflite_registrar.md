@@ -23,6 +23,9 @@ A module with a Python wrapper for TFLite TFText ops.
 [`AddByteSplit(...)`](../text/tflite_registrar/AddByteSplit.md):
 AddByteSplit(arg0: int) -> None
 
+[`AddByteSplitByOffsets(...)`](../text/tflite_registrar/AddByteSplitByOffsets.md):
+AddByteSplitByOffsets(arg0: int) -> None
+
 [`AddFastBertNormalize(...)`](../text/tflite_registrar/AddFastBertNormalize.md):
 AddFastBertNormalize(arg0: int) -> None
 
@@ -44,6 +47,18 @@ AddNgramsStringJoin(arg0: int) -> None
 [`AddRaggedTensorToTensor(...)`](../text/tflite_registrar/AddRaggedTensorToTensor.md):
 AddRaggedTensorToTensor(arg0: int) -> None
 
+[`AddRoundRobinGenerateMasks(...)`](../text/tflite_registrar/AddRoundRobinGenerateMasks.md):
+AddRoundRobinGenerateMasks(arg0: int) -> None
+
+[`AddRoundRobinTrim(...)`](../text/tflite_registrar/AddRoundRobinTrim.md):
+AddRoundRobinTrim(arg0: int) -> None
+
+[`AddSentenceFragmenterV2(...)`](../text/tflite_registrar/AddSentenceFragmenterV2.md):
+AddSentenceFragmenterV2(arg0: int) -> None
+
+[`AddUtf8Binarize(...)`](../text/tflite_registrar/AddUtf8Binarize.md):
+AddUtf8Binarize(arg0: int) -> None
+
 [`AddWhitespaceTokenize(...)`](../text/tflite_registrar/AddWhitespaceTokenize.md):
 AddWhitespaceTokenize(arg0: int) -> None
 
@@ -58,6 +73,7 @@ SELECT_TFTEXT_OPS<a id="SELECT_TFTEXT_OPS"></a>
 </td>
 <td>
 `[<built-in method AddByteSplit of PyCapsule object>,
+ <built-in method AddByteSplitByOffsets of PyCapsule object>,
  <built-in method AddFastBertNormalize of PyCapsule object>,
  <built-in method AddFastSentencepieceDetokenize of PyCapsule object>,
  <built-in method AddFastSentencepieceTokenize of PyCapsule object>,
@@ -65,6 +81,10 @@ SELECT_TFTEXT_OPS<a id="SELECT_TFTEXT_OPS"></a>
  <built-in method AddFastWordpieceDetokenize of PyCapsule object>,
  <built-in method AddNgramsStringJoin of PyCapsule object>,
  <built-in method AddRaggedTensorToTensor of PyCapsule object>,
+ <built-in method AddRoundRobinGenerateMasks of PyCapsule object>,
+ <built-in method AddRoundRobinTrim of PyCapsule object>,
+ <built-in method AddSentenceFragmenterV2 of PyCapsule object>,
+ <built-in method AddUtf8Binarize of PyCapsule object>,
  <built-in method AddWhitespaceTokenize of PyCapsule object>]`
 </td>
 </tr>

@@ -43,8 +43,8 @@ labels.
 
 For example, given the following example string and entity:
 
-content = "Who let the dogs out" entity = "dogs" tokens = {"Who", "let", "the",
-"dogs", "out"} token_begin_offsets = [0, 4, 8, 12, 17] token_end_offsets = [3,
+content = "Who let the dogs out" entity = "dogs" tokens = ["Who", "let", "the",
+"dogs", "out"] token_begin_offsets = [0, 4, 8, 12, 17] token_end_offsets = [3,
 7, 11, 16, 20] span_begin_offsets = [12] span_end_offsets = [16] span_type =
 ["animal"]
 
