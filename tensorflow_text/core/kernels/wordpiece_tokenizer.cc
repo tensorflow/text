@@ -1,4 +1,4 @@
-// Copyright 2022 TF.Text Authors.
+// Copyright 2023 TF.Text Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,14 +30,9 @@ LookupStatus Lookup(int byte_start, int byte_end,
                     const WordpieceVocab* vocab_map, bool* in_vocab) {
   int byte_len = byte_end - byte_start;
   absl::string_view substr(token.data() + byte_start, byte_len);
-  std::string lookup_value;
-  if (byte_start > 0) {
-    lookup_value = absl::StrCat(suffix_indicator, substr);
-  } else {
-    // absl::CopyToString
-    lookup_value.assign(substr.begin(), substr.end());
-  }
-  return vocab_map->Contains(lookup_value, in_vocab);
+  return vocab_map->Contains(
+      byte_start > 0 ? absl::StrCat(suffix_indicator, substr) : substr,
+      in_vocab);
 }
 
 // Sets byte_end to the longest byte sequence which:
