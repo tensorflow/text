@@ -9,8 +9,6 @@ toc:
   path: /text/guide/unicode
 - title: "Word embeddings"
   path: /text/guide/word_embeddings
-- title: "Decoding API"
-  path: /text/guide/decoding_api
 - title: "Convert to TF Lite"
   path: /text/guide/text_tf_lite
 
