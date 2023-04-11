@@ -25,7 +25,7 @@
 #include "tensorflow_text/core/kernels/mst_solver.h"
 #include "tensorflow_text/core/kernels/spanning_tree_iterator.h"
 
-ABSL_FLAG(int64, seed, 0,
+ABSL_FLAG(int64_t, seed, 0,
           "Seed for random comparison tests, or 0 for a weak random seed.");
 ABSL_FLAG(int, num_trials, 3, "Number of trials for random comparison tests.");
 

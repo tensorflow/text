@@ -30,8 +30,8 @@ std::vector<absl::string_view> RunTest(const tstring& input,
   RE2 re2((absl::string_view(regex)));
   RE2 include_delim_re2((absl::string_view(delim_regex)));
 
-  std::vector<int64> begin_offsets;
-  std::vector<int64> end_offsets;
+  std::vector<int64_t> begin_offsets;
+  std::vector<int64_t> end_offsets;
   std::vector<absl::string_view> tokens;
 
   RegexSplit(input, re2, true, include_delim_re2, &tokens, &begin_offsets,
