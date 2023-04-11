@@ -82,7 +82,7 @@ setup(
         'tests': [
             'absl-py',
             'pytest',
-            'tensorflow-datasets>=3.2.0',
+            'tensorflow-datasets<4.9.0',
         ],
     },
     classifiers=[
