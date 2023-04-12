@@ -72,10 +72,10 @@ sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 write_to_bazelrc "build:manylinux2010 --config=release_cpu_linux"
 write_to_bazelrc "build:manylinux2014 --config=release_cpu_linux"
 
-if (which python) | grep -q "python"; then
-  installed_python="python"
-elif (which python3) | grep -q "python3"; then
+if (which python3) | grep -q "python3"; then
   installed_python="python3"
+elif (which python) | grep -q "python"; then
+  installed_python="python"
 fi
 
 TF_CFLAGS=( $($installed_python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_compile_flags()))" | awk '{print $1}') )

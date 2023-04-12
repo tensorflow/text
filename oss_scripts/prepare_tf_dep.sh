@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e  # fail and exit on any command erroring
 
-if (which python) | grep -q "python"; then
-  installed_python="python"
-elif (which python3) | grep -q "python3"; then
+if (which python3) | grep -q "python3"; then
   installed_python="python3"
+elif (which python) | grep -q "python"; then
+  installed_python="python"
 fi
 
 ext=""
