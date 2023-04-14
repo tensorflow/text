@@ -116,3 +116,10 @@ load("@org_tensorflow//third_party/android:android_configure.bzl", "android_conf
 android_configure(name="local_config_android")
 load("@local_config_android//:android.bzl", "android_workspace")
 android_workspace()
+
+android_sdk_repository(name = "androidsdk")
+
+android_ndk_repository(
+    name = "androidndk",
+    api_level = 21,
+)

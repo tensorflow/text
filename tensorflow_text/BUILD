@@ -2,6 +2,8 @@ load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
 
 # [internal] load build_test.bzl
 load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
+# load(# lite/delegates/flex:build_def.bzl", "tflite_flex_android_library tensorflow dep)
+# load(# lite/java:aar_with_jni.bzl", "aar_with_jni tensorflow dep)
 
 # Visibility rules
 package(
@@ -61,6 +63,22 @@ cc_library(
 tflite_cc_shared_object(
     name = "libtftextops_for_testing.so",
     deps = [":ops_lib"],
+)
+
+# OSS build only; DO NOT use for non-OSS build
+tflite_flex_android_library(
+    name = "tftext_ops",
+    additional_deps = [
+        # lite/java:tensorflow-lite-select-tf-ops tensorflow dep,
+        ":ops_lib",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# OSS build only; DO NOT use for non-OSS build
+aar_with_jni(
+    name = "tftext_tflite_flex",
+    android_library = ":tftext_ops",
 )
 
 py_library(
