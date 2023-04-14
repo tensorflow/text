@@ -21,6 +21,8 @@ exports_files([
 # Public TF.Text library to import #
 ####################################
 
+# Add comment for testing
+
 # Most TF users will want to add this as their dependency.
 alias(
     name = "tensorflow_text",
