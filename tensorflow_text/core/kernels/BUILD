@@ -750,7 +750,6 @@ cc_library(
     deps = [
         ":trimmer",
         "@com_google_absl//absl/types:span",
-        # tf/platform:status tensorflow dep,
     ],
 )
 
