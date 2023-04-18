@@ -73,6 +73,13 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
           expected=[[b"hello", b"there"]],
       ),
       dict(
+          descr="Test scalar input",
+          text_input=r"hello there",
+          input_is_dense=True,
+          delim_regex_pattern=r"\s",
+          expected=[b"hello", b"there"],
+      ),
+      dict(
           descr="Two delimiters in a row",
           text_input=[r"hello  there"],
           delim_regex_pattern=r"\s",
@@ -223,7 +230,7 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
         delim_regex_pattern=delim_regex_pattern,
         keep_delim_regex_pattern=keep_delim_regex_pattern,
     )
-    self.assertAllEqual(actual_tokens, expected)
+    self.assertAllEqual(expected, actual_tokens)
 
     # Use the offsets to extract substrings and verify that the substrings match
     # up with the expected tokens

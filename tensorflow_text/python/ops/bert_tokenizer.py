@@ -118,17 +118,30 @@ class BasicTokenizer(TokenizerWithOffsets):
       self._delim_regex_pattern = _DELIM_REGEX_PATTERN
 
   def tokenize(self, text_input):
-    tokens, _, _ = self.tokenize_with_offsets(text_input)
-    return tokens
-
-  def tokenize_with_offsets(self, text_input):
     """Performs basic word tokenization for BERT.
 
     Args:
       text_input: A `Tensor` or `RaggedTensor` of untokenized UTF-8 strings.
 
     Returns:
-      A `RaggedTensor` of tokenized strings from text_input.
+      A `Tensor` (if text_input was a scalar) or `RaggedTensor` of tokens (of
+      type string)
+    """
+    tokens, _, _ = self.tokenize_with_offsets(text_input)
+    return tokens
+
+  def tokenize_with_offsets(self, text_input):
+    """Performs basic word tokenization and offsets calculation for BERT.
+
+    Args:
+      text_input: A `Tensor` or `RaggedTensor` of untokenized UTF-8 strings.
+
+    Returns:
+      A tuple of `Tensor`s (if text_input was a scalar) or `RaggedTensor`s
+      containing:
+        (tokens, begin_offsets, end_offsets)
+      where tokens is of type string, begin_offsets and end_offsets are of type
+      int64.
     """
     # lowercase and strip accents (if option is set)
     if self._lower_case:
@@ -252,7 +265,7 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
 
     Returns:
       A tuple of `RaggedTensor`s where the first element is the tokens where
-      `tokens[i1...iN, j]`, the second element is the starting offsets, the
+      `tokens[i1...iN, j, k]`, the second element is the starting offsets, the
       third element is the end offset. (Please look at `tokenize` for details
       on tokens.)
 
@@ -260,7 +273,7 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
     tokens, begin, _ = self._basic_tokenizer.tokenize_with_offsets(text_input)
     wordpieces, wp_begin, wp_end = (
         self._wordpiece_tokenizer.tokenize_with_offsets(tokens))
-    begin_expanded = array_ops.expand_dims(begin, axis=2)
+    begin_expanded = array_ops.expand_dims(begin, axis=-1)
     final_begin = begin_expanded + wp_begin
     final_end = begin_expanded + wp_end
     return wordpieces, final_begin, final_end
@@ -283,9 +296,9 @@ class BertTokenizer(TokenizerWithOffsets, Detokenizer):
         strings.
 
     Returns:
-      A `RaggedTensor` of tokens where `tokens[i1...iN, j]` is the string
+      A `RaggedTensor` of tokens where `tokens[i1...iN, j, k]` is the string
       contents (or ID in the vocab_lookup_table representing that string)
-      of the `jth` token in `input[i1...iN]`
+      of the k-th wordpiece in the j-th token in `input[i1...iN]`.
     """
     tokens = self._basic_tokenizer.tokenize(text_input)
     return self._wordpiece_tokenizer.tokenize(tokens)
