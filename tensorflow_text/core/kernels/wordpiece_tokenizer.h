@@ -16,6 +16,7 @@
 #define TENSORFLOW_TEXT_CORE_KERNELS_WORDPIECE_TOKENIZER_H_
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/strings/string_view.h"
@@ -25,7 +26,7 @@ namespace text {
 
 struct LookupStatus {
   LookupStatus() : error_msg(""), success(true) {}
-  LookupStatus(const std::string& msg) : error_msg(msg), success(false) {}
+  LookupStatus(std::string msg) : error_msg(std::move(msg)), success(false) {}
   std::string error_msg;
   bool success;
 

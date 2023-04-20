@@ -59,7 +59,7 @@ class MstSolverTest : public ::testing::Test {
   void SolveAndExpectError(int argmax_array_size,
                            const std::string &error_message_substr) {
     std::vector<Index> argmax(argmax_array_size);
-    EXPECT_TRUE(absl::StrContains(solver_.Solve(&argmax).error_message(),
+    EXPECT_TRUE(absl::StrContains(solver_.Solve(&argmax).ToString(),
                                   error_message_substr));
   }
 
@@ -91,7 +91,7 @@ TYPED_TEST_SUITE(MstSolverTest, Solvers);
 
 TYPED_TEST(MstSolverTest, FailIfNoNodes) {
   for (const bool forest : {false, true}) {
-    EXPECT_TRUE(absl::StrContains(this->solver_.Init(forest, 0).error_message(),
+    EXPECT_TRUE(absl::StrContains(this->solver_.Init(forest, 0).ToString(),
                                   "Non-positive number of nodes"));
   }
 }
@@ -101,9 +101,8 @@ TYPED_TEST(MstSolverTest, FailIfTooManyNodes) {
   const auto kNumNodes =
       (std::numeric_limits<typename TypeParam::IndexType>::max() / 2) + 10;
   for (const bool forest : {false, true}) {
-    EXPECT_TRUE(
-        absl::StrContains(this->solver_.Init(forest, kNumNodes).error_message(),
-                          "Too many nodes"));
+    EXPECT_TRUE(absl::StrContains(
+        this->solver_.Init(forest, kNumNodes).ToString(), "Too many nodes"));
   }
 }
 

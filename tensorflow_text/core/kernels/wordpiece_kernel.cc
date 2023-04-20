@@ -27,6 +27,7 @@
 #include "tensorflow/core/lib/core/threadpool.h"
 #include "tensorflow/core/lib/io/path.h"
 #include "tensorflow/core/platform/logging.h"
+#include "tensorflow/core/public/version.h"
 #include "tensorflow_text/core/kernels/wordpiece_tokenizer.h"
 
 namespace tensorflow {
@@ -159,7 +160,16 @@ LookupStatus LookupTableVocab::Contains(const absl::string_view key,
   keys.flat<tstring>()(0) = tstring(key.data(), key.size());
   Tensor values(DT_INT64, TensorShape({1}));
   auto status = table_->Find(ctx_, keys, &values, default_value_);
-  if (!status.ok()) return LookupStatus(status.error_message());
+  if (!status.ok()) {
+// On April 2023, there is not yet an official release of Tensorflow which
+// includes `message().` One will need to wait for the release following 2.12.0.
+// The code can be updated to just be the else branch after such release exists.
+#if TF_GRAPH_DEF_VERSION < 1467
+    return LookupStatus(std::string(status.error_message()));
+#else
+    return LookupStatus(std::string(status.message()));
+#endif
+  }
 
   if (static_cast<int64>(values.flat<int64>()(0)) != kOutOfVocabValue) {
     *value = true;
