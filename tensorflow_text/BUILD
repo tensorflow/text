@@ -1593,9 +1593,9 @@ py_library(
     srcs = ["python/benchmarks/benchmark_utils.py"],
     deps = [
         #  numpy dep,
+        # tensorflow package dep,
         #  tensorflow datasets dep,
         # python:dtypes tensorflow dep,
-        # python:platform tensorflow dep,
         # python:session tensorflow dep,
         # python/data/ops:dataset_ops tensorflow dep,
         # python/eager:context tensorflow dep,

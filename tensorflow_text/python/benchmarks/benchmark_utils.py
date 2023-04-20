@@ -19,6 +19,7 @@ from __future__ import division
 from __future__ import print_function
 
 import time
+import tensorflow as tf
 
 import tensorflow_datasets as tfds
 
@@ -32,13 +33,12 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import variables as variables_lib
 from tensorflow.python.ops.ragged import ragged_tensor
-from tensorflow.python.platform import benchmark
 from tensorflow_text.python import ops as text_ops
 # [internal] import xprof_session
 from tensorflow.python.util import tf_inspect
 
 
-class OpsBaseBenchmark(benchmark.Benchmark):
+class OpsBaseBenchmark(tf.test.Benchmark):
   """Base class for op benchmarks."""
 
   def __init__(self):
@@ -56,7 +56,7 @@ class OpsBaseBenchmark(benchmark.Benchmark):
     for frame in stack[::-1]:
       f_locals = frame[0].f_locals
       f_self = f_locals.get('self', None)
-      if isinstance(f_self, benchmark.Benchmark):
+      if isinstance(f_self, tf.test.Benchmark):
         name = frame[3]
         break
     if name is None:
@@ -219,7 +219,7 @@ class OpsBaseBenchmark(benchmark.Benchmark):
           'Input data is missing for {} benchmark'.format(benchmark_name))
 
     # Uses the benchmark config to disable the static graph optimizations
-    with session.Session(config=benchmark.benchmark_config()) as sess:
+    with session.Session(config=tf.test.benchmark_config()) as sess:
       if hasattr(self, 'iterator'):
         sess.run(self.iterator.initializer)
 
