@@ -17,6 +17,8 @@
 """Tests for regex_split and regex_split_with_offsets ops."""
 from absl.testing import parameterized
 
+import tensorflow as tf
+
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import errors_impl
 from tensorflow.python.framework import test_util
@@ -24,7 +26,6 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_tensor
-from tensorflow.python.platform import test
 from tensorflow_text.python.ops import regex_split_ops
 
 
@@ -56,30 +57,26 @@ def _ragged_substr(text_input, begin, size):
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
+class RegexSplitOpsTest(parameterized.TestCase, tf.test.TestCase):
 
   @parameterized.parameters([
       dict(
-          descr="Test doc string examples",
           text_input=[r"hello there"],
           delim_regex_pattern=r"\s",
           keep_delim_regex_pattern=r"\s",
           expected=[[b"hello", b" ", b"there"]],
       ),
       dict(
-          descr="Test simple whitespace",
           text_input=[r"hello there"],
           delim_regex_pattern=r"\s",
           expected=[[b"hello", b"there"]],
       ),
       dict(
-          descr="Two delimiters in a row",
           text_input=[r"hello  there"],
           delim_regex_pattern=r"\s",
           expected=[[b"hello", b"there"]],
       ),
       dict(
-          descr="Test Hiragana",
           text_input=[_utf8(u"では４日")],
           delim_regex_pattern=r"\p{Hiragana}",
           keep_delim_regex_pattern=r"\p{Hiragana}",
@@ -87,29 +84,24 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
                      _utf8(u"４日")]],
       ),
       dict(
-          descr="Test symbols and punctuation",
           text_input=[r"hello! (:$) there"],
           delim_regex_pattern=r"[\p{S}|\p{P}]+|\s",
           keep_delim_regex_pattern=r"[\p{S}|\p{P}]+",
           expected=[[b"hello", b"!", b"(:$)", b"there"]],
       ),
       dict(
-          descr="Test numbers",
           text_input=[r"hello12345there"],
           delim_regex_pattern=r"\p{N}+",
           keep_delim_regex_pattern=r"\p{N}+",
           expected=[[b"hello", b"12345", b"there"]],
       ),
       dict(
-          descr="Test numbers and symbols",
           text_input=[r"show me some $100 bills yo!"],
           delim_regex_pattern=r"\s|\p{S}",
           keep_delim_regex_pattern=r"\p{S}",
           expected=[[b"show", b"me", b"some", b"$", b"100", b"bills", b"yo!"]],
       ),
       dict(
-          descr="Test input RaggedTensor with ragged_rank=1; "
-          "shape = [2, (2, 1)]",
           text_input=[
               [b"show me some $100 bills yo!",
                _utf8(u"では４日")],
@@ -122,8 +114,6 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
                       _utf8(u"４日")]], [[b"hello", b"there"]]],
       ),
       dict(
-          descr="Test input 3D RaggedTensor with ragged_rank=2; "
-          "shape = [1, 2, (2, 1)]",
           text_input=[[
               [b"show me some $100 bills yo!",
                _utf8(u"では４日")],
@@ -136,8 +126,6 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
                      [[b"hello", b"there"]]]],
       ),
       dict(
-          descr="Test input 3D RaggedTensor with ragged_rank=1; "
-          "shape = [2, (1, 2), 2]",
           text_input=[
               [[b"a b", b"c"], [b"d", b"e f g"]],
               [[b"cat horse cow", b""]]],
@@ -149,7 +137,6 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
       ),
       # Test inputs that are Tensors.
       dict(
-          descr="Test input Tensor with shape = [2], rank = 1",
           text_input=[
               r"show me some $100 bills yo!",
               r"hello there",
@@ -161,7 +148,6 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
           input_is_dense=True,
       ),
       dict(
-          descr="Test input Tensor with shape = [2, 1], rank = 2",
           text_input=[
               [r"show me some $100 bills yo!"],
               [r"hello there"],
@@ -173,7 +159,6 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
           input_is_dense=True,
       ),
       dict(
-          descr="Test input Tensor with multiple ranks; shape = [2, 2]",
           input_is_dense=True,
           text_input=[
               [b"show me some $100 bills yo!",
@@ -188,7 +173,6 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
                                                               b"woot"]]],
       ),
       dict(
-          descr="Test input Tensor with multiple; shape = [2, 2, 1]",
           input_is_dense=True,
           text_input=[
               [[b"show me some $100 bills yo!"], [_utf8(u"では４日")]],
@@ -209,7 +193,6 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
                        delim_regex_pattern,
                        expected,
                        keep_delim_regex_pattern=r"",
-                       descr="",
                        input_is_dense=False,
                        ragged_rank=None):
     if input_is_dense:
@@ -240,11 +223,10 @@ class RegexSplitOpsTest(parameterized.TestCase, test.TestCase):
 
 
 @test_util.run_all_in_graph_and_eager_modes
-class RegexSplitterTestCases(test.TestCase, parameterized.TestCase):
+class RegexSplitterTestCases(tf.test.TestCase, parameterized.TestCase):
 
   @parameterized.parameters([
       dict(
-          test_description="Split on new line",
           text_input=[
               b"Hi there.\nWhat time is it?\nIt is gametime.",
               b"Who let the dogs out?\nWho?\nWho?\nWho?",
@@ -253,7 +235,6 @@ class RegexSplitterTestCases(test.TestCase, parameterized.TestCase):
                     [b"Who let the dogs out?", b"Who?", b"Who?", b"Who?"]],
       ),
       dict(
-          test_description="Test trailing \\n.",
           text_input=[
               b"Hi there.\nWhat time is it?\nIt is gametime.",
               b"Who let the dogs out?\nWho?\nWho?\nWho?\n",
@@ -262,7 +243,6 @@ class RegexSplitterTestCases(test.TestCase, parameterized.TestCase):
                     [b"Who let the dogs out?", b"Who?", b"Who?", b"Who?"]],
       ),
       dict(
-          test_description="Custom regex.",
           text_input=[
               b"Hi there.\r\nWhat time is it?\r\nIt is gametime.",
               b"Who let the dogs out?\r\nWho?\r\nWho?\r\nWho?",
@@ -273,7 +253,6 @@ class RegexSplitterTestCases(test.TestCase, parameterized.TestCase):
       ),
   ])
   def testRegexSplitter(self,
-                        test_description,
                         text_input,
                         expected,
                         new_sentence_regex=None):
@@ -284,4 +263,4 @@ class RegexSplitterTestCases(test.TestCase, parameterized.TestCase):
 
 
 if __name__ == "__main__":
-  test.main()
+  tf.test.main()

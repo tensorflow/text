@@ -912,9 +912,8 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":regex_split_ops",
-        # python:client_testlib tensorflow dep,
+        # tensorflow package dep,
         # python:framework_test_lib tensorflow dep,
-        # python:platform tensorflow dep,
     ],
 )
 
@@ -1621,6 +1620,7 @@ py_test(
         ":ops",
         "@absl_py//absl:app",
         "@absl_py//absl/testing:parameterized",
+        # tensorflow package dep,
         # python:dtypes tensorflow dep,
         # python/user_ops:ops tensorflow dep,
     ],
@@ -1637,6 +1637,7 @@ py_test(
         ":ops",
         "@absl_py//absl:app",
         "@absl_py//absl/testing:parameterized",
+        # tensorflow package dep,
         # python/user_ops:ops tensorflow dep,
     ],
 )

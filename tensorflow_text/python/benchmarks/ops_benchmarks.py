@@ -22,10 +22,11 @@ from absl import app
 from absl import flags
 import numpy as np
 
+import tensorflow as tf
+
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
-from tensorflow.python.platform import test
 from tensorflow_text.python import ops as text_ops
 from tensorflow_text.python.benchmarks import benchmark_utils
 
@@ -197,4 +198,4 @@ class ConstrainedSequenceOpsBenchmark(benchmark_utils.OpsBaseBenchmark):
 
 
 if __name__ == "__main__":
-  app.run(test.main())
+  app.run(tf.test.main())

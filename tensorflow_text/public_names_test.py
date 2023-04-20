@@ -25,12 +25,12 @@ from __future__ import division
 from __future__ import print_function
 
 import types
+import tensorflow as tf
 
 import tensorflow_text as tensorflow_text
-from tensorflow.python.platform import test
 
 
-class PublicNamesTest(test.TestCase):
+class PublicNamesTest(tf.test.TestCase):
 
   def check_names(self, module, prefix="tf_text."):
     self.assertTrue(
@@ -56,4 +56,4 @@ class PublicNamesTest(test.TestCase):
 
 
 if __name__ == "__main__":
-  test.main()
+  tf.test.main()
