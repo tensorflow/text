@@ -198,7 +198,7 @@ void FastWordpieceTokenizer::TokenizeTextImpl(
   int original_num_tokens =
       GetCurrentOutputSize<kGetPieces>(output_pieces, output_ids);
   UChar32 prev_unicode_char;
-  UChar32 cur_unicode_char;
+  UChar32 cur_unicode_char = 0;
   while (cur_pos < input_size) {
     int cur_offset_in_input_word = 0;
     // Tokenize the word starting at the current position.
