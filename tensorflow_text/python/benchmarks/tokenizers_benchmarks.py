@@ -22,8 +22,6 @@ from absl import app
 from absl import flags
 import six
 
-import tensorflow as tf
-
 from tensorflow.python.client import session
 from tensorflow.python.eager import context
 from tensorflow.python.framework import dtypes
@@ -34,6 +32,8 @@ from tensorflow.python.ops import lookup_ops
 from tensorflow.python.ops import random_ops
 from tensorflow.python.ops.ragged import ragged_functional_ops
 from tensorflow.python.platform import benchmark
+from tensorflow.python.platform import gfile
+from tensorflow.python.platform import test
 from tensorflow_text.python import ops as text_ops
 from tensorflow_text.python.benchmarks import benchmark_utils
 from tensorflow_text.python.ops.bert_tokenizer import BasicTokenizer
@@ -159,13 +159,13 @@ class CustomInputTokenizationBenchmark(benchmark_utils.OpsBaseBenchmark):
     self._run(tokenizer)
 
   def benchmark_sentencepiece_tokenizer(self):
-    model = tf.io.gfile.GFile((_SENTENCEPIECE_MODEL_FILE), "rb").read()
+    model = gfile.GFile((_SENTENCEPIECE_MODEL_FILE), "rb").read()
     tokenizer = text_ops.SentencepieceTokenizer(model)
     self._run(tokenizer)
     # TODO(irinabejan): Add benchmark for detokenization
 
   def benchmark_fast_sentencepiece_tokenizer(self):
-    model = tf.io.gfile.GFile((_FAST_SENTENCEPIECE_MODEL_FILE), "rb").read()
+    model = gfile.GFile((_FAST_SENTENCEPIECE_MODEL_FILE), "rb").read()
     tokenizer = text_ops.FastSentencepieceTokenizer(model)
     self._run(tokenizer)
 
@@ -252,4 +252,4 @@ class RegexSplitOpsBenchmark(benchmark_utils.OpsBaseBenchmark):
 
 
 if __name__ == "__main__":
-  app.run(tf.test.main())
+  app.run(test.main())
