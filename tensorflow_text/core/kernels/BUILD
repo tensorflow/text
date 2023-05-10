@@ -926,7 +926,6 @@ tf_cc_library(
     ],
     deps = [
         ":sentence_fragmenter_v2_kernel_template",
-        "//third_party/absl/synchronization",
         # lite/kernels/shim:tf_op_shim tensorflow dep,
     ],
 )
