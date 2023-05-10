@@ -137,6 +137,8 @@ def tf_cc_library(
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/strings:cord")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/time")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/types:variant")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/functional:any_invocable")
+    
     deps += select({
         "@org_tensorflow//tensorflow:mobile": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
