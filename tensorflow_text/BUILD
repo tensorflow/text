@@ -246,6 +246,7 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:constrained_sequence_kernel",
     ],
     deps = [
+        "@com_google_absl//absl/base:core_headers",
         # python:dtypes tensorflow dep,
         # python:framework_ops tensorflow dep,
         # python/ops/ragged tensorflow dep,
