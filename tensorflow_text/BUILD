@@ -150,10 +150,10 @@ py_library(
         ":regex_split_ops",
         ":tokenization",
         ":wordpiece_tokenizer",
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:string_ops tensorflow dep,
         # python/eager:monitoring tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
     ],
 )
 
@@ -167,17 +167,17 @@ py_test(
     deps = [
         ":bert_tokenizer",
         "@absl_py//absl/testing:parameterized",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -191,7 +191,7 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:boise_offset_converter_kernel",
     ],
     deps = [
-        # python:framework_ops tensorflow dep,
+        # python/framework:ops tensorflow dep,
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
@@ -206,7 +206,7 @@ py_test(
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
-        # python:client_testlib tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -220,7 +220,7 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:byte_splitter_kernel",
     ],
     deps = [
-        # python:framework_ops tensorflow dep,
+        # python/framework:ops tensorflow dep,
         # python/ops/ragged tensorflow dep,
     ],
 )
@@ -234,7 +234,7 @@ py_test(
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
-        # python:client_testlib tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -246,8 +246,8 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:constrained_sequence_kernel",
     ],
     deps = [
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
         # python/ops/ragged tensorflow dep,
     ],
 )
@@ -256,13 +256,13 @@ py_library(
     name = "create_feature_bitmask_op",
     srcs = ["python/ops/create_feature_bitmask_op.py"],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:check_ops tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:check_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
     ],
 )
 
@@ -274,12 +274,12 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":create_feature_bitmask_op",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -291,9 +291,9 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:fast_bert_normalizer_tf_kernel",
     ],
     deps = [
-        # python:array_ops_stack tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
         "//tensorflow_text/core/pybinds:pywrap_fast_bert_normalizer_model_builder",
     ],
@@ -309,14 +309,14 @@ py_test(
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
         "//tensorflow_text:normalize_ops",
         "//tensorflow_text/core/pybinds:pywrap_fast_bert_normalizer_model_builder",
     ],
@@ -330,9 +330,9 @@ py_library(
         ":fast_bert_normalizer",
         ":fast_wordpiece_tokenizer",
         ":tokenization",
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
         # python/eager:monitoring tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         "//tensorflow_text:normalize_ops",
     ],
 )
@@ -348,17 +348,17 @@ py_test(
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -406,9 +406,9 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:array_ops_stack tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
         "//tensorflow_text/core/pybinds:pywrap_fast_wordpiece_tokenizer_model_builder",
     ],
@@ -428,13 +428,13 @@ py_test(
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -447,9 +447,9 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:array_ops_stack tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
         "//tensorflow_text/core/pybinds:pywrap_phrase_tokenizer_model_builder",
     ],
@@ -469,13 +469,13 @@ py_test(
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -486,9 +486,9 @@ py_tf_text_library(
         ":constrained_sequence_op",
     ],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -502,9 +502,9 @@ py_test(
     deps = [
         ":greedy_constrained_sequence_op",
         #  numpy dep,
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -514,7 +514,7 @@ py_library(
     deps = [
         ":splitter",
         "@org_tensorflow_hub//tensorflow_hub",
-        # python:array_ops_stack tensorflow dep,
+        # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -530,12 +530,12 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":ops",
-        # python:client_testlib tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:variables tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
+        # python/ops:variables tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -559,12 +559,12 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":ops",
-        # python:client_testlib tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:variables tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
+        # python/ops:variables tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -572,16 +572,16 @@ py_library(
     name = "item_selector_ops",
     srcs = ["python/ops/item_selector_ops.py"],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:control_flow_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:map_fn tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:random_ops tensorflow dep,
-        # python:sort_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:control_flow_ops tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
+        # python/ops:map_fn tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:random_ops tensorflow dep,
+        # python/ops:sort_ops tensorflow dep,
         # python/ops/ragged:ragged_array_ops tensorflow dep,
         # python/ops/ragged:ragged_batch_gather_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -602,12 +602,12 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":item_selector_ops",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:math_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -615,13 +615,13 @@ py_library(
     name = "masking_ops",
     srcs = ["python/ops/masking_ops.py"],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:control_flow_assert tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:map_fn tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:random_ops tensorflow dep,
-        # python:sort_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:control_flow_assert tensorflow dep,
+        # python/ops:map_fn tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:random_ops tensorflow dep,
+        # python/ops:sort_ops tensorflow dep,
         # python/ops/ragged:ragged_batch_gather_ops tensorflow dep,
         # python/ops/ragged:ragged_functional_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
@@ -641,11 +641,11 @@ py_test(
         ":item_selector_ops",
         ":masking_ops",
         "@absl_py//absl/testing:parameterized",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -657,12 +657,12 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:mst_op_kernels",
     ],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:standard_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:standard_ops tensorflow dep,
     ],
 )
 
@@ -673,12 +673,12 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":mst_ops",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:math_ops tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -691,10 +691,10 @@ py_tf_text_library(
     ],
     deps = [
         ":sliding_window_op",
-        # python:errors tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_functional_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
@@ -709,11 +709,11 @@ py_test(
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -725,7 +725,7 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:normalize_kernels",
     ],
     deps = [
-        # python:dtypes tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
@@ -739,10 +739,10 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":normalize_ops",
-        # python:client_testlib tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -750,11 +750,11 @@ py_library(
     name = "pad_along_dimension_op",
     srcs = ["python/ops/pad_along_dimension_op.py"],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -768,14 +768,14 @@ py_test(
     deps = [
         ":pad_along_dimension_op",
         "@absl_py//absl/testing:parameterized",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
         # python/eager:context tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -783,12 +783,12 @@ py_library(
     name = "pad_model_inputs_ops",
     srcs = ["python/ops/pad_model_inputs_ops.py"],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:control_flow_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:tensor_array_ops tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:control_flow_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:tensor_array_ops tensorflow dep,
         # python/ops/ragged:ragged_array_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -803,10 +803,10 @@ py_test(
     deps = [
         ":pad_model_inputs_ops",
         "@absl_py//absl/testing:parameterized",
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -814,11 +814,11 @@ py_library(
     name = "pointer_ops",
     srcs = ["python/ops/pointer_ops.py"],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:check_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:check_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
         # python/ops/ragged:ragged_functional_ops tensorflow dep,
         # python/ops/ragged:ragged_gather_ops tensorflow dep,
         # python/ops/ragged:ragged_math_ops tensorflow dep,
@@ -836,12 +836,12 @@ py_test(
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -853,9 +853,9 @@ py_test(
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -867,14 +867,14 @@ py_test(
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
         # python/eager:context tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -886,10 +886,10 @@ py_test(
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -913,7 +913,7 @@ py_test(
     deps = [
         ":regex_split_ops",
         # tensorflow package dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
     ],
 )
 
@@ -921,10 +921,10 @@ py_library(
     name = "segment_combiner_ops",
     srcs = ["python/ops/segment_combiner_ops.py"],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
     ],
 )
 
@@ -936,10 +936,10 @@ py_test(
     deps = [
         ":segment_combiner_ops",
         "@absl_py//absl/testing:parameterized",
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -955,9 +955,9 @@ py_tf_text_library(
     deps = [
         ":regex_split_ops",
         # tf:lib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
         # python/util:deprecation tensorflow dep,
@@ -973,15 +973,15 @@ py_test(
     deps = [
         ":sentence_breaking_ops",
         "@absl_py//absl/testing:parameterized",
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -994,11 +994,11 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -1017,11 +1017,11 @@ py_test(
     deps = [
         ":sentencepiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_gather_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
         # python/saved_model tensorflow dep,
     ],
 )
@@ -1030,9 +1030,9 @@ py_library(
     name = "sliding_window_op",
     srcs = ["python/ops/sliding_window_op.py"],
     deps = [
-        # python:array_ops_stack tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -1046,12 +1046,12 @@ py_test(
     deps = [
         ":sliding_window_op",
         "@absl_py//absl/testing:parameterized",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1064,8 +1064,8 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
         # python/ops/ragged tensorflow dep,
     ],
 )
@@ -1078,10 +1078,10 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":split_merge_from_logits_tokenizer",
-        # python:client_testlib tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1094,8 +1094,8 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
         # python/ops/ragged tensorflow dep,
     ],
 )
@@ -1108,9 +1108,9 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":split_merge_tokenizer",
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1135,9 +1135,9 @@ py_tf_text_library(
         ":byte_splitter",
         ":sentence_breaking_ops",
         # tf:lib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
@@ -1154,16 +1154,16 @@ py_test(
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:errors tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:errors tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1171,7 +1171,7 @@ py_library(
     name = "string_ops",
     srcs = ["python/ops/string_ops.py"],
     deps = [
-        # python:string_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
     ],
 )
 
@@ -1183,8 +1183,8 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":string_ops",
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1194,10 +1194,10 @@ py_tf_text_library(
     cc_op_defs = ["//tensorflow_text/core/ops:rouge_l_op.cc"],
     cc_op_kernels = ["//tensorflow_text/core/kernels:rouge_l_kernel"],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:lookup_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -1211,13 +1211,13 @@ py_test(
     deps = [
         ":text_similarity_metric_ops",
         "@absl_py//absl/testing:parameterized",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1249,7 +1249,7 @@ py_library(
         ":whitespace_tokenizer_v2",
         ":wordpiece_tokenizer",
         # tensorflow package dep,
-        # python:lookup_ops tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
     ],
 )
@@ -1263,11 +1263,11 @@ py_tf_text_library(
     cc_op_kernels = ["//tensorflow_text/core/kernels:round_robin_trimmer_kernel"],
     deps = [
         ":item_selector_ops",
-        # python:array_ops tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:functional_ops tensorflow dep,
-        # python:while_loop tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:functional_ops tensorflow dep,
+        # python/ops:while_loop tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
@@ -1283,10 +1283,10 @@ py_test(
         ":trimmer_ops",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1302,11 +1302,11 @@ py_library(
     srcs = ["python/ops/unicode_char_tokenizer.py"],
     deps = [
         ":tokenization",
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
@@ -1321,10 +1321,10 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":unicode_char_tokenizer",
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1337,11 +1337,11 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -1357,10 +1357,10 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":unicode_script_tokenizer",
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1375,8 +1375,8 @@ py_tf_text_library(
         "//third_party/py/tensorflow_retvec:__subpackages__",
     ],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
     ],
 )
 
@@ -1390,8 +1390,8 @@ py_test(
         ":tensorflow_text",
         ":utf8_binarize_op",
         # tensorflow package dep,
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1402,9 +1402,9 @@ py_tf_text_library(
         ":constrained_sequence_op",
     ],
     deps = [
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
 )
@@ -1419,9 +1419,9 @@ py_test(
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
         #  numpy dep,
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1455,11 +1455,11 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:array_ops tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -1476,11 +1476,11 @@ py_tf_text_library(
     deps = [
         ":tokenization",
         ":whitespace_tokenizer",
-        # python:array_ops_stack tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops_stack tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -1498,10 +1498,10 @@ py_test(
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
-        # python:client_testlib tensorflow dep,
-        # python:constant_op tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:constant_op tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1514,17 +1514,17 @@ py_tf_text_library(
     ],
     deps = [
         ":tokenization",
-        # python:array_ops tensorflow dep,
-        # python:check_ops tensorflow dep,
-        # python:control_flow_assert tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
-        # python:sort_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
         # python/compat tensorflow dep,
         # python/eager:monitoring tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:check_ops tensorflow dep,
+        # python/ops:control_flow_assert tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
+        # python/ops:sort_ops tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
         # python/ops/ragged:ragged_functional_ops tensorflow dep,
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
@@ -1540,14 +1540,14 @@ py_test(
     deps = [
         ":wordpiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
-        # python:array_ops tensorflow dep,
-        # python:client_testlib tensorflow dep,
-        # python:dtypes tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
-        # python:lookup_ops tensorflow dep,
-        # python:math_ops tensorflow dep,
         # python/compat tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/ops:array_ops tensorflow dep,
+        # python/ops:lookup_ops tensorflow dep,
+        # python/ops:math_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1555,9 +1555,9 @@ py_library(
     name = "wordshape_ops",
     srcs = ["python/ops/wordshape_ops.py"],
     deps = [
-        # python:array_ops_stack tensorflow dep,
-        # python:framework_ops tensorflow dep,
-        # python:string_ops tensorflow dep,
+        # python/framework:ops tensorflow dep,
+        # python/ops:array_ops_stack tensorflow dep,
+        # python/ops:string_ops tensorflow dep,
     ],
 )
 
@@ -1569,8 +1569,8 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":wordshape_ops",
-        # python:client_testlib tensorflow dep,
-        # python:framework_test_lib tensorflow dep,
+        # python/framework:test_lib tensorflow dep,
+        # python/platform:client_testlib tensorflow dep,
     ],
 )
 
@@ -1594,11 +1594,11 @@ py_library(
         #  numpy dep,
         # tensorflow package dep,
         #  tensorflow datasets dep,
-        # python:dtypes tensorflow dep,
-        # python:session tensorflow dep,
+        # python/client:session tensorflow dep,
         # python/data/ops:dataset_ops tensorflow dep,
         # python/eager:context tensorflow dep,
         # python/eager:def_function tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
         # python/util:tf_inspect tensorflow dep,
     ],
 )
@@ -1621,7 +1621,7 @@ py_test(
         "@absl_py//absl:app",
         "@absl_py//absl/testing:parameterized",
         # tensorflow package dep,
-        # python:dtypes tensorflow dep,
+        # python/framework:dtypes tensorflow dep,
         # python/user_ops:ops tensorflow dep,
     ],
 )
