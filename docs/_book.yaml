@@ -25,6 +25,12 @@ upper_tabs:
       - title: Overview
         path: /text/api_overview
 
+      - heading: KerasNLP API
+        style: divider
+      - title: KerasNLP
+        path: https://keras.io/api/keras_nlp/
+        status: external
+
       - heading: TensorFlow Text
         style: divider
       - include: /text/api_docs/python/text/_toc.yaml

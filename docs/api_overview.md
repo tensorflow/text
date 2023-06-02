@@ -1,5 +1,19 @@
 # API reference for text and NLP libraries.
 
+## KerasNLP
+
+[API reference](https://keras.io/api/keras_nlp/){: .external}
+
+The easiest way to get started processing text in TensorFlow is to use KerasNLP,
+a natural language processing library that provides modular components with
+state-of-the-art preset weights and architectures. You can use KerasNLP
+components out-of-the-box or customize them as needed. KerasNLP
+emphasizes in-graph computation for all workflows, so you can expect easy
+productionization using the TensorFlow ecosystem.
+
+To install KerasNLP, see
+[Installation](https://keras.io/keras_nlp/#installation){: .external}.
+
 ## TensorFlow Text
 
 [API reference](https://www.tensorflow.org/text/api_docs/python/text)
