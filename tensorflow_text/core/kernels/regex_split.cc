@@ -26,7 +26,7 @@ void RegexSplitImpl(absl::string_view input, const RE2& re2,
                     std::vector<absl::string_view>* tokens,
                     std::vector<T>* begin_offsets,
                     std::vector<T>* end_offsets) {
-  absl::string_view leftover(input.data());
+  absl::string_view leftover = input;
   absl::string_view last_end = leftover;
 
   // Keep looking for split points until we have reached the end of the input.
