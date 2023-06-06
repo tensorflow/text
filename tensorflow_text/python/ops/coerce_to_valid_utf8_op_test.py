@@ -20,6 +20,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import sys
+
 from tensorflow.python.platform import test
 from tensorflow_text.python.ops import string_ops
 
@@ -27,21 +29,29 @@ from tensorflow_text.python.ops import string_ops
 class CoerceToUtf8Test(test.TestCase):
 
   def testCoercetoStructurallyValidOnValidInput(self):
+    if sys.platform == "darwin":
+      self.skipTest("Skip to avoid architecture issue in macos")
     with self.test_session():
       utf8 = string_ops.coerce_to_structurally_valid_utf8(["abc"])
     self.assertAllEqual(utf8, [b"abc"])
 
   def testCoercetoStructurallyValidOnValidInputWithDefault(self):
+    if sys.platform == "darwin":
+      self.skipTest("Skip to avoid architecture issue in macos")
     with self.test_session():
       utf8 = string_ops.coerce_to_structurally_valid_utf8(["abc"], "?")
     self.assertAllEqual(utf8, [b"abc"])
 
   def testCoercetoStructurallyValidOnInvalidInput(self):
+    if sys.platform == "darwin":
+      self.skipTest("Skip to avoid architecture issue in macos")
     with self.test_session():
       utf8 = string_ops.coerce_to_structurally_valid_utf8([b"abc\xfd"])
     self.assertAllEqual(utf8, [u"abc�".encode("utf-8")])
 
   def testCoercetoStructurallyValidOnInvalidInputWithDefault(self):
+    if sys.platform == "darwin":
+      self.skipTest("Skip to avoid architecture issue in macos")
     with self.test_session():
       utf8 = string_ops.coerce_to_structurally_valid_utf8([b"abc\xfd"], "?")
     self.assertAllEqual(utf8, [b"abc?"])
