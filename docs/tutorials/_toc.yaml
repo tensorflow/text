@@ -1,4 +1,13 @@
 toc:
+- title: "Overview"
+  path: /text/tutorials
+
+- heading: Keras NLP
+  style: divider
+- title: Get started with KerasNLP
+  path: https://keras.io/guides/keras_nlp/getting_started/
+  status: external
+
 - heading: Text Generation
   style: divider
 - title: "Generate Text with RNNs"
