@@ -19,6 +19,7 @@ import abc
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import tensor
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import math_ops
@@ -238,7 +239,7 @@ class RoundRobinTrimmer(Trimmer):
         number of elements allowed in a batch.
       axis: Axis to apply trimming on.
     """
-    if (isinstance(max_seq_length, ops.Tensor) and
+    if (isinstance(max_seq_length, tensor.Tensor) and
         max_seq_length.shape.ndims > 0):
       self._max_seq_length = array_ops.reshape(max_seq_length, ())
     else:
