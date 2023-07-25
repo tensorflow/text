@@ -31,6 +31,12 @@ upper_tabs:
         path: https://keras.io/api/keras_nlp/
         status: external
 
+      - heading: tf.strings
+        style: divider
+      - title: tf.strings
+        path: /api_docs/python/tf/strings
+        status: external
+
       - heading: TensorFlow Text
         style: divider
       - include: /text/api_docs/python/text/_toc.yaml

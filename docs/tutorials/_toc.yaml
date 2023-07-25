@@ -16,6 +16,8 @@ toc:
   path: /text/tutorials/nmt_with_attention
 - title: "Translate text with transformer models"
   path: /text/tutorials/transformer
+- title: "Image captioning"
+  path: /text/tutorials/image_captioning
 
 - heading: Text Classification
   style: divider
@@ -35,3 +37,13 @@ toc:
   path: /tfmodels/nlp/fine_tune_bert
 - title: "Quantify uncertainty with BERT"
   path: /text/tutorials/uncertainty_quantification_with_sngp_bert
+
+- heading: Embeddings
+  style: divider
+
+- title: "Word embeddings"
+  path: /text/tutorials/word_embeddings
+- title: "Warmstarting embeddings"
+  path: /text/tutorials/warmstart_embedding_matrix
+- title: "Word2Vec"
+  path: /text/tutorials/word2vec

@@ -8,16 +8,15 @@ toc:
   path: https://keras.io/guides/keras_nlp/getting_started/
   status: external
 
+- heading: tf.strings
+  style: divider
+- title: "Work with Unicode"
+  path: /text/guide/unicode
+
 - heading: TensorFlow Text
   style: divider
 - title: "Get started with TF-Text"
   path: /text/guide/tf_text_intro
-
-- heading: Concepts
-- title: "Work with Unicode"
-  path: /text/guide/unicode
-- title: "Word embeddings"
-  path: /text/guide/word_embeddings
 - title: "Convert to TF Lite"
   path: /text/guide/text_tf_lite
 
