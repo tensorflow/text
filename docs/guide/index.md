@@ -15,6 +15,14 @@ utilities. It's the recommended solution for most NLP use cases.
   complexity, from using a pre-trained model to building your own Transformer
   from scratch.
 
+## `tf.strings`
+
+The `tf.strings` module provides operations for working with string Tensors.
+
+* [Unicode strings](https://tensorflow.org/text/guide/unicode):
+  Represent Unicode strings in TensorFlow and manipulate them using Unicode
+  equivalents of standard string ops.
+
 ## TensorFlow Text
 
 If you need access to lower-level text processing tools, you can use TensorFlow
@@ -23,16 +31,6 @@ work with input in text form such as raw text strings or documents.
 
 * [Introduction to TensorFlow Text](https://tensorflow.org/text/guide/tf_text_intro):
   Learn how to install TensorFlow Text or build it from source.
-
-### Concepts
-
-* [Unicode strings](https://tensorflow.org/text/guide/unicode):
-  Represent Unicode strings in TensorFlow and manipulate them using Unicode
-  equivalents of standard string ops.
-* [Word embeddings](https://tensorflow.org/text/guide/word_embeddings):
-  Train your own word embeddings using a simple Keras model for a sentiment
-  classification task, and then visualize them using the
-  [Embedding Projector](https://www.tensorflow.org/tensorboard/tensorboard_projector_plugin).
 * [Converting TensorFlow Text operators to TensorFlow Lite](https://tensorflow.org/text/guide/text_tf_lite):
   Convert a TensorFlow Text model to TensorFlow Lite for deployment to mobile,
   embedded, and IoT devices.
@@ -55,7 +53,7 @@ work with input in text form such as raw text strings or documents.
 
 The TensorFlow Models - NLP library provides Keras primitives that can be
 assembled into Transformer-based models, and scaffold classes that enable easy
-experimentation with novel achitectures.
+experimentation with novel architectures.
 
 * [Introduction to the TensorFlow Models NLP library](https://tensorflow.org/tfmodels/nlp):
   Build Transformer-based models for common NLP tasks including pre-training,
