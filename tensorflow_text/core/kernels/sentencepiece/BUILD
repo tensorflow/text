@@ -118,6 +118,9 @@ cc_library(
     hdrs = [
         "model_converter.h",
     ],
+    visibility = [
+        "//java/com/google/android/apps/aicore/ulm1b_tflite:__subpackages__",
+    ],
     deps = [
         ":config",
         ":decoder_config",
@@ -139,6 +142,9 @@ cc_library(
     hdrs = [
         "optimized_encoder.h",
     ],
+    visibility = [
+        "//java/com/google/android/apps/aicore/ulm1b_tflite:__subpackages__",
+    ],
     deps = [
         ":config",
         ":double_array_trie",
@@ -154,8 +160,11 @@ cc_library(
     hdrs = [
         "optimized_decoder.h",
     ],
+    visibility = [
+        "//java/com/google/android/apps/aicore/ulm1b_tflite:__subpackages__",
+    ],
     deps = [
-        "config",
+        ":config",
         ":decoder_config",
         ":double_array_trie",
     ],
