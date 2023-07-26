@@ -30,6 +30,9 @@ help you work with input in text form such as raw text strings or documents.
 * [Neural machine translation with a Transformer and Keras](https://tensorflow.org/text/tutorials/transformer):
   Create and train a sequence-to-sequence Transformer model to translate
   Portuguese into English.
+* [Image captioning with visual attention](https://tensorflow.org/text/tutorials/image_captioning):
+  Generate image captions using a Transformer-decoder model built with attention
+  layers.
 
 ## Text classification
 
@@ -55,3 +58,15 @@ help you work with input in text form such as raw text strings or documents.
   Apply [SNGP](https://arxiv.org/abs/2006.10108) to a natural language
   understanding (NLU) task. Building on a BERT encoder, you'll improve the NLU
   model's ability to detect out-of-scope queries.
+
+## Embeddings
+
+* [Word embeddings](https://tensorflow.org/text/guide/word_embeddings):
+  Train your own word embeddings using a simple Keras model for a sentiment
+  classification task, and then visualize them using the
+  [Embedding Projector](https://www.tensorflow.org/tensorboard/tensorboard_projector_plugin).
+* [Warm-start embedding layer matrix](https://tensorflow.org/text/tutorials/warmstart_embedding_matrix):
+  Learn how to "warm-start" training for a text sentiment classification model.
+* [word2vec](https://tensorflow.org/text/tutorials/word2vec): Train a word2vec
+  model on a small dataset and visualize the trained embeddings in the
+  [Embedding Projector](https://www.tensorflow.org/tensorboard/tensorboard_projector_plugin).
