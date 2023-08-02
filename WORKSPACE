@@ -70,6 +70,8 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
+    patch_args = ["-p1"],
+    patches = ["//third_party/tensorflow:tf.patch"],
     strip_prefix = "tensorflow-2.12.0",
     sha256 = "af0584df1a4e28763c32c218b39f8c4f3784fabb6a8859b00c02d743864dc191",
     urls = [
