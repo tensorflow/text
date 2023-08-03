@@ -32,11 +32,7 @@ pybind_extension(
         "AddWhitespaceTokenize",
         "SELECT_TFTEXT_OPS",
     ],
-    enable_stub_generation = True,
     module_name = "tflite_registrar",
-    pytype_srcs = [
-        "tflite_registrar.pyi",
-    ],
     deps = [
         "@pybind11",
         # lite:framework tensorflow dep,
@@ -53,12 +49,8 @@ pybind_extension(
         "BuildFastBertNormalizerModel",
     ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
     module_name = "pywrap_fast_bert_normalizer_model_builder",
-    pytype_srcs = [
-        "pywrap_fast_bert_normalizer_model_builder.pyi",
-    ],
     srcs_version = "PY3ONLY",
     deps = [
         "//tensorflow_text/core/kernels:fast_bert_normalizer_model_builder",
@@ -87,12 +79,8 @@ pybind_extension(
         "BuildFastWordpieceModel",
     ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
     module_name = "pywrap_fast_wordpiece_tokenizer_model_builder",
-    pytype_srcs = [
-        "pywrap_fast_wordpiece_tokenizer_model_builder.pyi",
-    ],
     srcs_version = "PY3ONLY",
     deps = [
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_model_builder",
@@ -120,12 +108,8 @@ pybind_extension(
         "BuildPhraseModel",
     ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
     module_name = "pywrap_phrase_tokenizer_model_builder",
-    pytype_srcs = [
-        "pywrap_phrase_tokenizer_model_builder.pyi",
-    ],
     srcs_version = "PY3ONLY",
     visibility = [
         "//knowledge/cerebra/nlu/models/smartv2/input:__pkg__",
@@ -159,12 +143,8 @@ pybind_extension(
         "GetVocabularySize",
     ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
     module_name = "pywrap_model_converter",
-    pytype_srcs = [
-        "pywrap_model_converter.pyi",
-    ],
     srcs_version = "PY3ONLY",
     deps = [
         "//tensorflow_text/core/kernels/sentencepiece:model_converter",
@@ -179,12 +159,8 @@ pybind_extension(
         "BuildWhitespaceTokenizerConfig",
     ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
     module_name = "pywrap_whitespace_tokenizer_config_builder",
-    pytype_srcs = [
-        "pywrap_whitespace_tokenizer_config_builder.pyi",
-    ],
     srcs_version = "PY3ONLY",
     deps = [
         "//tensorflow_text/core/kernels:whitespace_tokenizer_config_builder",
