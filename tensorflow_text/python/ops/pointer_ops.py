@@ -23,6 +23,7 @@ import functools
 
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import tensor
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import check_ops
@@ -271,7 +272,7 @@ def _span_overlaps(source_start, source_limit, target_start, target_limit,
   Returns:
     `<bool>[D1...DB, source_size, target_size]`
   """
-  if isinstance(source_start, ops.Tensor):
+  if isinstance(source_start, tensor.Tensor):
     # Reshape the source tensors to [D1...DB, source_size, 1] and the
     # target tensors to [D1...DB, 1, target_size], so we can use broadcasting.
     # In particular, elementwise_op(source_x, target_x) will have shape

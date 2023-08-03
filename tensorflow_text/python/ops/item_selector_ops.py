@@ -16,6 +16,7 @@
 """Ops for selecting items in RaggedTensors."""
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import tensor
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import gen_array_ops
@@ -73,7 +74,7 @@ class ItemSelector(object):
       unselectable_ids = []
     if isinstance(unselectable_ids, list):
       self._unselectable_ids = unselectable_ids
-    elif isinstance(unselectable_ids, ops.Tensor):
+    elif isinstance(unselectable_ids, tensor.Tensor):
       if unselectable_ids.shape.rank not in (1, None):
         raise ValueError(f"`unselectable_ids` must have a rank of 1 or None, "
                          f"but was: {unselectable_ids.shape.rank}")

@@ -23,6 +23,7 @@ from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import tensor
 from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops.ragged import ragged_tensor
@@ -79,7 +80,7 @@ class PhraseTokenizer(Tokenizer, Detokenizer):
               vocab, unknown_token, support_detokenization, prob))
     # Use uint8 tensor as a buffer for the model to avoid any possible changes,
     # for example truncation by '\0'.
-    if isinstance(model_buffer, ops.Tensor):
+    if isinstance(model_buffer, tensor.Tensor):
       self._model = model_buffer
     else:
       self._model = constant_op.constant(list(model_buffer), dtype=dtypes.uint8)

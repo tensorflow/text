@@ -25,6 +25,7 @@ from tensorflow.python.compat import compat
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import tensor
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import check_ops
@@ -140,7 +141,7 @@ class WordpieceTokenizer(TokenizerWithOffsets, Detokenizer):
     _tf_text_wordpiece_tokenizer_op_create_counter.get_cell().increase_by(1)
 
     if isinstance(vocab_lookup_table, str) or (
-        isinstance(vocab_lookup_table, ops.Tensor) and
+        isinstance(vocab_lookup_table, tensor.Tensor) and
         vocab_lookup_table.dtype == dtypes.string):
       init = lookup_ops.TextFileIdTableInitializer(vocab_lookup_table)
       vocab_lookup_table = lookup_ops.StaticVocabularyTableV1(

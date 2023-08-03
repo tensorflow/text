@@ -23,6 +23,7 @@ from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import tensor as tensor_lib
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import check_ops
 from tensorflow.python.ops import math_ops
@@ -78,7 +79,7 @@ def create_feature_bitmask(tensor, dtype=dtypes.int32, name=None):
   """
   with ops.name_scope(name, 'CreateFeatureBitmask', [tensor]):
     if (isinstance(tensor, (list, tuple)) and tensor and
-        isinstance(tensor[0], ops.Tensor)):
+        isinstance(tensor[0], tensor_lib.Tensor)):
       raise errors.InvalidArgumentError(
           None, None,
           'CreateFeatureBitmask does not support lists of tensors. Consider '

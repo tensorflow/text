@@ -16,6 +16,7 @@
 """Library of ops to pack model inputs."""
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import tensor
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops import math_ops
@@ -71,7 +72,7 @@ def pad_model_inputs(input, max_seq_length, pad_value=0):  # pylint: disable=red
   with ops.name_scope("pad_model_inputs"):
     input = ragged_tensor.convert_to_tensor_or_ragged_tensor(input)
 
-    if isinstance(input, ops.Tensor):
+    if isinstance(input, tensor.Tensor):
       if input.shape.ndims > 1:
         return pad_model_inputs(ragged_tensor.RaggedTensor.from_tensor(input),
                                 max_seq_length, pad_value)
