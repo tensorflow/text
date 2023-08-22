@@ -13,25 +13,34 @@ if [[ "${osname}" == "darwin" ]]; then
   ext='""'
 fi
 
-# update setup.nightly.py with tf version
+# Update setup.nightly.py with current tf version.
 tf_version=$($installed_python -c 'import tensorflow as tf; print(tf.__version__)')
-echo "$tf_version"
-sed -i $ext "s/project_version = 'REPLACE_ME'/project_version = '${tf_version}'/" oss_scripts/pip_package/setup.nightly.py
-# update __version__
+echo "Updating setup.nightly.py to version $tf_version"
+sed -i $ext "s/project_version = '.*'/project_version = '${tf_version}'/" oss_scripts/pip_package/setup.nightly.py
+# Update __version__.
+echo "Updating __init__.py to version $tf_version"
 sed -i $ext "s/__version__ = .*\$/__version__ = \"${tf_version}\"/" tensorflow_text/__init__.py
 
-# Get commit sha of installed tensorflow
-# For some unknown reason this now needs to be split into two commands on Windows
+# Get git commit sha of installed tensorflow.
+echo "Querying commit SHA"
 short_commit_sha=$($installed_python -c 'import tensorflow as tf; print(tf.__git_version__)' | tail -1)
-if [[ "${osname}" == "darwin" ]]; then
-  short_commit_sha=$(echo $short_commit_sha | perl -nle 'print $& while m{(?<=-g)[0-9a-f]*$}g')
+if [[ "$short_commit_sha" == "unknown" ]]; then
+  # Some nightly builds report "unknown" for tf.__git_version.
+  echo 'TF git version "unknown", assuming nightly.'
+  commit_slug='nightly'
 else
-  short_commit_sha=$(echo $short_commit_sha | grep -oP '(?<=-g)[0-9a-f]*$')
+  if [[ "${osname}" == "darwin" ]]; then
+    short_commit_sha=$(echo $short_commit_sha | perl -nle 'print $& while m{(?<=-g)[0-9a-f]*$}g')
+  else
+    short_commit_sha=$(echo $short_commit_sha | grep -oP '(?<=-g)[0-9a-f]*$')
+  fi
+  echo "Found tensorflow commit sha: $short_commit_sha"
+  commit_slug=$(curl -s "https://api.github.com/repos/tensorflow/tensorflow/commits/$short_commit_sha" | grep "sha" | head -n 1 | cut -d '"' -f 4)
 fi
-commit_sha=$(curl -s "https://api.github.com/repos/tensorflow/tensorflow/commits/$short_commit_sha" | grep "sha" | head -n 1 | cut -d '"' -f 4)
 
-# Update TF dependency to installed tensorflow
-sed -E -i $ext "s/strip_prefix = \"tensorflow-2.+\",/strip_prefix = \"tensorflow-${commit_sha}\",/" WORKSPACE
-sed -E -i $ext "s|\"https://github.com/tensorflow/tensorflow/archive/v.+\.zip\"|\"https://github.com/tensorflow/tensorflow/archive/${commit_sha}.zip\"|" WORKSPACE
+# Update TF dependency to installed tensorflow.
+echo "Updating WORKSPACE file to use TensorFlow commit $commit_slug"
+sed -E -i $ext "s/strip_prefix = \"tensorflow-.+\",/strip_prefix = \"tensorflow-${commit_slug}\",/" WORKSPACE
+sed -E -i $ext "s|\"https://github.com/tensorflow/tensorflow/archive/.+\.zip\"|\"https://github.com/tensorflow/tensorflow/archive/${commit_slug}.zip\"|" WORKSPACE
 prev_shasum=$(grep -A 1 -e "strip_prefix.*tensorflow-" WORKSPACE | tail -1 | awk -F '"' '{print $2}')
 sed -i $ext "s/sha256 = \"${prev_shasum}\",//" WORKSPACE
