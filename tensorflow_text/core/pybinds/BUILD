@@ -1,5 +1,6 @@
 # Code that exposes C++ libraries to Python via pybind11.
 
+load("//third_party/bazel_rules/rules_python/python:py_test.bzl", "py_test")
 load("@org_tensorflow//tensorflow:tensorflow.bzl", "pybind_extension")
 
 licenses(["notice"])
