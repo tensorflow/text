@@ -1395,7 +1395,7 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels:utf8_binarize_kernel",
     ],
     visibility = [
-        "//third_party/py/tensorflow_retvec:__subpackages__",
+        "//visibility:private",  # Only private by automation, not intent. Owner may accept CLs adding visibility. See go/scheuklappen#explicit-private.
     ],
     deps = [
         # python/framework:ops tensorflow dep,
