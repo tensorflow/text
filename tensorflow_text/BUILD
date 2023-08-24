@@ -1,3 +1,5 @@
+# Placeholder: load py_library
+# Placeholder: load py_test
 load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
 
 # [internal] load build_test.bzl
