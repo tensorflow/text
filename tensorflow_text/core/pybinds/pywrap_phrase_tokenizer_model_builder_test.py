@@ -45,7 +45,7 @@ class PywrapPhraseBuilderTest(test_util.TensorFlowTestCase):
     expected_model_buffer = gfile.GFile(EXPECTED_MODEL_BUFFER_PATH, "rb").read()
     self.assertEqual(
         pywrap_phrase_tokenizer_model_builder.build_phrase_model(
-            vocab, unk_token, True, 0), expected_model_buffer)
+            vocab, unk_token, True, 0, False), expected_model_buffer)
 
 
 if __name__ == "__main__":

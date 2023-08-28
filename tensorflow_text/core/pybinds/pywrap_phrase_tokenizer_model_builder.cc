@@ -27,9 +27,10 @@ namespace py = pybind11;
 PYBIND11_MODULE(pywrap_phrase_tokenizer_model_builder, m) {
   m.def("build_phrase_model",
         [](const std::vector<std::string>& vocab, const std::string& unk_token,
-           bool support_detokenization, int prob) {
+           bool support_detokenization, int prob, bool split_end_punctuation) {
           const auto result = BuildPhraseModelAndExportToFlatBuffer(
-              vocab, unk_token, support_detokenization, prob);
+              vocab, unk_token, support_detokenization, prob,
+              split_end_punctuation);
           if (!result.status().ok()) {
             // Propagate the error to the Python code.
             throw std::runtime_error(std::string(result.status().message()));
