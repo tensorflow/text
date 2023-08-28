@@ -30,6 +30,9 @@ table PhraseTokenizerConfig {
 
   // whilte space config used to initalize the whitespace tokenzier.
   whitespace_config: string;
+
+  // Whether to split the end_puctualtion for each token.
+  split_end_punctuation: bool;
 }
 
 root_type PhraseTokenizerConfig;

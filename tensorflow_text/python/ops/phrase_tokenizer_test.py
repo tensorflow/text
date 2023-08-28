@@ -46,6 +46,9 @@ _ENGLISH_VOCAB = [
     b"dream",
     b"a dream",
     b"I have a",
+    b"!",
+    b"don",
+    b"'t",
 ]
 
 
@@ -55,9 +58,9 @@ class PhraseOpOriginalTest(test_util.TensorFlowTestCase,
 
   @parameterized.parameters([
       dict(
-          tokens=[[b"I don't have a dream", b"I have a dream"]],
-          expected_subwords=[[[b"I", b"<UNK>", b"have", b"a dream"],
-                              [b"I have a", b"dream"]]],
+          tokens=[[b"I don't have a dream", b"I have a dream!"]],
+          expected_subwords=[[[b"I", b"don", b"'t", b"have", b"a dream"],
+                              [b"I have a", b"dream", b"!"]]],
           vocab=_ENGLISH_VOCAB,
       ),
       dict(
@@ -68,7 +71,7 @@ class PhraseOpOriginalTest(test_util.TensorFlowTestCase,
       ),
       dict(
           tokens=[[b"I don't have a dream"], [b"I have a dream"]],
-          expected_subwords=[[[b"I", b"<UNK>", b"have", b"a dream"]],
+          expected_subwords=[[[b"I", b"don", b"'t", b"have", b"a dream"]],
                              [[b"I have a", b"dream"]]],
           vocab=_ENGLISH_VOCAB,
       ),
@@ -81,15 +84,18 @@ class PhraseOpOriginalTest(test_util.TensorFlowTestCase,
                    token_out_type=dtypes.string):
     tokens_t = ragged_factory_ops.constant(tokens)
     tokenizer = PhraseTokenizer(
-        vocab=vocab, unknown_token=unknown_token, token_out_type=token_out_type)
+        vocab=vocab,
+        unknown_token=unknown_token,
+        token_out_type=token_out_type,
+        split_end_punctuation=True)
     subwords_t = tokenizer.tokenize(tokens_t)
     self.assertAllEqual(subwords_t, expected_subwords)
 
 
 @parameterized.parameters([
     dict(
-        id_inputs=tf.convert_to_tensor([[1, 2, 3]]),
-        expected_outputs=[b"I have a"],
+        id_inputs=tf.convert_to_tensor([[1, 8, 9, 2, 3, 4, 7]]),
+        expected_outputs=[b"I don't have a dream!"],
     ),
     dict(
         id_inputs=tf.convert_to_tensor([1, 3, 2]),
@@ -111,7 +117,8 @@ class PhraseDetokenizeOpTest(test_base.DatasetTestBase,
         vocab=_ENGLISH_VOCAB,
         unknown_token="<UNK>",
         support_detokenization=True,
-        prob=0)
+        prob=0,
+        split_end_punctuation=True)
     results = tokenizer.detokenize(id_inputs)
     self.assertAllEqual(results, expected_outputs)
 

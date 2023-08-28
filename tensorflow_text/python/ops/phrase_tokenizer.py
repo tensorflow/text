@@ -52,6 +52,7 @@ class PhraseTokenizer(Tokenizer, Detokenizer):
       unknown_token='<UNK>',
       support_detokenization=True,
       prob=0,
+      split_end_punctuation=False,
       model_buffer=None,
   ):
     """Initializes the PhraseTokenizer.
@@ -66,6 +67,7 @@ class PhraseTokenizer(Tokenizer, Detokenizer):
         doing detokenization. Setting it to true expands the size of the model
         flatbuffer.
       prob: Probability of emitting a phrase when there is a match.
+      split_end_punctuation: Split the end punctuation.
       model_buffer: (optional) Bytes object (or a uint8 tf.Tenosr) that contains
         the phrase model in flatbuffer format (see phrase_tokenizer_model.fbs).
         If not `None`, all other arguments (except `token_output_type`) are
@@ -77,7 +79,8 @@ class PhraseTokenizer(Tokenizer, Detokenizer):
     if model_buffer is None:
       model_buffer = (
           pywrap_phrase_tokenizer_model_builder.build_phrase_model(
-              vocab, unknown_token, support_detokenization, prob))
+              vocab, unknown_token, support_detokenization, prob,
+              split_end_punctuation))
     # Use uint8 tensor as a buffer for the model to avoid any possible changes,
     # for example truncation by '\0'.
     if isinstance(model_buffer, tensor.Tensor):

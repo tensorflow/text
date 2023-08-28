@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/random/random.h"
 #include "absl/status/statusor.h"
 #include "absl/strings/string_view.h"
@@ -88,6 +89,9 @@ class PhraseTokenizer {
   float prob_;
   absl::BitGen gen_;
   std::unique_ptr<WhitespaceTokenizer> whitespace_tokenizer_ = nullptr;
+  bool split_end_punctuation_ = false;
+  const absl::flat_hash_set<std::string> special_tokens_ = {
+      "'t", "'s", ".", ",", "!", "?", "'m", "'re", "'ll", "'d", "'ve"};
 };
 
 }  // namespace text

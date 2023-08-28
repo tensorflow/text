@@ -36,7 +36,8 @@ namespace text {
 //  The bytes of the flatbuffer that stores the model.
 absl::StatusOr<std::string> BuildPhraseModelAndExportToFlatBuffer(
     const std::vector<std::string>& vocab, const std::string& unk_token,
-    bool support_detokenization = false, int prob = 0);
+    bool support_detokenization = false, int prob = 0,
+    bool split_end_punctuation = false);
 }  // namespace text
 }  // namespace tensorflow
 

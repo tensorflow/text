@@ -39,7 +39,8 @@ class PhraseBuilder {
  public:
   absl::Status BuildModel(const std::vector<std::string>& vocab,
                           const std::string& unk_token,
-                          bool support_detokenization, int prob);
+                          bool support_detokenization, int prob,
+                          bool split_end_punctuation);
 
   absl::StatusOr<std::string> ExportToFlatBuffer() const;
 
@@ -51,14 +52,17 @@ class PhraseBuilder {
   // Whether the tokenizer supports the detokenization function.
   bool support_detokenization_;
   int prob_;
+  bool split_end_punctuation_;
 };
 
 absl::Status PhraseBuilder::BuildModel(const std::vector<std::string>& vocab,
                                        const std::string& unk_token,
-                                       bool support_detokenization, int prob) {
+                                       bool support_detokenization, int prob,
+                                       bool split_end_punctuation) {
   unk_token_ = std::string(unk_token);
   support_detokenization_ = support_detokenization;
   prob_ = prob;
+  split_end_punctuation_ = split_end_punctuation;
 
   vocab_.emplace(vocab);
   if (vocab_->Size() != vocab.size()) {
@@ -118,6 +122,7 @@ absl::StatusOr<std::string> PhraseBuilder::ExportToFlatBuffer() const {
   wtcb.add_whitespace_config(whitespace_config);
   wtcb.add_vocab_trie(trie_fbs);
   wtcb.add_prob(prob_);
+  wtcb.add_split_end_punctuation(split_end_punctuation_);
   FinishPhraseTokenizerConfigBuffer(builder, wtcb.Finish());
   return std::string(reinterpret_cast<const char*>(builder.GetBufferPointer()),
                      builder.GetSize());
@@ -126,10 +131,10 @@ absl::StatusOr<std::string> PhraseBuilder::ExportToFlatBuffer() const {
 
 absl::StatusOr<std::string> BuildPhraseModelAndExportToFlatBuffer(
     const std::vector<std::string>& vocab, const std::string& unk_token,
-    bool support_detokenization, int prob) {
+    bool support_detokenization, int prob, bool split_end_punctuation) {
   PhraseBuilder builder;
-  SH_RETURN_IF_ERROR(
-      builder.BuildModel(vocab, unk_token, support_detokenization, prob));
+  SH_RETURN_IF_ERROR(builder.BuildModel(
+      vocab, unk_token, support_detokenization, prob, split_end_punctuation));
   SH_ASSIGN_OR_RETURN(std::string flatbuffer, builder.ExportToFlatBuffer());
   return flatbuffer;
 }

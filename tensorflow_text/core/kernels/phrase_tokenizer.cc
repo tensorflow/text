@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/match.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
@@ -41,6 +42,8 @@ namespace text {
       absl::string_view(ws_config->c_str(), ws_config->size());
   tokenizer.whitespace_tokenizer_ = absl::make_unique<WhitespaceTokenizer>(
       WhitespaceTokenizerConfig(tokenizer.whitespace_config_str_));
+  tokenizer.split_end_punctuation_ =
+      tokenizer.phrase_config_->split_end_punctuation();
   return std::move(tokenizer);
 }
 
@@ -52,17 +55,36 @@ void PhraseTokenizer::Tokenize(const absl::string_view input,
 
   whitespace_tokenizer_->Tokenize(input, &tokens);
 
-  auto concat = [](std::string a, std::string b) {
-    if (a.empty()) {
-      return b;
+  // Loop through tokens, considering 1-level punctuations.
+  std::string all_str;
+  int n = tokens.size();
+  for (int i = 0; i < n; i++) {
+    if (tokens[i].empty()) {
+      continue;
     }
-    if (b.empty()) {
-      return a;
+    if (split_end_punctuation_) {
+      bool contained_special_token = false;
+      for (const auto& special_token : special_tokens_) {
+        if (absl::EndsWith(tokens[i], special_token)) {
+          // Eg: split "can't" into "can 't"
+          all_str +=
+              tokens[i].substr(0, tokens[i].size() - special_token.size());
+          all_str += " ";
+          all_str += special_token;
+          contained_special_token = true;
+          break;
+        }
+      }
+      if (!contained_special_token) {
+        all_str += tokens[i];
+      }
+    } else {
+      all_str += tokens[i];
     }
-    return std::move(a) + ' ' + std::move(b);
-  };
-  std::string all_str =
-      std::accumulate(tokens.begin(), tokens.end(), std::string(), concat);
+    if (i < n - 1) {
+      all_str += " ";
+    }
+  }
 
   FindPhraseTokens(all_str, result_tokens, result_token_ids);
 }
@@ -163,7 +185,19 @@ absl::StatusOr<std::string> PhraseTokenizer::Detokenize(
     const absl::Span<const int> input) const {
   SH_ASSIGN_OR_RETURN(std::vector<std::string> output_tokens,
                       DetokenizeToTokens(input));
-  return absl::StrJoin(output_tokens, " ");
+  if (split_end_punctuation_) {
+    std::string result;
+    for (const auto& token : output_tokens) {
+      if (special_tokens_.contains(token)) {
+        result += token;
+      } else {
+        result += ((result.empty() ? "" : " ") + token);
+      }
+    }
+    return result;
+  } else {
+    return absl::StrJoin(output_tokens, " ");
+  }
 }
 
 }  // namespace text
