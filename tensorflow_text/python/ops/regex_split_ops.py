@@ -123,6 +123,8 @@ def regex_split_with_offsets(input,
       gen_regex_split_ops.regex_split_with_offsets(input_reshaped,
                                                    delim_regex_pattern,
                                                    keep_delim_regex_pattern))
+  if input_reshaped.shape[0] is not None:
+    row_splits.set_shape([input_reshaped.shape[0] + 1])
   # Pack back into ragged tensors
   tokens_rt = ragged_tensor.RaggedTensor.from_row_splits(
       tokens, row_splits=row_splits)
@@ -136,7 +138,6 @@ def regex_split_with_offsets(input,
   # dimensions
   static_rank = input.get_shape().ndims
   if static_rank is not None and static_rank > 1:
-    i = array_ops.get_positive_axis(-1, input.get_shape().ndims)
     for i in range(
         array_ops.get_positive_axis(-1,
                                     input.get_shape().ndims), 0, -1):
