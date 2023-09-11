@@ -19,8 +19,6 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
-from keras.testing_infra import test_combinations
-from keras.testing_infra import test_utils as keras_test_utils
 import numpy as np
 import tensorflow as tf
 
@@ -52,9 +50,24 @@ def get_input_dataset(in_data, out_data=None):
       (in_data, out_data)).batch(batch_size)
 
 
-@test_combinations.run_with_all_model_types
-@test_combinations.run_all_keras_modes
-class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
+def get_model_from_layers(
+    layers,
+    input_shape,
+    input_sparse=False,
+    input_ragged=False,
+    input_dtype=None):
+  layers = [
+      tf.keras.Input(
+          shape=input_shape,
+          dtype=input_dtype,
+          sparse=input_sparse,
+          ragged=input_ragged,
+      )
+  ] + layers
+  return tf.keras.models.Sequential(layers)
+
+
+class RaggedTensorsToDenseLayerTest(tf.test.TestCase, parameterized.TestCase):
 
   def SKIP_test_ragged_input_default_padding(self):
     input_data = get_input_dataset(
@@ -62,7 +75,7 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
     expected_output = np.array([[1, 2, 3, 4, 5], [2, 3, 0, 0, 0]])
 
     layers = [ToDense(), Final()]
-    model = keras_test_utils.get_model_from_layers(
+    model = get_model_from_layers(
         layers,
         input_shape=(None,),
         input_ragged=True,
@@ -70,8 +83,7 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
     model.compile(
         optimizer="sgd",
         loss="mse",
-        metrics=["accuracy"],
-        run_eagerly=keras_test_utils.should_run_eagerly())
+        metrics=["accuracy"])
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
@@ -84,7 +96,7 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
                                  [3., -1., -1., -1., -1.]]])
 
     layers = [ToDense(pad_value=-1), Final()]
-    model = keras_test_utils.get_model_from_layers(
+    model = get_model_from_layers(
         layers,
         input_shape=(None, None),
         input_ragged=True,
@@ -92,8 +104,7 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
     model.compile(
         optimizer="sgd",
         loss="mse",
-        metrics=["accuracy"],
-        run_eagerly=keras_test_utils.should_run_eagerly())
+        metrics=["accuracy"])
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
@@ -113,7 +124,7 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
     expected_output = np.array([[1, 2, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0, 0]])
 
     layers = [ToDense(shape=[2, 7]), Final()]
-    model = keras_test_utils.get_model_from_layers(
+    model = get_model_from_layers(
         layers,
         input_shape=(None,),
         input_ragged=True,
@@ -121,8 +132,7 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
     model.compile(
         optimizer="sgd",
         loss="mse",
-        metrics=["accuracy"],
-        run_eagerly=keras_test_utils.should_run_eagerly())
+        metrics=["accuracy"])
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
@@ -132,7 +142,7 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
           tf.compat.v1.keras.layers.LSTM, tf.keras.layers.GRU,
           tf.keras.layers.LSTM
       ]))
-  def SKIP_test_ragged_input_RNN_layer(self, layer):
+  def SKIP_test_ragged_input_RNN_layer(self, layer):  # pylint: disable=invalid-name
     input_data = get_input_dataset(
         tf.ragged.constant([[1, 2, 3, 4, 5], [5, 6]]))
 
@@ -143,7 +153,7 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
         tf.keras.layers.Dense(3, activation="softmax"),
         tf.keras.layers.Dense(1, activation="sigmoid")
     ]
-    model = keras_test_utils.get_model_from_layers(
+    model = get_model_from_layers(
         layers,
         input_shape=(None,),
         input_ragged=True,
@@ -151,16 +161,13 @@ class RaggedTensorsToDenseLayerTest(test_combinations.TestCase):
     model.compile(
         optimizer="rmsprop",
         loss="binary_crossentropy",
-        metrics=["accuracy"],
-        run_eagerly=keras_test_utils.should_run_eagerly())
+        metrics=["accuracy"])
 
     output = model.predict(input_data)
     self.assertAllEqual(np.zeros((2, 1)).shape, output.shape)
 
 
-@test_combinations.run_with_all_model_types
-@test_combinations.run_all_keras_modes
-class SparseTensorsToDenseLayerTest(test_combinations.TestCase):
+class SparseTensorsToDenseLayerTest(tf.test.TestCase):
 
   def SKIP_test_sparse_input_default_padding(self):
     input_data = get_input_dataset(
@@ -171,7 +178,7 @@ class SparseTensorsToDenseLayerTest(test_combinations.TestCase):
                                 [0., 0., 0., 0.]])
 
     layers = [ToDense(), Final()]
-    model = keras_test_utils.get_model_from_layers(
+    model = get_model_from_layers(
         layers,
         input_shape=(None,),
         input_sparse=True,
@@ -179,8 +186,7 @@ class SparseTensorsToDenseLayerTest(test_combinations.TestCase):
     model.compile(
         optimizer="sgd",
         loss="mse",
-        metrics=["accuracy"],
-        run_eagerly=keras_test_utils.should_run_eagerly())
+        metrics=["accuracy"])
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
@@ -193,7 +199,7 @@ class SparseTensorsToDenseLayerTest(test_combinations.TestCase):
                                 [-1., -1., -1., -1.]])
 
     layers = [ToDense(pad_value=-1, trainable=False), Final()]
-    model = keras_test_utils.get_model_from_layers(
+    model = get_model_from_layers(
         layers,
         input_shape=(None,),
         input_sparse=True,
@@ -201,8 +207,7 @@ class SparseTensorsToDenseLayerTest(test_combinations.TestCase):
     model.compile(
         optimizer="sgd",
         loss="mse",
-        metrics=["accuracy"],
-        run_eagerly=keras_test_utils.should_run_eagerly())
+        metrics=["accuracy"])
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 
@@ -227,7 +232,7 @@ class SparseTensorsToDenseLayerTest(test_combinations.TestCase):
                                 [0., 0., 0., 0.]])
 
     layers = [ToDense(shape=[3, 4]), Final()]
-    model = keras_test_utils.get_model_from_layers(
+    model = get_model_from_layers(
         layers,
         input_shape=(None,),
         input_sparse=True,
@@ -235,8 +240,7 @@ class SparseTensorsToDenseLayerTest(test_combinations.TestCase):
     model.compile(
         optimizer="sgd",
         loss="mse",
-        metrics=["accuracy"],
-        run_eagerly=keras_test_utils.should_run_eagerly())
+        metrics=["accuracy"])
     output = model.predict(input_data)
     self.assertAllEqual(output, expected_output)
 

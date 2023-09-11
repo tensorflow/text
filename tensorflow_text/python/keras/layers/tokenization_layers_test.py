@@ -20,107 +20,108 @@ from __future__ import division
 from __future__ import print_function
 
 from absl.testing import parameterized
-from keras.testing_infra import test_combinations
-from keras.testing_infra import test_utils as keras_test_utils
 import numpy as np
 import tensorflow as tf
 
 from tensorflow_text.python.keras.layers import tokenization_layers
 
 
-@test_combinations.run_all_keras_modes
-class TokenizationLayersTest(test_combinations.TestCase, tf.test.TestCase):
+class TokenizationLayersTest(tf.test.TestCase, parameterized.TestCase):
 
-  @parameterized.named_parameters(
-      {
-          'cls': tokenization_layers.UnicodeScriptTokenizer,
-          'input_shape': (1,),
-          'input_data': [b'I love Flume!'],
-          'expected': [[b'I', b'love', b'Flume', b'!']],
-          'kwargs': {
-              'squeeze_token_dim': False,
-          },
-          'testcase_name': 'unicode_layer',
-      },
-      {
-          'cls': tokenization_layers.WhitespaceTokenizer,
-          'input_shape': (1,),
-          'input_data': [b'I love Flume!'],
-          'expected': [[b'I', b'love', b'Flume!']],
-          # TODO(raw-pointer): layer test will fail if squeeze_token_dim option
-          # is disabled. Not sure if it is layer_test limitaitons or the layer
-          # itself. Fix it when layer_test is updated.
-          'kwargs': {
-              'squeeze_token_dim': False,
-          },
-          'testcase_name': 'whitespace_layer',
-      },
-      {
-          'cls':
-              tokenization_layers.WordpieceTokenizer,
-          'input_shape': (
-              1,
-              None,
-          ),
-          'kwargs': {
-              'vocabulary': [
-                  b'don',
-                  b"##'",
-                  b'##t',
-                  b'tread',
-                  b'##ness',
-                  b'hel',
-                  b'##lo',
-                  b'there',
-                  b'my',
-                  b'na',
-                  b'##me',
-                  b'is',
-                  b'ter',
-                  b'##ry',
-                  b'what',
-                  b'##cha',
-                  b'##ma',
-                  b'##call',
-                  b'##it?',
-                  b'you',
-                  b'said',
-              ],
-              'merge_wordpiece_dim': False
-          },
-          'input_data':
-              np.array([[b"don't", b'treadness', b'whatchamacallit?']]),
-          'expected': [[[b'don', b"##'", b'##t'], [b'tread', b'##ness'],
-                        [b'what', b'##cha', b'##ma', b'##call', b'##it?']]],
-          'testcase_name':
-              'wordpiece_layer',
-      })
-  def test_tokenizer_layer_sequential(self,
-                                      cls,
-                                      input_shape,
-                                      input_data=None,
-                                      expected=None,
-                                      kwargs=None):
-    # TODO(raw-pointer): was there meant to be a wordpiece test that tests the layers
-    # on an empty zero-value tensor? I think Keras doesn't support that in TF2.
-    # Or was it meant to test on an empty string?
+  # The test below uses `keras_test_utils.layer_test` which is a private API,
+  # so it has been disabled.
+  # Please move the implementation of `layer_test` to this codebase to reenable
+  # the test.
+  # @parameterized.named_parameters(
+  #     {
+  #         'cls': tokenization_layers.UnicodeScriptTokenizer,
+  #         'input_shape': (1,),
+  #         'input_data': [b'I love Flume!'],
+  #         'expected': [[b'I', b'love', b'Flume', b'!']],
+  #         'kwargs': {
+  #             'squeeze_token_dim': False,
+  #         },
+  #         'testcase_name': 'unicode_layer',
+  #     },
+  #     {
+  #         'cls': tokenization_layers.WhitespaceTokenizer,
+  #         'input_shape': (1,),
+  #         'input_data': [b'I love Flume!'],
+  #         'expected': [[b'I', b'love', b'Flume!']],
+  #         # TODO(raw-pointer): layer test will fail if squeeze_token_dim option
+  #         # is disabled. Not sure if it is layer_test limitaitons or the layer
+  #         # itself. Fix it when layer_test is updated.
+  #         'kwargs': {
+  #             'squeeze_token_dim': False,
+  #         },
+  #         'testcase_name': 'whitespace_layer',
+  #     },
+  #     {
+  #         'cls':
+  #             tokenization_layers.WordpieceTokenizer,
+  #         'input_shape': (
+  #             1,
+  #             None,
+  #         ),
+  #         'kwargs': {
+  #             'vocabulary': [
+  #                 b'don',
+  #                 b"##'",
+  #                 b'##t',
+  #                 b'tread',
+  #                 b'##ness',
+  #                 b'hel',
+  #                 b'##lo',
+  #                 b'there',
+  #                 b'my',
+  #                 b'na',
+  #                 b'##me',
+  #                 b'is',
+  #                 b'ter',
+  #                 b'##ry',
+  #                 b'what',
+  #                 b'##cha',
+  #                 b'##ma',
+  #                 b'##call',
+  #                 b'##it?',
+  #                 b'you',
+  #                 b'said',
+  #             ],
+  #             'merge_wordpiece_dim': False
+  #         },
+  #         'input_data':
+  #             np.array([[b"don't", b'treadness', b'whatchamacallit?']]),
+  #         'expected': [[[b'don', b"##'", b'##t'], [b'tread', b'##ness'],
+  #                       [b'what', b'##cha', b'##ma', b'##call', b'##it?']]],
+  #         'testcase_name':
+  #             'wordpiece_layer',
+  #     })
+  # def test_tokenizer_layer_sequential(self,
+  #                                     cls,
+  #                                     input_shape,
+  #                                     input_data=None,
+  #                                     expected=None,
+  #                                     kwargs=None):
+  #   # TODO(raw-pointer): was there meant to be a wordpiece test that tests the
+  #   # layers on an empty zero-value tensor? I think Keras doesn't support that
+  #   #  in TF2. Or was it meant to test on an empty string?
 
-    if not tf.executing_eagerly():
-      # In TF1 list-of-lists-of-scalars need to be wrapped in an extra list
-      # for single-io models, because it tries to disambiguate which
-      # input to send an input to (which causes issues w/ single io models)
-      input_data = [input_data]
+  #   if not tf.executing_eagerly():
+  #     # In TF1 list-of-lists-of-scalars need to be wrapped in an extra list
+  #     # for single-io models, because it tries to disambiguate which
+  #     # input to send an input to (which causes issues w/ single io models)
+  #     input_data = [input_data]
 
-    output_data = keras_test_utils.layer_test(
-        cls,
-        kwargs=kwargs,
-        validate_training=False,
-        input_shape=input_shape,
-        input_dtype='string',
-        input_data=input_data,
-        test_harness=self,
-    )
-    self.assertAllEqual(output_data, expected)
+  #   output_data = keras_test_utils.layer_test(
+  #       cls,
+  #       kwargs=kwargs,
+  #       validate_training=False,
+  #       input_shape=input_shape,
+  #       input_dtype='string',
+  #       input_data=input_data,
+  #       test_harness=self,
+  #   )
+  #   self.assertAllEqual(output_data, expected)
 
   @parameterized.named_parameters(
       {
