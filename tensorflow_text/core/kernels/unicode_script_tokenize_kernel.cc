@@ -159,7 +159,12 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
                  context->allocate_output(#name, TensorShape({name##_size}), \
                                           &name##_tensor));                  \
   auto name##_data = name##_tensor->flat<dtype>().data();                    \
-  memcpy(name##_data, name.data(), name##_size * sizeof(dtype));
+  /* For empty outputs, the data pointer might be null. */                   \
+  if (name##_size > 0) {                                                     \
+    memcpy(name##_data, name.data(), name##_size * sizeof(dtype));           \
+  }                                                                          \
+  do {                                                                       \
+  } while (false)
 
     DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_values, int32);
     DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_values_inner_splits,
