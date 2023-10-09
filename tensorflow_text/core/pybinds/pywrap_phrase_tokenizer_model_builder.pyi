@@ -13,6 +13,4 @@
 # limitations under the License.
 # ==============================================================================
 
-from typing import List
-
-def build_phrase_model(arg0: List[str], arg1: str, arg2: bool, arg3: int, arg4: bool) -> bytes: ...
+def build_phrase_model(arg0: list[str], arg1: str, arg2: bool, arg3: int, arg4: bool) -> bytes: ...
