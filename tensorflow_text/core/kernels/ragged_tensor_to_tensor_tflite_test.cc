@@ -60,7 +60,8 @@ class RaggedTensorToTensorOpModel : public SingleOpModel {
                                   partition_tensors_shapes,
                               std::vector<std::string> partition_types,
                               TensorType value_type = TensorType_FLOAT32,
-                              TensorType index_type = TensorType_INT32) {
+                              TensorType index_type = TensorType_INT32,
+                              bool allocate_and_delegate = true) {
     // A structure to collect shapes for the input.
     std::vector<std::vector<int>> shapes;
     input_shape_ = AddInput(index_type);
@@ -89,7 +90,11 @@ class RaggedTensorToTensorOpModel : public SingleOpModel {
     fbb.Finish();
     SetCustomOp("RaggedTensorToTensor", fbb.GetBuffer(),
                 ops::custom::text::Register_RAGGED_TENSOR_TO_TENSOR);
-    BuildInterpreter(shapes);
+    BuildInterpreter(shapes, /*num_threads=*/-1,
+                     /*allow_fp32_relax_to_fp16=*/false,
+                     /*apply_delegate=*/true,
+                     /*allocate_and_delegate=*/allocate_and_delegate,
+                     /*use_simple_allocator=*/false);
   }
 
   std::vector<int> GetOutputShape() { return GetTensorShape(output_); }
@@ -119,6 +124,7 @@ class RaggedTensorToTensorOpModel : public SingleOpModel {
     }
     SingleOpModel::Invoke();
   }
+  TfLiteStatus TryAllocateTensors() { return interpreter_->AllocateTensors(); }
 
  private:
   int input_shape_;
@@ -295,5 +301,16 @@ TEST(RaggedTensorToTensorTest, RaggedTensorToTensorContractExpandedDense) {
                    1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5,  //
                    .4,  1.4, .5,  1.5, .6,  1.6, .7,  1.7, 1.5, 1.5}));
 }
+
+TEST(RaggedTensorToTensorTest, StringType) {
+  RaggedTensorToTensorOpModel model(
+      2,           // output_shape_dims
+      {9},         // values_shape
+      {{1}, {9}},  // partition_tensors_shapes
+      std::vector<std::string>({"FIRST_DIM_SIZE", "VALUE_ROWIDS"}),
+      TensorType_STRING, TensorType_INT32, /*allocate_and_delegate=*/false);
+  EXPECT_EQ(model.TryAllocateTensors(), kTfLiteError);
+}
+
 }  // namespace
 }  // namespace tflite

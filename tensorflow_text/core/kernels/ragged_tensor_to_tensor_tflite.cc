@@ -558,26 +558,34 @@ void SetOutputT(TfLiteContext* context, int ragged_rank,
   }
 }
 
-void SetOutput(TfLiteContext* context, int ragged_rank,
-               const std::vector<int>& output_index,
-               const TfLiteTensor& values_tensor,
-               const TfLiteTensor& default_value_tensor,
-               TfLiteTensor* output_tensor) {
+bool IsSupportedTensorType(TfLiteType type) {
+  // Should reflect SetOutput capabilities.
+  return type == kTfLiteInt32 || type == kTfLiteInt64 || type == kTfLiteFloat32;
+}
+
+TfLiteStatus SetOutput(TfLiteContext* context, int ragged_rank,
+                       const std::vector<int>& output_index,
+                       const TfLiteTensor& values_tensor,
+                       const TfLiteTensor& default_value_tensor,
+                       TfLiteTensor* output_tensor) {
   switch (output_tensor->type) {
     case kTfLiteInt32:
       SetOutputT<int32_t>(context, ragged_rank, output_index, values_tensor,
                           default_value_tensor, output_tensor);
-      break;
+      return kTfLiteOk;
     case kTfLiteInt64:
       SetOutputT<int64_t>(context, ragged_rank, output_index, values_tensor,
                           default_value_tensor, output_tensor);
-      break;
+      return kTfLiteOk;
     case kTfLiteFloat32:
       SetOutputT<float>(context, ragged_rank, output_index, values_tensor,
                         default_value_tensor, output_tensor);
-      break;
+      return kTfLiteOk;
     default:
+      // Should not happen, checked in Prepare.
+      // Left as a defensive programming artifact for future updates.
       context->ReportError(context, "Not supported values type");
+      return kTfLiteError;
   }
 }
 
@@ -624,17 +632,21 @@ TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
     context->ReportError(context, "Attributes are not initialized");
     return kTfLiteError;
   }
-  // The output tensor need to be set to dynamic because it can have different
-  // size.
   TfLiteTensor& output_tensor =
       context->tensors[node->outputs->data[kOutputTensor]];
+  if (!IsSupportedTensorType(output_tensor.type)) {
+    context->ReportError(context, "Unsupported ragged tensor type");
+    return kTfLiteError;
+  }
+  // The output tensor needs to be set to dynamic because it can have different
+  // size.
   SetTensorToDynamic(&output_tensor);
 
   // Check that input shape tensor is int32 or int64
   TfLiteTensor& input_shape = context->tensors[node->inputs->data[kShapeInput]];
   if (input_shape.type != kTfLiteInt32 && input_shape.type != kTfLiteInt64) {
     context->ReportError(context,
-                         "Input form tensor could be only int32 or int64");
+                         "Input shape tensor could be only int32 or int64");
     return kTfLiteError;
   }
   return kTfLiteOk;
@@ -704,8 +716,9 @@ TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
       new_output_index.clear();
     }
 
-    SetOutput(context, attributes->ragged_rank, output_index, input_values,
-              default_value, &output_tensor);
+    TF_LITE_ENSURE_OK(context,
+                      SetOutput(context, attributes->ragged_rank, output_index,
+                                input_values, default_value, &output_tensor));
   }
   return kTfLiteOk;
 }
