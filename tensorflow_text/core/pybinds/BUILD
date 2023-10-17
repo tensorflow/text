@@ -88,6 +88,10 @@ pybind_extension(
         "BuildFastWordpieceModel",
     ],
     copts = ["-fexceptions"],
+    data = [
+        "pywrap_fast_wordpiece_tokenizer_model_builder.pyi",
+    ],
+    enable_stub_generation = True,
     features = ["-use_header_modules"],
     module_name = "pywrap_fast_wordpiece_tokenizer_model_builder",
     srcs_version = "PY3ONLY",
