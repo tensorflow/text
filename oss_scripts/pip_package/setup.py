@@ -32,7 +32,7 @@ from setuptools.command.install import install
 from setuptools.dist import Distribution
 
 project_name = 'tensorflow-text'
-project_version = '2.13.0'
+project_version = '2.15.0-rc0'
 
 
 class BinaryDistribution(Distribution):
@@ -74,11 +74,11 @@ setup(
     distclass=BinaryDistribution,
     install_requires=[
         (
-            'tensorflow>=2.13.0, <2.14; platform_machine != "arm64" or'
+            'tensorflow>=2.15.0rc0, <2.16; platform_machine != "arm64" or'
             ' platform_system != "Darwin"'
         ),
         (
-            'tensorflow-macos>=2.13.0, <2.14; platform_machine == "arm64" and'
+            'tensorflow-macos>=2.15.0rc0, <2.16; platform_machine == "arm64" and'
             ' platform_system == "Darwin"'
         ),
         'tensorflow_hub>=0.13.0',
