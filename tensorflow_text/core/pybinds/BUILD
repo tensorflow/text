@@ -77,6 +77,7 @@ py_test(
     python_version = "PY3",
     deps = [
         ":pywrap_fast_bert_normalizer_model_builder",
+        # Placeholder: proto dep
         # tensorflow package dep,
     ],
 )
@@ -110,6 +111,7 @@ py_test(
     python_version = "PY3",
     deps = [
         ":pywrap_fast_wordpiece_tokenizer_model_builder",
+        # Placeholder: proto dep
         # tensorflow package dep,
     ],
 )
@@ -147,6 +149,7 @@ py_test(
     python_version = "PY3",
     deps = [
         ":pywrap_phrase_tokenizer_model_builder",
+        # Placeholder: proto dep
         # tensorflow package dep,
     ],
 )
@@ -199,6 +202,7 @@ py_test(
     python_version = "PY3",
     deps = [
         ":pywrap_whitespace_tokenizer_config_builder",
+        # Placeholder: proto dep
         # tensorflow package dep,
     ],
 )

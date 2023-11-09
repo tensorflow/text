@@ -169,6 +169,7 @@ py_test(
     deps = [
         ":bert_tokenizer",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
         # python/framework:test_lib tensorflow dep,
@@ -207,6 +208,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/platform:client_testlib tensorflow dep,
     ],
@@ -235,6 +237,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/platform:client_testlib tensorflow dep,
     ],
@@ -276,6 +279,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":create_feature_bitmask_op",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
         # python/framework:errors tensorflow dep,
@@ -314,6 +318,7 @@ py_test(
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
@@ -353,6 +358,7 @@ py_test(
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
@@ -399,6 +405,7 @@ py_test(
         "@absl_py//absl/flags",
         "@absl_py//absl/logging",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
     ],
 )
@@ -437,6 +444,7 @@ py_test(
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
@@ -482,6 +490,7 @@ py_test(
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/compat tensorflow dep,
         # python/data/kernel_tests:test_base tensorflow dep,
@@ -515,6 +524,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":greedy_constrained_sequence_op",
+        # Placeholder: proto dep
         #  numpy dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -544,6 +554,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":ops",
+        # Placeholder: proto dep
         # python/framework:ops tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops:lookup_ops tensorflow dep,
@@ -573,6 +584,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":ops",
+        # Placeholder: proto dep
         # python/framework:ops tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops:lookup_ops tensorflow dep,
@@ -617,6 +629,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":item_selector_ops",
+        # Placeholder: proto dep
         # python/framework:dtypes tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops:array_ops tensorflow dep,
@@ -656,6 +669,7 @@ py_test(
         ":item_selector_ops",
         ":masking_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops:array_ops tensorflow dep,
@@ -688,6 +702,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":mst_ops",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
         # python/framework:test_lib tensorflow dep,
@@ -723,6 +738,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:constant_op tensorflow dep,
         # python/framework:errors tensorflow dep,
@@ -754,6 +770,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":normalize_ops",
+        # Placeholder: proto dep
         # python/framework:errors tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -783,6 +800,7 @@ py_test(
     deps = [
         ":pad_along_dimension_op",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/eager:context tensorflow dep,
         # python/framework:constant_op tensorflow dep,
         # python/framework:errors tensorflow dep,
@@ -821,6 +839,7 @@ py_test(
     deps = [
         ":pad_model_inputs_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -856,6 +875,7 @@ py_test(
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
         # python/framework:errors tensorflow dep,
@@ -873,6 +893,7 @@ py_test(
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
@@ -887,6 +908,7 @@ py_test(
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/eager:context tensorflow dep,
         # python/framework:dtypes tensorflow dep,
         # python/framework:errors tensorflow dep,
@@ -905,6 +927,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:constant_op tensorflow dep,
         # python/framework:test_lib tensorflow dep,
@@ -932,6 +955,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":regex_split_ops",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:test_lib tensorflow dep,
     ],
@@ -956,6 +980,7 @@ py_test(
     deps = [
         ":segment_combiner_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -993,6 +1018,7 @@ py_test(
     deps = [
         ":sentence_breaking_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
         # python/framework:errors tensorflow dep,
@@ -1037,6 +1063,7 @@ py_test(
     deps = [
         ":sentencepiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -1066,6 +1093,7 @@ py_test(
     deps = [
         ":sliding_window_op",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:errors tensorflow dep,
         # python/framework:test_lib tensorflow dep,
@@ -1098,6 +1126,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":split_merge_from_logits_tokenizer",
+        # Placeholder: proto dep
         # python/framework:errors tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -1128,6 +1157,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":split_merge_tokenizer",
+        # Placeholder: proto dep
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
@@ -1173,6 +1203,7 @@ py_test(
         ":state_based_sentence_breaker_op",
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
@@ -1203,6 +1234,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":string_ops",
+        # Placeholder: proto dep
         # python/framework:test_lib tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
     ],
@@ -1231,6 +1263,7 @@ py_test(
     deps = [
         ":text_similarity_metric_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/framework:dtypes tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops:array_ops tensorflow dep,
@@ -1307,6 +1340,7 @@ py_test(
         ":tensorflow_text",
         ":trimmer_ops",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:constant_op tensorflow dep,
         # python/framework:test_lib tensorflow dep,
@@ -1346,6 +1380,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":unicode_char_tokenizer",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -1382,6 +1417,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":unicode_script_tokenizer",
+        # Placeholder: proto dep
         # python/framework:constant_op tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -1414,6 +1450,7 @@ py_test(
     deps = [
         ":tensorflow_text",
         ":utf8_binarize_op",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:test_lib tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
@@ -1443,6 +1480,7 @@ py_test(
     deps = [
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
+        # Placeholder: proto dep
         #  numpy dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
@@ -1467,6 +1505,7 @@ py_test(
     deps = [
         ":viterbi_decode",
         "@absl_py//absl/testing:absltest",
+        # Placeholder: proto dep
         #  numpy dep,
     ],
 )
@@ -1522,6 +1561,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:constant_op tensorflow dep,
         # python/framework:test_lib tensorflow dep,
@@ -1567,6 +1607,7 @@ py_test(
     deps = [
         ":wordpiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # python/compat tensorflow dep,
         # python/framework:dtypes tensorflow dep,
         # python/framework:test_lib tensorflow dep,
@@ -1596,6 +1637,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":wordshape_ops",
+        # Placeholder: proto dep
         # python/framework:test_lib tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
     ],
@@ -1647,6 +1689,7 @@ py_test(
         ":ops",
         "@absl_py//absl:app",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/framework:dtypes tensorflow dep,
         # python/user_ops:ops tensorflow dep,
@@ -1664,6 +1707,7 @@ py_test(
         ":ops",
         "@absl_py//absl:app",
         "@absl_py//absl/testing:parameterized",
+        # Placeholder: proto dep
         # tensorflow package dep,
         # python/user_ops:ops tensorflow dep,
     ],

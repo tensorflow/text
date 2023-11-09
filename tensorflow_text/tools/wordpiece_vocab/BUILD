@@ -35,6 +35,7 @@ py_test(
     srcs_version = "PY3",
     deps = [
         ":wordpiece_tokenizer_learner_lib",
+        # Placeholder: proto dep
         #  numpy dep,
         # python/data/ops:dataset_ops tensorflow dep,
         "//tensorflow_text:ops",
@@ -60,6 +61,7 @@ py_test(
         ":bert_vocab_from_dataset",
         ":wordpiece_tokenizer_learner_lib",
         "@absl_py//absl/testing:absltest",
+        # Placeholder: proto dep
         #  numpy dep,
         # tensorflow package dep,
     ],
