@@ -74,18 +74,18 @@ setup(
     distclass=BinaryDistribution,
     install_requires=[
         (
-            'tensorflow>=2.13.0, <2.14; platform_machine != "arm64" or'
+            'tensorflow>=2.15.0, <2.16; platform_machine != "arm64" or'
             ' platform_system != "Darwin"'
         ),
         (
-            'tensorflow-macos>=2.13.0, <2.14; platform_machine == "arm64" and'
+            'tensorflow-macos>=2.15.0, <2.16; platform_machine == "arm64" and'
             ' platform_system == "Darwin"'
         ),
-        'tensorflow_hub>=0.13.0',
+        'tensorflow_hub>=0.15.0',
     ],
     extras_require={
         'tensorflow_cpu': [
-            'tensorflow-cpu>=2.13.0, <2.14',
+            'tensorflow-cpu>=2.15.0, <2.16',
         ],
         'tests': [
             'absl-py',
@@ -102,6 +102,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
