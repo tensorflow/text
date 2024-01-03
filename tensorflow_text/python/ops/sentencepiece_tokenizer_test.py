@@ -485,11 +485,15 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
     self.assertAllEqual(restored_model.tokenize(inputs), expected_result)
     file_io.delete_recursively(temp_dir)
 
-  def testBasicPipeline(self):
+  @parameterized.parameters([True, False])
+  def testBasicPipeline(self, use_unique_shared_resource_name):
     if not context.executing_eagerly():
       self.skipTest('testBasicPipeline only supported in eager mode.')
 
-    sp = SentencepieceTokenizer(self.model)
+    sp = SentencepieceTokenizer(
+        self.model,
+        use_unique_shared_resource_name=use_unique_shared_resource_name,
+    )
 
     strings = ['hello', 'world']
     dataset = dataset_ops.Dataset.from_tensor_slices(strings)
