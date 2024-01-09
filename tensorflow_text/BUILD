@@ -527,7 +527,7 @@ py_library(
     srcs = ["python/ops/hub_module_splitter.py"],
     deps = [
         ":splitter",
-        "@org_tensorflow_hub//tensorflow_hub",
+        "//third_party/py/tensorflow_hub",
         # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
     ],
