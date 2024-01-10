@@ -19,8 +19,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import uuid
-
 from tensorflow.python.eager import monitoring
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
@@ -45,24 +43,18 @@ _tf_text_sentencepiece_tokenizer_op_create_counter = monitoring.Counter(
 class _SentencepieceModelResource(resource.TrackableResource):
   """Utility to track the model resource tensor (for SavedModel support)."""
 
-  def __init__(self, model, name, use_unique_shared_resource_name):
+  def __init__(self, model, name):
     super(_SentencepieceModelResource, self).__init__()
     self._model = model
     self._name = name
-    self._use_unique_shared_resource_name = use_unique_shared_resource_name
     _ = self.resource_handle  # Accessing this property creates the resource.
 
   def _create_resource(self):
     model, name = self._model, self._name
     with ops.name_scope(name, "SentenceTokenizerInitializer", [model]):
-      # TODO(b/318839908): Switch to ref-counted resources and remove this.
-      shared_name = ""
-      if self._use_unique_shared_resource_name:
-        shared_name = str(uuid.uuid4())
-      return gen_sentencepiece_tokenizer.sentencepiece_op(
-          model=model,
-          shared_name=shared_name,
-      )
+      # TODO(b/318839908): Switch to using a ref-counted resource instead of
+      # this kernel-owned resource.
+      return gen_sentencepiece_tokenizer.sentencepiece_op(model=model)
 
 
 class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
@@ -89,8 +81,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
                add_bos=False,
                add_eos=False,
                return_nbest=False,
-               name=None,
-               use_unique_shared_resource_name=False):
+               name=None):
     """Creates & initializes a Sentencepiece processor.
 
     Args:
@@ -115,10 +106,6 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
         of a single one. The returned tensor has shape
         `[batch * nbest, (tokens)]`.
       name: The name argument that is passed to the op function.
-      use_unique_shared_resource_name: Whether to set a unique `shared_name` for
-        the Sentencepiece resource. This is useful for allowing the resource to
-        outlive the kernel that created it in eager mode. The resource's
-        lifetime will instead be tied to the eager context.
 
     Returns:
       pieces: A SentencepieceTokenizer.
@@ -132,8 +119,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
     self.add_bos = add_bos
     self.add_eos = add_eos
     self.return_nbest = return_nbest
-    self._model_resource = _SentencepieceModelResource(
-        model, name, use_unique_shared_resource_name)
+    self._model_resource = _SentencepieceModelResource(model, name)
 
   def tokenize(self, input, name=None):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings.
