@@ -24,18 +24,18 @@ index 9f71a414bf7..57f70752323 100644
  load("//third_party/nccl:nccl_configure.bzl", "remote_nccl_configure")
  load("//third_party/gpus:rocm_configure.bzl", "remote_rocm_configure")
 diff --git a/tensorflow/workspace2.bzl b/tensorflow/workspace2.bzl
-index 953e1d1bea6..664608592a5 100644
+index 056df85ffdb..7422baf8c59 100644
 --- a/tensorflow/workspace2.bzl
 +++ b/tensorflow/workspace2.bzl
-@@ -8,7 +8,7 @@ load("//third_party/gpus:rocm_configure.bzl", "rocm_configure")
- load("//third_party/tensorrt:tensorrt_configure.bzl", "tensorrt_configure")
+@@ -37,7 +37,7 @@ load("//third_party/nasm:workspace.bzl", nasm = "repo")
  load("//third_party/nccl:nccl_configure.bzl", "nccl_configure")
- load("//third_party/git:git_configure.bzl", "git_configure")
+ load("//third_party/opencl_headers:workspace.bzl", opencl_headers = "repo")
+ load("//third_party/pasta:workspace.bzl", pasta = "repo")
 -load("//third_party/py:python_configure.bzl", "python_configure")
 +load("//third_party/py/non_hermetic:python_configure.bzl", "python_configure")
- load("//third_party/systemlibs:syslibs_configure.bzl", "syslibs_configure")
- load("//tensorflow/tools/toolchains:cpus/aarch64/aarch64_compiler_configure.bzl", "aarch64_compiler_configure")
- load("//tensorflow/tools/toolchains:cpus/arm/arm_compiler_configure.bzl", "arm_compiler_configure")
+ load("//third_party/py/ml_dtypes:workspace.bzl", ml_dtypes = "repo")
+ load("//third_party/pybind11_abseil:workspace.bzl", pybind11_abseil = "repo")
+ load("//third_party/pybind11_bazel:workspace.bzl", pybind11_bazel = "repo")
 diff --git a/third_party/py/non_hermetic/python_configure.bzl b/third_party/py/non_hermetic/python_configure.bzl
 index 300cbfb6c71..09d98505dd9 100644
 --- a/third_party/py/non_hermetic/python_configure.bzl
