@@ -81,7 +81,6 @@ setup(
             'tensorflow-macos>=2.15.0, <2.16; platform_machine == "arm64" and'
             ' platform_system == "Darwin"'
         ),
-        'tensorflow_hub>=0.15.0',
     ],
     extras_require={
         'tensorflow_cpu': [
