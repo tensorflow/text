@@ -1,9 +1,8 @@
 # Placeholder: load py_library
 # Placeholder: load py_test
-load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
-
-# [internal] load build_test.bzl
 load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
+load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
+# [internal] load build_test.bzl
 
 # Visibility rules
 package(
@@ -527,9 +526,10 @@ py_library(
     srcs = ["python/ops/hub_module_splitter.py"],
     deps = [
         ":splitter",
-        "@org_tensorflow_hub//tensorflow_hub",
+        # python/eager:monitoring tensorflow dep,
         # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
+        # python/saved_model:load tensorflow dep,
     ],
 )
 

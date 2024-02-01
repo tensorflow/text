@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2023 TF.Text Authors.
+# Copyright 2024 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -81,7 +81,6 @@ setup(
             'tensorflow-macos>=2.15.0, <2.16; platform_machine == "arm64" and'
             ' platform_system == "Darwin"'
         ),
-        'tensorflow_hub>=0.15.0',
     ],
     extras_require={
         'tensorflow_cpu': [

@@ -41,10 +41,11 @@ as the support for ragged tensors and high-rank tensors.
 The Hub module should be supported by `hub.load()
 <https://www.tensorflow.org/hub/api_docs/python/hub/load>`_ If a v1 module, it
 should have a graph variant with an empty set of tags; we consider that graph
-variant to be the module and ignore everything else.  The module should have a
-signature named `default` that takes a <a href="../text.md"><code>text</code></a> input (a rank-1 tensor of
-strings to split into pieces) and returns a dictionary of tensors, let's say
-`output_dict`, such that:
+variant to be the module and ignore everything else. The module should have a
+signature named `default` that takes a
+<a href="../text.md"><code>text</code></a> input (a rank-1 tensor of strings to
+split into pieces) and returns a dictionary of tensors, let's say `output_dict`,
+such that:
 
 * `output_dict['num_pieces']` is a rank-1 tensor of integers, where
 num_pieces[i] is the number of pieces that text[i] was split into.
@@ -68,7 +69,7 @@ class is not using them.
 
 ```
 >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
->>> segmenter = HubModuleSplitter(HUB_MODULE)
+>>> segmenter = HubModuleSplitter(hub.resolve(HUB_MODULE))
 >>> segmenter.split(["新华社北京"])
 <tf.RaggedTensor [[b'\xe6\x96\xb0\xe5\x8d\x8e\xe7\xa4\xbe',
                    b'\xe5\x8c\x97\xe4\xba\xac']]>
@@ -78,7 +79,7 @@ You can also use this tokenizer to return the split strings and their offsets:
 
 ```
 >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
->>> segmenter = HubModuleSplitter(HUB_MODULE)
+>>> segmenter = HubModuleSplitter(hub.resolve(HUB_MODULE))
 >>> pieces, starts, ends = segmenter.split_with_offsets(["新华社北京"])
 >>> print("pieces: %s starts: %s ends: %s" % (pieces, starts, ends))
 pieces: <tf.RaggedTensor [[b'\xe6\x96\xb0\xe5\x8d\x8e\xe7\xa4\xbe',

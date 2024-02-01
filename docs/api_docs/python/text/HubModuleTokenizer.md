@@ -46,7 +46,7 @@ tokenize() instead of the more general and less informatively named split().
 
 ```
 >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
->>> segmenter = HubModuleTokenizer(HUB_MODULE)
+>>> segmenter = HubModuleTokenizer(hub.resolve(HUB_MODULE))
 >>> segmenter.tokenize(["新华社北京"])
 <tf.RaggedTensor [[b'\xe6\x96\xb0\xe5\x8d\x8e\xe7\xa4\xbe',
                    b'\xe5\x8c\x97\xe4\xba\xac']]>
@@ -56,7 +56,7 @@ You can also use this tokenizer to return the split strings and their offsets:
 
 ```
 >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
->>> segmenter = HubModuleTokenizer(HUB_MODULE)
+>>> segmenter = HubModuleTokenizer(hub.resolve(HUB_MODULE))
 >>> pieces, starts, ends = segmenter.tokenize_with_offsets(["新华社北京"])
 >>> print("pieces: %s starts: %s ends: %s" % (pieces, starts, ends))
 pieces: <tf.RaggedTensor [[b'\xe6\x96\xb0\xe5\x8d\x8e\xe7\xa4\xbe',

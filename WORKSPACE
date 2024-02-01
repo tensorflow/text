@@ -54,28 +54,14 @@ http_archive(
     ],
 )
 
-# NOTE: according to
-# https://docs.bazel.build/versions/master/external.html#transitive-dependencies
-# we should list the transitive dependencies of @org_tensorflow_hub in this
-# WORKSPACE file.  Still, all of them are already listed by tf_workspace() which
-# is called later in this file.
-http_archive(
-    name = "org_tensorflow_hub",
-    strip_prefix = "hub-c83a2362abdad2baae67508aa17efb42bf7c7dd6",
-    sha256 = "b7f5e53605a3b2d6da827b817385d476017300e8e14cccc91b269c86d5f5a99f",
-    urls = [
-        "https://github.com/tensorflow/hub/archive/c83a2362abdad2baae67508aa17efb42bf7c7dd6.zip"
-    ],
-)
-
 http_archive(
     name = "org_tensorflow",
     patch_args = ["-p1"],
     patches = ["//third_party/tensorflow:tf.patch"],
-    strip_prefix = "tensorflow-f21d60a1667c4a52399986809e8e9aedac0e24c2",
-    sha256 = "35fd0d69969f482edcc1e46d2d07c43a16ee02cfef1396b11a71b719674a1c8a",
+    strip_prefix = "tensorflow-d17c801006947b240ec4b8caf232c39b6a24718a",
+    sha256 = "1a32ed7b5ea090db114008ea382c1e1beda622ffd4c62582f2f906cb10ee6290",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/f21d60a1667c4a52399986809e8e9aedac0e24c2.zip"
+        "https://github.com/tensorflow/tensorflow/archive/d17c801006947b240ec4b8caf232c39b6a24718a.zip"
     ],
 )
 

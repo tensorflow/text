@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2023 TF.Text Authors.
+# Copyright 2024 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 
 """Splitter that uses a Hub module."""
 
-import tensorflow_hub as hub
 from tensorflow.python.eager import monitoring
 from tensorflow.python.ops import array_ops_stack
 from tensorflow.python.ops.ragged import ragged_tensor
+from tensorflow.python.saved_model import load
 from tensorflow_text.python.ops.splitter import SplitterWithOffsets
 
 _tf_text_hub_module_splitter_create_counter = monitoring.Counter(
@@ -61,18 +61,20 @@ class HubModuleSplitter(SplitterWithOffsets):
 
   Example:
 
-  >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
-  >>> segmenter = HubModuleSplitter(HUB_MODULE)
-  >>> segmenter.split(["新华社北京"])
+  import tensorflow_hub as hub
+  HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
+  segmenter = HubModuleSplitter(hub.resolve(HUB_MODULE))
+  segmenter.split(["新华社北京"])
   <tf.RaggedTensor [[b'\xe6\x96\xb0\xe5\x8d\x8e\xe7\xa4\xbe',
                      b'\xe5\x8c\x97\xe4\xba\xac']]>
 
   You can also use this tokenizer to return the split strings and their offsets:
 
-  >>> HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
-  >>> segmenter = HubModuleSplitter(HUB_MODULE)
-  >>> pieces, starts, ends = segmenter.split_with_offsets(["新华社北京"])
-  >>> print("pieces: %s starts: %s ends: %s" % (pieces, starts, ends))
+  import tensorflow_hub as hub
+  HUB_MODULE = "https://tfhub.dev/google/zh_segmentation/1"
+  segmenter = HubModuleSplitter(hub.resolve(HUB_MODULE))
+  pieces, starts, ends = segmenter.split_with_offsets(["新华社北京"])
+  print("pieces: %s starts: %s ends: %s" % (pieces, starts, ends))
   pieces: <tf.RaggedTensor [[b'\xe6\x96\xb0\xe5\x8d\x8e\xe7\xa4\xbe',
                              b'\xe5\x8c\x97\xe4\xba\xac']]>
   starts: <tf.RaggedTensor [[0, 9]]>
@@ -88,15 +90,15 @@ class HubModuleSplitter(SplitterWithOffsets):
     """Initializes a new HubModuleSplitter instance.
 
     Args:
-      hub_module_handle: A string handle accepted by hub.load().  Supported
-        cases include (1) a local path to a directory containing a module, and
-        (2) a handle to a module uploaded to e.g., https://tfhub.dev.  The
-        module should implement the signature described in the docstring for
-        this class.
+      hub_module_handle: A string handle accepted by tf.saved_model.load().
+        Supported cases include a local path to a directory containing a module.
+        If a model is stored on https://tfhub.dev, call hub.resolve() to
+        download the model locally. The module should implement the signature
+        described in the docstring for this class.
     """
     super(HubModuleSplitter, self).__init__()
     empty_tags = set()
-    self._hub_module = hub.load(hub_module_handle, tags=empty_tags)
+    self._hub_module = load.load(hub_module_handle, tags=empty_tags)
     self._hub_module_signature = self._hub_module.signatures['default']
     _tf_text_hub_module_splitter_create_counter.get_cell().increase_by(1)
 

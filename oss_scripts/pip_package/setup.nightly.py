@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2023 TF.Text Authors.
+# Copyright 2024 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -73,7 +73,6 @@ setup(
     cmdclass={'install': InstallPlatlib},
     distclass=BinaryDistribution,
     install_requires=[
-        'tensorflow_hub>=0.15.0',
     ],
     extras_require={
         'tests': [
