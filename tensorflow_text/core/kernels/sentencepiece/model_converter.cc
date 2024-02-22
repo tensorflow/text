@@ -81,6 +81,7 @@ absl::StatusOr<std::string> ConvertSentencepieceModelToFlatBuffer(
     switch (piece.type()) {
       case ::sentencepiece::ModelProto::SentencePiece::NORMAL:
       case ::sentencepiece::ModelProto::SentencePiece::USER_DEFINED:
+      case ::sentencepiece::ModelProto::SentencePiece::BYTE:
         pieces.push_back(piece.piece());
         ids.push_back(index);
         if (piece.score() < min_score) {
