@@ -58,10 +58,10 @@ http_archive(
     name = "org_tensorflow",
     patch_args = ["-p1"],
     patches = ["//third_party/tensorflow:tf.patch"],
-    strip_prefix = "tensorflow-d17c801006947b240ec4b8caf232c39b6a24718a",
-    sha256 = "1a32ed7b5ea090db114008ea382c1e1beda622ffd4c62582f2f906cb10ee6290",
+    strip_prefix = "tensorflow-2.16.0-rc0",
+    sha256 = "64b885703422a93b0ed3112d93b6070dab9a94bcdd88755b2dc83bb9a8d102b5",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/d17c801006947b240ec4b8caf232c39b6a24718a.zip"
+        "https://github.com/tensorflow/tensorflow/archive/v2.16.0-rc0.zip"
     ],
 )
 
