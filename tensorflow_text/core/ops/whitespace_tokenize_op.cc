@@ -48,7 +48,7 @@ REGISTER_OP("WhitespaceTokenizeWithOffsets")
       c->set_output(2, c->Vector(InferenceContext::kUnknownDim));
       c->set_output(3, c->Vector(InferenceContext::kUnknownDim));
       c->set_output(4, c->Vector(InferenceContext::kUnknownDim));
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 }  // namespace text

@@ -58,7 +58,7 @@ REGISTER_OP("NormalizeUTF8WithOffsetsMap")
     .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
       c->set_output(0, c->input(0));
       c->set_output(1, c->input(0));
-      return OkStatus();
+      return absl::OkStatus();
     })
     .Doc(R"doc(
 Normalizes each UTF8 string in the input tensor using 'normalization_form'
@@ -81,7 +81,7 @@ REGISTER_OP("FindSourceOffsets")
       TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));
       TF_RETURN_IF_ERROR(c->WithRank(c->input(2), 1, &unused));
       c->set_output(0, c->input(1));
-      return OkStatus();
+      return absl::OkStatus();
     })
     .Doc(R"doc(
 Map the post-normalized string offsets in the input tensor to the pre-normalized
