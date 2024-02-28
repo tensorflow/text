@@ -49,7 +49,7 @@ REGISTER_OP("TFText>FastSentencepieceTokenize")
       tensorflow::shape_inference::DimensionHandle num_splits;
       TF_RETURN_IF_ERROR(c->Add(c->NumElements(c->input(1)), 1, &num_splits));
       c->set_output(1, c->Vector(num_splits));
-      return tensorflow::OkStatus();
+      return absl::OkStatus();
     });
 
 REGISTER_OP("TFText>FastSentencepieceDetokenize")
@@ -66,7 +66,7 @@ REGISTER_OP("TFText>FastSentencepieceDetokenize")
       shape_inference::DimensionHandle dim;
       TF_RETURN_IF_ERROR(c->Subtract(c->NumElements(c->input(2)), 1, &dim));
       c->set_output(0, c->Vector(dim));
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 }  // namespace text

@@ -109,7 +109,7 @@ Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c) {
   }
   c->set_output(2, c->UnknownShapeOfRank(1));  // start_values
   c->set_output(3, c->UnknownShapeOfRank(1));  // limit_values
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 

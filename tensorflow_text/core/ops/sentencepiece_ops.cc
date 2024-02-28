@@ -32,7 +32,7 @@ REGISTER_OP("SentencepieceOp")
     .SetIsStateful()
     .SetShapeFn([](InferenceContext* c) {
       c->set_output(0, c->Scalar());
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 REGISTER_OP("SentencepieceTokenizeOp")
@@ -67,7 +67,7 @@ REGISTER_OP("SentencepieceTokenizeOp")
         TF_RETURN_IF_ERROR(c->Add(c->NumElements(c->input(1)), 1, &num_splits));
         c->set_output(1, c->Vector(num_splits));
       }
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 REGISTER_OP("SentencepieceTokenizeWithOffsetsOp")
@@ -107,7 +107,7 @@ REGISTER_OP("SentencepieceTokenizeWithOffsetsOp")
       }
       c->set_output(2, c->Vector(InferenceContext::kUnknownDim));
       c->set_output(3, c->Vector(InferenceContext::kUnknownDim));
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 REGISTER_OP("SentencepieceDetokenizeOp")
@@ -132,7 +132,7 @@ REGISTER_OP("SentencepieceDetokenizeOp")
       shape_inference::DimensionHandle dim;
       TF_RETURN_IF_ERROR(c->Subtract(c->NumElements(c->input(2)), 1, &dim));
       c->set_output(0, c->Vector(dim));
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 REGISTER_OP("SentencepieceVocabSizeOp")
@@ -142,7 +142,7 @@ REGISTER_OP("SentencepieceVocabSizeOp")
       shape_inference::ShapeHandle unused;
       TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 0, &unused));
       c->set_output(0, c->Scalar());
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 REGISTER_OP("SentencepieceIdToStringOp")
@@ -154,7 +154,7 @@ REGISTER_OP("SentencepieceIdToStringOp")
       TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 0, &unused));
       TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));
       c->set_output(0, c->input(1));
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 REGISTER_OP("SentencepieceStringToIdOp")
@@ -166,7 +166,7 @@ REGISTER_OP("SentencepieceStringToIdOp")
       TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 0, &unused));
       TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));
       c->set_output(0, c->input(1));
-      return OkStatus();
+      return absl::OkStatus();
     });
 
 }  // namespace text
