@@ -34,7 +34,6 @@ limitations under the License.
 #include "file/base/path.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "absl/flags/flag.h"
 #include "absl/status/status.h"
 #include "absl/strings/str_format.h"
 #include "src/sentencepiece.proto.h"
@@ -162,8 +161,7 @@ TEST(OptimizedEncoder, NormalizeStringWhitespacesRemove) {
 TEST(OptimizedEncoder, ConfigConverter) {
   std::string config;
   auto status = internal::TFReadFileToString(
-      file::JoinPath(absl::GetFlag(FLAGS_test_srcdir), kConfigFilePath),
-      &config);
+      file::JoinPath(::testing::SrcDir(), kConfigFilePath), &config);
   ASSERT_TRUE(status.ok());
 
   ::sentencepiece::SentencePieceProcessor processor;
