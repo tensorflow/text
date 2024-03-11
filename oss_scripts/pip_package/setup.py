@@ -74,11 +74,11 @@ setup(
     distclass=BinaryDistribution,
     install_requires=[
         (
-            'tensorflow>=2.16.0, <2.17; platform_machine != "arm64" or'
+            'tensorflow>=2.16.1, <2.17; platform_machine != "arm64" or'
             ' platform_system != "Darwin"'
         ),
         (
-            'tensorflow-macos>=2.16.0, <2.17; platform_machine == "arm64" and'
+            'tensorflow-macos>=2.16.1, <2.17; platform_machine == "arm64" and'
             ' platform_system == "Darwin"'
         ),
     ],
