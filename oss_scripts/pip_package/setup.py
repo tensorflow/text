@@ -74,17 +74,12 @@ setup(
     distclass=BinaryDistribution,
     install_requires=[
         (
-            'tensorflow>=2.15.0, <2.16; platform_machine != "arm64" or'
-            ' platform_system != "Darwin"'
-        ),
-        (
-            'tensorflow-macos>=2.15.0, <2.16; platform_machine == "arm64" and'
-            ' platform_system == "Darwin"'
+            'tensorflow>=2.16.1, <2.17',
         ),
     ],
     extras_require={
         'tensorflow_cpu': [
-            'tensorflow-cpu>=2.15.0, <2.16',
+            'tensorflow-cpu>=2.16.1, <2.17',
         ],
         'tests': [
             'absl-py',
