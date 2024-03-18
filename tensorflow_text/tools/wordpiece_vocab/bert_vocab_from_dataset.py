@@ -24,7 +24,8 @@ def bert_vocab_from_dataset(dataset,
                             vocab_size: int,
                             reserved_tokens: List[str],
                             bert_tokenizer_params=None,
-                            learn_params=None) -> List[str]:
+                            learn_params=None,
+                            preserve_accents=False) -> List[str]:
   """Generate a Bert wordpiece vocabulary from a `tf.data.Dataset` of texts.
 
   ```
@@ -86,7 +87,10 @@ def bert_vocab_from_dataset(dataset,
   except AttributeError:
     raise TypeError("The dataset should contain single-tensor elements.")
 
-  tokenizer = bert_tokenizer.BasicTokenizer(**bert_tokenizer_params)
+  if preserve_accents:
+    tokenizer = bert_tokenizer.AccentPreservingBasicTokenizer(**bert_tokenizer_params)
+  else:
+    tokenizer = bert_tokenizer.BasicTokenizer(**bert_tokenizer_params)
   words_dataset = dataset.map(tokenizer.tokenize)
   word_counts = learner.count_words(words_dataset)
 
