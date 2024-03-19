@@ -96,5 +96,5 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
 }  // namespace text
 }  // namespace tensorflow
 REGISTER_KERNEL_BUILDER(
-    Name("TFText>FastSentencepieceTokenize").Device(tensorflow::DEVICE_CPU),
+    Name("TFSentencepieceTokenizeOp").Device(tensorflow::DEVICE_CPU),
     tensorflow::text::TFSentencepieceOp);
