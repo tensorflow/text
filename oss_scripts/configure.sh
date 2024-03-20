@@ -46,7 +46,7 @@ else
   if is_macos; then
     #  Only Apple Silicon will be installed with tensorflow-macos.
     if [[ x"$(arch)" == x"arm64" ]]; then
-      pip install tensorflow-macos==2.13.0
+      pip install tensorflow-macos==2.15.0
     else
       pip install tensorflow==2.13.0
     fi
