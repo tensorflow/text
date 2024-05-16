@@ -1,3 +1,5 @@
+# buildifier: disable=out-of-order-load
+
 # Kernels for tf.text ops.
 # [internal] load cc_proto_library.bzl
 load("@flatbuffers//:build_defs.bzl", "flatbuffer_cc_library")
