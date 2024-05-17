@@ -29,5 +29,11 @@ if [[ $osname != "darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "A
 fi
 
 # Build the pip package.
-bazel build --enable_runfiles oss_scripts/pip_package:build_pip_package
+bazel build ${BUILD_ARGS[@]} --enable_runfiles oss_scripts/pip_package:build_pip_package
 ./bazel-bin/oss_scripts/pip_package/build_pip_package .
+
+if [ -n "${AUDITWHEEL_PLATFORM}" ]; then
+  echo $(date) : "=== Auditing wheel"
+  PYTHON_MINOR_VERSION=$(python3 -c "import sys; print(sys.version_info.minor)")
+  auditwheel repair --plat ${AUDITWHEEL_PLATFORM} --exclude "$SHARED_LIBRARY_NAME" -w . *cp3$PYTHON_MINOR_VERSION*.whl
+fi
