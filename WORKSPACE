@@ -3,6 +3,24 @@ workspace(name = "org_tensorflow_text")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "bazel_skylib",
+    sha256 = "74d544d96f4a5bb630d465ca8bbcfe231e3594e5aae57e1edbf17a6eb3ca2506",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "rules_python",
+    sha256 = "29a801171f7ca190c543406f9894abf2d483c206e14d6acbd695623662320097",
+    strip_prefix = "rules_python-0.18.1",
+    url = "https://github.com/bazelbuild/rules_python/releases/download/0.18.1/rules_python-0.18.1.tar.gz",
+)
+
+# load("@rules_python//python:repositories.bzl", "python_register_toolchains")
+
+http_archive(
     name = "icu",
     strip_prefix = "icu-release-64-2",
     sha256 = "dfc62618aa4bd3ca14a3df548cd65fe393155edd213e49c39f3a30ccd618fc27",
@@ -56,12 +74,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    patch_args = ["-p1"],
-    patches = ["//third_party/tensorflow:tf.patch"],
-    strip_prefix = "tensorflow-d17c801006947b240ec4b8caf232c39b6a24718a",
-    sha256 = "1a32ed7b5ea090db114008ea382c1e1beda622ffd4c62582f2f906cb10ee6290",
+    strip_prefix = "tensorflow-f6b72954734f8304bfb83228bd8406a3ba3394f4",
+    sha256 = "15df197aace44fe2c67e6e22f930cf76f45d9e6ac1291e7c9ce8dd0dcc26e9a5",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/d17c801006947b240ec4b8caf232c39b6a24718a.zip"
+        "https://github.com/tensorflow/tensorflow/archive/f6b72954734f8304bfb83228bd8406a3ba3394f4.zip"
     ],
 )
 
@@ -84,6 +100,38 @@ http_archive(
     strip_prefix = "pybind11-2.10.0",
     build_file = "//third_party/pybind11:BUILD.bzl",
 )
+
+# We must initialize hermetic Python first.
+load("@org_tensorflow//third_party/py:python_init_rules.bzl", "python_init_rules")
+python_init_rules()
+
+load("@org_tensorflow//third_party/py:python_init_repositories.bzl", "python_init_repositories")
+python_init_repositories(
+    requirements = {
+        "3.11": "//oss_scripts/requirements:python_requirements.txt",
+    },
+)
+
+load("@org_tensorflow//third_party/py:python_init_toolchains.bzl", "python_init_toolchains")
+python_init_toolchains()
+
+load("@org_tensorflow//third_party/py:python_init_pip.bzl", "python_init_pip")
+python_init_pip()
+
+# load("@pypi//:requirements.bzl", "install_deps")
+# install_deps()
+
+# Read the Python package dependencies of the build environment. To modify
+# them, see //third_party:python_requirements.in.
+load("@rules_python//python:pip.bzl", "pip_parse")
+pip_parse(
+    name = "tensorflow_text_pip_deps",
+    requirements_lock = "//oss_scripts/requirements:python_requirements.txt",
+)
+
+# Create repositories for each Python package dependency.
+load("@tensorflow_text_pip_deps//:requirements.bzl", "install_deps")
+install_deps()
 
 # Initialize TensorFlow dependencies.
 load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")

@@ -37,23 +37,9 @@ function is_macos() {
 # Remove .bazelrc if it already exist
 [ -e .bazelrc ] && rm .bazelrc
 
-if [[ $(pip show tensorflow) == *tensorflow* ]] ||
-   [[ $(pip show tensorflow-macos) == *tensorflow-macos* ]] ||
-   [[ $(pip show tf-nightly) == *tf-nightly* ]]; then
-  echo 'Using installed tensorflow.'
-else
-  echo 'Installing tensorflow.'
-  if is_macos; then
-    #  Only Apple Silicon will be installed with tensorflow-macos.
-    if [[ x"$(arch)" == x"arm64" ]]; then
-      pip install tensorflow-macos==2.13.0
-    else
-      pip install tensorflow==2.13.0
-    fi
-  else
-    pip install tensorflow==2.13.0
-  fi
-fi
+echo 'Installing tensorflow.'
+# For main branch, install nightly.  CHANGE THIS ON RELEASE BRANCHES.
+pip install tf-nightly
 
 if is_windows; then
   # ICU must be built as a static library, so the external data must be built in
