@@ -15,6 +15,10 @@ die() {
   exit 1
 }
 
+if [ -n "$BUILD_WORKSPACE_DIRECTORY" ]; then
+  cd "$BUILD_WORKSPACE_DIRECTORY"
+fi
+
 osname="$(uname -s | tr 'A-Z' 'a-z')"
 echo $osname
 
@@ -55,6 +59,7 @@ main() {
   mkdir -p ${output_dir}
   output_dir=$(abspath "${output_dir}")
   echo "=== Destination directory: ${output_dir}"
+  echo "=== Current directory: ${PWD}"
 
   if [[ ! -d "bazel-bin/tensorflow_text" ]]; then
     die "Could not find bazel-bin. Did you run from the root of the build tree?"

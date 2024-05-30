@@ -56,12 +56,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    patch_args = ["-p1"],
-    patches = ["//third_party/tensorflow:tf.patch"],
-    strip_prefix = "tensorflow-d17c801006947b240ec4b8caf232c39b6a24718a",
-    sha256 = "1a32ed7b5ea090db114008ea382c1e1beda622ffd4c62582f2f906cb10ee6290",
+    strip_prefix = "tensorflow-9d2929b69fdddc1e8d5de70a706556b15d8ed37b",
+    sha256 = "a4f965340ea11d49c8897df59a24822c2b367e4cebb5908b7ca8c3b607097af9",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/d17c801006947b240ec4b8caf232c39b6a24718a.zip"
+        "https://github.com/tensorflow/tensorflow/archive/9d2929b69fdddc1e8d5de70a706556b15d8ed37b.zip"
     ],
 )
 
@@ -85,6 +83,34 @@ http_archive(
     build_file = "//third_party/pybind11:BUILD.bzl",
 )
 
+# Initialize hermetic Python
+load("@org_tensorflow//third_party/py:python_init_rules.bzl", "python_init_rules")
+
+python_init_rules()
+
+load("@org_tensorflow//third_party/py:python_init_repositories.bzl", "python_init_repositories")
+
+python_init_repositories(
+    requirements = {
+        "3.9": "//oss_scripts/pip_package:requirements_lock_3_9.txt",
+        "3.10": "//oss_scripts/pip_package:requirements_lock_3_10.txt",
+        "3.11": "//oss_scripts/pip_package:requirements_lock_3_11.txt",
+    },
+    default_python_version = "system",
+)
+
+load("@org_tensorflow//third_party/py:python_init_toolchains.bzl", "python_init_toolchains")
+
+python_init_toolchains()
+
+load("//third_party/tensorflow:tf_configure.bzl", "tf_configure")
+
+tf_configure()
+
+load("@pypi//:requirements.bzl", "install_deps")
+
+install_deps()
+
 # Initialize TensorFlow dependencies.
 load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
 tf_workspace3()
@@ -94,10 +120,6 @@ load("@org_tensorflow//tensorflow:workspace1.bzl", "tf_workspace1")
 tf_workspace1()
 load("@org_tensorflow//tensorflow:workspace0.bzl", "tf_workspace0")
 tf_workspace0()
-
-load("//third_party/tensorflow:tf_configure.bzl", "tf_configure")
-
-tf_configure(name = "local_config_tf")
 
 # Set up Android.
 load("@org_tensorflow//third_party/android:android_configure.bzl", "android_configure")

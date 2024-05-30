@@ -143,8 +143,8 @@ def tf_cc_library(
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
         ],
         "//conditions:default": [
-            "@local_config_tf//:libtensorflow_framework",
-            "@local_config_tf//:tf_header_lib",
+            "@pypi_tf_nightly//:libtensorflow_framework",
+            "@pypi_tf_nightly//:tf_header_lib",
         ] + tf_deps + oss_deps,
     })
     native.cc_library(
@@ -202,8 +202,8 @@ def tflite_cc_library(
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
         ],
         "//conditions:default": [
-            "@local_config_tf//:libtensorflow_framework",
-            "@local_config_tf//:tf_header_lib",
+            "@pypi_tf_nightly//:libtensorflow_framework",
+            "@pypi_tf_nightly//:tf_header_lib",
         ] + oss_deps,
     })
     native.cc_library(
@@ -215,3 +215,12 @@ def tflite_cc_library(
         compatible_with = compatible_with,
         testonly = testonly,
         alwayslink = alwayslink)
+
+def extra_py_deps():
+    return [
+        "@pypi_tf_nightly//:pkg",
+        "@pypi_tf_keras_nightly//:pkg",
+        "@pypi_tensorflow_datasets//:pkg",
+        "@pypi_tensorflow_metadata//:pkg",
+    ]
+

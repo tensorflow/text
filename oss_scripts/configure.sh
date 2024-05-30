@@ -25,11 +25,6 @@ function write_action_env_to_bazelrc() {
 osname="$(uname -s | tr 'A-Z' 'a-z')"
 echo $osname
 
-function is_windows() {
-  # On windows, the shell script is actually running in msys
-  [[ "${osname}" =~ msys_nt*|mingw*|cygwin*|uwin* ]]
-}
-
 function is_macos() {
   [[ "${osname}" == "darwin" ]]
 }
@@ -46,18 +41,13 @@ else
   if is_macos; then
     #  Only Apple Silicon will be installed with tensorflow-macos.
     if [[ x"$(arch)" == x"arm64" ]]; then
-      pip install tensorflow-macos==2.16.1
+      pip install tensorflow-macos==2.13.0
     else
       pip install tensorflow==2.13.0
     fi
   else
     pip install tensorflow==2.13.0
   fi
-fi
-
-if is_windows; then
-  # ICU must be built as a static library, so the external data must be built in
-  sed -i -e 's/":headers",$/":headers", ":windows_static_link_data",/' third_party/icu/BUILD.bzl
 fi
 
 # Copy the current bazelversion of TF.
@@ -78,10 +68,7 @@ elif (which python) | grep -q "python"; then
   installed_python="python"
 fi
 
-TF_CFLAGS=( $($installed_python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_compile_flags()))" | awk '{print $1}') )
-TF_LFLAGS=( $($installed_python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $1}') )
-TF_LFLAGS_2=( $($installed_python -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $2}') )
-TF_ABIFLAG=$($installed_python -c "import tensorflow as tf; print(tf.sysconfig.CXX11_ABI_FLAG)")
+TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
 
 HEADER_DIR=${TF_CFLAGS:2}
 SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
@@ -89,13 +76,6 @@ SHARED_LIBRARY_NAME=$(echo $TF_LFLAGS_2 | rev | cut -d":" -f1 | rev)
 if is_macos; then
   SHARED_LIBRARY_NAME="libtensorflow_framework.2.dylib"
 fi
-if is_windows; then
-  HEADER_DIR=$(echo "$HEADER_DIR" | tr '\\' '/')
-  SHARED_LIBRARY_DIR="${HEADER_DIR:0:-7}python"
-  SHARED_LIBRARY_NAME="_pywrap_tensorflow_internal.lib"
-fi
+
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SHARED_LIBRARY_DIR
-write_action_env_to_bazelrc "TF_HEADER_DIR" ${HEADER_DIR}
-write_action_env_to_bazelrc "TF_SHARED_LIBRARY_DIR" ${SHARED_LIBRARY_DIR}
-write_action_env_to_bazelrc "TF_SHARED_LIBRARY_NAME" ${SHARED_LIBRARY_NAME}
 write_action_env_to_bazelrc "TF_CXX11_ABI_FLAG" ${TF_ABIFLAG}

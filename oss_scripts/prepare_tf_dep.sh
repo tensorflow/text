@@ -13,8 +13,11 @@ if [[ "${osname}" == "darwin" ]]; then
   ext='""'
 fi
 
+HERMETIC_PYTHON_VERSION=$($installed_python  -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
+export HERMETIC_PYTHON_VERSION
+
 # Update setup.nightly.py with current tf version.
-tf_version=$($installed_python -c 'import tensorflow as tf; print(tf.__version__)')
+tf_version=$(bazel run  //oss_scripts/pip_package:tensorflow_build_info -- version)
 echo "Updating setup.nightly.py to version $tf_version"
 sed -i $ext "s/project_version = '.*'/project_version = '${tf_version}'/" oss_scripts/pip_package/setup.nightly.py
 # Update __version__.
@@ -23,7 +26,7 @@ sed -i $ext "s/__version__ = .*\$/__version__ = \"${tf_version}\"/" tensorflow_t
 
 # Get git commit sha of installed tensorflow.
 echo "Querying commit SHA"
-short_commit_sha=$($installed_python -c 'import tensorflow as tf; print(tf.__git_version__)' | tail -1)
+short_commit_sha=$(bazel run  //oss_scripts/pip_package:tensorflow_build_info -- git_version)
 if [[ "$short_commit_sha" == "unknown" ]]; then
   # Some nightly builds report "unknown" for tf.__git_version.
   echo 'TF git version "unknown", assuming nightly.'
@@ -44,3 +47,5 @@ sed -E -i $ext "s/strip_prefix = \"tensorflow-.+\",/strip_prefix = \"tensorflow-
 sed -E -i $ext "s|\"https://github.com/tensorflow/tensorflow/archive/.+\.zip\"|\"https://github.com/tensorflow/tensorflow/archive/${commit_slug}.zip\"|" WORKSPACE
 prev_shasum=$(grep -A 1 -e "strip_prefix.*tensorflow-" WORKSPACE | tail -1 | awk -F '"' '{print $2}')
 sed -i $ext "s/sha256 = \"${prev_shasum}\",//" WORKSPACE
+
+bazel run //oss_scripts/pip_package:requirements.update -- --upgrade
