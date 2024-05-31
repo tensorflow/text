@@ -1,8 +1,28 @@
 # Tools for building the TF.Text pip package.
+load("@python//:defs.bzl", "compile_pip_requirements")
+load("@python_version_repo//:py_version.bzl", "REQUIREMENTS")
 
 package(default_visibility = ["//visibility:private"])
 
 licenses(["notice"])  # Apache 2.0
+
+compile_pip_requirements(
+    name = "requirements",
+    extra_args = [
+        "--allow-unsafe",
+        "--build-isolation",
+        "--rebuild",
+    ],
+    generate_hashes = True,
+    requirements_in = "requirements.in",
+    requirements_txt = REQUIREMENTS,
+)
+
+py_binary(
+    name = "tensorflow_build_info",
+    srcs = ["tensorflow_build_info.py"],
+    deps = ["@pypi_tf_nightly//:pkg"],
+)
 
 sh_binary(
     name = "build_pip_package",

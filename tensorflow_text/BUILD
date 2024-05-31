@@ -1,7 +1,7 @@
 # Placeholder: load py_library
 # Placeholder: load py_test
 load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
-load("//tensorflow_text:tftext.bzl", "py_tf_text_library")
+load("//tensorflow_text:tftext.bzl", "extra_py_deps", "py_tf_text_library")
 # [internal] load build_test.bzl
 
 # Visibility rules
@@ -125,7 +125,7 @@ py_library(
         # python/util:all_util tensorflow dep,
         "//tensorflow_text/core/pybinds:tflite_registrar",
         "//tensorflow_text/tools/wordpiece_vocab",
-    ],
+    ] + extra_py_deps(),
 )
 
 # build_test
@@ -155,7 +155,7 @@ py_library(
         # python/framework:dtypes tensorflow dep,
         # python/ops:array_ops tensorflow dep,
         # python/ops:string_ops tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -264,7 +264,7 @@ py_library(
         # python/ops:array_ops tensorflow dep,
         # python/ops:check_ops tensorflow dep,
         # python/ops:math_ops tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -503,7 +503,7 @@ py_tf_text_library(
         # python/framework:ops tensorflow dep,
         # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -606,7 +606,7 @@ py_library(
         # python/ops/ragged:ragged_tensor tensorflow dep,
         # python/ops/ragged:ragged_tensor_shape tensorflow dep,
         # python/ops/ragged:ragged_where_op tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -678,7 +678,7 @@ py_tf_text_library(
         # python/ops:array_ops tensorflow dep,
         # python/ops:math_ops tensorflow dep,
         # python/ops:standard_ops tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -743,7 +743,7 @@ py_tf_text_library(
         # python/framework:dtypes tensorflow dep,
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -771,7 +771,7 @@ py_library(
         # python/ops:array_ops tensorflow dep,
         # python/ops:math_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -810,7 +810,7 @@ py_library(
         # python/ops/ragged:ragged_array_ops tensorflow dep,
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -845,7 +845,7 @@ py_library(
         # python/ops/ragged:ragged_tensor tensorflow dep,
         # python/ops/ragged:ragged_where_op tensorflow dep,
         # python/ops/ragged:segment_id_ops tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -921,7 +921,7 @@ py_tf_text_library(
     deps = [
         ":splitter",
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -945,7 +945,7 @@ py_library(
         # python/framework:ops tensorflow dep,
         # python/ops:array_ops tensorflow dep,
         # python/ops:math_ops tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -1054,7 +1054,7 @@ py_library(
         # python/framework:ops tensorflow dep,
         # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -1192,7 +1192,7 @@ py_library(
     srcs = ["python/ops/string_ops.py"],
     deps = [
         # python/ops:string_ops tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -1219,7 +1219,7 @@ py_tf_text_library(
         # python/ops:array_ops tensorflow dep,
         # python/ops:lookup_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -1257,7 +1257,7 @@ py_library(
     deps = [
         ":splitter",
         # python/module tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_library(
@@ -1396,9 +1396,7 @@ py_tf_text_library(
     cc_op_kernels = [
         "//tensorflow_text/core/kernels:utf8_binarize_kernel",
     ],
-    visibility = [
-        "//visibility:private",  # Only private by automation, not intent. Owner may accept CLs adding visibility. See go/scheuklappen#explicit-private.
-    ],
+    visibility = ["//visibility:private"],
     deps = [
         # python/framework:ops tensorflow dep,
         # python/ops:array_ops tensorflow dep,
@@ -1431,7 +1429,7 @@ py_tf_text_library(
         # python/framework:ops tensorflow dep,
         # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -1455,7 +1453,7 @@ py_library(
     srcs = ["python/numpy/viterbi_decode.py"],
     deps = [
         #  numpy dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
@@ -1585,7 +1583,7 @@ py_library(
         # python/framework:ops tensorflow dep,
         # python/ops:array_ops_stack tensorflow dep,
         # python/ops:string_ops tensorflow dep,
-    ],
+    ] + extra_py_deps(),
 )
 
 py_test(
