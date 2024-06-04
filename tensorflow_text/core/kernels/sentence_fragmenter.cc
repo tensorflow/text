@@ -57,7 +57,7 @@ Status SpaceAllowedBeforeToken(const UnicodeUtil *util, const Token &token,
 
   *result = (TokenHasProperty(Token::EMOTICON, token) ||
              (is_ellipsis || is_terminal_punc || is_close_paren));
-  return OkStatus();
+  return absl::OkStatus();
 }
 }  // namespace
 
@@ -127,7 +127,7 @@ class SentenceFragmenter::FragmentBoundaryMatch {
 
     if (no_transition) {
       *result = false;
-      return OkStatus();
+      return absl::OkStatus();
     } else {
       limit_index_ = index + 1;
       if (state_ == COLLECTING_TERMINAL_PUNC) {
@@ -135,7 +135,7 @@ class SentenceFragmenter::FragmentBoundaryMatch {
         first_close_punc_index_ = limit_index_;
       }
       *result = true;
-      return OkStatus();
+      return absl::OkStatus();
     }
   }
 
@@ -197,7 +197,7 @@ Status SentenceFragmenter::FindFragments(
     result->push_back(std::move(fragment));
     i_start = match.limit_index();
   }
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 // This method is essentially a control layer on top of a simple state machine
@@ -243,7 +243,7 @@ Status SentenceFragmenter::FindNextFragmentBoundary(
       if (previous_match.GotTerminalPunc()) {
         // Extension failed. Return previous match.
         *result = previous_match;
-        return OkStatus();
+        return absl::OkStatus();
       } else {
         // Start matching again from scratch.
         current_match.Reset();
@@ -255,7 +255,7 @@ Status SentenceFragmenter::FindNextFragmentBoundary(
     }
   }
   *result = current_match;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 // Keep track of whether the latest open parenthesis seen so far appears to be
@@ -290,7 +290,7 @@ Status SentenceFragmenter::UpdateLatestOpenParenForFragment(int i_start,
     }
   }
 
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 Status SentenceFragmenter::FillInFragmentFields(
@@ -330,7 +330,7 @@ Status SentenceFragmenter::FillInFragmentFields(
     }
   }
 
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 // The standard first terminal punctuation index is just
@@ -349,7 +349,7 @@ Status SentenceFragmenter::GetAdjustedFirstTerminalPuncIndex(
   int i1 = match.first_terminal_punc_index();
   if (i1 < 0) {
     *result = i1;
-    return OkStatus();
+    return absl::OkStatus();
   }
   int i2 = match.first_close_punc_index();
 
@@ -361,19 +361,19 @@ Status SentenceFragmenter::GetAdjustedFirstTerminalPuncIndex(
       if (i == i2) {
         // Ellipsis is last terminal punctuation mark. No adjustment.
         *result = i1;
-        return OkStatus();
+        return absl::OkStatus();
       } else {
         // Ellipsis is not the last terminal punctuation mark. Return the index
         // of the terminal punctuation mark after it.
         *result = i;  // current token = i - 1
-        return OkStatus();
+        return absl::OkStatus();
       }
     }
   }
 
   // No ellipsis.
   *result = i1;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 // Example of an an "unattachable" terminal punctuation mark:
@@ -392,7 +392,7 @@ Status SentenceFragmenter::HasUnattachableTerminalPunc(
   int i1 = match.first_terminal_punc_index();
   if (i1 < 0) {
     *result = false;
-    return OkStatus();
+    return absl::OkStatus();
   }
   int i2 = match.first_close_punc_index();
 
@@ -407,12 +407,12 @@ Status SentenceFragmenter::HasUnattachableTerminalPunc(
         !TokenHasProperty(Token::EMOTICON, token)) {
       // Found an unattachable, unambiguous terminal punctuation mark.
       *result = true;
-      return OkStatus();
+      return absl::OkStatus();
     }
   }
 
   *result = false;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 Status SentenceFragmenter::HasCloseParen(const FragmentBoundaryMatch &match,
@@ -422,7 +422,7 @@ Status SentenceFragmenter::HasCloseParen(const FragmentBoundaryMatch &match,
   int i1 = match.first_close_punc_index();
   if (i1 < 0) {
     *result = false;
-    return OkStatus();
+    return absl::OkStatus();
   }
   int i2 = match.limit_index();
 
@@ -432,11 +432,11 @@ Status SentenceFragmenter::HasCloseParen(const FragmentBoundaryMatch &match,
     TF_RETURN_IF_ERROR(util_->IsCloseParen(token.word(), &is_close_paren));
     if (is_close_paren) {
       *result = true;
-      return OkStatus();
+      return absl::OkStatus();
     }
   }
   *result = false;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 }  // namespace text

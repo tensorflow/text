@@ -337,7 +337,7 @@ tensorflow::Status MstSolver<Index, Score>::Init(bool forest, Index num_nodes) {
   // This doesn't need to be cleared now; it will be cleared before use.
   cycle_.reserve(num_original_nodes_);
 
-  return tensorflow::OkStatus();
+  return absl::OkStatus();
 }
 
 template <class Index, class Score>
@@ -378,7 +378,7 @@ tensorflow::Status MstSolver<Index, Score>::Solve(absl::Span<Index> argmax) {
   MaybePenalizeRootScoresForTree();
   TF_RETURN_IF_ERROR(ContractionPhase());
   TF_RETURN_IF_ERROR(ExpansionPhase(argmax));
-  return tensorflow::OkStatus();
+  return absl::OkStatus();
 }
 
 template <class Index, class Score>
@@ -537,7 +537,7 @@ tensorflow::Status MstSolver<Index, Score>::ContractionPhase() {
     }
   }
 
-  return tensorflow::OkStatus();
+  return absl::OkStatus();
 }
 
 template <class Index, class Score>
@@ -599,7 +599,7 @@ tensorflow::Status MstSolver<Index, Score>::ExpansionPhase(
     return tensorflow::errors::FailedPrecondition("Infeasible digraph");
   }
 
-  return tensorflow::OkStatus();
+  return absl::OkStatus();
 }
 
 }  // namespace text

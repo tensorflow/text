@@ -78,7 +78,7 @@ tensorflow::Status ValidateConstraintTensor(const Tensor &tensor,
         " when num_states is ", num_states, " and use_start_and_end_states is ",
         use_start_end_states));
   }
-  return tensorflow::OkStatus();
+  return absl::OkStatus();
 }
 
 }  // namespace

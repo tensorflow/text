@@ -166,7 +166,7 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
       argmax_sources_bxm(problem, i) = -1;
     }
 
-    return tensorflow::OkStatus();
+    return absl::OkStatus();
   }
 
  private:
