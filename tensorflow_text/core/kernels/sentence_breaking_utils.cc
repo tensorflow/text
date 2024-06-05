@@ -51,7 +51,7 @@ Status UnicodeUtil::GetOneUChar(const absl::string_view& input,
     *has_more_than_one_char = false;
   }
 
-  return ::tensorflow::OkStatus();
+  return absl::OkStatus();
 }
 
 Status UnicodeUtil::IsTerminalPunc(const absl::string_view& input,
@@ -60,7 +60,7 @@ Status UnicodeUtil::IsTerminalPunc(const absl::string_view& input,
   const auto& ellipsis_status = IsEllipsis(input, result);
   // If there was a error decoding, or if we found an ellipsis, then return.
   if (!ellipsis_status.ok()) return ellipsis_status;
-  if (*result) return OkStatus();
+  if (*result) return absl::OkStatus();
 
   bool has_more_than_one_char = false;
   UChar32 char_value;
@@ -68,7 +68,7 @@ Status UnicodeUtil::IsTerminalPunc(const absl::string_view& input,
   if (!status.ok()) return status;
   if (has_more_than_one_char) {
     *result = false;
-    return OkStatus();
+    return absl::OkStatus();
   }
 
   // These are unicode characters that should be considered in this category but
@@ -80,13 +80,13 @@ Status UnicodeUtil::IsTerminalPunc(const absl::string_view& input,
     case 0x037E:  // Greek question mark
     case 0x2026:  // ellipsis
       *result = true;
-      return OkStatus();
+      return absl::OkStatus();
   }
 
   USentenceBreak sb_property = static_cast<USentenceBreak>(
       u_getIntPropertyValue(char_value, UCHAR_SENTENCE_BREAK));
   *result = sb_property == U_SB_ATERM || sb_property == U_SB_STERM;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 Status UnicodeUtil::IsClosePunc(const absl::string_view& input,
@@ -94,7 +94,7 @@ Status UnicodeUtil::IsClosePunc(const absl::string_view& input,
   *result = false;
   if (input == "''") {
     *result = true;
-    return OkStatus();
+    return absl::OkStatus();
   }
 
   bool has_more_than_one_char = false;
@@ -103,7 +103,7 @@ Status UnicodeUtil::IsClosePunc(const absl::string_view& input,
   if (!status.ok()) return status;
   if (has_more_than_one_char) {
     *result = false;
-    return OkStatus();
+    return absl::OkStatus();
   }
 
   // These are unicode characters that should be considered in this category but
@@ -116,7 +116,7 @@ Status UnicodeUtil::IsClosePunc(const absl::string_view& input,
     case 65282:  // fullwidth quotation mark
     case 65287:  // fullwidth apostrophe
       *result = true;
-      return OkStatus();
+      return absl::OkStatus();
   }
 
   ULineBreak lb_property = static_cast<ULineBreak>(
@@ -125,7 +125,7 @@ Status UnicodeUtil::IsClosePunc(const absl::string_view& input,
   *result = lb_property == U_LB_CLOSE_PUNCTUATION ||
             lb_property == U_LB_CLOSE_PARENTHESIS ||
             lb_property == U_LB_QUOTATION;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 Status UnicodeUtil::IsOpenParen(const absl::string_view& input,
@@ -137,7 +137,7 @@ Status UnicodeUtil::IsOpenParen(const absl::string_view& input,
   if (!status.ok()) return status;
   if (has_more_than_one_char) {
     *result = false;
-    return OkStatus();
+    return absl::OkStatus();
   }
 
   // These are unicode characters that should be considered in this category but
@@ -146,13 +146,13 @@ Status UnicodeUtil::IsOpenParen(const absl::string_view& input,
     case '<':
     case 64830:  // Ornate left parenthesis
       *result = true;
-      return OkStatus();
+      return absl::OkStatus();
   }
 
   ULineBreak lb_property = static_cast<ULineBreak>(
       u_getIntPropertyValue(char_value, UCHAR_LINE_BREAK));
   *result = lb_property == U_LB_OPEN_PUNCTUATION;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 Status UnicodeUtil::IsCloseParen(const absl::string_view& input,
@@ -164,7 +164,7 @@ Status UnicodeUtil::IsCloseParen(const absl::string_view& input,
   if (!status.ok()) return status;
   if (has_more_than_one_char) {
     *result = false;
-    return OkStatus();
+    return absl::OkStatus();
   }
 
   // These are unicode characters that should be considered in this category but
@@ -173,14 +173,14 @@ Status UnicodeUtil::IsCloseParen(const absl::string_view& input,
     case '>':
     case 64831:  // Ornate right parenthesis
       *result = true;
-      return OkStatus();
+      return absl::OkStatus();
   }
 
   ULineBreak lb_property = static_cast<ULineBreak>(
       u_getIntPropertyValue(char_value, UCHAR_LINE_BREAK));
   *result = lb_property == U_LB_CLOSE_PUNCTUATION ||
             lb_property == U_LB_CLOSE_PARENTHESIS;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 Status UnicodeUtil::IsPunctuationWord(const absl::string_view& input,
@@ -192,7 +192,7 @@ Status UnicodeUtil::IsPunctuationWord(const absl::string_view& input,
   if (!status.ok()) return status;
   if (has_more_than_one_char) {
     *result = false;
-    return OkStatus();
+    return absl::OkStatus();
   }
 
   // These are unicode characters that should be considered in this category but
@@ -204,13 +204,13 @@ Status UnicodeUtil::IsPunctuationWord(const absl::string_view& input,
     case '~':
     case 5741:
       *result = true;
-      return OkStatus();
+      return absl::OkStatus();
   }
 
   *result = u_ispunct(char_value) ||
             u_hasBinaryProperty(char_value, UCHAR_DASH) ||
             u_hasBinaryProperty(char_value, UCHAR_HYPHEN);
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 Status UnicodeUtil::IsEllipsis(const absl::string_view& input,
@@ -218,7 +218,7 @@ Status UnicodeUtil::IsEllipsis(const absl::string_view& input,
   *result = false;
   if (input == "...") {
     *result = true;
-    return OkStatus();
+    return absl::OkStatus();
   }
 
   bool has_more_than_one_char = false;
@@ -227,11 +227,11 @@ Status UnicodeUtil::IsEllipsis(const absl::string_view& input,
   if (!status.ok()) return status;
   if (has_more_than_one_char) {
     *result = false;
-    return OkStatus();
+    return absl::OkStatus();
   }
 
   *result = char_value == 0x2026;
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 }  // namespace text

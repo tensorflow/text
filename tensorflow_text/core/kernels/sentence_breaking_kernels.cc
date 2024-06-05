@@ -117,7 +117,7 @@ Status GetErrorOptions(OpKernelConstruction* context, ErrorOptions* out) {
                                         &(out->replace_control_chars)));
   }
 
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 inline bool ShouldHandleFormatError(const ErrorOptions& error_options,
