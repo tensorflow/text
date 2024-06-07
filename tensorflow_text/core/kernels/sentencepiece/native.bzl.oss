@@ -80,8 +80,8 @@ def micore_tf_deps():
             # Standard references for Tensorflow when building for Linux. We use
             # an indirection via the alias targets below, to facilitate whitelisting
             # these deps in the mobile license presubmit checks.
-            "@pypi_tf_nightly//:libtensorflow_framework",
-            "@pypi_tf_nightly//:tf_header_lib",
+            "@release_or_nightly//:tensorflow_libtensorflow_framework",
+            "@release_or_nightly//:tensorflow_tf_header_lib",
         ],
 
     )

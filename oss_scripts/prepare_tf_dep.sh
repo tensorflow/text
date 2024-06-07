@@ -16,8 +16,17 @@ fi
 HERMETIC_PYTHON_VERSION=$($installed_python  -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
 export HERMETIC_PYTHON_VERSION
 
+
+echo "TF_VERSION=$TF_VERSION"
+REQUIREMENTS_EXTRA_FLAGS="--upgrade"
+if [[ "$TF_VERSION" == *"rc"* ]]; then
+  REQUIREMENTS_EXTRA_FLAGS="$REQUIREMENTS_EXTRA_FLAGS --pre"
+fi
+
+bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
+
 # Update setup.nightly.py with current tf version.
-tf_version=$(bazel run  //oss_scripts/pip_package:tensorflow_build_info -- version)
+tf_version=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- version)
 echo "Updating setup.nightly.py to version $tf_version"
 sed -i $ext "s/project_version = '.*'/project_version = '${tf_version}'/" oss_scripts/pip_package/setup.nightly.py
 # Update __version__.
@@ -47,5 +56,3 @@ sed -E -i $ext "s/strip_prefix = \"tensorflow-.+\",/strip_prefix = \"tensorflow-
 sed -E -i $ext "s|\"https://github.com/tensorflow/tensorflow/archive/.+\.zip\"|\"https://github.com/tensorflow/tensorflow/archive/${commit_slug}.zip\"|" WORKSPACE
 prev_shasum=$(grep -A 1 -e "strip_prefix.*tensorflow-" WORKSPACE | tail -1 | awk -F '"' '{print $2}')
 sed -i $ext "s/sha256 = \"${prev_shasum}\",//" WORKSPACE
-
-bazel run //oss_scripts/pip_package:requirements.update -- --upgrade

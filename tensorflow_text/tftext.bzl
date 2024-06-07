@@ -48,13 +48,13 @@ def py_tf_text_library(
             }),
             alwayslink = 1,
             deps = cc_op_kernels +
-                ["@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim"] +
-                select({
-                    "@org_tensorflow//tensorflow:mobile": [
-                        "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
-                ],
-                    "//conditions:default": [],
-            }),
+                   ["@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim"] +
+                   select({
+                       "@org_tensorflow//tensorflow:mobile": [
+                           "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+                       ],
+                       "//conditions:default": [],
+                   }),
         )
 
         native.cc_binary(
@@ -129,6 +129,7 @@ def tf_cc_library(
     """
     if "kernel" in name:
         alwayslink = 1
+
     # These are "random" deps likely needed by each library (http://b/142433427)
     oss_deps = []
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:flat_hash_map")
@@ -143,8 +144,8 @@ def tf_cc_library(
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
         ],
         "//conditions:default": [
-            "@pypi_tf_nightly//:libtensorflow_framework",
-            "@pypi_tf_nightly//:tf_header_lib",
+            "@release_or_nightly//:tensorflow_libtensorflow_framework",
+            "@release_or_nightly//:tensorflow_tf_header_lib",
         ] + tf_deps + oss_deps,
     })
     native.cc_library(
@@ -155,8 +156,8 @@ def tf_cc_library(
         copts = copts,
         compatible_with = compatible_with,
         testonly = testonly,
-        alwayslink = alwayslink)
-
+        alwayslink = alwayslink,
+    )
 
 def tflite_cc_library(
         name,
@@ -179,6 +180,7 @@ def tflite_cc_library(
         testonly: If library is only for testing
         alwayslink: If symbols should be exported
     """
+
     # Necessary build deps for tflite ops
     tflite_deps = [
         "@org_tensorflow//tensorflow/core:framework",
@@ -190,6 +192,7 @@ def tflite_cc_library(
         "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
         "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_wrapper",
     ]
+
     # These are "random" deps likely needed by each library (http://b/142433427)
     oss_deps = [
         "@com_google_absl//absl/container:flat_hash_map",
@@ -202,8 +205,8 @@ def tflite_cc_library(
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
         ],
         "//conditions:default": [
-            "@pypi_tf_nightly//:libtensorflow_framework",
-            "@pypi_tf_nightly//:tf_header_lib",
+            "@release_or_nightly//:tensorflow_libtensorflow_framework",
+            "@release_or_nightly//:tensorflow_tf_header_lib",
         ] + oss_deps,
     })
     native.cc_library(
@@ -214,13 +217,59 @@ def tflite_cc_library(
         copts = copts,
         compatible_with = compatible_with,
         testonly = testonly,
-        alwayslink = alwayslink)
+        alwayslink = alwayslink,
+    )
 
 def extra_py_deps():
     return [
-        "@pypi_tf_nightly//:pkg",
-        "@pypi_tf_keras_nightly//:pkg",
+        "@release_or_nightly//:tensorflow_pkg",
+        "@release_or_nightly//:tf_keras_pkg",
         "@pypi_tensorflow_datasets//:pkg",
         "@pypi_tensorflow_metadata//:pkg",
     ]
 
+def _py_deps_profile_impl(ctx):
+    is_switch = False
+    for var_name, var_val in ctx.attr.switch.items():
+        is_switch = is_switch or ctx.os.environ.get(var_name, "") == var_val
+
+    prefix = ctx.attr.pip_repo_name
+    reqirements_name = ctx.attr.requirements_in.name
+    requirements_in_substitutions = {}
+    build_content = ['exports_files(["{}"])'.format(reqirements_name)]
+    for k, v in ctx.attr.deps_map.items():
+        repo_name = v[0] if is_switch else k
+        requirements_in_substitutions[k + "\n"] = repo_name + "\n"
+        requirements_in_substitutions[k + "\r\n"] = repo_name + "\r\n"
+        aliased_targets = ["pkg"] + v[1:]
+        norm_repo_name = repo_name.replace("-", "_")
+        norm_alas_name = k.replace("-", "_")
+        for target in aliased_targets:
+            alias_name = "{}_{}".format(norm_alas_name, target)
+            alias_value = "@{}_{}//:{}".format(prefix, norm_repo_name, target)
+            build_content.append("""
+alias(
+    name = "{}",
+    actual = "{}",
+    visibility = ["//visibility:public"]
+)
+""".format(alias_name, alias_value))
+
+    ctx.file("BUILD", "".join(build_content))
+    ctx.template(
+        reqirements_name,
+        ctx.attr.requirements_in,
+        executable = False,
+        substitutions = requirements_in_substitutions,
+    )
+
+py_deps_profile = repository_rule(
+    implementation = _py_deps_profile_impl,
+    attrs = {
+        "requirements_in": attr.label(mandatory = True),
+        "deps_map": attr.string_list_dict(mandatory = True),
+        "pip_repo_name": attr.string(mandatory = True),
+        "switch": attr.string_dict(mandatory = True),
+    },
+    local = True,
+)
