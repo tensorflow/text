@@ -13,16 +13,6 @@ if [[ "${osname}" == "darwin" ]]; then
   ext='""'
 fi
 
-HERMETIC_PYTHON_VERSION=$($installed_python  -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
-export HERMETIC_PYTHON_VERSION
-
-
-echo "TF_VERSION=$TF_VERSION"
-REQUIREMENTS_EXTRA_FLAGS="--upgrade"
-if [[ "$TF_VERSION" == *"rc"* ]]; then
-  REQUIREMENTS_EXTRA_FLAGS="$REQUIREMENTS_EXTRA_FLAGS --pre"
-fi
-
 bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
 
 # Update setup.nightly.py with current tf version.
