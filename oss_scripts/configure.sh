@@ -80,13 +80,9 @@ fi
 bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
 
 TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
-
-HEADER_DIR=${TF_CFLAGS:2}
-SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
-SHARED_LIBRARY_NAME=$(echo $TF_LFLAGS_2 | rev | cut -d":" -f1 | rev)
+SHARED_LIBRARY_NAME="libtensorflow_framework.so.2"
 if is_macos; then
   SHARED_LIBRARY_NAME="libtensorflow_framework.2.dylib"
 fi
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SHARED_LIBRARY_DIR
 write_action_env_to_bazelrc "TF_CXX11_ABI_FLAG" ${TF_ABIFLAG}
