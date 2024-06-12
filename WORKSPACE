@@ -88,6 +88,21 @@ load("@org_tensorflow//third_party/py:python_init_rules.bzl", "python_init_rules
 
 python_init_rules()
 
+load("//tensorflow_text:tftext.bzl", "py_deps_profile")
+
+py_deps_profile(
+    name = "release_or_nightly",
+    requirements_in = "//oss_scripts/pip_package:requirements.in",
+    pip_repo_name = "pypi",
+    deps_map = {
+        "tensorflow": ["tf-nightly", "tf_header_lib", "libtensorflow_framework"],
+        "tf-keras": ["tf-keras-nightly"]
+    },
+    switch = {
+        "IS_NIGHTLY": "nightly"
+    }
+)
+
 load("@org_tensorflow//third_party/py:python_init_repositories.bzl", "python_init_repositories")
 
 python_init_repositories(

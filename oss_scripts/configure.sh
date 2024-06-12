@@ -42,12 +42,12 @@ else
   if is_macos; then
     #  Only Apple Silicon will be installed with tensorflow-macos.
     if [[ x"$(arch)" == x"arm64" ]]; then
-      pip install tensorflow-macos==2.13.0
+      pip install tensorflow-macos==2.16.1
     else
-      pip install tensorflow==2.13.0
+      pip install tensorflow==2.16.1
     fi
   else
-    pip install tensorflow==2.13.0
+    pip install tensorflow==2.16.1
   fi
 fi
 
@@ -69,14 +69,21 @@ elif (which python) | grep -q "python"; then
   installed_python="python"
 fi
 
-TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
+HERMETIC_PYTHON_VERSION=$($installed_python  -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
+export HERMETIC_PYTHON_VERSION
 
-HEADER_DIR=${TF_CFLAGS:2}
-SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
-SHARED_LIBRARY_NAME=$(echo $TF_LFLAGS_2 | rev | cut -d":" -f1 | rev)
+echo "TF_VERSION=$TF_VERSION"
+REQUIREMENTS_EXTRA_FLAGS="--upgrade"
+if [[ "$TF_VERSION" == *"rc"* ]]; then
+  REQUIREMENTS_EXTRA_FLAGS="$REQUIREMENTS_EXTRA_FLAGS --pre"
+fi
+
+bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
+
+TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
+SHARED_LIBRARY_NAME="libtensorflow_framework.so.2"
 if is_macos; then
   SHARED_LIBRARY_NAME="libtensorflow_framework.2.dylib"
 fi
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SHARED_LIBRARY_DIR
 write_action_env_to_bazelrc "TF_CXX11_ABI_FLAG" ${TF_ABIFLAG}

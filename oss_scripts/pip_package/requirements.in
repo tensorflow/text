@@ -1,4 +1,4 @@
-tf-nightly
-tf_keras-nightly
-tensorflow_datasets
+tensorflow
+tf-keras
+tensorflow-datasets
 tensorflow-metadata
