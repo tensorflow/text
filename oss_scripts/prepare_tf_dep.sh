@@ -13,8 +13,6 @@ if [[ "${osname}" == "darwin" ]]; then
   ext='""'
 fi
 
-bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
-
 # Update setup.nightly.py with current tf version.
 tf_version=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- version)
 echo "Updating setup.nightly.py to version $tf_version"
