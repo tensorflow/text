@@ -65,7 +65,7 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
       const auto res = sentencepiece::EncodeString(
           input_values_flat(i), model_tensor.data(), add_bos, add_eos, reverse);
       OP_REQUIRES(ctx, res.type == sentencepiece::EncoderResultType::SUCCESS,
-                  tensorflow::Status(static_cast<tsl::errors::Code>(
+                  tensorflow::Status(static_cast<absl::StatusCode>(
                                          absl::StatusCode::kInternal),
                                      "Sentencepiece conversion failed"));
       std::copy(res.codes.begin(), res.codes.end(),
