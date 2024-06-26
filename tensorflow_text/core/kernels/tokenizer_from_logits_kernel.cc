@@ -78,13 +78,13 @@ Status TokenizeByLogits(const absl::string_view& text,
   std::vector<absl::string_view> chars;
   if (!GetUTF8Chars(text, &chars)) {
     return Status(
-        static_cast<tsl::errors::Code>(absl::StatusCode::kInvalidArgument),
+        static_cast<absl::StatusCode>(absl::StatusCode::kInvalidArgument),
         absl::StrCat("Input string is not utf8 valid: ", text));
   }
 
   if (chars.size() > logits.dimension(1)) {
     return Status(
-        static_cast<tsl::errors::Code>(absl::StatusCode::kInvalidArgument),
+        static_cast<absl::StatusCode>(absl::StatusCode::kInvalidArgument),
         absl::StrCat("Number of logits, ", logits.dimension(1),
                      ", is insufficient for text \"", text, "\""));
   }
@@ -116,7 +116,7 @@ Status TokenizeByLogits(const absl::string_view& text,
     last_character_is_break_character = is_break_character;
   }
 
-  return OkStatus();
+  return absl::OkStatus();
 }
 
 }  // namespace
