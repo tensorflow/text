@@ -43,10 +43,10 @@ else
     if [[ x"$(arch)" == x"arm64" ]]; then
       pip install tensorflow-macos==2.16.1
     else
-      pip install tensorflow==2.17.0rc0
+      pip install tensorflow==2.17.0
     fi
   else
-    pip install tensorflow==2.17.0rc0
+    pip install tensorflow==2.17.0
   fi
 fi
 
