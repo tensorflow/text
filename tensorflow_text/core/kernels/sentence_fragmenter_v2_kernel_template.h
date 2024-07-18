@@ -15,13 +15,12 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_KERNEL_TEMPLATE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_KERNEL_TEMPLATE_H_
 
-
 #include <iostream>
 #include <vector>
 
 #include "absl/status/status.h"
+#include "tensorflow/compiler/mlir/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
-#include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/sentence_fragmenter_v2.h"
 

@@ -55,8 +55,8 @@ tf_cc_library(
     deps = [
         ":boise_offset_converter",
         "@com_google_absl//absl/status",
+        "//third_party/tensorflow/compiler/mlir/lite/kernels/shim:shape",
         # lite/kernels/shim:op_kernel tensorflow dep,
-        # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,
     ],
 )
@@ -105,8 +105,8 @@ tf_cc_library(
     deps = [
         ":byte_splitter",
         "@com_google_absl//absl/status",
+        "//third_party/tensorflow/compiler/mlir/lite/kernels/shim:shape",
         # lite/kernels/shim:op_kernel tensorflow dep,
-        # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,
     ],
 )
@@ -794,8 +794,8 @@ tf_cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/types:span",
+        "//third_party/tensorflow/compiler/mlir/lite/kernels/shim:shape",
         # lite/kernels/shim:op_kernel tensorflow dep,
-        # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:tensor_view tensorflow dep,
     ],
 )
@@ -940,8 +940,8 @@ tf_cc_library(
     deps = [
         ":sentence_fragmenter_v2",
         "@com_google_absl//absl/status",
+        "//third_party/tensorflow/compiler/mlir/lite/kernels/shim:shape",
         # lite/kernels/shim:op_kernel tensorflow dep,
-        # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,
         # lite/kernels/shim:tensor_view tensorflow dep,
     ],
@@ -1183,8 +1183,8 @@ tf_cc_library(
         ":whitespace_tokenizer",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
+        "//third_party/tensorflow/compiler/mlir/lite/kernels/shim:shape",
         # lite/kernels/shim:op_kernel tensorflow dep,
-        # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:tensor_view tensorflow dep,
     ],
 )
@@ -1328,9 +1328,9 @@ cc_library(
         ":utf8_binarize",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
+        "//third_party/tensorflow/compiler/mlir/lite/kernels/shim:shape",
         # tf/platform:tstring tensorflow dep,
         # lite/kernels/shim:op_kernel tensorflow dep,
-        # lite/kernels/shim:shape tensorflow dep,
         # lite/kernels/shim:status_macros tensorflow dep,
     ],
 )

@@ -19,9 +19,9 @@
 #include <vector>
 
 #include "absl/status/status.h"
+#include "tensorflow/compiler/mlir/lite/kernels/shim/shape.h"
 #include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
-#include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/byte_splitter.h"
 
