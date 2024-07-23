@@ -34,6 +34,7 @@ function is_macos() {
 
 if [[ $(pip show tensorflow) == *tensorflow* ]] ||
    [[ $(pip show tensorflow-macos) == *tensorflow-macos* ]] ||
+   [[ $(pip show tensorflow-cpu) == *tensorflow-cpu* ]] ||
    [[ $(pip show tf-nightly) == *tf-nightly* ]]; then
   echo 'Using installed tensorflow.'
 else
