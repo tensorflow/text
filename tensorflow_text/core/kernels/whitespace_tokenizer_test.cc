@@ -74,6 +74,17 @@ TEST(WhitespaceTokenizerTest, InvalidCodepoint) {
   EXPECT_THAT(output_end_offsets, ElementsAre(1));
 }
 
+TEST(WhitespaceTokenizerTest, MaxCodepoint) {
+  // Create an artificially-small config so that we can test behavior with
+  // codepoints at the upper edge of its range. This bitmap marks 0x00-0x3f as
+  // whitespace.
+  std::string config(8, '\xff');
+  // Verify that reading one bit off the end of the bitmap returns
+  // not-whitespace.
+  WhitespaceTokenizerConfig cfg(config);
+  EXPECT_FALSE(cfg.IsWhitespace(0x40));
+}
+
 }  // namespace
 }  // namespace text
 }  // namespace tensorflow
