@@ -45,7 +45,8 @@ class WhitespaceTokenizerConfig {
       : config_(*config), max_codepoint_(config->length() * 8) {}
 
   inline bool IsWhitespace(const UChar32 codepoint) const {
-    return codepoint <= max_codepoint_ &&
+    return codepoint != U_SENTINEL &&
+           codepoint < max_codepoint_ &&
            config_[codepoint >> 3] & (1 << (char)(codepoint & 0x7));
   }
 

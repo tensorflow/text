@@ -62,6 +62,29 @@ TEST(WhitespaceTokenizerTest, Internationalization) {
   EXPECT_THAT(output_end_offsets, ElementsAre(5, 10, 15));
 }
 
+TEST(WhitespaceTokenizerTest, InvalidCodepoint) {
+  absl::string_view input("\xE3");
+  std::vector<std::string> output_tokens;
+  std::vector<int> output_start_offsets;
+  std::vector<int> output_end_offsets;
+  std::string config = BuildWhitespaceTokenizerConfig();
+  WhitespaceTokenizer t(&config);
+  t.Tokenize(input, &output_tokens, &output_start_offsets, &output_end_offsets);
+  EXPECT_THAT(output_start_offsets, ElementsAre(0));
+  EXPECT_THAT(output_end_offsets, ElementsAre(1));
+}
+
+TEST(WhitespaceTokenizerTest, MaxCodepoint) {
+  // Create an artificially-small config so that we can test behavior with
+  // codepoints at the upper edge of its range. This bitmap marks 0x00-0x3f as
+  // whitespace.
+  std::string config(8, '\xff');
+  // Verify that reading one bit off the end of the bitmap returns
+  // not-whitespace.
+  WhitespaceTokenizerConfig cfg(config);
+  EXPECT_FALSE(cfg.IsWhitespace(0x40));
+}
+
 }  // namespace
 }  // namespace text
 }  // namespace tensorflow
