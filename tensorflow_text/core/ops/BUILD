@@ -14,10 +14,11 @@ cc_test(
         "byte_splitter_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
+        # # tf:framework tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
         # tf/framework:shape_inference_testutil tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:byte_splitter_kernel",
     ],
 )
@@ -30,7 +31,8 @@ cc_test(
         "boise_offset_converter_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
+        # # tf:framework tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
         # tf/framework:shape_inference_testutil tensorflow dep,
@@ -46,7 +48,8 @@ cc_test(
         "fast_wordpiece_tokenizer_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
+        # # tf:framework tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
         # tf/framework:shape_inference_testutil tensorflow dep,
@@ -62,7 +65,8 @@ cc_test(
         "sentence_fragmenter_v2_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
+        # # tf:framework tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
         # tf/framework:shape_inference_testutil tensorflow dep,
@@ -83,6 +87,7 @@ cc_test(
         # tf:test_main tensorflow dep,
         # tf/framework:shape_inference_testutil tensorflow dep,
         # tf/framework:tensor_testutil tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:round_robin_trimmer_kernel",
     ],
 )
@@ -95,11 +100,12 @@ cc_test(
         "utf8_binarize_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
+        # # tf:framework tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
         # tf/framework:shape_inference_testutil tensorflow dep,
+        # lite/kernels/shim:tf_op_shim tensorflow dep,
         "//tensorflow_text/core/kernels:utf8_binarize_kernel",
     ],
 )
