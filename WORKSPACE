@@ -56,10 +56,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    strip_prefix = "tensorflow-9d2929b69fdddc1e8d5de70a706556b15d8ed37b",
-    sha256 = "a4f965340ea11d49c8897df59a24822c2b367e4cebb5908b7ca8c3b607097af9",
+    strip_prefix = "tensorflow-1ad7a2160315a64dd2a5cbde380e9478b671d043",
+    sha256 = "2caf5f221197fa817f41f8b71a14adda3261e2ecd1b45357f5af824530b37267",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/9d2929b69fdddc1e8d5de70a706556b15d8ed37b.zip"
+        "https://github.com/tensorflow/tensorflow/archive/1ad7a2160315a64dd2a5cbde380e9478b671d043.zip"
     ],
 )
 
@@ -141,3 +141,50 @@ load("@org_tensorflow//third_party/android:android_configure.bzl", "android_conf
 android_configure(name="local_config_android")
 load("@local_config_android//:android.bzl", "android_workspace")
 android_workspace()
+
+load(
+    "@local_tsl//third_party/gpus/cuda/hermetic:cuda_json_init_repository.bzl",
+    "cuda_json_init_repository",
+)
+
+cuda_json_init_repository()
+
+load(
+    "@cuda_redist_json//:distributions.bzl",
+    "CUDA_REDISTRIBUTIONS",
+    "CUDNN_REDISTRIBUTIONS",
+)
+load(
+    "@local_tsl//third_party/gpus/cuda/hermetic:cuda_redist_init_repositories.bzl",
+    "cuda_redist_init_repositories",
+    "cudnn_redist_init_repository",
+)
+
+cuda_redist_init_repositories(
+    cuda_redistributions = CUDA_REDISTRIBUTIONS,
+)
+
+cudnn_redist_init_repository(
+    cudnn_redistributions = CUDNN_REDISTRIBUTIONS,
+)
+
+load(
+    "@local_tsl//third_party/gpus/cuda/hermetic:cuda_configure.bzl",
+    "cuda_configure",
+)
+
+cuda_configure(name = "local_config_cuda")
+
+load(
+    "@local_tsl//third_party/nccl/hermetic:nccl_redist_init_repository.bzl",
+    "nccl_redist_init_repository",
+)
+
+nccl_redist_init_repository()
+
+load(
+    "@local_tsl//third_party/nccl/hermetic:nccl_configure.bzl",
+    "nccl_configure",
+)
+
+nccl_configure(name = "local_config_nccl")
