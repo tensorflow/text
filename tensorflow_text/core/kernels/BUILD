@@ -796,7 +796,6 @@ tf_cc_library(
         "@com_google_absl//absl/types:span",
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:shape tensorflow dep,
-        # lite/kernels/shim:status_macros tensorflow dep,
         # lite/kernels/shim:tensor_view tensorflow dep,
     ],
 )
@@ -1186,7 +1185,6 @@ tf_cc_library(
         "@com_google_absl//absl/status:statusor",
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:shape tensorflow dep,
-        # lite/kernels/shim:status_macros tensorflow dep,
         # lite/kernels/shim:tensor_view tensorflow dep,
     ],
 )
