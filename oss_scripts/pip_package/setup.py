@@ -74,12 +74,12 @@ setup(
     distclass=BinaryDistribution,
     install_requires=[
         (
-            'tensorflow>=2.16.1, <2.17',
+            'tensorflow>=2.16.1, <2.20',
         ),
     ],
     extras_require={
         'tensorflow_cpu': [
-            'tensorflow-cpu>=2.16.1, <2.17',
+            'tensorflow-cpu>=2.16.1, <2.20',
         ],
         'tests': [
             'absl-py',
