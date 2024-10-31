@@ -1,6 +1,7 @@
 """Kernels for tf.text ops."""
 
 load("@flatbuffers//:build_defs.bzl", "flatbuffer_cc_library")
+load("//third_party/protobuf/bazel:proto_library.bzl", "proto_library")
 load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
 # [internal] load cc_proto_library.bzl
 
