@@ -1,3 +1,5 @@
+# ai-edge-litert
+setuptools==70.0.0
 tensorflow
 tf-keras
 tensorflow-datasets

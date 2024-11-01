@@ -38,15 +38,10 @@ if [[ $(pip show tensorflow) == *tensorflow* ]] ||
   echo 'Using installed tensorflow.'
 else
   echo 'Installing tensorflow.'
-  if is_macos; then
-    #  Only Apple Silicon will be installed with tensorflow-macos.
-    if [[ x"$(arch)" == x"arm64" ]]; then
-      pip install tensorflow-macos==2.16.1
-    else
-      pip install tensorflow==2.16.1
-    fi
+  if [[ "$IS_NIGHTLY" == "nightly" ]]; then
+    pip install tf-nightly
   else
-    pip install tensorflow==2.16.1
+    pip install tensorflow==2.18.0
   fi
 fi
 
@@ -58,8 +53,6 @@ curl https://raw.githubusercontent.com/tensorflow/tensorflow/master/.bazelrc -o 
 # This line breaks Windows builds, so we remove it.
 sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 
-# the next line is temporary to aid in transition
-write_to_bazelrc "build:manylinux2010 --config=release_cpu_linux"
 write_to_bazelrc "build:manylinux2014 --config=release_cpu_linux"
 
 if (which python3) | grep -q "python3"; then
