@@ -110,6 +110,7 @@ python_init_repositories(
         "3.9": "//oss_scripts/pip_package:requirements_lock_3_9.txt",
         "3.10": "//oss_scripts/pip_package:requirements_lock_3_10.txt",
         "3.11": "//oss_scripts/pip_package:requirements_lock_3_11.txt",
+        "3.12": "//oss_scripts/pip_package:requirements_lock_3_12.txt",
     },
     default_python_version = "system",
 )
