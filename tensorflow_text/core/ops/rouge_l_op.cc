@@ -21,7 +21,7 @@ using shape_inference::DimensionHandle;
 using shape_inference::InferenceContext;
 using shape_inference::ShapeHandle;
 
-Status RougeLShapeFn(InferenceContext* c);
+absl::Status RougeLShapeFn(InferenceContext* c);
 
 REGISTER_OP("RougeL")
     .Input("hyp_values: Tvalues")
@@ -67,7 +67,7 @@ p_measure: a 1D Tensor of shape [S-1] containing LCS P-measure scores
 r_measure: a 1D Tensor of shape [S-1] containing LCS R-measure scores
 )doc");
 
-Status RougeLShapeFn(InferenceContext* c) {
+absl::Status RougeLShapeFn(InferenceContext* c) {
   ShapeHandle unused;
 
   // Check rank of inner values

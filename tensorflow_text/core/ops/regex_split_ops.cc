@@ -19,7 +19,7 @@
 namespace tensorflow {
 namespace text {
 
-Status RegexSplitOpShape(shape_inference::InferenceContext* c) {
+absl::Status RegexSplitOpShape(shape_inference::InferenceContext* c) {
   shape_inference::ShapeHandle unused;
   TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 1, &unused));
   TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 0, &unused));
