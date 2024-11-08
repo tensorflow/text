@@ -20,7 +20,7 @@
 namespace tensorflow {
 namespace text {
 
-Status SentenceFragmentShapeFn(
+absl::Status SentenceFragmentShapeFn(
     ::tensorflow::shape_inference::InferenceContext* c) {
   for (int i = 0; i < c->num_outputs(); ++i) {
     c->set_output(i, c->UnknownShapeOfRank(1));

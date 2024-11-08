@@ -22,7 +22,7 @@ using shape_inference::DimensionHandle;
 using shape_inference::InferenceContext;
 using shape_inference::ShapeHandle;
 
-Status TokenizerFromLogitsShapeFn(InferenceContext* c);
+absl::Status TokenizerFromLogitsShapeFn(InferenceContext* c);
 
 REGISTER_OP("TokenizerFromLogits")
     .Input("strings: string")
@@ -100,7 +100,7 @@ REGISTER_OP("TokenizerFromLogits")
       A 2D RaggedTensor can be constructed from this and row_splits.
 )doc");
 
-Status TokenizerFromLogitsShapeFn(InferenceContext* c) {
+absl::Status TokenizerFromLogitsShapeFn(InferenceContext* c) {
   ShapeHandle strings = c->input(0);
   ShapeHandle logits = c->input(1);
   ShapeHandle force_split_at_break_character = c->input(2);

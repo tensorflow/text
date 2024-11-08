@@ -21,7 +21,7 @@ using shape_inference::DimensionHandle;
 using shape_inference::InferenceContext;
 using shape_inference::ShapeHandle;
 
-Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c);
+absl::Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c);
 
 REGISTER_OP("WordpieceTokenizeWithOffsets")
     .Input("input_values: string")
@@ -90,7 +90,7 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
       A 2D RaggedTensor can be constructed from this and output_row_lengths.
 )doc");
 
-Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c) {
+absl::Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c) {
   ShapeHandle input_values = c->input(0);
   ShapeHandle vocab_lookup_table = c->input(1);
   string output_row_partition_type;
@@ -111,6 +111,5 @@ Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c) {
   c->set_output(3, c->UnknownShapeOfRank(1));  // limit_values
   return absl::OkStatus();
 }
-
 
 }  // namespace tensorflow

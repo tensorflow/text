@@ -23,7 +23,7 @@ using shape_inference::DimensionHandle;
 using shape_inference::InferenceContext;
 using shape_inference::ShapeHandle;
 
-Status SplitMergeTokenizeWithOffsetsShapeFn(InferenceContext* c);
+absl::Status SplitMergeTokenizeWithOffsetsShapeFn(InferenceContext* c);
 
 REGISTER_OP("SplitMergeTokenizeWithOffsets")
     .Input("input_values: string")
@@ -76,7 +76,7 @@ REGISTER_OP("SplitMergeTokenizeWithOffsets")
       A 2D RaggedTensor can be constructed from this and output_row_splits.
 )doc");
 
-Status SplitMergeTokenizeWithOffsetsShapeFn(InferenceContext* c) {
+absl::Status SplitMergeTokenizeWithOffsetsShapeFn(InferenceContext* c) {
   ShapeHandle input_values = c->input(0);
   ShapeHandle labels = c->input(1);
   ShapeHandle row_splits = c->input(2);
