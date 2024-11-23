@@ -28,9 +28,9 @@ using ::tensorflow::Status;
 namespace tensorflow {
 namespace text {
 
-Status UnicodeUtil::GetOneUChar(const absl::string_view& input,
-                                bool* has_more_than_one_char,
-                                UChar32* result) const {
+absl::Status UnicodeUtil::GetOneUChar(const absl::string_view& input,
+                                      bool* has_more_than_one_char,
+                                      UChar32* result) const {
   UErrorCode status = U_ZERO_ERROR;
   const char* source = input.data();
   const char* limit = input.data() + input.length();
@@ -54,8 +54,8 @@ Status UnicodeUtil::GetOneUChar(const absl::string_view& input,
   return absl::OkStatus();
 }
 
-Status UnicodeUtil::IsTerminalPunc(const absl::string_view& input,
-                                   bool* result) const {
+absl::Status UnicodeUtil::IsTerminalPunc(const absl::string_view& input,
+                                         bool* result) const {
   *result = false;
   const auto& ellipsis_status = IsEllipsis(input, result);
   // If there was a error decoding, or if we found an ellipsis, then return.
@@ -89,8 +89,8 @@ Status UnicodeUtil::IsTerminalPunc(const absl::string_view& input,
   return absl::OkStatus();
 }
 
-Status UnicodeUtil::IsClosePunc(const absl::string_view& input,
-                                bool* result) const {
+absl::Status UnicodeUtil::IsClosePunc(const absl::string_view& input,
+                                      bool* result) const {
   *result = false;
   if (input == "''") {
     *result = true;
@@ -128,8 +128,8 @@ Status UnicodeUtil::IsClosePunc(const absl::string_view& input,
   return absl::OkStatus();
 }
 
-Status UnicodeUtil::IsOpenParen(const absl::string_view& input,
-                                bool* result) const {
+absl::Status UnicodeUtil::IsOpenParen(const absl::string_view& input,
+                                      bool* result) const {
   *result = false;
   bool has_more_than_one_char = false;
   UChar32 char_value;
@@ -155,8 +155,8 @@ Status UnicodeUtil::IsOpenParen(const absl::string_view& input,
   return absl::OkStatus();
 }
 
-Status UnicodeUtil::IsCloseParen(const absl::string_view& input,
-                                 bool* result) const {
+absl::Status UnicodeUtil::IsCloseParen(const absl::string_view& input,
+                                       bool* result) const {
   *result = false;
   bool has_more_than_one_char = false;
   UChar32 char_value;
@@ -183,8 +183,8 @@ Status UnicodeUtil::IsCloseParen(const absl::string_view& input,
   return absl::OkStatus();
 }
 
-Status UnicodeUtil::IsPunctuationWord(const absl::string_view& input,
-                                      bool* result) const {
+absl::Status UnicodeUtil::IsPunctuationWord(const absl::string_view& input,
+                                            bool* result) const {
   *result = false;
   bool has_more_than_one_char = false;
   UChar32 char_value;
@@ -213,8 +213,8 @@ Status UnicodeUtil::IsPunctuationWord(const absl::string_view& input,
   return absl::OkStatus();
 }
 
-Status UnicodeUtil::IsEllipsis(const absl::string_view& input,
-                               bool* result) const {
+absl::Status UnicodeUtil::IsEllipsis(const absl::string_view& input,
+                                     bool* result) const {
   *result = false;
   if (input == "...") {
     *result = true;

@@ -43,8 +43,8 @@ bool IsPeriodSeparatedAcronym(const Token &token) {
 
 // Returns true iff the token can appear after a space in a sentence-terminal
 // token sequence.
-Status SpaceAllowedBeforeToken(const UnicodeUtil *util, const Token &token,
-                               bool *result) {
+absl::Status SpaceAllowedBeforeToken(const UnicodeUtil *util,
+                                     const Token &token, bool *result) {
   const tstring &word = token.word();
   bool is_ellipsis = false;
   TF_RETURN_IF_ERROR(util->IsEllipsis(word, &is_ellipsis));
@@ -77,8 +77,8 @@ class SentenceFragmenter::FragmentBoundaryMatch {
 
   // Follows the state transition for the token at the given index. Returns
   // true for success, or false if there was no valid transition.
-  Status Advance(const UnicodeUtil *util, const Document &document, int index,
-                 bool *result) {
+  absl::Status Advance(const UnicodeUtil *util, const Document &document,
+                       int index, bool *result) {
     const Token &token = document.tokens()[index];
     const tstring &word = token.word();
     bool no_transition = false;
@@ -176,7 +176,7 @@ class SentenceFragmenter::FragmentBoundaryMatch {
   int limit_index_ = -1;
 };
 
-Status SentenceFragmenter::FindFragments(
+absl::Status SentenceFragmenter::FindFragments(
     std::vector<SentenceFragment> *result) {
   // Partition tokens into sentence fragments.
   for (int i_start = 0; i_start < document_->tokens().size();) {
@@ -215,7 +215,7 @@ Status SentenceFragmenter::FindFragments(
 // scan "!!!" looking for a fragment boundary. Since we failed to find one last
 // time, we'll fail again this time and therefore continue past "y" to find the
 // next boundary. We will not try to scan "!!!" a third time.
-Status SentenceFragmenter::FindNextFragmentBoundary(
+absl::Status SentenceFragmenter::FindNextFragmentBoundary(
     int i_start, SentenceFragmenter::FragmentBoundaryMatch *result) const {
   FragmentBoundaryMatch current_match;
   FragmentBoundaryMatch previous_match;
@@ -276,8 +276,8 @@ Status SentenceFragmenter::FindNextFragmentBoundary(
 // punctuation that turns out not to be a sentence boundary, e.g.,
 // "Yahoo! (known for search, etc.) blah", but this is not expected to happen
 // often.
-Status SentenceFragmenter::UpdateLatestOpenParenForFragment(int i_start,
-                                                            int i_end) {
+absl::Status SentenceFragmenter::UpdateLatestOpenParenForFragment(int i_start,
+                                                                  int i_end) {
   for (int i = i_end; i > i_start; --i) {
     const auto &token = document_->tokens()[i - 1];
     bool is_open_paren = false;
@@ -293,7 +293,7 @@ Status SentenceFragmenter::UpdateLatestOpenParenForFragment(int i_start,
   return absl::OkStatus();
 }
 
-Status SentenceFragmenter::FillInFragmentFields(
+absl::Status SentenceFragmenter::FillInFragmentFields(
     int i_start, const FragmentBoundaryMatch &match,
     SentenceFragment *fragment) const {
   // Set the fragment's boundaries.
@@ -343,7 +343,7 @@ Status SentenceFragmenter::FillInFragmentFields(
 //
 // We treat "!" as the first terminal punctuation mark; the ellipsis acts as
 // left context.
-Status SentenceFragmenter::GetAdjustedFirstTerminalPuncIndex(
+absl::Status SentenceFragmenter::GetAdjustedFirstTerminalPuncIndex(
     const FragmentBoundaryMatch &match, int *result) const {
   // Get terminal punctuation span.
   int i1 = match.first_terminal_punc_index();
@@ -385,7 +385,7 @@ Status SentenceFragmenter::GetAdjustedFirstTerminalPuncIndex(
 // true sentence boundary. The terminal punctuation mark must be unambiguous
 // (.!?), as ambiguous ones (ellipsis/emoticon) do not necessarily imply a
 // sentence boundary.
-Status SentenceFragmenter::HasUnattachableTerminalPunc(
+absl::Status SentenceFragmenter::HasUnattachableTerminalPunc(
     const FragmentBoundaryMatch &match, bool *result) const {
   *result = false;
   // Get terminal punctuation span.
@@ -415,8 +415,8 @@ Status SentenceFragmenter::HasUnattachableTerminalPunc(
   return absl::OkStatus();
 }
 
-Status SentenceFragmenter::HasCloseParen(const FragmentBoundaryMatch &match,
-                                         bool *result) const {
+absl::Status SentenceFragmenter::HasCloseParen(
+    const FragmentBoundaryMatch &match, bool *result) const {
   *result = false;
   // Get close punctuation span.
   int i1 = match.first_close_punc_index();
