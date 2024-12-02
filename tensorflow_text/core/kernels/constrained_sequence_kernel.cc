@@ -57,10 +57,10 @@ namespace {
 
 // Validate that a given constraint tensor is the proper shape (dimension
 // 2, with shape [num_states + 1, num_states + 1].
-tensorflow::Status ValidateConstraintTensor(const Tensor &tensor,
-                                            const int num_states,
-                                            const bool use_start_end_states,
-                                            const string &name) {
+absl::Status ValidateConstraintTensor(const Tensor &tensor,
+                                      const int num_states,
+                                      const bool use_start_end_states,
+                                      const string &name) {
   if (tensor.shape().dims() != 2) {
     return InvalidArgument(
         tensorflow::strings::StrCat(name, " must be of rank 2"));
