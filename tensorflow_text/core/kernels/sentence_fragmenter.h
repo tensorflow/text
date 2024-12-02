@@ -170,7 +170,7 @@ class SentenceFragmenter {
 
   // Finds sentence fragments in the [start_, limit_) range of the associated
   // document.
-  ::tensorflow::Status FindFragments(std::vector<SentenceFragment> *result);
+  absl::Status FindFragments(std::vector<SentenceFragment> *result);
 
  private:
   // State for matching a fragment-boundary regexp against a token sequence.
@@ -180,33 +180,33 @@ class SentenceFragmenter {
   // Matches a fragment-boundary regexp against the tokens starting at
   // 'i_start'. Returns the longest match found; will be non-empty as long as
   // 'i_start' was not already at the end of the associated token range.
-  ::tensorflow::Status FindNextFragmentBoundary(
-      int i_start, FragmentBoundaryMatch *result) const;
+  absl::Status FindNextFragmentBoundary(int i_start,
+                                        FragmentBoundaryMatch *result) const;
 
   // Updates 'latest_open_paren_is_sentential_' for the tokens in the given
   // fragment.
-  ::tensorflow::Status UpdateLatestOpenParenForFragment(int i_start, int i_end);
+  absl::Status UpdateLatestOpenParenForFragment(int i_start, int i_end);
 
   // Populates a sentence fragment with the tokens from 'i_start' to the end
   // of the given FragmentBoundaryMatch.
-  ::tensorflow::Status FillInFragmentFields(int i_start,
-                                            const FragmentBoundaryMatch &match,
-                                            SentenceFragment *fragment) const;
+  absl::Status FillInFragmentFields(int i_start,
+                                    const FragmentBoundaryMatch &match,
+                                    SentenceFragment *fragment) const;
 
   // Returns the adjusted first terminal punctuation index in a
   // FragmentBoundaryMatch.
-  ::tensorflow::Status GetAdjustedFirstTerminalPuncIndex(
+  absl::Status GetAdjustedFirstTerminalPuncIndex(
       const FragmentBoundaryMatch &match, int *result) const;
 
   // Returns true iff a FragmentBoundaryMatch has an "unattachable" terminal
   // punctuation mark.
-  ::tensorflow::Status HasUnattachableTerminalPunc(
-      const FragmentBoundaryMatch &match, bool *result) const;
+  absl::Status HasUnattachableTerminalPunc(const FragmentBoundaryMatch &match,
+                                           bool *result) const;
 
   // Returns true iff a FragmentBoundaryMatch has a close paren in its closing
   // punctuation.
-  ::tensorflow::Status HasCloseParen(const FragmentBoundaryMatch &match,
-                                     bool *result) const;
+  absl::Status HasCloseParen(const FragmentBoundaryMatch &match,
+                             bool *result) const;
 
   // Whether the latest open paren seen so far appears to be sentence-initial.
   // See UpdateLatestOpenParenForFragment() in the .cc file for details.

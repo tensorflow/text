@@ -89,7 +89,7 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
     // Solve the batch of MST problems in parallel.  Set a high cycles per unit
     // to encourage finer sharding.
     constexpr int64 kCyclesPerUnit = 1000 * 1000 * 1000;
-    std::vector<tensorflow::Status> statuses(batch_size);
+    std::vector<absl::Status> statuses(batch_size);
     context->device()->tensorflow_cpu_worker_threads()->workers->ParallelFor(
         batch_size, kCyclesPerUnit, [&](int64 begin, int64 end) {
           for (int64 problem = begin; problem < end; ++problem) {
@@ -97,7 +97,7 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
                                           max_scores_b, argmax_sources_bxm);
           }
         });
-    for (const tensorflow::Status &status : statuses) {
+    for (const absl::Status &status : statuses) {
       OP_REQUIRES_OK(context, status);
     }
   }
@@ -112,10 +112,9 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
   // at index |problem| in |num_nodes_b| and |scores_bxmxm|.  On success, sets
   // the values at index |problem| in |max_scores_b| and |argmax_sources_bxm|.
   // On error, returns non-OK.
-  tensorflow::Status RunSolver(int problem, BatchedSizes num_nodes_b,
-                               BatchedScores scores_bxmxm,
-                               BatchedMaxima max_scores_b,
-                               BatchedSources argmax_sources_bxm) const {
+  absl::Status RunSolver(int problem, BatchedSizes num_nodes_b,
+                         BatchedScores scores_bxmxm, BatchedMaxima max_scores_b,
+                         BatchedSources argmax_sources_bxm) const {
     // Check digraph size overflow.
     const int32 num_nodes = num_nodes_b(problem);
     const int32 input_dim = argmax_sources_bxm.dimension(1);
