@@ -33,34 +33,29 @@ class UnicodeUtil {
   explicit UnicodeUtil(UConverter* converter) : converter_(converter) {}
 
   // Returns true iff a string is terminal punctuation.
-  ::tensorflow::Status IsTerminalPunc(const absl::string_view& input,
-                                      bool* result) const;
+  absl::Status IsTerminalPunc(const absl::string_view& input,
+                              bool* result) const;
 
   // Returns true iff a string is close punctuation (close quote or close
   // paren).
-  ::tensorflow::Status IsClosePunc(const absl::string_view& input,
-                                   bool* result) const;
+  absl::Status IsClosePunc(const absl::string_view& input, bool* result) const;
 
   // Returns true iff a string is an open paren.
-  ::tensorflow::Status IsOpenParen(const absl::string_view& input,
-                                   bool* result) const;
+  absl::Status IsOpenParen(const absl::string_view& input, bool* result) const;
 
   // Returns true iff a string is a close paren.
-  ::tensorflow::Status IsCloseParen(const absl::string_view& input,
-                                    bool* result) const;
+  absl::Status IsCloseParen(const absl::string_view& input, bool* result) const;
 
   // Returns true iff a word is made of punctuation characters only.
-  ::tensorflow::Status IsPunctuationWord(const absl::string_view& input,
-                                         bool* result) const;
+  absl::Status IsPunctuationWord(const absl::string_view& input,
+                                 bool* result) const;
 
   // Returns true iff a string is an ellipsis token ("...").
-  ::tensorflow::Status IsEllipsis(const absl::string_view& input,
-                                  bool* result) const;
+  absl::Status IsEllipsis(const absl::string_view& input, bool* result) const;
 
  private:
-  ::tensorflow::Status GetOneUChar(const absl::string_view&,
-                                   bool* has_more_than_one_char,
-                                   UChar32* result) const;
+  absl::Status GetOneUChar(const absl::string_view&,
+                           bool* has_more_than_one_char, UChar32* result) const;
 
   // not owned. mutable because UConverter contains some internal options and
   // buffer.
