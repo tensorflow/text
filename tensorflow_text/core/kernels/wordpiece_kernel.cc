@@ -82,8 +82,8 @@ bool GetSplitUnknownCharacters(OpKernelConstruction* ctx) {
   return split_unknown_characters;
 }
 
-Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
-                      string* container, string* table_handle) {
+absl::Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
+                            string* container, string* table_handle) {
   {
     mutex* mu;
     TF_RETURN_IF_ERROR(ctx->input_ref_mutex(input_name, &mu));
@@ -105,8 +105,8 @@ Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
 // Gets the LookupTable stored in the ctx->resource_manager() with key
 // passed by attribute with name input_name, returns null if the table
 // doesn't exist.
-Status GetLookupTable(const string& input_name, OpKernelContext* ctx,
-                      lookup::LookupInterface** table) {
+absl::Status GetLookupTable(const string& input_name, OpKernelContext* ctx,
+                            lookup::LookupInterface** table) {
   string container;
   string table_handle;
   DataType handle_dtype;
@@ -135,7 +135,7 @@ class LookupTableVocab : public WordpieceVocab {
   Tensor default_value_;
 };
 
-Status ToStatus(const LookupStatus& status) {
+absl::Status ToStatus(const LookupStatus& status) {
   if (status.success) {
     return absl::OkStatus();
   }
