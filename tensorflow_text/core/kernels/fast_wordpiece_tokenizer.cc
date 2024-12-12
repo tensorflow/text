@@ -65,12 +65,13 @@ void FastWordpieceTokenizer::Tokenize(absl::string_view input,
                                       std::vector<int>* output_ids,
                                       std::vector<int>* output_start_offsets,
                                       std::vector<int>* output_end_offsets,
-                                      int input_word_offset_in_text) const {
+                                      int input_word_offset_in_text,
+                                      bool* error) const {
   if (config_->end_to_end()) {
     TokenizeTextImpl</*kGetPieces=*/true, /*kGetIds=*/true,
                      /*kGetOffsets=*/true>(input, output_pieces, output_ids,
                                            output_start_offsets,
-                                           output_end_offsets);
+                                           output_end_offsets, error);
   } else {
     TokenizeSingleWordImpl</*kGetPieces=*/true, /*kGetIds=*/true,
                            /*kGetOffsets=*/true>(
@@ -86,9 +87,9 @@ void FastWordpieceTokenizer::Tokenize(absl::string_view input,
                                       int input_word_offset_in_text) const {
   if (config_->end_to_end()) {
     TokenizeTextImpl</*kGetPieces=*/false, /*kGetIds=*/true,
-                     /*kGetOffsets=*/true>(input, /*output_pieces=*/nullptr,
-                                           output_ids, output_start_offsets,
-                                           output_end_offsets);
+                     /*kGetOffsets=*/true>(
+        input, /*output_pieces=*/nullptr, output_ids, output_start_offsets,
+        output_end_offsets, /*error=*/nullptr);
   } else {
     TokenizeSingleWordImpl</*kGetPieces=*/false, /*kGetIds=*/true,
                            /*kGetOffsets=*/true>(
@@ -102,10 +103,10 @@ void FastWordpieceTokenizer::Tokenize(absl::string_view input,
                                       int input_word_offset_in_text) const {
   if (config_->end_to_end()) {
     TokenizeTextImpl</*kGetPieces=*/false, /*kGetIds=*/true,
-                     /*kGetOffsets=*/false>(input, /*output_pieces=*/nullptr,
-                                            output_ids,
-                                            /*output_start_offsets=*/nullptr,
-                                            /*output_end_offsets=*/nullptr);
+                     /*kGetOffsets=*/false>(
+        input, /*output_pieces=*/nullptr, output_ids,
+        /*output_start_offsets=*/nullptr,
+        /*output_end_offsets=*/nullptr, /*error=*/nullptr);
   } else {
     TokenizeSingleWordImpl</*kGetPieces=*/false, /*kGetIds=*/true,
                            /*kGetOffsets=*/false>(
@@ -186,13 +187,14 @@ template <bool kGetPieces, bool kGetIds, bool kGetOffsets>
 void FastWordpieceTokenizer::TokenizeTextImpl(
     absl::string_view input_text, std::vector<std::string>* output_pieces,
     std::vector<int>* output_ids, std::vector<int>* output_start_offsets,
-    std::vector<int>* output_end_offsets) const {
+    std::vector<int>* output_end_offsets, bool* error) const {
   static_assert(kGetPieces || kGetIds,
                 "At least one of `kGetPieces` and `kGetIds` should be true.");
   if (input_text.empty()) {
     return;
   }
   const int input_size = input_text.size();
+  int prev_pos = -1;
   int next_pos = 0;
   int cur_pos = 0;
   int original_num_tokens =
@@ -200,6 +202,13 @@ void FastWordpieceTokenizer::TokenizeTextImpl(
   UChar32 prev_unicode_char;
   UChar32 cur_unicode_char;
   while (cur_pos < input_size) {
+    // Prevent looping without progress in cur_pos.
+    if (prev_pos == cur_pos && error != nullptr) {
+      *error = true;
+      return;
+    }
+    prev_pos = cur_pos;
+
     int cur_offset_in_input_word = 0;
     // Tokenize the word starting at the current position.
     auto cur_node = trie_->CreateTraversalCursorPointToRoot();
@@ -210,7 +219,15 @@ void FastWordpieceTokenizer::TokenizeTextImpl(
     //  1. it steps over the input boundary, or
     //  2. the length of the current word reaches 'max_bytes_per_token', or
     //  3. it sees a whitespace / punctuation / unknown character.
+    int prev_pos_inner = -1;
     while (cur_pos < input_size) {
+      // Prevent looping without progress in cur_pos.
+      if (prev_pos_inner == cur_pos && error != nullptr) {
+        *error = true;
+        return;
+      }
+      prev_pos_inner = cur_pos;
+
       prev_unicode_char = cur_unicode_char;
       next_pos = cur_pos;
       U8_NEXT(input_text, next_pos, input_text.length(), cur_unicode_char);

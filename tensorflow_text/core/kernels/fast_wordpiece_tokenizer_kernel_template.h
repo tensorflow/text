@@ -163,8 +163,14 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Invoke(
   for (int i = 0; i < values_vec.Dim(0); ++i) {
     // Tokenize into subwords and record the offset locations.
     const int original_num_wordpieces = subwords.size();
+    bool error = false;
     fast_wordpiece_tokenizer->Tokenize(values_vec(i), &subwords, &subword_ids,
-                                       &begin_offset, &end_offset);
+                                       &begin_offset, &end_offset,
+                                       /*input_word_offset_in_text=*/0, &error);
+    if (error) {
+      return absl::InternalError(
+          "Failed to make any progress in tokenizing the input text.");
+    }
     const int delta_num_wordpieces = subwords.size() - original_num_wordpieces;
 
     // Record the row splits.
