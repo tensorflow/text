@@ -72,13 +72,15 @@ class FastWordpieceTokenizer {
   //    text, in utf-8 bytes.
   //  * input_word_offset_in_text: The relative offset of the input word in
   //    the whole text. Only used when not using end-to-end tokenizer.
+  //  * error: If not null, this will be set to true if the tokenizer failed to
+  //    make progress in decoding the input.
   // Note: the start offsets are inclusive and the end offsets are exclusive.
   void Tokenize(absl::string_view input,
                 std::vector<std::string>* output_pieces,
                 std::vector<int>* output_ids,
                 std::vector<int>* output_start_offsets,
                 std::vector<int>* output_end_offsets,
-                int input_word_offset_in_text = 0) const;
+                int input_word_offset_in_text = 0, bool* error = nullptr) const;
 
   // An override not returning `output_pieces`.
   void Tokenize(absl::string_view input, std::vector<int>* output_ids,
@@ -125,7 +127,8 @@ class FastWordpieceTokenizer {
                         std::vector<std::string>* output_pieces,
                         std::vector<int>* output_ids,
                         std::vector<int>* output_start_offsets,
-                        std::vector<int>* output_end_offsets) const;
+                        std::vector<int>* output_end_offsets,
+                        bool* error) const;
 
   // Try following the failure link to make the transition when trie matching
   // fails.
