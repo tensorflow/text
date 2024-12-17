@@ -62,7 +62,13 @@ elif (which python) | grep -q "python"; then
   installed_python="python"
 fi
 
-HERMETIC_PYTHON_VERSION=$($installed_python  -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
+if [ -z "$HERMETIC_PYTHON_VERSION" ]; then
+  if [ -n "$PY_VERSION" ]; then
+    HERMETIC_PYTHON_VERSION=$PY_VERSION
+  else
+    HERMETIC_PYTHON_VERSION=$($installed_python  -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
+  fi
+fi
 export HERMETIC_PYTHON_VERSION
 
 echo "TF_VERSION=$TF_VERSION"
