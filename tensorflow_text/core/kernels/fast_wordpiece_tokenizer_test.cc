@@ -17,6 +17,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "absl/flags/flag.h"
+#include "icu4c/source/common/unicode/uchar.h"
 #include "tensorflow/core/platform/env.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_builder.h"
 
@@ -24,6 +25,7 @@ namespace tensorflow {
 namespace text {
 namespace {
 
+using ::testing::AnyOf;
 using ::testing::ElementsAre;
 
 constexpr char kTestConfigPath[] =
@@ -57,6 +59,71 @@ TEST(FastWordpieceTokenizerTest, LoadAndTokenize) {
   EXPECT_THAT(output_start_offsets, ElementsAre(0, 3, 5, 6));
   EXPECT_THAT(output_end_offsets, ElementsAre(3, 5, 6, 9));
 }
+
+using TestPunctuationVersionMismatch = testing::TestWithParam<std::string>;
+
+TEST_P(TestPunctuationVersionMismatch, Test) {
+  // The config_flatbuffer used here is built from the following config:
+  //  * vocab = {"a", "abc", "abcdefghi", "##de", "##defgxy", "##deh", "##f",
+  //             "##ghz", "<unk>"}
+  //  * unk_token = "<unk>"
+  //  * suffix_indicator = "##"
+  //  * max_bytes_per_token = 100
+  //  * end_to_end = True
+
+  const std::string kTestConfigUnicodePath = GetParam();
+
+  // We test the new punctuation symbol: \341\255\277, which was available in
+  // Unicode 16: https://www.fileformat.info/info/unicode/char//1b7f/index.htm,
+  // but not in 15.1.
+  // We also test an existing punctuation symbol ">".
+  std::string input = "abc>abc\341\255\277abc";
+
+  std::string config_flatbuffer;
+  auto status = tensorflow::ReadFileToString(
+      tensorflow::Env::Default(), kTestConfigUnicodePath, &config_flatbuffer);
+  ASSERT_TRUE(status.ok());
+
+  ASSERT_OK_AND_ASSIGN(
+      auto tokenizer, FastWordpieceTokenizer::Create(config_flatbuffer.data()));
+
+  std::vector<std::string> output_tokens;
+  std::vector<int> output_ids;
+  std::vector<int> output_start_offsets;
+  std::vector<int> output_end_offsets;
+  tokenizer.Tokenize(input, &output_tokens, &output_ids, &output_start_offsets,
+                     &output_end_offsets);
+
+  // If the runtime environment has unicode <=15.1, "\341\255\277" is not a
+  // punctuation, so "abc\341\255\277abc" is one token.
+  // If the runtime environment has unicode >=16.0, "\341\255\277" is a
+  // punctuation, so tokens are "abc", "<unk>", "abc"
+  EXPECT_THAT(output_tokens.size(), AnyOf(3, 5));
+  if (!u_ispunct(0x1b7f)) {
+    // We have a runtime environment of unicode <= 15.1.
+    EXPECT_THAT(output_tokens, ElementsAre("abc", "<unk>", "<unk>"));
+    EXPECT_THAT(output_ids, ElementsAre(1, 8, 8));
+    EXPECT_THAT(output_start_offsets, ElementsAre(0, 3, 4));
+    EXPECT_THAT(output_end_offsets, ElementsAre(3, 4, 13));
+  } else {
+    // We have a runtime environment of unicode >= 16.0.
+    EXPECT_THAT(output_tokens,
+                ElementsAre("abc", "<unk>", "abc", "<unk>", "abc"));
+    EXPECT_THAT(output_ids, ElementsAre(1, 8, 1, 8, 1));
+    EXPECT_THAT(output_start_offsets, ElementsAre(0, 3, 4, 7, 10));
+    EXPECT_THAT(output_end_offsets, ElementsAre(3, 4, 7, 10, 13));
+  }
+}
+
+INSTANTIATE_TEST_SUITE_P(FastWordpieceTokenizerPunctuationTest,
+                         TestPunctuationVersionMismatch,
+                         testing::Values(
+                             // Unicode v 15.1 config
+                             "third_party/tensorflow_text/python/ops/test_data/"
+                             "fast_wordpiece_tokenizer_model_ver_15_1.fb",
+                             // Unicode v 16.0 config
+                             "third_party/tensorflow_text/python/ops/test_data/"
+                             "fast_wordpiece_tokenizer_model_ver_16_0.fb"));
 
 template <typename T>
 std::string ListToString(const std::vector<T>& list) {

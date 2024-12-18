@@ -278,14 +278,24 @@ void FastWordpieceTokenizer::TokenizeTextImpl(
                         prev_unicode_char))) {
       // If the current Unicode character is a valid word boundary, collect the
       // remaining tokens stored on a path on the trie.
+      absl::string_view cur_str = absl::string_view(
+          input_substr.data(), cur_pos - input_word_offset_in_text);
       HandleTheRemainingStringOnTriePath<kGetPieces, kGetIds, kGetOffsets>(
-          absl::string_view(input_substr.data(),
-                            cur_pos - input_word_offset_in_text),
-          input_word_offset_in_text, cur_node, original_num_tokens,
+          cur_str, input_word_offset_in_text, cur_node, original_num_tokens,
           cur_offset_in_input_word, output_pieces, output_ids,
           output_start_offsets, output_end_offsets);
-      // Skip the whitespace.
-      if (is_white_space) cur_pos = next_pos;
+      if (is_white_space) {
+        // Skip the whitespace.
+        cur_pos = next_pos;
+      } else if (cur_str.empty()) {
+        // If the remaining tokens are empty, it means we encountered an
+        // unmappable separator, so output an unknown token and continue.
+        cur_pos = next_pos;
+        ResetOutputAppendUnknownToken<kGetPieces, kGetIds, kGetOffsets>(
+            input_word_offset_in_text, (cur_pos - input_word_offset_in_text),
+            original_num_tokens, output_pieces, output_ids,
+            output_start_offsets, output_end_offsets);
+      }
       // Continue in the outer while loop to process the remaining input.
       continue;
     }
