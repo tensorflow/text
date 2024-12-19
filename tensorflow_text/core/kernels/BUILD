@@ -403,12 +403,15 @@ cc_test(
     srcs = ["fast_wordpiece_tokenizer_test.cc"],
     data = [
         "//tensorflow_text:python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
+        "//tensorflow_text:python/ops/test_data/fast_wordpiece_tokenizer_model_ver_15_1.fb",
+        "//tensorflow_text:python/ops/test_data/fast_wordpiece_tokenizer_model_ver_16_0.fb",
     ],
     deps = [
         ":fast_wordpiece_tokenizer",
         ":fast_wordpiece_tokenizer_model_builder",
         "@com_google_googletest//:gtest_main",
         "@com_google_absl//absl/flags:flag",
+        "//third_party/icu:headers",
         # tf:lib tensorflow dep,
     ],
 )
