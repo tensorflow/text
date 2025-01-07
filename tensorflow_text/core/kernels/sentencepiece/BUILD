@@ -296,8 +296,8 @@ tflite_cc_library(
 
 config_setting(
     name = "armeabi_v7a_and_fastbuild",
+    constraint_values = ["//third_party/bazel_platforms/cpu:armv7"],
     values = {
-        "cpu": "armeabi-v7a",
         "compilation_mode": "fastbuild",
     },
     visibility = ["//visibility:public"],
@@ -305,8 +305,8 @@ config_setting(
 
 config_setting(
     name = "armeabi_v7a_and_dbg",
+    constraint_values = ["//third_party/bazel_platforms/cpu:armv7"],
     values = {
-        "cpu": "armeabi-v7a",
         "compilation_mode": "dbg",
     },
     visibility = ["//visibility:public"],
