@@ -107,7 +107,7 @@ class CreateFeatureBitmaskOpTest(test_util.TensorFlowTestCase):
     list_data = [data_1, data_2]
     error_message = 'CreateFeatureBitmask does not support lists of tensors.*'
 
-    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegex(errors.InvalidArgumentError, error_message):
       _ = create_feature_bitmask_op.create_feature_bitmask(list_data)
 
   def test_unsupported_dtype_type(self):
@@ -115,7 +115,7 @@ class CreateFeatureBitmaskOpTest(test_util.TensorFlowTestCase):
     bad_dtype = dtypes.uint32
     error_message = 'dtype must be one of: .*, was %s' % bad_dtype.name
 
-    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegex(errors.InvalidArgumentError, error_message):
       _ = create_feature_bitmask_op.create_feature_bitmask(
           data, dtype=bad_dtype)
 
@@ -124,14 +124,14 @@ class CreateFeatureBitmaskOpTest(test_util.TensorFlowTestCase):
     error_message = ('Tensor conversion requested dtype bool for Tensor'
                      ' with dtype float32: .*')
 
-    with self.assertRaisesRegexp(ValueError, error_message):
+    with self.assertRaisesRegex(ValueError, error_message):
       _ = create_feature_bitmask_op.create_feature_bitmask(data)
 
   def test_larger_than_max_shape(self):
     data = array_ops.fill([2, 64], False)
     error_message = r'data.shape\[-1\] must be less than 64, is 64.'
 
-    with self.assertRaisesRegexp(ValueError, error_message):
+    with self.assertRaisesRegex(ValueError, error_message):
       _ = create_feature_bitmask_op.create_feature_bitmask(data)
 
   def test_larger_than_dtype_shape(self):
@@ -139,7 +139,7 @@ class CreateFeatureBitmaskOpTest(test_util.TensorFlowTestCase):
     error_message = (r'data.shape\[-1\] is too large for %s \(was 9, cannot '
                      r'exceed 8\).*') % dtypes.uint8.name
 
-    with self.assertRaisesRegexp(ValueError, error_message):
+    with self.assertRaisesRegex(ValueError, error_message):
       _ = create_feature_bitmask_op.create_feature_bitmask(
           data, dtype=dtypes.uint8)
 
@@ -149,8 +149,9 @@ class CreateFeatureBitmaskOpTest(test_util.TensorFlowTestCase):
     error_message = (r'.*data.shape\[-1\] is too large for %s.*' %
                      dtypes.uint8.name)
 
-    with self.assertRaisesRegexp((errors.InvalidArgumentError, ValueError),
-                                 error_message):
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), error_message
+    ):
       self.evaluate(
           create_feature_bitmask_op.create_feature_bitmask(
               data, dtype=dtypes.uint8))

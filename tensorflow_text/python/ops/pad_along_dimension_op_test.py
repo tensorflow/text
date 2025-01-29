@@ -224,7 +224,7 @@ class PadAlongDimensionOpTest(test_util.TensorFlowTestCase,
     right_pad_value = [9, 9, 9]
 
     error_msg = 'axis must be between -k <= axis <= -1 OR 0 <= axis < k'
-    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_msg):
+    with self.assertRaisesRegex(errors.InvalidArgumentError, error_msg):
       _ = pad_along_dimension_op.pad_along_dimension(
           data=data,
           axis=axis,
@@ -232,7 +232,7 @@ class PadAlongDimensionOpTest(test_util.TensorFlowTestCase,
           right_pad=right_pad_value)
 
     error_msg = 'axis must be an int'
-    with self.assertRaisesRegexp(TypeError, error_msg):
+    with self.assertRaisesRegex(TypeError, error_msg):
       _ = pad_along_dimension_op.pad_along_dimension(
           data=data,
           axis=constant_op.constant(0),
@@ -434,29 +434,34 @@ class PadAlongDimensionOpTest(test_util.TensorFlowTestCase,
 
   def testRaggedPadDimensionErrors(self):
     ragged_data = ragged_factory_ops.constant([[1, 2], [3, 4]])
-    self.assertRaisesRegexp(
+    self.assertRaisesRegex(
         errors.InvalidArgumentError,
         'axis must be between -k <= axis <= -1 OR 0 <= axis < k',
         pad_along_dimension_op.pad_along_dimension,
         ragged_data,
         left_pad=[0],
-        axis=2)
-    self.assertRaisesRegexp(
+        axis=2,
+    )
+    self.assertRaisesRegex(
         ValueError,
         r'Shapes .* are incompatible',
         pad_along_dimension_op.pad_along_dimension,
         ragged_data,
         axis=1,
-        left_pad=ragged_data)
+        left_pad=ragged_data,
+    )
     if not context.executing_eagerly():
-      self.assertRaisesRegexp(
-          ValueError, 'axis may not be negative if data is ragged '
+      self.assertRaisesRegex(
+          ValueError,
+          'axis may not be negative if data is ragged '
           'and data.ndims is not statically known.',
           pad_along_dimension_op.pad_along_dimension,
           ragged_tensor.RaggedTensor.from_tensor(
-              array_ops.placeholder_with_default([[1, 2], [3, 4]], shape=None)),
+              array_ops.placeholder_with_default([[1, 2], [3, 4]], shape=None)
+          ),
           left_pad=[0],
-          axis=-1)
+          axis=-1,
+      )
 
   @parameterized.parameters([
       #=========================================================================

@@ -223,9 +223,9 @@ class GatherWithDefaultOpTest(test_util.TensorFlowTestCase,
           params=[[0, 1], [2, 3]], indices=[0], default=0)
 
   def testBadDefaultDtype(self):
-    with self.assertRaisesRegexp(
-        TypeError,
-        'Expected int32.*|Cannot convert .*'):
+    with self.assertRaisesRegex(
+        TypeError, 'Expected int32.*|Cannot convert .*'
+    ):
       pointer_ops.gather_with_default(
           params=[0, 1, 2, 3], indices=[0], default='a')
 
@@ -241,14 +241,16 @@ class GatherWithDefaultOpTest(test_util.TensorFlowTestCase,
     # Note: because of the way gather_with_default is implemented, these
     # error messages will report values and ranges that are one greater than
     # those that were supplied to gather_with_default.
-    with self.assertRaisesRegexp(errors.InvalidArgumentError,
-                                 r'indices\[0\] = .* is not in .*'):
+    with self.assertRaisesRegex(
+        errors.InvalidArgumentError, r'indices\[0\] = .* is not in .*'
+    ):
       self.evaluate(
           pointer_ops.gather_with_default(
               params=[0, 1, 2, 3], indices=[4], default=0))
 
-    with self.assertRaisesRegexp(errors.InvalidArgumentError,
-                                 r'indices\[0\] = .* is not in .*'):
+    with self.assertRaisesRegex(
+        errors.InvalidArgumentError, r'indices\[0\] = .* is not in .*'
+    ):
       self.evaluate(
           pointer_ops.gather_with_default(
               params=[0, 1, 2, 3], indices=[-2], default=0))
