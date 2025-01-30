@@ -36,7 +36,7 @@ from tensorflow_text.python.ops import pointer_ops
 class SpanOverlapsOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
   maxDiff = 5000  # Display diffs even if they're long.  pylint: disable=invalid-name
 
-  #=============================================================================
+  # =============================================================================
   # Source & Target Spans:
   #    Offset: 0    5    10   15   20   25   30   35   40   45   50   55   60
   #            |====|====|====|====|====|====|====|====|====|====|====|====|
@@ -398,39 +398,48 @@ class SpanOverlapsOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
   def testErrors(self):
     t = [10, 20, 30, 40, 50]
 
-    with self.assertRaisesRegexp(TypeError, 'contains must be bool.'):
+    with self.assertRaisesRegex(TypeError, 'contains must be bool.'):
       pointer_ops.span_overlaps(t, t, t, t, contains='x')
-    with self.assertRaisesRegexp(TypeError, 'contained_by must be bool.'):
+    with self.assertRaisesRegex(TypeError, 'contained_by must be bool.'):
       pointer_ops.span_overlaps(t, t, t, t, contained_by='x')
-    with self.assertRaisesRegexp(TypeError, 'partial_overlap must be bool.'):
+    with self.assertRaisesRegex(TypeError, 'partial_overlap must be bool.'):
       pointer_ops.span_overlaps(t, t, t, t, partial_overlap='x')
-    with self.assertRaisesRegexp(
-        TypeError, 'source_start, source_limit, target_start, and '
-        'target_limit must all have the same dtype'):
+    with self.assertRaisesRegex(
+        TypeError,
+        'source_start, source_limit, target_start, and '
+        'target_limit must all have the same dtype',
+    ):
       pointer_ops.span_overlaps(t, t, t, [1.0, 2.0, 3.0, 4.0, 5.0])
-    with self.assertRaisesRegexp(ValueError,
-                                 r'Shapes \(5,\) and \(4,\) are incompatible'):
+    with self.assertRaisesRegex(
+        ValueError, r'Shapes \(5,\) and \(4,\) are incompatible'
+    ):
       pointer_ops.span_overlaps(t, t[:4], t, t)
-    with self.assertRaisesRegexp(ValueError,
-                                 r'Shapes \(4,\) and \(5,\) are incompatible'):
+    with self.assertRaisesRegex(
+        ValueError, r'Shapes \(4,\) and \(5,\) are incompatible'
+    ):
       pointer_ops.span_overlaps(t, t, t[:4], t)
-    with self.assertRaisesRegexp(
-        ValueError, r'Shapes \(1, 5\) and \(5,\) must have the same rank'):
+    with self.assertRaisesRegex(
+        ValueError, r'Shapes \(1, 5\) and \(5,\) must have the same rank'
+    ):
       pointer_ops.span_overlaps([t], [t], t, t)
     if not context.executing_eagerly():
-      with self.assertRaisesRegexp(
-          ValueError, 'For ragged inputs, the shape.ndims of at least one '
-          'span tensor must be statically known.'):
+      with self.assertRaisesRegex(
+          ValueError,
+          'For ragged inputs, the shape.ndims of at least one '
+          'span tensor must be statically known.',
+      ):
         x = ragged_tensor.RaggedTensor.from_row_splits(
             array_ops.placeholder(dtypes.int32), [0, 3, 8])
         pointer_ops.span_overlaps(x, x, x, x)
-    with self.assertRaisesRegexp(
-        ValueError, 'Span tensors must all have the same ragged_rank'):
+    with self.assertRaisesRegex(
+        ValueError, 'Span tensors must all have the same ragged_rank'
+    ):
       a = [[10, 20, 30], [40, 50, 60]]
       pointer_ops.span_overlaps(a, a, a, ragged_factory_ops.constant(a))
-    with self.assertRaisesRegexp(
+    with self.assertRaisesRegex(
         errors.InvalidArgumentError,
-        'Mismatched ragged shapes for batch dimensions'):
+        'Mismatched ragged shapes for batch dimensions',
+    ):
       rt1 = ragged_factory_ops.constant([[[1, 2], [3]], [[4, 5]]])
       rt2 = ragged_factory_ops.constant([[[1, 2], [3]], [[4, 5], [6]]])
       pointer_ops.span_overlaps(rt1, rt1, rt2, rt2)

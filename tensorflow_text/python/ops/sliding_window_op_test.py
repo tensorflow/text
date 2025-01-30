@@ -163,9 +163,9 @@ class SlidingWindowOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     axis = -1
     error_message = 'width must be an integer greater than 0'
 
-    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegex(errors.InvalidArgumentError, error_message):
       self._test_sliding_window_op(data, data, 0, axis)
-    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegex(errors.InvalidArgumentError, error_message):
       self._test_sliding_window_op(data, data, -1, axis)
 
   def test_sliding_window_op_invalid_axis(self):
@@ -173,9 +173,9 @@ class SlidingWindowOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     width = 3
     error_message = 'axis must be between -k <= axis <= -1 OR 0 <= axis < k'
 
-    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegex(errors.InvalidArgumentError, error_message):
       self._test_sliding_window_op(data, data, width, -2)
-    with self.assertRaisesRegexp(errors.InvalidArgumentError, error_message):
+    with self.assertRaisesRegex(errors.InvalidArgumentError, error_message):
       self._test_sliding_window_op(data, data, width, 1)
 
   def test_sliding_window_op_invalid_data_types(self):
@@ -185,9 +185,9 @@ class SlidingWindowOpTest(test_util.TensorFlowTestCase, parameterized.TestCase):
     axis = -1
     bad_axis = constant_op.constant([axis])
 
-    with self.assertRaisesRegexp(TypeError, 'width must be an int'):
+    with self.assertRaisesRegex(TypeError, 'width must be an int'):
       self._test_sliding_window_op(data, data, bad_width, axis)
-    with self.assertRaisesRegexp(TypeError, 'axis must be an int'):
+    with self.assertRaisesRegex(TypeError, 'axis must be an int'):
       self._test_sliding_window_op(data, data, width, bad_axis)
 
   def test_docstring_example_1d_tensor(self):

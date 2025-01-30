@@ -332,9 +332,10 @@ class SplitMergeFromLogitsTokenizerTest(test.TestCase):
             [0.3, 1.0],  # r: merge
             [0.2, 2.2],  # f: merge
         ]])
-    with self.assertRaisesRegexp(
+    with self.assertRaisesRegex(
         errors.InvalidArgumentError,
-        r'Number of logits, 11, is insufficient for text "and tensorflow"'):
+        r'Number of logits, 11, is insufficient for text "and tensorflow"',
+    ):
       self.evaluate(
           self.tokenizer.tokenize_with_offsets(test_strings, test_logits))
 
