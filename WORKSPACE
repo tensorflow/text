@@ -56,10 +56,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    strip_prefix = "tensorflow-1ad7a2160315a64dd2a5cbde380e9478b671d043",
-    sha256 = "2caf5f221197fa817f41f8b71a14adda3261e2ecd1b45357f5af824530b37267",
+    strip_prefix = "tensorflow-c49fbe6cc0f081607e571f1d7d0d11de2ddf0955",
+    sha256 = "64e81e840a3e59f57468963711de1937bf005f5a04146b674a7553a5c472a025",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/1ad7a2160315a64dd2a5cbde380e9478b671d043.zip"
+        "https://github.com/tensorflow/tensorflow/archive/c49fbe6cc0f081607e571f1d7d0d11de2ddf0955.zip"
     ],
 )
 

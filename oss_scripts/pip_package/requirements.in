@@ -1,5 +1,5 @@
-# ai-edge-litert
 setuptools==70.0.0
+dm-tree==0.1.8  # Limit for macos support.
 tensorflow
 tf-keras
 tensorflow-datasets
