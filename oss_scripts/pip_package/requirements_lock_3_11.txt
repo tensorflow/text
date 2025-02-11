@@ -191,7 +191,9 @@ dm-tree==0.1.8 \
     --hash=sha256:ea9e59e0451e7d29aece402d9f908f2e2a80922bcde2ebfd5dcb07750fcbfee8 \
     --hash=sha256:f7ac31b9aecccb2c6e1ab29706f6ded3eba0c2c69c770322c9c685929c3d6afb \
     --hash=sha256:fa42a605d099ee7d41ba2b5fb75e21423951fd26e5d50583a00471238fb3021d
-    # via tensorflow-datasets
+    # via
+    #   -r /root/.cache/bazel/_bazel_root/f0f460bed04956685208146002a595fa/external/release_or_nightly/requirements.in
+    #   tensorflow-datasets
 docstring-parser==0.16 \
     --hash=sha256:538beabd0af1e2db0146b6bd3caa526c35a34d61af9fd2887f3a8a27a739aa6e \
     --hash=sha256:bf0a1387354d3691d102edef7ec124f219ef639982d096e26e3b60aeffa90637
@@ -731,7 +733,7 @@ tensorboard-data-server==0.7.2 \
 tensorflow-datasets==4.9.7 \
     --hash=sha256:948d7a68ee693d9709cbfe955f97344b98647e5512e0e42dd2a61f3e7925d68b \
     --hash=sha256:f6fdfe745b5df2a37bde8bb2ef149188ebbca4af546226b461f3bad26bc42875
-    # via -r /root/.cache/bazel/_bazel_root/923931bc6361f42370e42a4c3d043f0c/external/release_or_nightly/requirements.in
+    # via -r /root/.cache/bazel/_bazel_root/f0f460bed04956685208146002a595fa/external/release_or_nightly/requirements.in
 tensorflow-io-gcs-filesystem==0.37.1 \
     --hash=sha256:0df00891669390078a003cedbdd3b8e645c718b111917535fa1d7725e95cdb95 \
     --hash=sha256:249c12b830165841411ba71e08215d0e94277a49c551e6dd5d72aab54fe5491b \
@@ -753,7 +755,7 @@ tensorflow-io-gcs-filesystem==0.37.1 \
 tensorflow-metadata==1.16.1 \
     --hash=sha256:2ce72ea31d78a00c0c74c6d465482335aa5cb2a3b2a104dedba0b258bc7bb18a
     # via
-    #   -r /root/.cache/bazel/_bazel_root/923931bc6361f42370e42a4c3d043f0c/external/release_or_nightly/requirements.in
+    #   -r /root/.cache/bazel/_bazel_root/f0f460bed04956685208146002a595fa/external/release_or_nightly/requirements.in
     #   tensorflow-datasets
 termcolor==2.5.0 \
     --hash=sha256:37b17b5fc1e604945c2642c872a3764b5d547a48009871aea3edd3afa180afb8 \
@@ -764,26 +766,26 @@ termcolor==2.5.0 \
 tf-keras-nightly==2.19.0.dev2024110310 \
     --hash=sha256:6c4a030252589a8d17cf0d296f41c6b2e333b88aaa428ac823c9ae7e0a47d793 \
     --hash=sha256:c02036e3ff847432f29386212bf27ff6a664eba876e7eb96601f232168316ee7
-    # via -r /root/.cache/bazel/_bazel_root/923931bc6361f42370e42a4c3d043f0c/external/release_or_nightly/requirements.in
-tf-nightly==2.19.0.dev20241103 \
-    --hash=sha256:25ec4098ff89efc0b4c2a34a9fbaa03c62b6ea5c13fc543c913b5aefb55f7d1d \
-    --hash=sha256:33b57612715573edc738df105a7a266765512020b6db2529a7d4365cc57087ae \
-    --hash=sha256:3e2bd02bf4923babfe1751be28f7a70be04d18796857265cd5764b4de1a34716 \
-    --hash=sha256:5314f61658c4f9c8421c11ab528311171485a4196e7741f3fdb2b9d40ac16da0 \
-    --hash=sha256:5ee05bf07c123792ea5085bbc5299f41bdb86360c6797d7e62b8ab2ddc10ed42 \
-    --hash=sha256:6fffacfa30b193e087ba047fce9e183ceede4af47e4a38c988b9a21a2a99347c \
-    --hash=sha256:7f13c46814eb9a8770ee2edaf3f40d92540b660fb69263100dff9e23ece7ed7a \
-    --hash=sha256:844864ed264d80fb8a299fbac35f81b0a483cb55973321b94d09d14d5a24054c \
-    --hash=sha256:8504a46d8554178ad1efb4353c567be5fe3754e0d5687a45b8944b2a204c57b8 \
-    --hash=sha256:892acdd4835632344fe46efff4b4dc3fbc0de07785b0ea32d646eee19ac74048 \
-    --hash=sha256:8f1059a8f50d9b5f5d825c098822431e4a9530c99ddaf8ed0c591ebefb992733 \
-    --hash=sha256:916c40c52a970d8ac1497214c0d7c4fecb59d39e775af1463d2c71148595d05d \
-    --hash=sha256:9181f069889b50af7125d479a6ae4b82e93efdbd0dc209edf74b356e770c75a3 \
-    --hash=sha256:958774aa6ca54aef8ba9ba592a5a6ae61a61d12c421ed0f3368878ba95c29e65 \
-    --hash=sha256:a303f137a5a387213fd912c069421120f8ece6a97c98a918ddede8850d88adc2 \
-    --hash=sha256:c871b69ca63d755e72db5605227341c56248daefafbe6abdf381f17d0aca26c6
+    # via -r /root/.cache/bazel/_bazel_root/f0f460bed04956685208146002a595fa/external/release_or_nightly/requirements.in
+tf-nightly==2.19.0.dev20250205 \
+    --hash=sha256:01a19df1e6d24dc16fa51ee013d0707a0887fd593f5a3aad71c2cc1ab93bb545 \
+    --hash=sha256:232dbc6787404020235d2c5b60e5e74961c23dd9d6a0c5750424d57c4ef08bb8 \
+    --hash=sha256:25263b0dd17c9db3b90ea9df8a2a33d5f6daf03252d0971513a36cda5f15e81c \
+    --hash=sha256:416a5f33dde80759a49c83501a67f3da739ad22743400d9cf303de4a41b758bc \
+    --hash=sha256:4f92313e5b9efc1f1cccabdcddbba94ae817c83e4bc9dce34bb9f33ce7a9e547 \
+    --hash=sha256:56b58ed996af80914087683af84fd619ae9ce671abc26f62963efcd165c391a9 \
+    --hash=sha256:5a27b3d2458bae1412f683b513bbe0e6fae81be61068a28bff43b7a3e6f5df27 \
+    --hash=sha256:90b04dc7f2c7ce75b67b5bdd0a05700760c66a70435397e53819891a4438b280 \
+    --hash=sha256:99c87a59a7d99417ecf3fb764b6c8b8e21a96ab8807f7ed3b88d1410e1ff02a4 \
+    --hash=sha256:a4fba78a6fefc05acd244372c1ad29cac069849d0fd5e71e339dbf5a70ba0755 \
+    --hash=sha256:c3a6bc32aa24fb7322e3e4af0b764aad381dbb2f07a281b18d1874444c414503 \
+    --hash=sha256:c8c6530f08353ded7ed6d7e1916e484c16763465894616436d56a8164f1b24f1 \
+    --hash=sha256:dc88312190f9daa80610b3602bec7d1f8c92740efd341093af513442865e19dc \
+    --hash=sha256:e5f79f8f31042b5ea94898853687ac85b19a832c7f2cb0c65b64f6adc9bd8b8c \
+    --hash=sha256:ee159fe5aed52e7837a91b48d84479021ae8d98313aebb118c4b2b212e189f1b \
+    --hash=sha256:f786bbd4e95d10764c10890638721a28ed3da49cbc6c3e91ea6c2674975344af
     # via
-    #   -r /root/.cache/bazel/_bazel_root/923931bc6361f42370e42a4c3d043f0c/external/release_or_nightly/requirements.in
+    #   -r /root/.cache/bazel/_bazel_root/f0f460bed04956685208146002a595fa/external/release_or_nightly/requirements.in
     #   tf-keras-nightly
 toml==0.10.2 \
     --hash=sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b \
@@ -899,6 +901,6 @@ setuptools==70.0.0 \
     --hash=sha256:54faa7f2e8d2d11bcd2c07bed282eef1046b5c080d1c32add737d7b5817b1ad4 \
     --hash=sha256:f211a66637b8fa059bb28183da127d4e86396c991a942b028c6650d4319c3fd0
     # via
-    #   -r /root/.cache/bazel/_bazel_root/923931bc6361f42370e42a4c3d043f0c/external/release_or_nightly/requirements.in
+    #   -r /root/.cache/bazel/_bazel_root/f0f460bed04956685208146002a595fa/external/release_or_nightly/requirements.in
     #   tb-nightly
     #   tf-nightly
