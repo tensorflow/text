@@ -76,7 +76,6 @@ py_library(
         "python/ops/__init__.py",
         "tools/__init__.py",
     ],
-    srcs_version = "PY3",
     deps = [
         ":bert_tokenizer",
         ":boise_offset_converter",
@@ -130,7 +129,17 @@ py_library(
 
 # build_test
 
-# public_names_test
+py_test(
+    name = "public_names_test",
+    size = "small",
+    srcs = ["public_names_test.py"],
+    deps = [
+        ":ops",
+        ":ops_lib",
+        "//testing/pybase",
+        # tensorflow package dep,
+    ],
+)
 
 # This is required for other external users to build tests using these models.
 exports_files(
@@ -163,8 +172,6 @@ py_test(
     size = "small",
     timeout = "moderate",
     srcs = ["python/ops/bert_tokenizer_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":bert_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -202,8 +209,6 @@ py_test(
     name = "boise_offset_converter_test",
     size = "medium",
     srcs = ["python/ops/boise_offset_converter_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
@@ -230,8 +235,6 @@ py_test(
     name = "byte_splitter_test",
     size = "medium",
     srcs = ["python/ops/byte_splitter_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
@@ -271,8 +274,6 @@ py_test(
     name = "create_feature_bitmask_op_test",
     size = "small",
     srcs = ["python/ops/create_feature_bitmask_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":create_feature_bitmask_op",
         # python/framework:constant_op tensorflow dep,
@@ -308,8 +309,6 @@ py_test(
     name = "fast_bert_normalizer_test",
     size = "small",
     srcs = ["python/ops/fast_bert_normalizer_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
@@ -347,8 +346,6 @@ py_test(
     size = "small",
     timeout = "moderate",
     srcs = ["python/ops/fast_bert_tokenizer_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
@@ -389,8 +386,6 @@ py_test(
     data = [
         ":python/ops/test_data/fast_sentencepiece.model",
     ],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":fast_sentencepiece_tokenizer",
         ":tensorflow_text",
@@ -431,8 +426,6 @@ py_test(
     data = [
         ":python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
     ],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
@@ -476,8 +469,6 @@ py_test(
     data = [
         ":python/ops/test_data/phrase_tokenizer_model.fb",
     ],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
@@ -510,8 +501,6 @@ py_test(
     name = "greedy_constrained_sequence_op_test",
     size = "small",
     srcs = ["python/ops/greedy_constrained_sequence_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":greedy_constrained_sequence_op",
         #  numpy dep,
@@ -540,8 +529,6 @@ py_test(
     data = [
         ":test_data_segmenter_hub_module",
     ],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":ops",
         # python/framework:ops tensorflow dep,
@@ -569,8 +556,6 @@ py_test(
     data = [
         ":test_data_segmenter_hub_module",
     ],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":ops",
         # python/framework:ops tensorflow dep,
@@ -613,8 +598,6 @@ py_test(
     name = "item_selector_ops_test",
     size = "medium",
     srcs = ["python/ops/item_selector_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":item_selector_ops",
         # python/framework:dtypes tensorflow dep,
@@ -650,8 +633,6 @@ py_test(
     name = "masking_ops_test",
     size = "medium",
     srcs = ["python/ops/masking_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":item_selector_ops",
         ":masking_ops",
@@ -684,8 +665,6 @@ py_tf_text_library(
 py_test(
     name = "mst_ops_test",
     srcs = ["python/ops/mst_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":mst_ops",
         # python/framework:constant_op tensorflow dep,
@@ -719,8 +698,6 @@ py_test(
     name = "ngrams_op_test",
     size = "medium",
     srcs = ["python/ops/ngrams_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
@@ -750,8 +727,6 @@ py_test(
     name = "normalize_ops_test",
     size = "small",
     srcs = ["python/ops/normalize_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":normalize_ops",
         # python/framework:errors tensorflow dep,
@@ -778,8 +753,6 @@ py_test(
     name = "pad_along_dimension_op_test",
     size = "medium",
     srcs = ["python/ops/pad_along_dimension_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":pad_along_dimension_op",
         "@absl_py//absl/testing:parameterized",
@@ -816,8 +789,6 @@ py_library(
 py_test(
     name = "pad_model_inputs_ops_test",
     srcs = ["python/ops/pad_model_inputs_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":pad_model_inputs_ops",
         "@absl_py//absl/testing:parameterized",
@@ -851,8 +822,6 @@ py_library(
 py_test(
     name = "gather_with_default_op_test",
     srcs = ["python/ops/gather_with_default_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -868,8 +837,6 @@ py_test(
 py_test(
     name = "span_alignment_op_test",
     srcs = ["python/ops/span_alignment_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -882,8 +849,6 @@ py_test(
 py_test(
     name = "span_overlaps_op_test",
     srcs = ["python/ops/span_overlaps_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -901,8 +866,6 @@ py_test(
 py_test(
     name = "ragged_tensor_to_tensor_test",
     srcs = ["python/ragged/ragged_tensor_to_tensor_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
@@ -928,8 +891,6 @@ py_test(
     name = "regex_split_ops_test",
     size = "medium",
     srcs = ["python/ops/regex_split_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":regex_split_ops",
         # tensorflow package dep,
@@ -951,8 +912,6 @@ py_library(
 py_test(
     name = "segment_combiner_ops_test",
     srcs = ["python/ops/segment_combiner_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":segment_combiner_ops",
         "@absl_py//absl/testing:parameterized",
@@ -988,8 +947,6 @@ py_test(
     name = "sentence_breaking_ops_test",
     size = "small",
     srcs = ["python/ops/sentence_breaking_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":sentence_breaking_ops",
         "@absl_py//absl/testing:parameterized",
@@ -1032,8 +989,6 @@ py_test(
     data = [
         ":python/ops/test_data/test_oss_model.model",
     ],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":sentencepiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -1061,8 +1016,6 @@ py_test(
     name = "sliding_window_op_test",
     size = "small",
     srcs = ["python/ops/sliding_window_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":sliding_window_op",
         "@absl_py//absl/testing:parameterized",
@@ -1094,8 +1047,6 @@ py_test(
     name = "split_merge_from_logits_tokenizer_test",
     size = "small",
     srcs = ["python/ops/split_merge_from_logits_tokenizer_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":split_merge_from_logits_tokenizer",
         # python/framework:errors tensorflow dep,
@@ -1124,8 +1075,6 @@ py_test(
     name = "split_merge_tokenizer_test",
     size = "small",
     srcs = ["python/ops/split_merge_tokenizer_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":split_merge_tokenizer",
         # python/framework:test_lib tensorflow dep,
@@ -1167,8 +1116,6 @@ py_test(
     name = "state_based_sentence_breaker_op_test",
     size = "medium",
     srcs = ["python/ops/state_based_sentence_breaker_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":state_based_sentence_breaker_op",
         ":tensorflow_text",
@@ -1199,8 +1146,6 @@ py_test(
     name = "coerce_to_valid_utf8_op_test",
     size = "small",
     srcs = ["python/ops/coerce_to_valid_utf8_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":string_ops",
         # python/framework:test_lib tensorflow dep,
@@ -1226,8 +1171,6 @@ py_test(
     name = "text_similarity_metric_ops_test",
     size = "small",
     srcs = ["python/metrics/text_similarity_metric_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":text_similarity_metric_ops",
         "@absl_py//absl/testing:parameterized",
@@ -1249,7 +1192,19 @@ py_library(
     ],
 )
 
-# todense_py_test
+py_test(
+    name = "todense_test",
+    size = "large",
+    srcs = ["python/keras/layers/todense_test.py"],
+    shard_count = 2,
+    deps = [
+        ":todense_layer",
+        "@absl_py//absl/testing:parameterized",
+        #  numpy dep,
+        # tensorflow package dep,
+        # python/framework:test_lib tensorflow dep,
+    ],
+)
 
 py_library(
     name = "tokenization",
@@ -1263,7 +1218,6 @@ py_library(
 py_library(
     name = "tokenization_layers",
     srcs = ["python/keras/layers/tokenization_layers.py"],
-    srcs_version = "PY2AND3",
     deps = [
         ":unicode_script_tokenizer",
         ":whitespace_tokenizer_v2",
@@ -1274,7 +1228,18 @@ py_library(
     ],
 )
 
-# tokenization_layers_py_test
+py_test(
+    name = "tokenization_layers_test",
+    size = "large",
+    srcs = ["python/keras/layers/tokenization_layers_test.py"],
+    shard_count = 20,
+    deps = [
+        ":tokenization_layers",
+        "@absl_py//absl/testing:parameterized",
+        #  numpy dep,
+        # tensorflow package dep,
+    ],
+)
 
 py_tf_text_library(
     name = "trimmer_ops",
@@ -1301,8 +1266,6 @@ py_tf_text_library(
 py_test(
     name = "trimmer_ops_test",
     srcs = ["python/ops/trimmer_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         ":trimmer_ops",
@@ -1341,9 +1304,7 @@ py_test(
     name = "unicode_char_tokenizer_test",
     size = "large",
     srcs = ["python/ops/unicode_char_tokenizer_test.py"],
-    python_version = "PY3",
     shard_count = 5,
-    srcs_version = "PY3",
     deps = [
         ":unicode_char_tokenizer",
         # python/framework:constant_op tensorflow dep,
@@ -1377,9 +1338,7 @@ py_test(
     name = "unicode_script_tokenizer_test",
     size = "large",
     srcs = ["python/ops/unicode_script_tokenizer_test.py"],
-    python_version = "PY3",
     shard_count = 5,
-    srcs_version = "PY3",
     deps = [
         ":unicode_script_tokenizer",
         # python/framework:constant_op tensorflow dep,
@@ -1407,8 +1366,6 @@ py_test(
     name = "utf8_binarize_op_test",
     size = "small",
     srcs = ["python/ops/utf8_binarize_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         ":utf8_binarize_op",
@@ -1436,8 +1393,6 @@ py_test(
     name = "viterbi_constrained_sequence_op_test",
     size = "small",
     srcs = ["python/ops/viterbi_constrained_sequence_op_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
@@ -1460,8 +1415,6 @@ py_test(
     name = "viterbi_decode_test",
     size = "small",
     srcs = ["python/numpy/viterbi_decode_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":viterbi_decode",
         "@absl_py//absl/testing:absltest",
@@ -1515,9 +1468,7 @@ py_test(
     name = "whitespace_tokenizer_test",
     size = "large",
     srcs = ["python/ops/whitespace_tokenizer_test.py"],
-    python_version = "PY3",
     shard_count = 4,
-    srcs_version = "PY3",
     deps = [
         ":tensorflow_text",
         # tensorflow package dep,
@@ -1560,8 +1511,6 @@ py_test(
     name = "wordpiece_tokenizer_test",
     size = "small",
     srcs = ["python/ops/wordpiece_tokenizer_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":wordpiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -1590,8 +1539,6 @@ py_test(
     name = "wordshape_ops_test",
     size = "small",
     srcs = ["python/ops/wordshape_ops_test.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":wordshape_ops",
         # python/framework:test_lib tensorflow dep,
@@ -1638,8 +1585,6 @@ py_test(
         ":python/ops/test_data/test_oss_model.model",
         ":test_data_segmenter_hub_module",
     ],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":benchmark_utils",
         ":ops",
@@ -1655,8 +1600,6 @@ py_test(
     name = "ops_benchmarks",
     size = "medium",
     srcs = ["python/benchmarks/ops_benchmarks.py"],
-    python_version = "PY3",
-    srcs_version = "PY3",
     deps = [
         ":benchmark_utils",
         ":ops",
