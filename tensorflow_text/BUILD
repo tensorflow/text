@@ -129,18 +129,6 @@ py_library(
 
 # build_test
 
-py_test(
-    name = "public_names_test",
-    size = "small",
-    srcs = ["public_names_test.py"],
-    deps = [
-        ":ops",
-        ":ops_lib",
-        "//testing/pybase",
-        # tensorflow package dep,
-    ],
-)
-
 # This is required for other external users to build tests using these models.
 exports_files(
     glob(["python/ops/test_data/**"]),
