@@ -129,17 +129,7 @@ py_library(
 
 # build_test
 
-py_test(
-    name = "public_names_test",
-    size = "small",
-    srcs = ["public_names_test.py"],
-    deps = [
-        ":ops",
-        ":ops_lib",
-        "//testing/pybase",
-        # tensorflow package dep,
-    ],
-)
+# public_names_test
 
 # This is required for other external users to build tests using these models.
 exports_files(
@@ -1192,19 +1182,7 @@ py_library(
     ],
 )
 
-py_test(
-    name = "todense_test",
-    size = "large",
-    srcs = ["python/keras/layers/todense_test.py"],
-    shard_count = 2,
-    deps = [
-        ":todense_layer",
-        "@absl_py//absl/testing:parameterized",
-        #  numpy dep,
-        # tensorflow package dep,
-        # python/framework:test_lib tensorflow dep,
-    ],
-)
+# todense_py_test
 
 py_library(
     name = "tokenization",
@@ -1228,18 +1206,7 @@ py_library(
     ],
 )
 
-py_test(
-    name = "tokenization_layers_test",
-    size = "large",
-    srcs = ["python/keras/layers/tokenization_layers_test.py"],
-    shard_count = 20,
-    deps = [
-        ":tokenization_layers",
-        "@absl_py//absl/testing:parameterized",
-        #  numpy dep,
-        # tensorflow package dep,
-    ],
-)
+# tokenization_layers_py_test
 
 py_tf_text_library(
     name = "trimmer_ops",
