@@ -6,7 +6,10 @@ load("//tensorflow_text:tftext.bzl", "extra_py_deps", "py_tf_text_library")
 
 # Visibility rules
 package(
-    default_visibility = ["//visibility:public"],
+    default_visibility = [
+        "//java/com/google/android/apps/inputmethod/libs:__subpackages__",
+        "//visibility:public",
+    ],
 )
 
 licenses(["notice"])
