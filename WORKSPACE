@@ -56,10 +56,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    strip_prefix = "tensorflow-c49fbe6cc0f081607e571f1d7d0d11de2ddf0955",
-    sha256 = "64e81e840a3e59f57468963711de1937bf005f5a04146b674a7553a5c472a025",
+    strip_prefix = "tensorflow-40998f44c0c500ce0f6e3b1658dfbc54f838a82a",
+    sha256 = "5a5bc4599964c71277dcac0d687435291e5810d2ac2f6283cc96736febf73aaf",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/c49fbe6cc0f081607e571f1d7d0d11de2ddf0955.zip"
+        "https://github.com/tensorflow/tensorflow/archive/40998f44c0c500ce0f6e3b1658dfbc54f838a82a.zip"
     ],
 )
 
@@ -144,7 +144,14 @@ load("@local_config_android//:android.bzl", "android_workspace")
 android_workspace()
 
 load(
-    "@local_tsl//third_party/gpus/cuda/hermetic:cuda_json_init_repository.bzl",
+    "@local_xla//third_party/py:python_wheel.bzl",
+    "python_wheel_version_suffix_repository",
+)
+
+python_wheel_version_suffix_repository(name = "tf_wheel_version_suffix")
+
+load(
+    "@local_xla//third_party/gpus/cuda/hermetic:cuda_json_init_repository.bzl",
     "cuda_json_init_repository",
 )
 
@@ -156,7 +163,7 @@ load(
     "CUDNN_REDISTRIBUTIONS",
 )
 load(
-    "@local_tsl//third_party/gpus/cuda/hermetic:cuda_redist_init_repositories.bzl",
+    "@local_xla//third_party/gpus/cuda/hermetic:cuda_redist_init_repositories.bzl",
     "cuda_redist_init_repositories",
     "cudnn_redist_init_repository",
 )
@@ -170,21 +177,21 @@ cudnn_redist_init_repository(
 )
 
 load(
-    "@local_tsl//third_party/gpus/cuda/hermetic:cuda_configure.bzl",
+    "@local_xla//third_party/gpus/cuda/hermetic:cuda_configure.bzl",
     "cuda_configure",
 )
 
 cuda_configure(name = "local_config_cuda")
 
 load(
-    "@local_tsl//third_party/nccl/hermetic:nccl_redist_init_repository.bzl",
+    "@local_xla//third_party/nccl/hermetic:nccl_redist_init_repository.bzl",
     "nccl_redist_init_repository",
 )
 
 nccl_redist_init_repository()
 
 load(
-    "@local_tsl//third_party/nccl/hermetic:nccl_configure.bzl",
+    "@local_xla//third_party/nccl/hermetic:nccl_configure.bzl",
     "nccl_configure",
 )
 
