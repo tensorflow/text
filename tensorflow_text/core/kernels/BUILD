@@ -30,8 +30,8 @@ cc_test(
     srcs = ["boise_offset_converter_test.cc"],
     deps = [
         ":boise_offset_converter",
-        "//third_party/absl/strings:string_view",
         "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/strings:string_view",
         "@com_google_googletest//:gtest_main",
     ],
 )

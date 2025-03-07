@@ -89,8 +89,7 @@ absl::StatusOr<std::vector<uint32_t>> BuildDartsCloneTrie(
   trie->build(trie_keys.size(), const_cast<char**>(&trie_keys[0]), nullptr,
               const_cast<int*>(&trie_values[0]));
 
-  // Return the data of darts_clone (an array of 32-bit unsigned int). See:
-  // http://google3/third_party/darts_clone/include/darts.h?l=53-55&rcl=245017625
+  // Return the data of darts_clone (an array of 32-bit unsigned int).
   const uint32_t* trie_array = static_cast<const uint32_t*>(trie->array());
   return std::vector<uint32_t>(trie_array, trie_array + trie->size());
 }

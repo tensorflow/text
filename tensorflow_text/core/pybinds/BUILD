@@ -75,7 +75,7 @@ py_test(
     ],
     deps = [
         ":pywrap_fast_bert_normalizer_model_builder",
-        # tensorflow package dep,
+        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
 )
 
@@ -106,7 +106,7 @@ py_test(
     ],
     deps = [
         ":pywrap_fast_wordpiece_tokenizer_model_builder",
-        # tensorflow package dep,
+        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
 )
 
@@ -141,7 +141,7 @@ py_test(
     ],
     deps = [
         ":pywrap_phrase_tokenizer_model_builder",
-        # tensorflow package dep,
+        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
 )
 
@@ -190,6 +190,6 @@ py_test(
     srcs = ["pywrap_whitespace_tokenizer_config_builder_test.py"],
     deps = [
         ":pywrap_whitespace_tokenizer_config_builder",
-        # tensorflow package dep,
+        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
 )

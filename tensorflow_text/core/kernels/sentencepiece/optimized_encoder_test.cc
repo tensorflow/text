@@ -74,7 +74,7 @@ absl::Status StdReadFileToString(const std::string& filepath,
 namespace {
 
 static char kConfigFilePath[] =
-    "/google3/third_party/tensorflow_text/python/ops/test_data/"
+    "/tensorflow_text/python/ops/test_data/"
     "fast_sentencepiece.model";
 
 TEST(OptimizedEncoder, NormalizeStringWhitestpaces) {
