@@ -14,8 +14,7 @@ exports_files(["LICENSE"])
 # Note: I had to build from master, but I'm sure any version after 64.2 would
 # will work.
 #
-# For guidance, see: go/icu-data &
-# http://google3/third_party/icu/g3data/icu_data.bzl?l=47&rcl=252943749
+# For guidance, see: go/icu-data & icu_data.bzl
 #
 # First, download, build, and install ICU. This installs tools such as makeconv.
 # Then, run the following from your icu4c/source directory:
