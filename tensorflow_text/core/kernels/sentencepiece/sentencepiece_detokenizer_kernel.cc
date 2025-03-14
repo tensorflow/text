@@ -79,12 +79,12 @@ class TFSentencepieceDetokenizerOp : public tensorflow::OpKernel {
 }  // namespace tensorflow
 
 REGISTER_KERNEL_BUILDER(
-    Name("TFText>FastSentencepieceDetokenize")
+    Name("TFSentencepieceDetokenizeOp")
         .Device(tensorflow::DEVICE_CPU)
         .TypeConstraint<tensorflow::int32>("Tsplits"),
     tensorflow::text::TFSentencepieceDetokenizerOp<tensorflow::int32>);
 REGISTER_KERNEL_BUILDER(
-    Name("TFText>FastSentencepieceDetokenize")
+    Name("TFSentencepieceDetokenizeOp")
         .Device(tensorflow::DEVICE_CPU)
         .TypeConstraint<tensorflow::int64>("Tsplits"),
     tensorflow::text::TFSentencepieceDetokenizerOp<tensorflow::int64>);
