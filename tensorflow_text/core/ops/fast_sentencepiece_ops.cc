@@ -21,7 +21,7 @@ namespace tensorflow {
 namespace text {
 
 // copied from third_party/tensorflow_text/core/ops/sentencepiece_ops.cc
-REGISTER_OP("TFText>FastSentencepieceTokenize")
+REGISTER_OP("TFSentencepieceTokenizeOp")
     .Input("sp_model: uint8")
     .Input("input: string")
     .Input("nbest_size: int32")
@@ -52,7 +52,7 @@ REGISTER_OP("TFText>FastSentencepieceTokenize")
       return absl::OkStatus();
     });
 
-REGISTER_OP("TFText>FastSentencepieceDetokenize")
+REGISTER_OP("TFSentencepieceDetokenizeOp")
     .Input("sp_model: uint8")
     .Input("input_values: int32")
     .Input("input_splits: Tsplits")

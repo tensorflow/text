@@ -40,14 +40,14 @@ namespace text {
 extern "C" void AddFastSentencepieceTokenize(
     tflite::MutableOpResolver* resolver) {
   resolver->AddCustom(
-      "TFText>FastSentencepieceTokenize",
+      "TFSentencepieceTokenizeOp",
       ::tflite::ops::custom::Register_FAST_SENTENCEPIECE_TOKENIZER());
 }
 
 extern "C" void AddFastSentencepieceDetokenize(
     tflite::MutableOpResolver* resolver) {
   resolver->AddCustom(
-      "TFText>FastSentencepieceDetokenize",
+      "TFSentencepieceDetokenizeOp",
       ::tflite::ops::custom::Register_FAST_SENTENCEPIECE_DETOKENIZER());
 }
 
