@@ -24,8 +24,8 @@ from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
 from tensorflow_text.core.pybinds import pywrap_fast_bert_normalizer_model_builder
 
-EXPECTED_MODEL_BUFFER_PATH = "third_party/tensorflow_text/python/ops/test_data/fast_bert_normalizer_model.fb"
-EXPECTED_MODEL_LOWER_CASE_NFD_STRIP_ACCENTS_BUFFER_PATH = "third_party/tensorflow_text/python/ops/test_data/fast_bert_normalizer_model_lower_case_nfd_strip_accents.fb"
+EXPECTED_MODEL_BUFFER_PATH = "tensorflow_text/python/ops/test_data/fast_bert_normalizer_model.fb"
+EXPECTED_MODEL_LOWER_CASE_NFD_STRIP_ACCENTS_BUFFER_PATH = "tensorflow_text/python/ops/test_data/fast_bert_normalizer_model_lower_case_nfd_strip_accents.fb"
 
 
 class PywrapCodepointWiseTextNormalizerModelBuilderTest(

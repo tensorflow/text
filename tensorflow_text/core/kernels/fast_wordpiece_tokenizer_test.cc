@@ -29,7 +29,7 @@ using ::testing::AnyOf;
 using ::testing::ElementsAre;
 
 constexpr char kTestConfigPath[] =
-    "third_party/tensorflow_text/python/ops/test_data/"
+    "tensorflow_text/python/ops/test_data/"
     "fast_wordpiece_tokenizer_model.fb";
 
 TEST(FastWordpieceTokenizerTest, LoadAndTokenize) {
@@ -119,10 +119,10 @@ INSTANTIATE_TEST_SUITE_P(FastWordpieceTokenizerPunctuationTest,
                          TestPunctuationVersionMismatch,
                          testing::Values(
                              // Unicode v 15.1 config
-                             "third_party/tensorflow_text/python/ops/test_data/"
+                             "tensorflow_text/python/ops/test_data/"
                              "fast_wordpiece_tokenizer_model_ver_15_1.fb",
                              // Unicode v 16.0 config
-                             "third_party/tensorflow_text/python/ops/test_data/"
+                             "tensorflow_text/python/ops/test_data/"
                              "fast_wordpiece_tokenizer_model_ver_16_0.fb"));
 
 template <typename T>

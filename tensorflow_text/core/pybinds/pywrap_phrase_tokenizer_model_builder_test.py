@@ -24,7 +24,7 @@ from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
 from tensorflow_text.core.pybinds import pywrap_phrase_tokenizer_model_builder
 
-EXPECTED_MODEL_BUFFER_PATH = "third_party/tensorflow_text/python/ops/test_data/phrase_tokenizer_model_test.fb"
+EXPECTED_MODEL_BUFFER_PATH = "tensorflow_text/python/ops/test_data/phrase_tokenizer_model_test.fb"
 
 
 class PywrapPhraseBuilderTest(test_util.TensorFlowTestCase):

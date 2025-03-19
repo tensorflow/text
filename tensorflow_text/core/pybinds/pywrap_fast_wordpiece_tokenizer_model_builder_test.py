@@ -24,7 +24,7 @@ from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
 from tensorflow_text.core.pybinds import pywrap_fast_wordpiece_tokenizer_model_builder
 
-EXPECTED_MODEL_BUFFER_PATH = "third_party/tensorflow_text/python/ops/test_data/fast_wordpiece_tokenizer_model.fb"
+EXPECTED_MODEL_BUFFER_PATH = "tensorflow_text/python/ops/test_data/fast_wordpiece_tokenizer_model.fb"
 
 
 class PywrapFastWordpieceBuilderTest(test_util.TensorFlowTestCase):
