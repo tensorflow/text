@@ -38,7 +38,7 @@ heard news today
 the news today
 */
 constexpr char kTestConfigPath[] =
-    "third_party/tensorflow_text/python/ops/test_data/"
+    "tensorflow_text/python/ops/test_data/"
     "phrase_tokenizer_model.fb";
 
 TEST(PhraseTokenizerTest, Tokenize) {

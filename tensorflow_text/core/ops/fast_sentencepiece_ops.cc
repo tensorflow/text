@@ -20,7 +20,6 @@
 namespace tensorflow {
 namespace text {
 
-// copied from third_party/tensorflow_text/core/ops/sentencepiece_ops.cc
 REGISTER_OP("TFText>FastSentencepieceTokenize")
     .Input("sp_model: uint8")
     .Input("input: string")

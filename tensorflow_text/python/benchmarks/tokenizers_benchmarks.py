@@ -56,10 +56,10 @@ flags.DEFINE_boolean("with_offsets", False,
 
 # These are needed when generating the parameterized benchmarks and cannot use
 # absl FLAGS
-_BERT_VOCAB_PATH = "third_party/tensorflow_text/python/benchmarks/test_data/uncased_L-12_H-768_A-12/vocab.txt"
-_HUB_MODULE_HANDLE = "third_party/tensorflow_text/python/ops/test_data/segmenter_hub_module"
-_SENTENCEPIECE_MODEL_FILE = "third_party/tensorflow_text/python/ops/test_data/test_oss_model.model"
-_FAST_SENTENCEPIECE_MODEL_FILE = "third_party/tensorflow_text/python/ops/test_data/fast_sentencepiece.model"
+_BERT_VOCAB_PATH = "tensorflow_text/python/benchmarks/test_data/uncased_L-12_H-768_A-12/vocab.txt"
+_HUB_MODULE_HANDLE = "tensorflow_text/python/ops/test_data/segmenter_hub_module"
+_SENTENCEPIECE_MODEL_FILE = "tensorflow_text/python/ops/test_data/test_oss_model.model"
+_FAST_SENTENCEPIECE_MODEL_FILE = "tensorflow_text/python/ops/test_data/fast_sentencepiece.model"
 
 
 class TokenizationBenchmark(
