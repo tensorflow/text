@@ -976,13 +976,15 @@ tf_cc_library(
     ],
     deps = [
         "@com_google_absl//absl/base:core_headers",
-        "@com_google_absl//absl/memory",
+        "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/meta:type_traits",
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
         "@com_google_sentencepiece//:sentencepiece_cc_proto",
         "@com_google_sentencepiece//:sentencepiece_model_cc_proto",
         "@com_google_sentencepiece//:sentencepiece_processor",
+        # tf:core_cpu_base tensorflow dep,
     ],
 )
 
@@ -1015,7 +1017,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
@@ -1071,7 +1073,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
-        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@icu//:common",
     ],
@@ -1376,7 +1378,7 @@ tf_cc_library(
     ],
     deps = [
         ":wordpiece_tokenizer",
-        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/status",
     ],
 )
 
