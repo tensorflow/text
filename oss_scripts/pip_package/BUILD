@@ -21,7 +21,10 @@ compile_pip_requirements(
 py_binary(
     name = "tensorflow_build_info",
     srcs = ["tensorflow_build_info.py"],
-    deps = ["@release_or_nightly//:tensorflow_pkg"],
+    deps = [
+        "@absl_py//absl:app",
+        "@release_or_nightly//:tensorflow_pkg",
+    ],
 )
 
 sh_binary(
