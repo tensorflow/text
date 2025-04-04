@@ -41,7 +41,7 @@ else
   if [[ "$IS_NIGHTLY" == "nightly" ]]; then
     pip install tf-nightly
   else
-    pip install tensorflow==2.19.0-rc0
+    pip install tensorflow==2.19.0
   fi
 fi
 
