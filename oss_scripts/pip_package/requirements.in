@@ -1,4 +1,4 @@
-setuptools==70.0.0
+setuptools==78.1.1
 dm-tree==0.1.8  # Limit for macos support.
 numpy
 protobuf==4.25.3  # b/397977335 - Fix crash on python 3.9, 3.10.
