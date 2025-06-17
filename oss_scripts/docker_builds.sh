@@ -8,7 +8,7 @@ set -e -x
 
 # If a specific PYTHON_VERSION is specified, only build that one.
 # Otherwisebuild all supported versions.
-python_versions=("3.9" "3.10" "3.11" "3.12")
+python_versions=("3.10" "3.11" "3.12")
 if [[ ! -z ${PYTHON_VERSION+x} ]]; then
   python_versions=("$PYTHON_VERSION")
 fi
