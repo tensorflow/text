@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "icu4c/source/common/unicode/uchar.h"
 #include "icu4c/source/common/unicode/umachine.h"
@@ -24,6 +25,7 @@
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
+#include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/lib/core/status.h"
 
 namespace tensorflow {
@@ -68,22 +70,22 @@ bool IsBreakChar(absl::string_view text) {
 // allows us to retrieve the corresponding data from logits.  I.e., the logits
 // for the i-th character from text are logits(batch_index, i, 0) (for the
 // "split" action) and logits(batch_index, i, 1) (for the "merge" action).
-Status TokenizeByLogits(const absl::string_view& text,
-                        const TTypes<const float, 3>::Tensor& logits,
-                        int batch_index,
-                        bool force_split_at_break_character,
-                        std::vector<std::string>* tokens,
-                        std::vector<int>* begin_offset,
-                        std::vector<int>* end_offset, int* num_tokens) {
+absl::Status TokenizeByLogits(const absl::string_view& text,
+                              const TTypes<const float, 3>::Tensor& logits,
+                              int batch_index,
+                              bool force_split_at_break_character,
+                              std::vector<std::string>* tokens,
+                              std::vector<int>* begin_offset,
+                              std::vector<int>* end_offset, int* num_tokens) {
   std::vector<absl::string_view> chars;
   if (!GetUTF8Chars(text, &chars)) {
-    return Status(
+    return absl::Status(
         static_cast<absl::StatusCode>(absl::StatusCode::kInvalidArgument),
         absl::StrCat("Input string is not utf8 valid: ", text));
   }
 
   if (chars.size() > logits.dimension(1)) {
-    return Status(
+    return absl::Status(
         static_cast<absl::StatusCode>(absl::StatusCode::kInvalidArgument),
         absl::StrCat("Number of logits, ", logits.dimension(1),
                      ", is insufficient for text \"", text, "\""));
