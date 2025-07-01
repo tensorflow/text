@@ -39,6 +39,7 @@ namespace tensorflow {
 namespace text {
 
 std::string BuildWhitespaceString() {
+  // Noop change to test presubmit.
   icu::UnicodeString unicode_string;
   icu::UnicodeStringAppendable appendable_unicode_string(unicode_string);
   // The maximum codepoint in Unicode is 0x0010FFFF.
