@@ -17,7 +17,6 @@
 #include <iterator>
 #include <string>
 
-#include "icu4c/source/common/unicode/appendable.h"
 #include "icu4c/source/common/unicode/bytestream.h"
 #include "icu4c/source/common/unicode/edits.h"
 #include "icu4c/source/common/unicode/normalizer2.h"
@@ -40,11 +39,10 @@ namespace text {
 
 std::string BuildWhitespaceString() {
   icu::UnicodeString unicode_string;
-  icu::UnicodeStringAppendable appendable_unicode_string(unicode_string);
   // The maximum codepoint in Unicode is 0x0010FFFF.
   for (UChar32 cp = 0; cp <= 0x0010FFFF; ++cp) {
     if (U_IS_UNICODE_CHAR(cp) && u_isUWhiteSpace(cp)) {
-      appendable_unicode_string.appendCodePoint(cp);
+      unicode_string.append(cp);
     }
   }
   std::string str;
