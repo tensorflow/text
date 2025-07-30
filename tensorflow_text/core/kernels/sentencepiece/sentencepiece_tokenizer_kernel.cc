@@ -27,6 +27,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+#include <cstdint>
 #include <iterator>
 #include <vector>
 
@@ -76,9 +77,9 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
     tensorflow::Tensor* output_splits_tensor = nullptr;
 
     OP_REQUIRES_OK(
-        ctx, ctx->allocate_output(0, {(int16_t)encoded.size()},
+        ctx, ctx->allocate_output(0, {(int64_t)encoded.size()},
                                   &output_values_tensor));
-    OP_REQUIRES_OK(ctx, ctx->allocate_output(1, {(int16_t)splits.size() + 1},
+    OP_REQUIRES_OK(ctx, ctx->allocate_output(1, {(int64_t)splits.size() + 1},
                                              &output_splits_tensor));
 
     auto values_tensor_flat = output_values_tensor->vec<int32>();
