@@ -1,5 +1,7 @@
 """ICU data build."""
 
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
 licenses(["notice"])  # Apache 2.0
 
 package(
