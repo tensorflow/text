@@ -1,6 +1,8 @@
 """Kernels for tf.text ops."""
 
 load("@flatbuffers//:build_defs.bzl", "flatbuffer_cc_library")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 # Placeholder: load proto_library
 load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
