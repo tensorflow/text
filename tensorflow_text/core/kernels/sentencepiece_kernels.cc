@@ -17,11 +17,12 @@
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/meta/type_traits.h"
+#include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/span.h"
-#include "src/sentencepiece_model.pb.h"
 #include "src/sentencepiece.pb.h"
+#include "src/sentencepiece_model.pb.h"
 #include "src/sentencepiece_processor.h"
 #include "tensorflow/core/framework/bounds_check.h"
 #include "tensorflow/core/framework/dataset_stateful_op_allowlist.h"
@@ -33,6 +34,7 @@
 #include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/framework/types.h"
 #include "tensorflow/core/framework/types.pb.h"
+#include "tensorflow/core/graph/graph.h"
 #include "tensorflow/core/graph/graph_def_builder.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/refcount.h"
@@ -67,7 +69,7 @@ struct SentencepieceResource : public ResourceBase {
            (reverse == this->reverse);
   }
 
-  Status AsGraphDef(GraphDefBuilder* builder, Node** out) const override {
+  sentencepiece::util::Status AsGraphDef(GraphDefBuilder* builder, Node** out) const override {
     absl::ReaderMutexLock l(&mu);
     // We set use_node_name_sharing with a unique node name so that the resource
     // can outlive the kernel. This means that the lifetime of the re-created
@@ -93,10 +95,10 @@ struct SentencepieceResource : public ResourceBase {
 // TODO(broken) Determine a medium cost of a call to the SentencePiece processor
 constexpr int64 kCostPerUnit = 10000;
 
-::tensorflow::Status ToTFStatus(const sentencepiece::util::Status& s) {
-  if (s.ok()) return ::tensorflow::Status();
-  return ::tensorflow::Status(static_cast<::tensorflow::errors::Code>(s.code()),
-                              ::tensorflow::string(s.message()));
+absl::Status ToTFStatus(const sentencepiece::util::Status& s) {
+  if (s.ok()) return sentencepiece::util::Status();
+  return sentencepiece::util::Status(static_cast<absl::StatusCode>(s.code()),
+                      ::tensorflow::string(s.message()));
 }
 
 template <typename T>
@@ -114,8 +116,8 @@ int32 GetPieceOrId<int32>(
   return sp.id();
 }
 
-tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
-                                      SentencepieceResource* sp) {
+absl::Status HandleExtraOptions(OpKernelContext* ctx,
+                                SentencepieceResource* sp) {
   const Tensor* add_bos_tensor = nullptr;
   TF_RETURN_IF_ERROR(ctx->input("add_bos", &add_bos_tensor));
   const bool add_bos = add_bos_tensor->scalar<bool>()();
@@ -209,7 +211,7 @@ class SentencepieceOp : public OpKernel {
                   GetNodeAttr(this->def(), "model", &model_proto_attr));
 
               if (TF_PREDICT_FALSE(model_proto_attr.empty())) {
-                return Status(tensorflow::errors::InvalidArgument(
+                return sentencepiece::util::Status(tensorflow::errors::InvalidArgument(
                     "Model argument must be specified."));
               }
               // Loads serialized sentencepiece model proto to enable embedding
