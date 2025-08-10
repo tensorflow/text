@@ -10,7 +10,7 @@ readme = "README.md"  # Add your README path here if you want long description i
 authors = [
   { name = "Google Inc.", email = "packages@tensorflow.org" }
 ]
-license = { text = "Apache 2.0" }
+license = "Apache 2.0"
 keywords = ["tensorflow", "text", "machine learning"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
