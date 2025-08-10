@@ -1,3 +1,45 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = ["setuptools>=65.5.1", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "tensorflow-text"
+version = "2.18.0"
+description = "TF.Text is a TensorFlow library of text related ops, modules, and subgraphs."
+readme = "README.md"  # Add your README path here if you want long description included
+authors = [
+  { name = "Google Inc.", email = "packages@tensorflow.org" }
+]
+license = { text = "Apache 2.0" }
+keywords = ["tensorflow", "text", "machine learning"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+  "tensorflow>=2.18.0,<2.19",
+]
+
+[project.optional-dependencies]
+tensorflow_cpu = [
+  "tensorflow-cpu>=2.18.0,<2.19"
+]
+tests = [
+  "absl-py",
+  "pytest",
+  "tensorflow-datasets>=3.2.0",
+]
