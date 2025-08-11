@@ -44,6 +44,7 @@ from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.install import install
 from setuptools.dist import Distribution
+from setuptools.command.build import build
 
 project_name = 'tensorflow-text-nightly'
 project_version = 'REPLACE_ME'
@@ -70,6 +71,12 @@ class InstallPlatlib(install):
     self.install_lib = os.path.join(self.install_lib, self.extra_dirs)
 
 
+class BuildToBuildSetuptools(build):
+    def initialize_options(self):
+        super().initialize_options()
+        self.build_base = 'build_setuptools'
+
+
 DOCLINES = __doc__.split('\n')
 
 setup(
@@ -84,7 +91,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    cmdclass={'install': InstallPlatlib},
+    cmdclass={'install': InstallPlatlib, 'build': BuildToBuildSetuptools},
     distclass=BinaryDistribution,
     install_requires=[
     ],
