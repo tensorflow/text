@@ -76,7 +76,7 @@ if [[ "$TF_VERSION" == *"rc"* ]]; then
   REQUIREMENTS_EXTRA_FLAGS="$REQUIREMENTS_EXTRA_FLAGS --pre"
 fi
 
-pip-compile oss_scripts/pip_package/requirements.in -- $REQUIREMENTS_EXTRA_FLAGS
+pip-compile -- $REQUIREMENTS_EXTRA_FLAGS oss_scripts/pip_package/requirements.in
 # bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
 
 TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
