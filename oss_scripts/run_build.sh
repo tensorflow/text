@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # fail and exit on any command erroring
+# set -e  # fail and exit on any command erroring
 
 osname="$(uname -s | tr 'A-Z' 'a-z')"
 

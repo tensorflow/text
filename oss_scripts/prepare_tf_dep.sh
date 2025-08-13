@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # fail and exit on any command erroring
+# set -e  # fail and exit on any command erroring
 
 if (which python3) | grep -q "python3"; then
   installed_python="python3"
