@@ -77,6 +77,7 @@ if [[ "$TF_VERSION" == *"rc"* ]]; then
 fi
 
 echo $REQUIREMENTS_EXTRA_FLAGS
+echo pip-compile -- $REQUIREMENTS_EXTRA_FLAGS oss_scripts/pip_package/requirements.in
 pip-compile -- $REQUIREMENTS_EXTRA_FLAGS oss_scripts/pip_package/requirements.in
 # bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
 
