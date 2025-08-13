@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -e  # fail and exit on any command erroring
+set -e  # fail and exit on any command erroring
 
 osname="$(uname -s | tr 'A-Z' 'a-z')"
 
@@ -19,7 +19,6 @@ if [[ $osname != "darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "A
 fi
 
 # Build the pip package.
-echo "RUNNING THIS NOW!!!!"
 bazel run ${BUILD_ARGS[@]} --enable_runfiles //oss_scripts/pip_package:build_pip_package -- "$(realpath .)"
 
 if [ -n "${AUDITWHEEL_PLATFORM}" ]; then

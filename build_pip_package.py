@@ -53,11 +53,15 @@ def main(output_dir=None):
     old_cwd = os.getcwd()
     os.chdir(temp_dir)
     try:
-        python_cmd = shutil.which("python3") or shutil.which("python")
-        if python_cmd is None:
+        if shutil.which('python3'):
+            python_cmd = 'python3'
+        elif shutil.which('python'):
+            python_cmd = 'python'
+        else:
             print("Python not found in PATH.", file=sys.stderr)
             sys.exit(1)
 
+        print(python_cmd, setup_script, "bdist_wheel", "--universal")
         subprocess.run([python_cmd, setup_script, "bdist_wheel", "--universal"], check=True)
         # Copy generated wheel(s) to output directory
         dist_dir = os.path.join(temp_dir, "dist")

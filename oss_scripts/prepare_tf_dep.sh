@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -e  # fail and exit on any command erroring
+set -e  # fail and exit on any command erroring
 
 if (which python3) | grep -q "python3"; then
   installed_python="python3"
@@ -14,8 +14,7 @@ if [[ "${osname}" == "darwin" ]]; then
 fi
 
 # Update setup.nightly.py with current tf version.
-# tf_version=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- version)
-tf_version=$(python3 oss_scripts/pip_package/tensorflow_build_info.py --version)
+tf_version=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- version)
 echo "Updating setup.nightly.py to version $tf_version"
 sed -i $ext "s/project_version = '.*'/project_version = '${tf_version}'/" oss_scripts/pip_package/setup.nightly.py
 # Update __version__.
@@ -24,8 +23,7 @@ sed -i $ext "s/__version__ = .*\$/__version__ = \"${tf_version}\"/" tensorflow_t
 
 # Get git commit sha of installed tensorflow.
 echo "Querying commit SHA"
-# short_commit_sha=$(bazel run  //oss_scripts/pip_package:tensorflow_build_info -- git_version)
-short_commit_sha=$(python3 oss_scripts/pip_package/tensorflow_build_info.py --git_version)
+short_commit_sha=$(bazel run  //oss_scripts/pip_package:tensorflow_build_info -- git_version)
 if [[ "$short_commit_sha" == "unknown" ]]; then
   # Some nightly builds report "unknown" for tf.__git_version.
   echo 'TF git version "unknown", assuming nightly.'
