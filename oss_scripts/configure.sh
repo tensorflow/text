@@ -76,12 +76,10 @@ if [[ "$TF_VERSION" == *"rc"* ]]; then
   REQUIREMENTS_EXTRA_FLAGS="$REQUIREMENTS_EXTRA_FLAGS --pre"
 fi
 
-echo $REQUIREMENTS_EXTRA_FLAGS
-echo pip-compile $REQUIREMENTS_EXTRA_FLAGS oss_scripts/pip_package/requirements.in
 pip-compile $REQUIREMENTS_EXTRA_FLAGS oss_scripts/pip_package/requirements.in
 # bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
 
-TF_ABIFLAG = $(python3 oss_scripts/pip_package/tensorflow_build_info.py --abi)
+TF_ABIFLAG=$(python3 oss_scripts/pip_package/tensorflow_build_info.py --abi)
 # TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
 SHARED_LIBRARY_NAME="libtensorflow_framework.so.2"
 if is_macos; then
