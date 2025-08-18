@@ -17,6 +17,7 @@
 #include "absl/base/thread_annotations.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/meta/type_traits.h"
+#include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/span.h"
@@ -95,7 +96,7 @@ constexpr int64 kCostPerUnit = 10000;
 
 ::tensorflow::Status ToTFStatus(const sentencepiece::util::Status& s) {
   if (s.ok()) return ::tensorflow::Status();
-  return ::tensorflow::Status(static_cast<::tensorflow::errors::Code>(s.code()),
+  return ::tensorflow::Status(static_cast<::absl::StatusCode>(s.code()),
                               ::tensorflow::string(s.message()));
 }
 
