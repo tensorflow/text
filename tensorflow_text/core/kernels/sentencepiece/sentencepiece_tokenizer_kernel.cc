@@ -27,16 +27,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+#include <cstdint>
 #include <iterator>
+#include <limits>
 #include <vector>
 
-#include "tensorflow_text/core/kernels/sentencepiece/optimized_encoder.h"
-#include "tensorflow_text/core/kernels/sentencepiece/sentencepiece_tokenizer.h"
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/platform/errors.h"
+#include "tensorflow_text/core/kernels/sentencepiece/optimized_encoder.h"
+#include "tensorflow_text/core/kernels/sentencepiece/sentencepiece_tokenizer.h"
 
 namespace tensorflow {
 namespace text{
@@ -50,7 +52,7 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
     const auto& input_values_tensor = ctx->input(kInputIndex);
     const auto input_values_flat =
         input_values_tensor.flat<tensorflow::tstring>();
-    const int num_of_input_values = input_values_flat.size();
+    const int64_t num_of_input_values = input_values_flat.size();
 
     const auto& add_bos_tensor = ctx->input(kAddBOSInput);
     const bool add_bos = add_bos_tensor.scalar<bool>()();
@@ -74,20 +76,26 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
     }
     tensorflow::Tensor* output_values_tensor = nullptr;
     tensorflow::Tensor* output_splits_tensor = nullptr;
-
+    OP_REQUIRES(ctx, encoded.size() < std::numeric_limits<int32_t>::max(),
+                errors::InvalidArgument(
+                    "Encoded input must contain less than 2^31 characters."));
+    OP_REQUIRES(
+        ctx, splits.size() + 1 < std::numeric_limits<int32_t>::max(),
+        errors::InvalidArgument("Splits tensor is limited to 2^31-1 values."));
     OP_REQUIRES_OK(
-        ctx, ctx->allocate_output(0, {(int16_t)encoded.size()},
+        ctx, ctx->allocate_output(0, {static_cast<int32_t>(encoded.size())},
                                   &output_values_tensor));
-    OP_REQUIRES_OK(ctx, ctx->allocate_output(1, {(int16_t)splits.size() + 1},
-                                             &output_splits_tensor));
+    OP_REQUIRES_OK(
+        ctx, ctx->allocate_output(1, {static_cast<int32_t>(splits.size()) + 1},
+                                  &output_splits_tensor));
 
     auto values_tensor_flat = output_values_tensor->vec<int32>();
     auto splits_tensor_flat = output_splits_tensor->vec<int32>();
-    for (int i = 0; i < encoded.size(); ++i) {
+    for (int32_t i = 0; i < encoded.size(); ++i) {
       values_tensor_flat(i) = encoded[i];
     }
     splits_tensor_flat(0) = 0;
-    for (int i = 0; i < splits.size(); ++i) {
+    for (int32_t i = 0; i < splits.size(); ++i) {
       splits_tensor_flat(i + 1) = splits[i];
     }
   }
