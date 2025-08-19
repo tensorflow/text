@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "icu4c/source/common/unicode/uchar.h"
 #include "icu4c/source/common/unicode/umachine.h"
@@ -72,13 +73,13 @@ Status TokenizeByLabel(const absl::string_view& text,
                        std::vector<int>* end_offset, int* num_tokens) {
   std::vector<absl::string_view> chars;
   if (!GetUTF8Chars(text, &chars)) {
-    return Status(static_cast<tensorflow::errors::Code>(
+    return Status(static_cast<::absl::StatusCode>(
                       absl::StatusCode::kInvalidArgument),
                   absl::StrCat("Input string is not utf8 valid: ", text));
   }
 
   if (chars.size() > labels_tensor.dim_size(0)) {
-    return Status(static_cast<tensorflow::errors::Code>(
+    return Status(static_cast<::absl::StatusCode>(
                       absl::StatusCode::kInvalidArgument),
                   absl::StrCat("Number of labels ", labels_tensor.dim_size(0),
                                " is insufficient for text ", text));
