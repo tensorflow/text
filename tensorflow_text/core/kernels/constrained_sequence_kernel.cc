@@ -62,8 +62,7 @@ absl::Status ValidateConstraintTensor(const Tensor &tensor,
                                       const bool use_start_end_states,
                                       const string &name) {
   if (tensor.shape().dims() != 2) {
-    return InvalidArgument(
-        tensorflow::strings::StrCat(name, " must be of rank 2"));
+    return InvalidArgument(absl::StrCat(name, " must be of rank 2"));
   }
   int expected_size = use_start_end_states ? num_states + 1 : num_states;
   if (tensor.shape().dim_size(0) != expected_size) {
@@ -110,7 +109,7 @@ class ConstrainedSequence : public OpKernel {
     const int num_scores = scores.num_scores();
 
     OP_REQUIRES(context, lengths_tensor.NumElements() == batch_size,
-                InvalidArgument(tensorflow::strings::StrCat(
+                InvalidArgument(absl::StrCat(
                     "There should be exactly one length for every batch "
                     "element. Found ",
                     lengths_tensor.NumElements(),

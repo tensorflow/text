@@ -65,24 +65,24 @@ bool IsBreakChar(absl::string_view text) {
   return u_isUWhiteSpace(c);
 }
 
-Status TokenizeByLabel(const absl::string_view& text,
-                       const Tensor& labels_tensor,
-                       bool force_split_at_break_character,
-                       std::vector<std::string>* tokens,
-                       std::vector<int>* begin_offset,
-                       std::vector<int>* end_offset, int* num_tokens) {
+absl::Status TokenizeByLabel(const absl::string_view& text,
+                             const Tensor& labels_tensor,
+                             bool force_split_at_break_character,
+                             std::vector<std::string>* tokens,
+                             std::vector<int>* begin_offset,
+                             std::vector<int>* end_offset, int* num_tokens) {
   std::vector<absl::string_view> chars;
   if (!GetUTF8Chars(text, &chars)) {
-    return Status(static_cast<::absl::StatusCode>(
-                      absl::StatusCode::kInvalidArgument),
-                  absl::StrCat("Input string is not utf8 valid: ", text));
+    return absl::Status(
+        static_cast<::absl::StatusCode>(absl::StatusCode::kInvalidArgument),
+        absl::StrCat("Input string is not utf8 valid: ", text));
   }
 
   if (chars.size() > labels_tensor.dim_size(0)) {
-    return Status(static_cast<::absl::StatusCode>(
-                      absl::StatusCode::kInvalidArgument),
-                  absl::StrCat("Number of labels ", labels_tensor.dim_size(0),
-                               " is insufficient for text ", text));
+    return absl::Status(
+        static_cast<::absl::StatusCode>(absl::StatusCode::kInvalidArgument),
+        absl::StrCat("Number of labels ", labels_tensor.dim_size(0),
+                     " is insufficient for text ", text));
   }
 
   const int split_label = 0;
