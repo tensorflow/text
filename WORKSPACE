@@ -2,6 +2,28 @@ workspace(name = "org_tensorflow_text")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+# Toolchains for ML projects hermetic builds.
+# Details: https://github.com/google-ml-infra/rules_ml_toolchain
+http_archive(
+    name = "rules_ml_toolchain",
+    sha256 = "de3b14418657eeacd8afc2aa89608be6ec8d66cd6a5de81c4f693e77bc41bee1",
+    strip_prefix = "rules_ml_toolchain-5653e5a0ca87c1272069b4b24864e55ce7f129a1",
+    urls = [
+        "https://github.com/google-ml-infra/rules_ml_toolchain/archive/5653e5a0ca87c1272069b4b24864e55ce7f129a1.tar.gz",
+    ],
+)
+
+load(
+    "@rules_ml_toolchain//cc_toolchain/deps:cc_toolchain_deps.bzl",
+    "cc_toolchain_deps",
+)
+
+cc_toolchain_deps()
+
+register_toolchains("@rules_ml_toolchain//cc_toolchain:lx64_lx64")
+
+register_toolchains("@rules_ml_toolchain//cc_toolchain:lx64_lx64_cuda")
+
 http_archive(
     name = "icu",
     strip_prefix = "icu-release-64-2",
@@ -56,10 +78,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    strip_prefix = "tensorflow-40998f44c0c500ce0f6e3b1658dfbc54f838a82a",
-    sha256 = "5a5bc4599964c71277dcac0d687435291e5810d2ac2f6283cc96736febf73aaf",
+    sha256 = "1a25308b15036bf8006ada5c9955ddc9a217792e6fc24deee04626ec07013f2c",
+    strip_prefix = "tensorflow-72fbba3d20f4616d7312b5e2b7f79daf6e82f2fa",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/40998f44c0c500ce0f6e3b1658dfbc54f838a82a.zip"
+        "https://github.com/tensorflow/tensorflow/archive/72fbba3d20f4616d7312b5e2b7f79daf6e82f2fa.zip",
     ],
 )
 
@@ -134,6 +156,14 @@ load("@pypi//:requirements.bzl", "install_deps")
 
 install_deps()
 
+load("//oss_scripts/pip_package:tensorflow_text_python_wheel.bzl", "tensorflow_text_python_wheel_repository")
+
+tensorflow_text_python_wheel_repository(
+    name = "tensorflow_text_wheel",
+    version_key = "__version__",
+    version_source = "//tensorflow_text:__init__.py",
+)
+
 # Initialize TensorFlow dependencies.
 load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
 tf_workspace3()
@@ -151,14 +181,16 @@ load("@local_config_android//:android.bzl", "android_workspace")
 android_workspace()
 
 load(
-    "@local_xla//third_party/py:python_wheel.bzl",
+    "@org_tensorflow//third_party/xla/third_party/py:python_wheel.bzl",
     "python_wheel_version_suffix_repository",
 )
 
-python_wheel_version_suffix_repository(name = "tf_wheel_version_suffix")
+python_wheel_version_suffix_repository(
+    name = "tf_wheel_version_suffix",
+)
 
 load(
-    "@local_xla//third_party/gpus/cuda/hermetic:cuda_json_init_repository.bzl",
+    "@rules_ml_toolchain//third_party/gpus/cuda/hermetic:cuda_json_init_repository.bzl",
     "cuda_json_init_repository",
 )
 
@@ -170,7 +202,7 @@ load(
     "CUDNN_REDISTRIBUTIONS",
 )
 load(
-    "@local_xla//third_party/gpus/cuda/hermetic:cuda_redist_init_repositories.bzl",
+    "@rules_ml_toolchain//third_party/gpus/cuda/hermetic:cuda_redist_init_repositories.bzl",
     "cuda_redist_init_repositories",
     "cudnn_redist_init_repository",
 )
@@ -184,21 +216,21 @@ cudnn_redist_init_repository(
 )
 
 load(
-    "@local_xla//third_party/gpus/cuda/hermetic:cuda_configure.bzl",
+    "@rules_ml_toolchain//third_party/gpus/cuda/hermetic:cuda_configure.bzl",
     "cuda_configure",
 )
 
 cuda_configure(name = "local_config_cuda")
 
 load(
-    "@local_xla//third_party/nccl/hermetic:nccl_redist_init_repository.bzl",
+    "@rules_ml_toolchain//third_party/nccl/hermetic:nccl_redist_init_repository.bzl",
     "nccl_redist_init_repository",
 )
 
 nccl_redist_init_repository()
 
 load(
-    "@local_xla//third_party/nccl/hermetic:nccl_configure.bzl",
+    "@rules_ml_toolchain//third_party/nccl/hermetic:nccl_configure.bzl",
     "nccl_configure",
 )
 
