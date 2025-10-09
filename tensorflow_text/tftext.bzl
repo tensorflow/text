@@ -1,6 +1,8 @@
 """
 Build rule for open source tf.text libraries.
 """
+load("@rules_python//python:py_library.bzl", "py_library")
+
 
 def py_tf_text_library(
         name,
@@ -85,7 +87,7 @@ def py_tf_text_library(
             }),
         )
 
-    native.py_library(
+    py_library(
         name = name,
         srcs = srcs,
         srcs_version = "PY2AND3",
@@ -139,6 +141,12 @@ def tf_cc_library(
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/time")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/types:variant")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/functional:any_invocable")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:check")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:log")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:absl_check")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:absl_log")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:btree")
+    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:flat_hash_set")
     deps += select({
         "@org_tensorflow//tensorflow:mobile": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
@@ -227,49 +235,3 @@ def extra_py_deps():
         "@pypi_tensorflow_datasets//:pkg",
         "@pypi_tensorflow_metadata//:pkg",
     ]
-
-def _py_deps_profile_impl(ctx):
-    is_switch = False
-    for var_name, var_val in ctx.attr.switch.items():
-        is_switch = is_switch or ctx.os.environ.get(var_name, "") == var_val
-
-    prefix = ctx.attr.pip_repo_name
-    reqirements_name = ctx.attr.requirements_in.name
-    requirements_in_substitutions = {}
-    build_content = ['exports_files(["{}"])'.format(reqirements_name)]
-    for k, v in ctx.attr.deps_map.items():
-        repo_name = v[0] if is_switch else k
-        requirements_in_substitutions[k + "\n"] = repo_name + "\n"
-        requirements_in_substitutions[k + "\r\n"] = repo_name + "\r\n"
-        aliased_targets = ["pkg"] + v[1:]
-        norm_repo_name = repo_name.replace("-", "_")
-        norm_alas_name = k.replace("-", "_")
-        for target in aliased_targets:
-            alias_name = "{}_{}".format(norm_alas_name, target)
-            alias_value = "@{}_{}//:{}".format(prefix, norm_repo_name, target)
-            build_content.append("""
-alias(
-    name = "{}",
-    actual = "{}",
-    visibility = ["//visibility:public"]
-)
-""".format(alias_name, alias_value))
-
-    ctx.file("BUILD", "".join(build_content))
-    ctx.template(
-        reqirements_name,
-        ctx.attr.requirements_in,
-        executable = False,
-        substitutions = requirements_in_substitutions,
-    )
-
-py_deps_profile = repository_rule(
-    implementation = _py_deps_profile_impl,
-    attrs = {
-        "requirements_in": attr.label(mandatory = True),
-        "deps_map": attr.string_list_dict(mandatory = True),
-        "pip_repo_name": attr.string(mandatory = True),
-        "switch": attr.string_dict(mandatory = True),
-    },
-    local = True,
-)

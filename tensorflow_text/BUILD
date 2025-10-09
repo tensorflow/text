@@ -1,7 +1,8 @@
-# Placeholder: load py_library
-# Placeholder: load py_test
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "if_oss")
 load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_python//python:py_library.bzl", "py_library")
+load("@rules_python//python:py_test.bzl", "py_test")
 load("//tensorflow_text:tftext.bzl", "extra_py_deps", "py_tf_text_library")
 # [internal] load build_test.bzl
 
@@ -123,9 +124,11 @@ py_library(
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python/util:all_util tensorflow dep,
-        "//tensorflow_text/core/pybinds:tflite_registrar",
         "//tensorflow_text/tools/wordpiece_vocab",
-    ] + extra_py_deps(),
+    ] + if_oss(
+        ["//tensorflow_text/core/pybinds:tflite_registrar_library"],
+        ["//tensorflow_text/core/pybinds:tflite_registrar"],
+    ) + extra_py_deps(),
 )
 
 # build_test
