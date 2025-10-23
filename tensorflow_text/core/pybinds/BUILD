@@ -1,7 +1,7 @@
 # Code that exposes C++ libraries to Python via pybind11.
 
 # Placeholder: load py_test
-load("@org_tensorflow//tensorflow:tensorflow.bzl", "pybind_extension")
+load("//third_party/tensorflow/compiler/xla/tsl:tsl.google.bzl", pybind_extension = "tsl_pybind_extension")
 
 licenses(["notice"])
 
@@ -66,19 +66,6 @@ pybind_extension(
     ],
 )
 
-py_test(
-    name = "pywrap_fast_bert_normalizer_model_builder_test",
-    srcs = ["pywrap_fast_bert_normalizer_model_builder_test.py"],
-    data = [
-        "//tensorflow_text:python/ops/test_data/fast_bert_normalizer_model.fb",
-        "//tensorflow_text:python/ops/test_data/fast_bert_normalizer_model_lower_case_nfd_strip_accents.fb",
-    ],
-    deps = [
-        ":pywrap_fast_bert_normalizer_model_builder",
-        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
-    ],
-)
-
 pybind_extension(
     name = "pywrap_fast_wordpiece_tokenizer_model_builder",
     srcs = ["pywrap_fast_wordpiece_tokenizer_model_builder.cc"],
@@ -95,18 +82,6 @@ pybind_extension(
     deps = [
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_model_builder",
         "@pybind11",
-    ],
-)
-
-py_test(
-    name = "pywrap_fast_wordpiece_tokenizer_model_builder_test",
-    srcs = ["pywrap_fast_wordpiece_tokenizer_model_builder_test.py"],
-    data = [
-        "//tensorflow_text:python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
-    ],
-    deps = [
-        ":pywrap_fast_wordpiece_tokenizer_model_builder",
-        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
 )
 
@@ -130,18 +105,6 @@ pybind_extension(
     deps = [
         "//tensorflow_text/core/kernels:phrase_tokenizer_model_builder",
         "@pybind11",
-    ],
-)
-
-py_test(
-    name = "pywrap_phrase_tokenizer_model_builder_test",
-    srcs = ["pywrap_phrase_tokenizer_model_builder_test.py"],
-    data = [
-        "//tensorflow_text:python/ops/test_data/phrase_tokenizer_model_test.fb",
-    ],
-    deps = [
-        ":pywrap_phrase_tokenizer_model_builder",
-        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
 )
 
@@ -182,14 +145,5 @@ pybind_extension(
     deps = [
         "//tensorflow_text/core/kernels:whitespace_tokenizer_config_builder",
         "@pybind11",
-    ],
-)
-
-py_test(
-    name = "pywrap_whitespace_tokenizer_config_builder_test",
-    srcs = ["pywrap_whitespace_tokenizer_config_builder_test.py"],
-    deps = [
-        ":pywrap_whitespace_tokenizer_config_builder",
-        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
 )
