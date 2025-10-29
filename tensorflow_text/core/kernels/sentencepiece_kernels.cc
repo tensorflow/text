@@ -53,29 +53,29 @@ namespace {
 // Our resource object that will hold the SentencePiece processor.
 struct SentencepieceResource : public ResourceBase {
   sentencepiece::SentencePieceProcessor processor;
-  int64 memory_used;
+  int64_t memory_used;
   bool add_bos = false;
   bool add_eos = false;
   bool reverse = false;
   mutable absl::Mutex mu;
 
-  string DebugString() const override { return "Sentencepiece Resource"; }
+  std::string DebugString() const override { return "Sentencepiece Resource"; }
 
-  int64 MemoryUsed() const override { return memory_used; }
+  int64_t MemoryUsed() const override { return memory_used; }
 
   bool SameOptions(bool add_bos, bool add_eos, bool reverse) const {
     return (add_bos == this->add_bos) && (add_eos == this->add_eos) &&
            (reverse == this->reverse);
   }
 
-  Status AsGraphDef(GraphDefBuilder* builder, Node** out) const override {
+  sentencepiece::util::Status AsGraphDef(GraphDefBuilder* builder, Node** out) const override {
     absl::ReaderMutexLock l(&mu);
     // We set use_node_name_sharing with a unique node name so that the resource
     // can outlive the kernel. This means that the lifetime of the re-created
     // resource will be tied to the lifetime of the resource manager it is
     // created in.
-    static std::atomic<int64> counter(0);
-    std::string unique_node_name = strings::StrCat(
+    static std::atomic<int64_t> counter(0);
+    std::string unique_node_name = absl::StrCat(
         "SentencepieceResourceFromGraphDef", "/", counter.fetch_add(1));
     std::string model = processor.model_proto().SerializeAsString();
     *out = ops::SourceOp(
@@ -92,12 +92,11 @@ struct SentencepieceResource : public ResourceBase {
 // how much to shard. It assumes each cost unit is 1ns, and the minimum cost
 // per shard is 10000 (10us).
 // TODO(broken) Determine a medium cost of a call to the SentencePiece processor
-constexpr int64 kCostPerUnit = 10000;
+constexpr int64_t kCostPerUnit = 10000;
 
-::tensorflow::Status ToTFStatus(const sentencepiece::util::Status& s) {
-  if (s.ok()) return ::tensorflow::Status();
-  return ::tensorflow::Status(static_cast<::absl::StatusCode>(s.code()),
-                              ::tensorflow::string(s.message()));
+absl::Status ToTFStatus(const sentencepiece::util::Status& s) {
+  if (s.ok()) return sentencepiece::util::Status();
+  return sentencepiece::util::Status(static_cast<::absl::StatusCode>(s.code()), s.message());
 }
 
 template <typename T>
@@ -110,13 +109,13 @@ tensorflow::tstring GetPieceOrId<tensorflow::tstring>(
 }
 
 template <>
-int32 GetPieceOrId<int32>(
+int32_t GetPieceOrId<int32_t>(
     const sentencepiece::SentencePieceText::SentencePiece& sp) {
   return sp.id();
 }
 
-tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
-                                      SentencepieceResource* sp) {
+absl::Status HandleExtraOptions(OpKernelContext* ctx,
+                                SentencepieceResource* sp) {
   const Tensor* add_bos_tensor = nullptr;
   TF_RETURN_IF_ERROR(ctx->input("add_bos", &add_bos_tensor));
   const bool add_bos = add_bos_tensor->scalar<bool>()();
@@ -142,7 +141,7 @@ tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
   if (sp->SameOptions(add_bos, add_eos, reverse)) {
     return absl::OkStatus();
   }
-  string options;
+  std::string options;
   sp->add_bos = add_bos;
   if (sp->add_bos) {
     absl::StrAppend(&options, "bos");
@@ -205,12 +204,12 @@ class SentencepieceOp : public OpKernel {
             ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_) {
               SentencepieceResource* sp = new SentencepieceResource();
 
-              string model_proto_attr;
+              std::string model_proto_attr;
               TF_RETURN_IF_ERROR(
                   GetNodeAttr(this->def(), "model", &model_proto_attr));
 
               if (TF_PREDICT_FALSE(model_proto_attr.empty())) {
-                return Status(tensorflow::errors::InvalidArgument(
+                return sentencepiece::util::Status(tensorflow::errors::InvalidArgument(
                     "Model argument must be specified."));
               }
               // Loads serialized sentencepiece model proto to enable embedding
@@ -281,7 +280,7 @@ class SentencepieceTokenizeOp : public OpKernel {
     const Tensor& input_values_tensor = ctx->input(1);
     const auto input_values_flat =
         input_values_tensor.flat<tensorflow::tstring>();
-    const int64 num_of_input_values = input_values_flat.size();
+    const int64_t num_of_input_values = input_values_flat.size();
 
     const Tensor* nbest_size_tensor = nullptr;
     OP_REQUIRES_OK(ctx, ctx->input("nbest_size", &nbest_size_tensor));
@@ -296,10 +295,10 @@ class SentencepieceTokenizeOp : public OpKernel {
                       "When return_nbest is true nbest_size must "
                       "be a scalar; got",
                       nbest_size_tensor->shape().DebugString(), "instead"));
-      OP_REQUIRES(ctx, nbest_size_tensor->scalar<int32>()() >= 1,
+      OP_REQUIRES(ctx, nbest_size_tensor->scalar<int32_t>()() >= 1,
                   errors::InvalidArgument(
                       "When return_nbest is true nbest_size must be >= 1; got ",
-                      nbest_size_tensor->scalar<int32>()()));
+                      nbest_size_tensor->scalar<int32_t>()()));
     }
 
     std::vector<std::vector<typename std::conditional<
@@ -318,13 +317,14 @@ class SentencepieceTokenizeOp : public OpKernel {
           num_of_input_values,         // total number of data to process.
           kCostPerUnit,                // cost per unit
           [ctx, sp, &input_values_flat, &tokens, &nbest_tokens,
-          &nbest_size_tensor, &alpha_tensor,
-          return_nbest](int64 start, int64 limit) {
+           &nbest_size_tensor, &alpha_tensor,
+           return_nbest](int64_t start, int64_t limit) {
             absl::ReaderMutexLock lock(&sp->mu);
             for (int i = start; i < limit; ++i) {
-              const int32 nbest_size = nbest_size_tensor->dims() == 1
-                                         ? nbest_size_tensor->vec<int32>()(i)
-                                         : nbest_size_tensor->scalar<int32>()();
+              const int32_t nbest_size =
+                  nbest_size_tensor->dims() == 1
+                      ? nbest_size_tensor->vec<int32_t>()(i)
+                      : nbest_size_tensor->scalar<int32_t>()();
               if (return_nbest) {
                 OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.NBestEncode(
                                         input_values_flat(i), nbest_size,
@@ -352,7 +352,7 @@ class SentencepieceTokenizeOp : public OpKernel {
       }
       nbest_tokens.clear();
     }
-    int64 total_tokens = 0;
+    int64_t total_tokens = 0;
     for (auto& tokens_row : tokens) {
       total_tokens += tokens_row.size();
     }
@@ -362,7 +362,7 @@ class SentencepieceTokenizeOp : public OpKernel {
 
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(0, {total_tokens}, &output_values_tensor));
-    int64 splits_size = tokens.size() + 1;
+    int64_t splits_size = tokens.size() + 1;
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(1, {splits_size}, &output_splits_tensor));
 
@@ -384,24 +384,24 @@ class SentencepieceTokenizeOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int32>("out_type")
-                            .TypeConstraint<int32>("Tsplits"),
-                        SentencepieceTokenizeOp<int32, int32>);
+                            .TypeConstraint<int32_t>("out_type")
+                            .TypeConstraint<int32_t>("Tsplits"),
+                        SentencepieceTokenizeOp<int32_t, int32_t>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                             .Device(DEVICE_CPU)
                             .TypeConstraint<tensorflow::tstring>("out_type")
-                            .TypeConstraint<int32>("Tsplits"),
-                        SentencepieceTokenizeOp<tensorflow::tstring, int32>);
+                            .TypeConstraint<int32_t>("Tsplits"),
+                        SentencepieceTokenizeOp<tensorflow::tstring, int32_t>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int32>("out_type")
-                            .TypeConstraint<int64>("Tsplits"),
-                        SentencepieceTokenizeOp<int32, int64>);
+                            .TypeConstraint<int32_t>("out_type")
+                            .TypeConstraint<int64_t>("Tsplits"),
+                        SentencepieceTokenizeOp<int32_t, int64_t>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
                             .Device(DEVICE_CPU)
                             .TypeConstraint<tensorflow::tstring>("out_type")
-                            .TypeConstraint<int64>("Tsplits"),
-                        SentencepieceTokenizeOp<tensorflow::tstring, int64>);
+                            .TypeConstraint<int64_t>("Tsplits"),
+                        SentencepieceTokenizeOp<tensorflow::tstring, int64_t>);
 ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceTokenizeOp");
 
 template <typename T, typename Tsplits>
@@ -424,7 +424,7 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
     const Tensor& input_values_tensor = ctx->input(1);
     const auto input_values_flat =
         input_values_tensor.flat<tensorflow::tstring>();
-    const int64 num_of_input_values = input_values_flat.size();
+    const int64_t num_of_input_values = input_values_flat.size();
 
     const Tensor* nbest_size_tensor = nullptr;
     OP_REQUIRES_OK(ctx, ctx->input("nbest_size", &nbest_size_tensor));
@@ -439,10 +439,10 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
                       "When return_nbest is true nbest_size must "
                       "be a scalar; got",
                       nbest_size_tensor->shape().DebugString(), "instead"));
-      OP_REQUIRES(ctx, nbest_size_tensor->scalar<int32>()() >= 1,
+      OP_REQUIRES(ctx, nbest_size_tensor->scalar<int32_t>()() >= 1,
                   errors::InvalidArgument(
                       "When return_nbest is true nbest_size must be >= 1; got ",
-                      nbest_size_tensor->scalar<int32>()()));
+                      nbest_size_tensor->scalar<int32_t>()()));
     }
 
     std::vector<sentencepiece::SentencePieceText> results(
@@ -459,13 +459,14 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
           num_of_input_values,         // total number of data to process.
           kCostPerUnit,
           [ctx, sp, &input_values_flat, &results, &nbest_results,
-          &nbest_size_tensor, &alpha_tensor,
-          return_nbest](int64 start, int64 limit) {
+           &nbest_size_tensor, &alpha_tensor,
+           return_nbest](int64_t start, int64_t limit) {
             absl::ReaderMutexLock lock(&sp->mu);
             for (int i = start; i < limit; ++i) {
-              const int32 nbest_size = nbest_size_tensor->dims() == 1
-                                         ? nbest_size_tensor->vec<int32>()(i)
-                                         : nbest_size_tensor->scalar<int32>()();
+              const int32_t nbest_size =
+                  nbest_size_tensor->dims() == 1
+                      ? nbest_size_tensor->vec<int32_t>()(i)
+                      : nbest_size_tensor->scalar<int32_t>()();
               if (return_nbest) {
                 OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.NBestEncode(
                                         input_values_flat(i), nbest_size,
@@ -492,7 +493,7 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
         }
       }
     }
-    int64 total_tokens = 0;
+    int64_t total_tokens = 0;
     for (auto& sp_result : results) {
       total_tokens += sp_result.pieces_size();
     }
@@ -504,7 +505,7 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
 
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(0, {total_tokens}, &output_values_tensor));
-    int64 splits_size = results.size() + 1;
+    int64_t splits_size = results.size() + 1;
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(1, {splits_size}, &output_splits_tensor));
     OP_REQUIRES_OK(
@@ -514,8 +515,8 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
 
     auto values_tensor_flat = output_values_tensor->vec<T>();
     auto splits_tensor_flat = output_splits_tensor->vec<Tsplits>();
-    auto starts_tensor_flat = output_starts_tensor->vec<int64>();
-    auto limits_tensor_flat = output_limits_tensor->vec<int64>();
+    auto starts_tensor_flat = output_starts_tensor->vec<int64_t>();
+    auto limits_tensor_flat = output_limits_tensor->vec<int64_t>();
 
     int i = 0;
     splits_tensor_flat(0) = 0;
@@ -535,26 +536,26 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeWithOffsetsOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int32>("out_type")
-                            .TypeConstraint<int32>("Tsplits"),
-                        SentencepieceTokenizeWithOffsetsOp<int32, int32>);
+                            .TypeConstraint<int32_t>("out_type")
+                            .TypeConstraint<int32_t>("Tsplits"),
+                        SentencepieceTokenizeWithOffsetsOp<int32_t, int32_t>);
 REGISTER_KERNEL_BUILDER(
     Name("SentencepieceTokenizeWithOffsetsOp")
         .Device(DEVICE_CPU)
         .TypeConstraint<tensorflow::tstring>("out_type")
-        .TypeConstraint<int32>("Tsplits"),
-    SentencepieceTokenizeWithOffsetsOp<tensorflow::tstring, int32>);
+        .TypeConstraint<int32_t>("Tsplits"),
+    SentencepieceTokenizeWithOffsetsOp<tensorflow::tstring, int32_t>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeWithOffsetsOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int32>("out_type")
-                            .TypeConstraint<int64>("Tsplits"),
-                        SentencepieceTokenizeWithOffsetsOp<int32, int64>);
+                            .TypeConstraint<int32_t>("out_type")
+                            .TypeConstraint<int64_t>("Tsplits"),
+                        SentencepieceTokenizeWithOffsetsOp<int32_t, int64_t>);
 REGISTER_KERNEL_BUILDER(
     Name("SentencepieceTokenizeWithOffsetsOp")
         .Device(DEVICE_CPU)
         .TypeConstraint<tensorflow::tstring>("out_type")
-        .TypeConstraint<int64>("Tsplits"),
-    SentencepieceTokenizeWithOffsetsOp<tensorflow::tstring, int64>);
+        .TypeConstraint<int64_t>("Tsplits"),
+    SentencepieceTokenizeWithOffsetsOp<tensorflow::tstring, int64_t>);
 ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceTokenizeWithOffsetsOp");
 
 template <typename T, typename Tsplits>
@@ -576,7 +577,7 @@ class SentencepieceDetokenizeOp : public OpKernel {
     const auto input_values_flat = input_values_tensor.flat<T>();
     const Tensor& input_splits_tensor = ctx->input(2);
     const auto input_splits_flat = input_splits_tensor.flat<Tsplits>();
-    const int64 num_of_sentences = input_splits_flat.size() - 1;
+    const int64_t num_of_sentences = input_splits_flat.size() - 1;
 
     OP_REQUIRES_OK(ctx, HandleExtraOptions(ctx, sp));
 
@@ -594,7 +595,7 @@ class SentencepieceDetokenizeOp : public OpKernel {
           num_of_sentences,            // total number of data to process.
           kCostPerUnit,
           [ctx, sp, &input_values_flat, &input_splits_flat, &output_flat](
-              int64 start, int64 limit) {
+              int64_t start, int64_t limit) {
             absl::ReaderMutexLock lock(&sp->mu);
             for (int i = start; i < limit; ++i) {
               if (i + 1 >= input_splits_flat.size()) {
@@ -624,24 +625,26 @@ class SentencepieceDetokenizeOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int32>("T")
-                            .TypeConstraint<int32>("Tsplits"),
-                        SentencepieceDetokenizeOp<int32, int32>);
+                            .TypeConstraint<int32_t>("T")
+                            .TypeConstraint<int32_t>("Tsplits"),
+                        SentencepieceDetokenizeOp<int32_t, int32_t>);
+REGISTER_KERNEL_BUILDER(
+    Name("SentencepieceDetokenizeOp")
+        .Device(DEVICE_CPU)
+        .TypeConstraint<tensorflow::tstring>("T")
+        .TypeConstraint<int32_t>("Tsplits"),
+    SentencepieceDetokenizeOp<tensorflow::tstring, int32_t>);
 REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<tensorflow::tstring>("T")
-                            .TypeConstraint<int32>("Tsplits"),
-                        SentencepieceDetokenizeOp<tensorflow::tstring, int32>);
-REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
-                            .Device(DEVICE_CPU)
-                            .TypeConstraint<int32>("T")
-                            .TypeConstraint<int64>("Tsplits"),
-                        SentencepieceDetokenizeOp<int32, int64>);
-REGISTER_KERNEL_BUILDER(Name("SentencepieceDetokenizeOp")
-                            .Device(DEVICE_CPU)
-                            .TypeConstraint<tensorflow::tstring>("T")
-                            .TypeConstraint<int64>("Tsplits"),
-                        SentencepieceDetokenizeOp<tensorflow::tstring, int64>);
+                            .TypeConstraint<int32_t>("T")
+                            .TypeConstraint<int64_t>("Tsplits"),
+                        SentencepieceDetokenizeOp<int32_t, int64_t>);
+REGISTER_KERNEL_BUILDER(
+    Name("SentencepieceDetokenizeOp")
+        .Device(DEVICE_CPU)
+        .TypeConstraint<tensorflow::tstring>("T")
+        .TypeConstraint<int64_t>("Tsplits"),
+    SentencepieceDetokenizeOp<tensorflow::tstring, int64_t>);
 ALLOW_STATEFUL_OP_FOR_DATASET_FUNCTIONS("SentencepieceDetokenizeOp");
 
 class SentencepieceVocabSizeOp : public OpKernel {
@@ -660,7 +663,7 @@ class SentencepieceVocabSizeOp : public OpKernel {
 
     Tensor* output_tensor;
     OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {}, &output_tensor));
-    output_tensor->scalar<int32>()() = sp->processor.GetPieceSize();
+    output_tensor->scalar<int32_t>()() = sp->processor.GetPieceSize();
   }
 };
 
@@ -683,7 +686,7 @@ class SentencepieceIdToStringOp : public OpKernel {
     core::ScopedUnref unref_me(sp);
 
     const Tensor& input_tensor = ctx->input(1);
-    const auto input_tensor_flat = input_tensor.flat<int32>();
+    const auto input_tensor_flat = input_tensor.flat<int32_t>();
     Tensor* output_tensor;
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(0, input_tensor.shape(), &output_tensor));
@@ -719,7 +722,7 @@ class SentencepieceStringToIdOp : public OpKernel {
     Tensor* output_tensor;
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(0, input_tensor.shape(), &output_tensor));
-    auto output_tensor_flat = output_tensor->flat<int32>();
+    auto output_tensor_flat = output_tensor->flat<int32_t>();
 
     absl::ReaderMutexLock lock(&sp->mu);
     for (int i = 0; i < input_tensor_flat.size(); ++i) {

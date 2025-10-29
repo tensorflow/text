@@ -65,31 +65,31 @@ bool IsBreakChar(absl::string_view text) {
   return u_isUWhiteSpace(c);
 }
 
-Status TokenizeByLabel(const absl::string_view& text,
-                       const Tensor& labels_tensor,
-                       bool force_split_at_break_character,
-                       std::vector<std::string>* tokens,
-                       std::vector<int>* begin_offset,
-                       std::vector<int>* end_offset, int* num_tokens) {
+absl::Status TokenizeByLabel(const absl::string_view& text,
+                             const Tensor& labels_tensor,
+                             bool force_split_at_break_character,
+                             std::vector<std::string>* tokens,
+                             std::vector<int>* begin_offset,
+                             std::vector<int>* end_offset, int* num_tokens) {
   std::vector<absl::string_view> chars;
   if (!GetUTF8Chars(text, &chars)) {
-    return Status(static_cast<::absl::StatusCode>(
-                      absl::StatusCode::kInvalidArgument),
-                  absl::StrCat("Input string is not utf8 valid: ", text));
+    return absl::Status(
+        static_cast<::absl::StatusCode>(absl::StatusCode::kInvalidArgument),
+        absl::StrCat("Input string is not utf8 valid: ", text));
   }
 
   if (chars.size() > labels_tensor.dim_size(0)) {
-    return Status(static_cast<::absl::StatusCode>(
-                      absl::StatusCode::kInvalidArgument),
-                  absl::StrCat("Number of labels ", labels_tensor.dim_size(0),
-                               " is insufficient for text ", text));
+    return absl::Status(
+        static_cast<::absl::StatusCode>(absl::StatusCode::kInvalidArgument),
+        absl::StrCat("Number of labels ", labels_tensor.dim_size(0),
+                     " is insufficient for text ", text));
   }
 
   const int split_label = 0;
   bool last_character_is_break_character = false;
   int start = 0;
   bool has_new_token_generated_for_text = false;
-  const auto& labels = labels_tensor.unaligned_flat<int32>();
+  const auto& labels = labels_tensor.unaligned_flat<int32_t>();
   for (int i = 0; i < chars.size(); ++i) {
     const bool is_break_character = IsBreakChar(chars[i]);
     if (!is_break_character) {
@@ -138,14 +138,14 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
                                         " elements, got ",
                                         row_splits->dim_size(0)));
 
-    std::vector<string> tokens;
+    std::vector<std::string> tokens;
     std::vector<int> begin_offset;
     std::vector<int> end_offset;
     std::vector<int> output_row_splits(1, 0);
 
     // Iterate through all the values and tokenize them.
     const auto& values_vec = input_values->flat<tstring>();
-    const auto& row_splits_vec = row_splits->flat<int32>();
+    const auto& row_splits_vec = row_splits->flat<int32_t>();
     for (int i = 0; i < values_vec.size(); ++i) {
       // Tokenize into tokens and record the offset locations.
       int num_tokens = 0;
@@ -160,10 +160,10 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
       output_row_splits.push_back(num_tokens + output_row_splits.back());
     }
 
-    std::vector<int64> output_tokens_shape;
+    std::vector<int64_t> output_tokens_shape;
     output_tokens_shape.push_back(tokens.size());
 
-    std::vector<int64> output_row_splits_shape;
+    std::vector<int64_t> output_row_splits_shape;
     output_row_splits_shape.push_back(output_row_splits.size());
 
     Tensor* output_values;
@@ -177,19 +177,19 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
                    ctx->allocate_output("output_row_splits",
                                         TensorShape(output_row_splits_shape),
                                         &output_row_splits_tensor));
-    auto output_row_splits_vec = output_row_splits_tensor->vec<int64>();
+    auto output_row_splits_vec = output_row_splits_tensor->vec<int64_t>();
 
     Tensor* start_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("start_values",
                                              TensorShape(output_tokens_shape),
                                              &start_values));
-    auto start_values_vec = start_values->vec<int64>();
+    auto start_values_vec = start_values->vec<int64_t>();
 
     Tensor* limit_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("limit_values",
                                              TensorShape(output_tokens_shape),
                                              &limit_values));
-    auto limit_values_vec = limit_values->vec<int64>();
+    auto limit_values_vec = limit_values->vec<int64_t>();
 
     for (int i = 0; i < tokens.size(); ++i) {
       output_values_vec(i) = tokens[i];

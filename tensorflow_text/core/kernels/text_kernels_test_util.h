@@ -77,7 +77,7 @@ template <typename DTYPE>
 //               VectorEq<int64>({1, 2, 3, 4, 5, 6});
 template <typename DTYPE>
 ::testing::Matcher<Tensor> VectorEq(const std::vector<DTYPE>& values) {
-  int64 nvals = values.size();
+  int64_t nvals = values.size();
   Tensor expect = test::AsTensor<DTYPE>(values, {nvals});
   // MakeMatcher takes ownership of the TensorEqMatcher.
   return ::testing::MakeMatcher(new TensorEqMatcher(expect));
@@ -95,11 +95,11 @@ template <typename DTYPE>
 template <typename DTYPE>
 ::testing::Matcher<Tensor> MatrixEq(
     const std::vector<std::vector<DTYPE>>& values) {
-  int64 nrows = values.size();
+  int64_t nrows = values.size();
   CHECK_GT(nrows, 0)  // Crash OK
       << "Invalid use of MatrixEq: to test empty matrices, use "
       << "TensorHasShapeAndValues<dtype>{{0, ndims}, {}} instead.";
-  int64 ncols = values[0].size();
+  int64_t ncols = values[0].size();
   std::vector<DTYPE> flat;
   for (const auto& row : values) {
     CHECK_EQ(ncols, row.size())  // Crash OK
