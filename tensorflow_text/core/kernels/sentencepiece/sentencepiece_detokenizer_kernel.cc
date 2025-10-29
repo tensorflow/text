@@ -46,8 +46,7 @@ class TFSentencepieceDetokenizerOp : public tensorflow::OpKernel {
   void Compute(tensorflow::OpKernelContext* ctx) override {
     const auto& model_tensor = ctx->input(kSPModelIndex);
     const auto& input_values_tensor = ctx->input(kInputIndex);
-    const auto input_values_flat =
-        input_values_tensor.flat<tensorflow::int32>();
+    const auto input_values_flat = input_values_tensor.flat<int32_t>();
     const auto& input_splits_tensor = ctx->input(kInputSplits);
     const auto input_splits_flat = input_splits_tensor.flat<Tsplits>();
     const int num_of_sentences = input_splits_flat.size() - 1;
@@ -81,10 +80,10 @@ class TFSentencepieceDetokenizerOp : public tensorflow::OpKernel {
 REGISTER_KERNEL_BUILDER(
     Name("TFText>FastSentencepieceDetokenize")
         .Device(tensorflow::DEVICE_CPU)
-        .TypeConstraint<tensorflow::int32>("Tsplits"),
-    tensorflow::text::TFSentencepieceDetokenizerOp<tensorflow::int32>);
+        .TypeConstraint<int32_t>("Tsplits"),
+    tensorflow::text::TFSentencepieceDetokenizerOp<int32_t>);
 REGISTER_KERNEL_BUILDER(
     Name("TFText>FastSentencepieceDetokenize")
         .Device(tensorflow::DEVICE_CPU)
-        .TypeConstraint<tensorflow::int64>("Tsplits"),
-    tensorflow::text::TFSentencepieceDetokenizerOp<tensorflow::int64>);
+        .TypeConstraint<int64_t>("Tsplits"),
+    tensorflow::text::TFSentencepieceDetokenizerOp<int64_t>);
