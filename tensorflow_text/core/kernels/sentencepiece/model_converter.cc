@@ -46,6 +46,9 @@ DecodePrecompiledCharsmap(
     const ::sentencepiece::NormalizerSpec& normalizer_spec) {
   // This function "undoes" encoding done by
   // sentencepiece::normalizer::Normalizer::EncodePrecompiledCharsMap.
+  if (normalizer_spec.precompiled_charsmap().empty()) {
+    return std::make_tuple(std::vector<uint32_t>(), std::vector<int8_t>());
+  }
   const char* precompiled_map = normalizer_spec.precompiled_charsmap().data();
   const uint32_t trie_size =
       *reinterpret_cast<const uint32_t*>(precompiled_map);
@@ -89,6 +92,7 @@ absl::StatusOr<std::string> ConvertSentencepieceModelToFlatBuffer(
         break;
       case ::sentencepiece::ModelProto::SentencePiece::UNKNOWN:
       case ::sentencepiece::ModelProto::SentencePiece::CONTROL:
+      case ::sentencepiece::ModelProto::SentencePiece::BYTE:
         // Ignore unknown and control codes.
         break;
       default:

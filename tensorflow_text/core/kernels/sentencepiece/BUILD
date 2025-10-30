@@ -10,6 +10,7 @@ licenses(["notice"])
 
 # Visibility rules
 package(default_visibility = [
+    "//java/com/google/android/apps/pixel/psi:__subpackages__",
     "//visibility:public",
 ])
 
