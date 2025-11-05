@@ -15,12 +15,11 @@
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_config_builder.h"
 
 #include <string>
+#include <cassert>
 
-#include "icu4c/source/common/unicode/uchar.h"
 #include "icu4c/source/common/unicode/umachine.h"
 #include "icu4c/source/common/unicode/uniset.h"
-#include "icu4c/source/common/unicode/uset.h"
-#include "icu4c/source/common/unicode/utf8.h"
+#include "icu4c/source/common/unicode/unistr.h"
 #include "icu4c/source/common/unicode/utypes.h"
 
 namespace tensorflow {
@@ -29,24 +28,27 @@ namespace text {
 namespace {
 
 const icu::UnicodeSet& WhiteSpaceSet() {
-  // Will not fail because the data is hardcoded in the ICU library.
-  UErrorCode error_code = U_ZERO_ERROR;
-  const USet* c_set = u_getBinaryPropertySet(UCHAR_WHITE_SPACE, &error_code);
-  // assert(U_SUCCESS(error_code));
-  const icu::UnicodeSet* set = icu::UnicodeSet::fromUSet(c_set);
-  return *set;
+  // Use a C++11 static lambda to safely initialize the UnicodeSet.
+  static const icu::UnicodeSet white_space_set = []() {
+    UErrorCode status = U_ZERO_ERROR;
+    // The pattern "[:White_Space:]" selects all whitespace characters.
+    icu::UnicodeSet set(u"[:White_Space:]", status);
+    // This should never fail as the pattern is hardcoded and valid.
+    assert(U_SUCCESS(status));
+    return set;
+  }();
+  return white_space_set;
 }
 
 }  // namespace
 
 std::string BuildWhitespaceString() {
-  std::string str;
-  char buf[U8_MAX_LENGTH];
+  icu::UnicodeString ustr;
   for (auto cp : WhiteSpaceSet().codePoints()) {
-    int len = 0;
-    U8_APPEND_UNSAFE(buf, len, cp);
-    str.append(buf, len);
+    ustr.append(cp);
   }
+  std::string str;
+  ustr.toUTF8String(str);
   return str;
 }
 

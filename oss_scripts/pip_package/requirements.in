@@ -2,7 +2,7 @@ setuptools==70.0.0
 dm-tree==0.1.8  # Limit for macos support.
 numpy
 protobuf==4.25.3  # b/397977335 - Fix crash on python 3.9, 3.10.
-tensorflow
-tf-keras
+tensorflow==2.20.0
+tf-keras<=3.11.3
 tensorflow-datasets
 tensorflow-metadata
