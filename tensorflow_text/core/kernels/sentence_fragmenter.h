@@ -106,8 +106,8 @@ class Token {
     HYPERLINK = 0x200,
   };
 
-  Token(const tstring &word, uint32 start, uint32 end, BreakLevel break_level,
-        TextProperty text_properties)
+  Token(const tstring& word, uint32_t start, uint32_t end,
+        BreakLevel break_level, TextProperty text_properties)
       : word_(word),
         start_(start),
         end_(end),
@@ -115,15 +115,15 @@ class Token {
         text_properties_(text_properties) {}
 
   const tstring &word() const { return word_; }
-  const uint32 start() const { return start_; }
-  const uint32 end() const { return end_; }
+  const uint32_t start() const { return start_; }
+  const uint32_t end() const { return end_; }
   const BreakLevel break_level() const { return break_level_; }
   const TextProperty text_properties() const { return text_properties_; }
 
  private:
   const tstring &word_;
-  uint32 start_;
-  uint32 end_;
+  uint32_t start_;
+  uint32_t end_;
   BreakLevel break_level_;
   TextProperty text_properties_;
 };
@@ -133,7 +133,7 @@ class Document {
   // Does NOT take ownership of 'tokens'.
   Document(std::vector<Token> *tokens) : tokens_(tokens) {}
 
-  void AddToken(const tstring &word, uint32 start, uint32 end,
+  void AddToken(const tstring& word, uint32_t start, uint32_t end,
                 Token::BreakLevel break_level,
                 Token::TextProperty text_properties) {
     tokens_->emplace_back(word, start, end, break_level, text_properties);
@@ -157,7 +157,7 @@ struct SentenceFragment {
     HAS_SENTENTIAL_CLOSE_PAREN = 0x0008,  // e.g.: (Mushrooms are fungi!)
   };
   // A mask of the above listed properties.
-  uint32 properties = 0;
+  uint32_t properties = 0;
   int terminal_punc_token = -1;
 };
 
