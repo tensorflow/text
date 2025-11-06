@@ -5,4 +5,4 @@ protobuf==4.25.3  # b/397977335 - Fix crash on python 3.9, 3.10.
 tensorflow
 tf-keras
 tensorflow-datasets
-tensorflow-metadata
+tensorflow-metadata==1.17.2
