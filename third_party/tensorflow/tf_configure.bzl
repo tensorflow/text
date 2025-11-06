@@ -4,7 +4,10 @@ This is used for the generation of the dynamic libraries used for custom ops.
 See: http://github.com/tensorflow/custom-op
 """
 
-load("@python//:defs.bzl", "interpreter")
+load(
+    "@org_tensorflow//third_party/py:python_init_toolchains.bzl",
+    "get_toolchain_name_per_python_version",
+)
 load("@python_version_repo//:py_version.bzl", "REQUIREMENTS_WITH_LOCAL_WHEELS")
 load("@rules_python//python:pip.bzl", "package_annotation", "pip_parse")
 
@@ -55,6 +58,11 @@ cc_library(
                 additive_build_content = tensorflow_annotation,
             ),
         },
-        python_interpreter_target = interpreter,
+        python_interpreter_target = _get_python_interpreter(),
         requirements_lock = REQUIREMENTS_WITH_LOCAL_WHEELS,
+    )
+
+def _get_python_interpreter():
+    return "@{}_host//:python".format(
+        get_toolchain_name_per_python_version("python"),
     )

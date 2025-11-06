@@ -337,6 +337,7 @@ cc_library(
     deps = [
         "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
         "@darts_clone",
     ],
 )
@@ -681,11 +682,11 @@ tf_cc_library(
     ],
     deps = [
         ":edit_changes_cc_proto",
+        "//third_party/icu:i18n",
         "//third_party/icu/data:icu_normalization_data",
         "@com_google_absl//absl/strings",
-        "@icu//:nfkc",
-        "@icu//:nfkc_cf",
     ],
+    alwayslink = 1,
 )
 
 tflite_cc_library(
