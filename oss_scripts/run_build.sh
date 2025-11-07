@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e  # fail and exit on any command erroring
+set -x
 
 osname="$(uname -s | tr 'A-Z' 'a-z')"
 
@@ -19,7 +20,9 @@ if [[ $osname != "darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "A
 fi
 
 # Build the pip package.
-bazel run ${BUILD_ARGS[@]} --enable_runfiles //oss_scripts/pip_package:build_pip_package -- "$(realpath .)"
+#bazel run ${BUILD_ARGS[@]} --enable_runfiles //oss_scripts/pip_package:build_pip_package -- "$(realpath .)"
+
+bazel build //oss_scripts/pip_package:tensorflow_text_wheel
 
 if [ -n "${AUDITWHEEL_PLATFORM}" ]; then
   echo $(date) : "=== Auditing wheel"
