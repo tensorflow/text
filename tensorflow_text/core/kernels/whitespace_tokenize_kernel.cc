@@ -54,7 +54,7 @@ class WhitespaceTokenizeWithOffsetsOp : public OpKernel {
   void Compute(OpKernelContext* context) override {
     // Get inputs
     const Tensor& input_values_tensor = context->input(0);
-    const auto input_values_flat = input_values_tensor.flat<int32>();
+    const auto input_values_flat = input_values_tensor.flat<int32_t>();
     const Tensor& input_splits_tensor = context->input(1);
     const auto input_splits_flat = input_splits_tensor.flat<SPLITS_TYPE>();
 
@@ -76,17 +76,18 @@ class WhitespaceTokenizeWithOffsetsOp : public OpKernel {
     auto output_outer_splits_flat =
         output_outer_splits_tensor->flat<SPLITS_TYPE>();
 
-    std::vector<int32> output_values;
+    std::vector<int32_t> output_values;
     std::vector<SPLITS_TYPE> output_values_inner_splits;
-    std::vector<int64> output_offset_starts;
-    std::vector<int64> output_offset_limits;
+    std::vector<int64_t> output_offset_starts;
+    std::vector<int64_t> output_offset_limits;
 
     // Loop over the codepoints (a split at a time) and create splits of tokens.
     for (int splits_idx = 0; splits_idx < input_splits_flat.size() - 1;
          splits_idx++) {
       output_outer_splits_flat(splits_idx) = output_offset_starts.size();
       bool token_has_start_set = false;
-      int32 curr_skipped_spaces = 0;  // Used when computing the end of a token
+      int32_t curr_skipped_spaces =
+          0;  // Used when computing the end of a token
       const int curr_word_start_idx = input_splits_flat(splits_idx);
       for (int values_idx = curr_word_start_idx;
            values_idx < input_splits_flat(splits_idx + 1); values_idx++) {
@@ -135,11 +136,11 @@ class WhitespaceTokenizeWithOffsetsOp : public OpKernel {
   auto name##_data = name##_tensor->flat<dtype>().data();                    \
   memcpy(name##_data, name.data(), name##_size * sizeof(dtype));
 
-    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_values, int32);
+    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_values, int32_t);
     DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_values_inner_splits,
                                             SPLITS_TYPE);
-    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_offset_starts, int64);
-    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_offset_limits, int64);
+    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_offset_starts, int64_t);
+    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_offset_limits, int64_t);
 
 #undef DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR
   }
@@ -150,12 +151,12 @@ class WhitespaceTokenizeWithOffsetsOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("WhitespaceTokenizeWithOffsets")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int32>("Tsplits"),
-                        WhitespaceTokenizeWithOffsetsOp<int32>);
+                            .TypeConstraint<int32_t>("Tsplits"),
+                        WhitespaceTokenizeWithOffsetsOp<int32_t>);
 REGISTER_KERNEL_BUILDER(Name("WhitespaceTokenizeWithOffsets")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int64>("Tsplits"),
-                        WhitespaceTokenizeWithOffsetsOp<int64>);
+                            .TypeConstraint<int64_t>("Tsplits"),
+                        WhitespaceTokenizeWithOffsetsOp<int64_t>);
 
 }  // namespace text
 }  // namespace tensorflow

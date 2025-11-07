@@ -34,25 +34,25 @@ namespace tensorflow {
 namespace text {
 
 namespace {
-string GetWordSplitChar(OpKernelConstruction* ctx) {
-  string suffix_indicator;
-  ([=](string* c) -> void {
+std::string GetWordSplitChar(OpKernelConstruction* ctx) {
+  std::string suffix_indicator;
+  ([=](std::string* c) -> void {
     OP_REQUIRES_OK(ctx, ctx->GetAttr("suffix_indicator", c));
   })(&suffix_indicator);
   return suffix_indicator;
 }
 
-int32 GetMaxCharsPerWord(OpKernelConstruction* ctx) {
-  int32 max_chars_per_word;
-  ([=](int32* c) -> void {
+int32_t GetMaxCharsPerWord(OpKernelConstruction* ctx) {
+  int32_t max_chars_per_word;
+  ([=](int32_t* c) -> void {
     OP_REQUIRES_OK(ctx, ctx->GetAttr("max_bytes_per_word", c));
   })(&max_chars_per_word);
   return max_chars_per_word;
 }
 
-int32 GetMaxCharsPerToken(OpKernelConstruction* ctx) {
-  int32 max_chars_per_token;
-  ([=](int32* c) -> void {
+int32_t GetMaxCharsPerToken(OpKernelConstruction* ctx) {
+  int32_t max_chars_per_token;
+  ([=](int32_t* c) -> void {
     OP_REQUIRES_OK(ctx, ctx->GetAttr("max_chars_per_token", c));
   })(&max_chars_per_token);
   return max_chars_per_token;
@@ -66,9 +66,9 @@ bool GetShouldUseUnknownToken(OpKernelConstruction* ctx) {
   return use_unknown_token;
 }
 
-string GetUnknownToken(OpKernelConstruction* ctx) {
-  string unknown_token;
-  ([=](string* c) -> void {
+std::string GetUnknownToken(OpKernelConstruction* ctx) {
+  std::string unknown_token;
+  ([=](std::string* c) -> void {
     OP_REQUIRES_OK(ctx, ctx->GetAttr("unknown_token", c));
   })(&unknown_token);
   return unknown_token;
@@ -82,8 +82,8 @@ bool GetSplitUnknownCharacters(OpKernelConstruction* ctx) {
   return split_unknown_characters;
 }
 
-Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
-                      string* container, string* table_handle) {
+absl::Status GetTableHandle(const std::string& input_name, OpKernelContext* ctx,
+                            std::string* container, std::string* table_handle) {
   {
     mutex* mu;
     TF_RETURN_IF_ERROR(ctx->input_ref_mutex(input_name, &mu));
@@ -105,10 +105,10 @@ Status GetTableHandle(const string& input_name, OpKernelContext* ctx,
 // Gets the LookupTable stored in the ctx->resource_manager() with key
 // passed by attribute with name input_name, returns null if the table
 // doesn't exist.
-Status GetLookupTable(const string& input_name, OpKernelContext* ctx,
-                      lookup::LookupInterface** table) {
-  string container;
-  string table_handle;
+absl::Status GetLookupTable(const std::string& input_name, OpKernelContext* ctx,
+                            lookup::LookupInterface** table) {
+  std::string container;
+  std::string table_handle;
   DataType handle_dtype;
   TF_RETURN_IF_ERROR(ctx->input_dtype(input_name, &handle_dtype));
   if (handle_dtype == DT_RESOURCE) {
@@ -135,7 +135,7 @@ class LookupTableVocab : public WordpieceVocab {
   Tensor default_value_;
 };
 
-Status ToStatus(const LookupStatus& status) {
+absl::Status ToStatus(const LookupStatus& status) {
   if (status.success) {
     return absl::OkStatus();
   }
@@ -143,12 +143,12 @@ Status ToStatus(const LookupStatus& status) {
   return errors::InvalidArgument(status.error_msg);
 }
 
-constexpr int64 kOutOfVocabValue = -1;
+constexpr int64_t kOutOfVocabValue = -1;
 
 LookupTableVocab::LookupTableVocab(lookup::LookupInterface* table,
                                    OpKernelContext* ctx)
     : table_(table), ctx_(ctx), default_value_(DT_INT64, TensorShape({1})) {
-  default_value_.flat<int64>()(0) = kOutOfVocabValue;
+  default_value_.flat<int64_t>()(0) = kOutOfVocabValue;
 }
 
 LookupStatus LookupTableVocab::Contains(const absl::string_view key,
@@ -171,7 +171,7 @@ LookupStatus LookupTableVocab::Contains(const absl::string_view key,
 #endif
   }
 
-  if (static_cast<int64>(values.flat<int64>()(0)) != kOutOfVocabValue) {
+  if (static_cast<int64_t>(values.flat<int64_t>()(0)) != kOutOfVocabValue) {
     *value = true;
     return LookupStatus::OK();
   }
@@ -191,7 +191,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
         use_unknown_token_(GetShouldUseUnknownToken(ctx)),
         unknown_token_(GetUnknownToken(ctx)),
         split_unknown_characters_(GetSplitUnknownCharacters(ctx)) {
-    string output_row_partition_type;
+    std::string output_row_partition_type;
     OP_REQUIRES_OK(ctx, ctx->GetAttr("output_row_partition_type",
                                      &output_row_partition_type));
     if (output_row_partition_type == "row_lengths") {
@@ -216,7 +216,7 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
     core::ScopedUnref unref_me(lookup_table);
     LookupTableVocab vocab_map(lookup_table, ctx);
 
-    std::vector<string> subwords;
+    std::vector<std::string> subwords;
     std::vector<int> begin_offset;
     std::vector<int> end_offset;
     std::vector<int> row_partition;
@@ -247,10 +247,10 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
       }
     }
 
-    std::vector<int64> output_subwords_shape;
+    std::vector<int64_t> output_subwords_shape;
     output_subwords_shape.push_back(subwords.size());
 
-    std::vector<int64> output_row_partition_shape;
+    std::vector<int64_t> output_row_partition_shape;
     output_row_partition_shape.push_back(row_partition.size());
 
     Tensor* output_values;
@@ -264,19 +264,19 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
                    ctx->allocate_output("output_row_lengths",
                                         TensorShape(output_row_partition_shape),
                                         &output_row_partition));
-    auto output_row_partition_vec = output_row_partition->vec<int64>();
+    auto output_row_partition_vec = output_row_partition->vec<int64_t>();
 
     Tensor* start_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("start_values",
                                              TensorShape(output_subwords_shape),
                                              &start_values));
-    auto start_values_vec = start_values->vec<int64>();
+    auto start_values_vec = start_values->vec<int64_t>();
 
     Tensor* limit_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("limit_values",
                                              TensorShape(output_subwords_shape),
                                              &limit_values));
-    auto limit_values_vec = limit_values->vec<int64>();
+    auto limit_values_vec = limit_values->vec<int64_t>();
 
     for (int i = 0; i < subwords.size(); ++i) {
       output_values_vec(i) = subwords[i];
@@ -298,11 +298,11 @@ class WordpieceTokenizeWithOffsetsOp : public OpKernel {
  private:
   enum RowPartitionType { ROW_LENGTHS, ROW_SPLITS };
 
-  const string suffix_indicator_;
+  const std::string suffix_indicator_;
   const int max_bytes_per_word_;
   const int max_chars_per_token_;
   const bool use_unknown_token_;
-  const string unknown_token_;
+  const std::string unknown_token_;
   const bool split_unknown_characters_;
   RowPartitionType row_partition_type_;
 

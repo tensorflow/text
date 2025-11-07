@@ -23,8 +23,8 @@ namespace text_kernels_test_util {
 
 bool TensorEqMatcher::MatchAndExplain(
     Tensor actual, ::testing::MatchResultListener* listener) const {
-  string expect_values = expect_.SummarizeValue(expect_.NumElements());
-  string actual_values = actual.SummarizeValue(actual.NumElements());
+  std::string expect_values = expect_.SummarizeValue(expect_.NumElements());
+  std::string actual_values = actual.SummarizeValue(actual.NumElements());
   if (expect_.dtype() != actual.dtype() || expect_.shape() != actual.shape() ||
       expect_values != actual_values) {
     *listener << "\n          dtype=" << DataTypeString(actual.dtype());
