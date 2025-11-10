@@ -1,7 +1,10 @@
 # Code that exposes C++ libraries to Python via pybind11.
 
-# Placeholder: load py_test
-load("@org_tensorflow//tensorflow:tensorflow.bzl", "pybind_extension")
+load("@rules_python//python:py_test.bzl", "py_test")
+
+# This comment separates the load statements, so copybara reverse transformation works.
+
+load("@org_tensorflow//tensorflow:tensorflow.default.bzl", "pybind_extension", "pywrap_library")
 
 licenses(["notice"])
 
@@ -10,6 +13,11 @@ package(default_visibility = [
     "//nlp/semantic_parsing/learning/neural/portable/tools/release:__pkg__",
     "//tensorflow_text:__subpackages__",
 ])
+
+pywrap_library(
+    name = "tflite_registrar_library",
+    deps = [":tflite_registrar"],
+)
 
 pybind_extension(
     name = "tflite_registrar",
