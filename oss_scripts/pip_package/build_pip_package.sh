@@ -98,11 +98,7 @@ main() {
   fi
 
   # Build pip package
-  if is_nightly; then
-    $installed_python setup.nightly.py bdist_wheel --universal $plat_name
-  else
-    $installed_python setup.py bdist_wheel --universal $plat_name
-  fi
+  $installed_python setup.nightly.py bdist_wheel --universal $plat_name
   cp dist/*.whl "${output_dir}"
 }
 

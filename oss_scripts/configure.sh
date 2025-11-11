@@ -38,11 +38,7 @@ if [[ $(pip show tensorflow) == *tensorflow* ]] ||
   echo 'Using installed tensorflow.'
 else
   echo 'Installing tensorflow.'
-  if [[ "$IS_NIGHTLY" == "nightly" ]]; then
-    pip install tf-nightly
-  else
-    pip install tensorflow==2.18.0
-  fi
+  pip install tf-nightly
 fi
 
 # Copy the current bazelversion of TF.
@@ -54,11 +50,16 @@ curl https://raw.githubusercontent.com/tensorflow/tensorflow/master/.bazelrc -o 
 sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 
 write_to_bazelrc "build:manylinux2014 --config=release_cpu_linux"
-# JUST FOR TESTING
-git clone https://github.com/tensorflow/tensorflow.git org_tensorflow
-cd org_tensorflow
-git checkout 735467e89ccfd7ace190363412bb5698164628b5
-cd ..
+DIR="org_tensorflow"
+# Check if the directory exists
+if [ ! -d "$DIR" ]; then
+  git clone https://github.com/tensorflow/tensorflow.git org_tensorflow
+  cd org_tensorflow
+  git checkout 735467e89ccfd7ace190363412bb5698164628b5
+  cd ..
+else
+  echo "Directory $DIR already exists."
+fi
 write_to_bazelrc "common:linux --override_repository=org_tensorflow=./org_tensorflow"
 
 if (which python3) | grep -q "python3"; then
