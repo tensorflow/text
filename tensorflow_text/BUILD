@@ -77,6 +77,7 @@ py_library(
         "python/ops/__init__.py",
         "tools/__init__.py",
     ],
+    lazy_imports = True,
     deps = [
         ":bert_tokenizer",
         ":boise_offset_converter",
