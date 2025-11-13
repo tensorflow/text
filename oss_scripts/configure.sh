@@ -38,11 +38,7 @@ if [[ $(pip show tensorflow) == *tensorflow* ]] ||
   echo 'Using installed tensorflow.'
 else
   echo 'Installing tensorflow.'
-  if [[ "$IS_NIGHTLY" == "nightly" ]]; then
-    pip install tf-nightly
-  else
-    pip install tensorflow==2.18.0
-  fi
+  pip install tf-nightly
 fi
 
 # Copy the current bazelversion of TF.
@@ -54,6 +50,17 @@ curl https://raw.githubusercontent.com/tensorflow/tensorflow/master/.bazelrc -o 
 sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 
 write_to_bazelrc "build:manylinux2014 --config=release_cpu_linux"
+DIR="org_tensorflow"
+# Check if the directory exists
+if [ ! -d "$DIR" ]; then
+  git clone https://github.com/tensorflow/tensorflow.git org_tensorflow
+  cd org_tensorflow
+  git checkout 735467e89ccfd7ace190363412bb5698164628b5
+  cd ..
+else
+  echo "Directory $DIR already exists."
+fi
+write_to_bazelrc "common:linux --override_repository=org_tensorflow=./org_tensorflow"
 
 if (which python3) | grep -q "python3"; then
   installed_python="python3"
@@ -76,7 +83,15 @@ if [[ "$TF_VERSION" == *"rc"* ]]; then
   REQUIREMENTS_EXTRA_FLAGS="$REQUIREMENTS_EXTRA_FLAGS --pre"
 fi
 
+# JUST FOR TESTING
+wget https://storage.googleapis.com/ml-sysroot-testing/tensorflow_metadata-1.18.0.dev0-py3-none-any.whl
+mv tensorflow_metadata-1.18.0.dev0-py3-none-any.whl /github/tensorflow_metadata-1.18.0.dev0-py3-none-any.whl
+echo "tensorflow-metadata @ file:///github/tensorflow_metadata-1.18.0.dev0-py3-none-any.whl" >> oss_scripts/pip_package/requirements.in
+
 bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
+
+# JUST FOR TESTING
+sed -i 's#file://tensorflow_metadata-1.18.0.dev0-py3-none-any.whl#file:///github/tensorflow_metadata-1.18.0.dev0-py3-none-any.whl#g' oss_scripts/pip_package/requirements_lock_3_9.txt
 
 TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
 SHARED_LIBRARY_NAME="libtensorflow_framework.so.2"
