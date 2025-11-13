@@ -1,10 +1,7 @@
 # Code that exposes C++ libraries to Python via pybind11.
 
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "pybind_extension")
 load("@rules_python//python:py_test.bzl", "py_test")
-
-# This comment separates the load statements, so copybara reverse transformation works.
-
-load("@org_tensorflow//tensorflow:tensorflow.default.bzl", "pybind_extension", "pywrap_library")
 
 licenses(["notice"])
 
@@ -14,13 +11,8 @@ package(default_visibility = [
     "//tensorflow_text:__subpackages__",
 ])
 
-pywrap_library(
-    name = "tflite_registrar_library",
-    deps = [":tflite_registrar"],
-)
-
 pybind_extension(
-    name = "tflite_registrar",
+    name = "tflite_registrar_library",
     srcs = [
         "tflite_registrar.cc",
     ],
@@ -47,11 +39,12 @@ pybind_extension(
         "tflite_registrar.pyi",
     ],
     deps = [
-        "@pybind11",
-        # lite:framework tensorflow dep,
-        # lite/c:common tensorflow dep,
-        # lite/kernels:builtin_ops tensorflow dep,
         "//tensorflow_text/core/kernels:tflite_ops",
+        "@org_tensorflow//tensorflow/lite:framework",
+        "@org_tensorflow//tensorflow/lite/c:common",
+        "@org_tensorflow//tensorflow/lite/kernels:builtin_ops",
+        "@pybind11",
+        "@pypi//numpy:pkg",
     ],
 )
 
@@ -71,6 +64,7 @@ pybind_extension(
     deps = [
         "//tensorflow_text/core/kernels:fast_bert_normalizer_model_builder",
         "@pybind11",
+        "@pypi//numpy:pkg",
     ],
 )
 
@@ -83,7 +77,7 @@ py_test(
     ],
     deps = [
         ":pywrap_fast_bert_normalizer_model_builder",
-        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
+        "@org_tensorflow//tensorflow",
     ],
 )
 
@@ -102,7 +96,9 @@ pybind_extension(
     module_name = "pywrap_fast_wordpiece_tokenizer_model_builder",
     deps = [
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_model_builder",
+        "@org_tensorflow//tensorflow/core:framework",
         "@pybind11",
+        "@pypi//numpy:pkg",
     ],
 )
 
@@ -114,7 +110,7 @@ py_test(
     ],
     deps = [
         ":pywrap_fast_wordpiece_tokenizer_model_builder",
-        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
+        "@org_tensorflow//tensorflow",
     ],
 )
 
@@ -138,6 +134,7 @@ pybind_extension(
     deps = [
         "//tensorflow_text/core/kernels:phrase_tokenizer_model_builder",
         "@pybind11",
+        "@pypi//numpy:pkg",
     ],
 )
 
@@ -149,7 +146,7 @@ py_test(
     ],
     deps = [
         ":pywrap_phrase_tokenizer_model_builder",
-        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
+        "@org_tensorflow//tensorflow",
     ],
 )
 
@@ -171,6 +168,7 @@ pybind_extension(
     deps = [
         "//tensorflow_text/core/kernels/sentencepiece:model_converter",
         "@pybind11",
+        "@pypi//numpy:pkg",
     ],
 )
 
@@ -190,6 +188,7 @@ pybind_extension(
     deps = [
         "//tensorflow_text/core/kernels:whitespace_tokenizer_config_builder",
         "@pybind11",
+        "@pypi//numpy:pkg",
     ],
 )
 
@@ -198,6 +197,6 @@ py_test(
     srcs = ["pywrap_whitespace_tokenizer_config_builder_test.py"],
     deps = [
         ":pywrap_whitespace_tokenizer_config_builder",
-        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
+        "@org_tensorflow//tensorflow",
     ],
 )

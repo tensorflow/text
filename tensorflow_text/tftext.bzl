@@ -1,106 +1,106 @@
 """
-Build rule for open source tf.text libraries.
+Build rule for tf.text libraries.
+
+BEGIN GOOGLE-INTERNAL
+Example usage:
+
+py_tf_text_library(
+    name = "string_ops",
+    srcs = ["python/ops/string_ops.py"],
+    cc_op_defs = ["core/ops/string_ops.cc"],
+    cc_op_kernels = ["//third_party/tensorflow_text/core/kernels:string_kernels"],
+    deps = ["//third_party/tensorflow/python/framework:dtypes"],
+)
+END GOOGLE-INTERNAL
 """
+
+load("@org_tensorflow//tensorflow:tensorflow.bzl", "tf_gen_op_wrapper_py", "tf_opts_nortti_if_mobile")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load("@rules_python//python:py_library.bzl", "py_library")
 
-
+# Generates a Python library for the ops defined in `op_defs` and `py_srcs`.
+#
+# Defines three targets:
+#
+# <name>
+#     Python library that exposes all ops defined in `cc_op_defs` and `py_srcs`.
+# <name>_cc
+#     C++ library that registers any c++ ops in `cc_op_defs`, and includes the
+#     kernels from `cc_op_kernels`.
+# gen_<name>_py
+#     Python library that exposes any c++ ops.
+#
+# Args:
+#   name: The name for the python library target build by this rule.
+#   srcs: Python source files for the Python library.
+#   deps: Dependencies for the Python library.
+#   compatible_with: Standard blaze cc_library for the cc_library.
+#   visibility: Visibility for the Python library.
+#   cc_op_defs: A list of c++ src files containing REGISTER_OP definitions.
+#   cc_op_kernels: A list of c++ targets containing kernels that are used
+#       by the Python library.
 def py_tf_text_library(
         name,
         srcs = [],
         deps = [],
+        compatible_with = None,
         visibility = None,
         cc_op_defs = [],
         cc_op_kernels = []):
-    """Creates build rules for TF.Text ops as shared libraries.
-
-    Defines three targets:
-
-    <name>
-        Python library that exposes all ops defined in `cc_op_defs` and `py_srcs`.
-    <name>_cc
-        C++ library that registers any c++ ops in `cc_op_defs`, and includes the
-        kernels from `cc_op_kernels`.
-    python/ops/_<name>.so
-        Shared library exposing the <name>_cc library.
-
-    Args:
-      name: The name for the python library target build by this rule.
-      srcs: Python source files for the Python library.
-      deps: Dependencies for the Python library.
-      visibility: Visibility for the Python library.
-      cc_op_defs: A list of c++ src files containing REGISTER_OP definitions.
-      cc_op_kernels: A list of c++ targets containing kernels that are used
-          by the Python library.
-    """
-    binary_path = "python/ops"
-    if srcs:
-        binary_path_end_pos = srcs[0].rfind("/")
-        binary_path = srcs[0][0:binary_path_end_pos]
-    binary_name = binary_path + "/_" + cc_op_kernels[0][1:] + ".so"
     if cc_op_defs:
-        binary_name = binary_path + "/_" + name + ".so"
-        library_name = name + "_cc"
-        native.cc_library(
-            name = library_name,
+        # C++ library that registers ops.
+        op_def_lib_name = name + "_cc"
+        cc_library(
+            name = op_def_lib_name,
             srcs = cc_op_defs,
-            copts = select({
-                # Android supports pthread natively, -pthread is not needed.
-                "@org_tensorflow//tensorflow:mobile": [],
-                "//conditions:default": ["-pthread"],
-            }),
-            alwayslink = 1,
             deps = cc_op_kernels +
                    ["@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim"] +
                    select({
                        "@org_tensorflow//tensorflow:mobile": [
                            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
                        ],
-                       "//conditions:default": [],
+                       "//conditions:default": [
+                           "@org_tensorflow//tensorflow/core:framework",
+                           "@org_tensorflow//tensorflow/core:framework_headers_lib",
+                       ],
                    }),
-        )
-
-        native.cc_binary(
-            name = binary_name,
-            copts = select({
-                "@org_tensorflow//tensorflow:mobile": [],
-                "//conditions:default": ["-pthread"],
-            }),
-            linkshared = 1,
-            linkopts = select({
-                "@org_tensorflow//tensorflow:macos": [
-                    "-Wl,-exported_symbols_list,$(location //tensorflow_text:exported_symbols.lds)",
-                ],
-                "@org_tensorflow//tensorflow:windows": [],
-                "//conditions:default": [
-                    "-Wl,--version-script,$(location //tensorflow_text:version_script.lds)",
-                ],
-            }),
-            deps = [
-                ":" + library_name,
-                "//tensorflow_text:version_script.lds",
-                "//tensorflow_text:exported_symbols.lds",
-            ] + select({
-                "@org_tensorflow//tensorflow:mobile": [
-                    "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+            features = select({
+                "@org_tensorflow//tensorflow:android": [
+                    "-layering_check",
                 ],
                 "//conditions:default": [],
             }),
+            alwayslink = 1,
         )
+        deps = deps + [":" + op_def_lib_name]
 
+        # Python wrapper that exposes c++ ops.
+        gen_py_lib_name = "gen_" + name + "_py"
+        gen_py_out = "gen_" + name + ".py"
+        tf_gen_op_wrapper_py(
+            name = gen_py_lib_name,
+            out = gen_py_out,
+            deps = [":" + op_def_lib_name],
+        )
+        deps = deps + [":" + gen_py_lib_name]
+
+    # Python library that exposes all ops.
     py_library(
         name = name,
         srcs = srcs,
         srcs_version = "PY2AND3",
         visibility = visibility,
-        data = [":" + binary_name],
-        deps = deps,
+        deps = cc_op_kernels + deps + [
+            "@org_tensorflow//tensorflow/python/framework:for_generated_wrappers",
+        ],
     )
 
-def _dedupe(list, item):
-    if item not in list:
-        return [item]
-    else:
-        return []
+# Enable build_cleaner to update py_tf_text_library targets.
+# GOOGLE-INTERNAL: See: go/build-cleaner-build-extensions
+# register_extension_info(
+#     extension = py_tf_text_library,
+#     label_regex_for_dep = "{extension_name}",
+# )
 
 def tf_cc_library(
         name,
@@ -109,6 +109,7 @@ def tf_cc_library(
         deps = [],
         tf_deps = [],
         copts = [],
+        features = [],
         compatible_with = None,
         testonly = 0,
         alwayslink = 0):
@@ -116,6 +117,7 @@ def tf_cc_library(
 
     Just like cc_library, but:
       * Adds alwayslink=1 for kernels (name has kernel in it)
+      * Passes -DGOOGLE_CUDA=1 if we're building with --config=cuda.
       * Separates out TF deps for when building for Android.
 
     Args:
@@ -127,42 +129,30 @@ def tf_cc_library(
         copts: C options
         compatible_with: List of environments target can be built for
         testonly: If library is only for testing
-        alwayslink: If symbols should be exported
+        alwayslink: If symbols should be exported.
     """
     if "kernel" in name:
         alwayslink = 1
-
-    # These are "random" deps likely needed by each library (http://b/142433427)
-    oss_deps = []
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:flat_hash_map")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/status")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/status:statusor")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/strings:cord")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/time")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/types:variant")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/functional:any_invocable")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:check")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:log")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:absl_check")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:absl_log")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:btree")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:flat_hash_set")
-    deps += select({
-        "@org_tensorflow//tensorflow:mobile": [
-            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
-        ],
-        "//conditions:default": [
-            "@release_or_nightly//:tensorflow_libtensorflow_framework",
-            "@release_or_nightly//:tensorflow_tf_header_lib",
-        ] + tf_deps + oss_deps,
-    })
-    native.cc_library(
+    if tf_deps:
+        deps += select({
+            "@org_tensorflow//tensorflow:mobile": [
+                "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+            ],
+            "//conditions:default": tf_deps,
+        })
+        features += select({
+            "@org_tensorflow//tensorflow:android": [
+                "-layering_check",
+            ],
+            "//conditions:default": [],
+        })
+    cc_library(
         name = name,
         srcs = srcs,
         hdrs = hdrs,
         deps = deps,
-        copts = copts,
-        compatible_with = compatible_with,
+        copts = copts + tf_opts_nortti_if_mobile(),
+        features = features,
         testonly = testonly,
         alwayslink = alwayslink,
     )
@@ -176,7 +166,7 @@ def tflite_cc_library(
         compatible_with = None,
         testonly = 0,
         alwayslink = 0):
-    """ A rule to build a TensorFlow library or OpKernel.
+    """ A rule to build a TensorFlow Lite library or OpKernel.
 
     Args:
         name: Name of library
@@ -186,52 +176,24 @@ def tflite_cc_library(
         copts: C options
         compatible_with: List of environments target can be built for
         testonly: If library is only for testing
-        alwayslink: If symbols should be exported
+        alwayslink: If symbols should be exported.
     """
-
-    # Necessary build deps for tflite ops
-    tflite_deps = [
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
-        "@org_tensorflow//tensorflow/lite:framework",
-        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
-        "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_wrapper",
-    ]
-
-    # These are "random" deps likely needed by each library (http://b/142433427)
-    oss_deps = [
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/strings:cord",
-        "@com_google_absl//absl/time",
-        "@com_google_absl//absl/types:variant",
-    ]
-    deps += tflite_deps + select({
-        "@org_tensorflow//tensorflow:mobile": [
-            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
-        ],
-        "//conditions:default": [
-            "@release_or_nightly//:tensorflow_libtensorflow_framework",
-            "@release_or_nightly//:tensorflow_tf_header_lib",
-        ] + oss_deps,
-    })
-    native.cc_library(
+    cc_library(
         name = name,
         srcs = srcs,
         hdrs = hdrs,
         deps = deps,
-        copts = copts,
-        compatible_with = compatible_with,
+        copts = copts + tf_opts_nortti_if_mobile(),
         testonly = testonly,
         alwayslink = alwayslink,
     )
 
+# Allow build_cleaner to manage dependencies of tf_cc_library build rules.
+# GOOGLE-INTERNAL: See: go/build-cleaner-build-extensions
+# register_extension_info(
+#     extension = tf_cc_library,
+#     label_regex_for_dep = "{extension_name}",
+# )
+
 def extra_py_deps():
-    return [
-        "@release_or_nightly//:tensorflow_pkg",
-        "@release_or_nightly//:tf_keras_pkg",
-        "@pypi_tensorflow_datasets//:pkg",
-        "@pypi_tensorflow_metadata//:pkg",
-    ]
+    return []

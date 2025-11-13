@@ -110,4 +110,4 @@ tflite_registrar.SELECT_TFTEXT_OPS = [
 ]
 
 remove_undocumented(__name__, _allowed_symbols)
-__version__ = "2.13.0"
+__version__ = "2.20.0"
