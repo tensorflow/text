@@ -77,6 +77,10 @@ py_library(
         "python/ops/__init__.py",
         "tools/__init__.py",
     ],
+    # TODO: b/459693180 - Opt in the library for lazy imports as this will yield a significant
+    # performance gain for some of its users. This is currently not possible as it breaks a number
+    # of tests in //third_party/tensorflow_text/.
+    lazy_imports = False,
     deps = [
         ":bert_tokenizer",
         ":boise_offset_converter",

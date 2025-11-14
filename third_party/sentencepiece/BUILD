@@ -44,7 +44,7 @@ cc_library(
         "src/common.h",
     ],
     deps = [
-        "@com_google_absl//absl/base",
+        "//third_party/absl/base",
     ],
 )
 
@@ -88,11 +88,11 @@ cc_library(
             ":common",
             ":sentencepiece_cc_proto",
             ":sentencepiece_model_cc_proto",
-            "@com_google_absl//absl/container:flat_hash_map",
-            "@com_google_absl//absl/container:flat_hash_set",
-            "@com_google_absl//absl/memory",
-            "@com_google_absl//absl/strings",
-            "@com_google_absl//absl/strings:str_format",
-            "@darts_clone",
+            "//third_party/absl/container:flat_hash_map",
+            "//third_party/absl/container:flat_hash_set",
+            "//third_party/absl/memory",
+            "//third_party/absl/strings",
+            "//third_party/absl/strings:str_format",
+            "//third_party/darts_clone",
         ],
 )

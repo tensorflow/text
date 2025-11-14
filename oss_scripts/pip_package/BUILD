@@ -22,7 +22,7 @@ py_binary(
     name = "tensorflow_build_info",
     srcs = ["tensorflow_build_info.py"],
     deps = [
-        "@absl_py//absl:app",
+        "//third_party/py/absl:app",
         "@release_or_nightly//:tensorflow_pkg",
     ],
 )

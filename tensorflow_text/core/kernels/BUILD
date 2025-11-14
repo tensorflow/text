@@ -6,12 +6,16 @@ load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 # Placeholder: load proto_library
 load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
+load("//tools/build_defs/license:license.bzl", "license")
 # [internal] load cc_proto_library.bzl
 
 licenses(["notice"])
 
 # Visibility rules
-package(default_visibility = ["//visibility:public"])
+package(
+    default_applicable_licenses = ["//tensorflow_text/core/kernels:license"],
+    default_visibility = ["//visibility:public"],
+)
 
 exports_files(["LICENSE"])
 
@@ -238,7 +242,6 @@ tf_cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
-        "//third_party/icu/data:icu_normalization_data",
         "@icu//:common",
         "@icu//:nfkc_cf",  # Needed for NFKC_Casefold Unicode Normalization form.
         "@com_googlesource_code_re2//:re2",
@@ -413,7 +416,7 @@ cc_test(
         ":fast_wordpiece_tokenizer_model_builder",
         "@com_google_googletest//:gtest_main",
         "@com_google_absl//absl/flags:flag",
-        "//third_party/icu:headers",
+        "@icu//:headers",
         # tf:lib tensorflow dep,
     ],
 )
@@ -681,7 +684,6 @@ tf_cc_library(
     ],
     deps = [
         ":edit_changes_cc_proto",
-        "//third_party/icu/data:icu_normalization_data",
         "@com_google_absl//absl/strings",
         "@icu//:nfkc",
         "@icu//:nfkc_cf",
@@ -1406,4 +1408,9 @@ cc_test(
         # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:wordpiece_tokenizer_cc",
     ],
+)
+
+license(
+    name = "license",
+    package_name = "kernels",
 )
