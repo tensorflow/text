@@ -41,7 +41,7 @@ else
   if [[ "$IS_NIGHTLY" == "nightly" ]]; then
     pip install tf-nightly
   else
-    pip install tensorflow==2.18.0
+    pip install tensorflow==2.20.0
   fi
 fi
 
@@ -85,3 +85,5 @@ if is_macos; then
 fi
 
 write_action_env_to_bazelrc "TF_CXX11_ABI_FLAG" ${TF_ABIFLAG}
+write_to_bazelrc "build --define=TENSORFLOW_TEXT_BUILD_TFLITE_OPS=1"
+write_to_bazelrc "build --define=with_tflite_ops=true"

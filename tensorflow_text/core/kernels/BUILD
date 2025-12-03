@@ -337,6 +337,7 @@ cc_library(
     deps = [
         "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
         "@darts_clone",
     ],
 )
@@ -871,8 +872,12 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         "@icu//:common",
+        "@icu//:nfkc",
     ],
 )
 

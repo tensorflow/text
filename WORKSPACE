@@ -4,34 +4,32 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "icu",
-    strip_prefix = "icu-release-64-2",
-    sha256 = "dfc62618aa4bd3ca14a3df548cd65fe393155edd213e49c39f3a30ccd618fc27",
-    urls = [
-        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/unicode-org/icu/archive/release-64-2.zip",
-        "https://github.com/unicode-org/icu/archive/release-64-2.zip",
-    ],
     build_file = "//third_party/icu:BUILD.bzl",
-    patches = ["//third_party/icu:udata.patch"],
-    patch_args = ["-p1"],
+    sha256 = "e424ba5282d95ad38b52639a08fb82164f0b0cbd7f17b53ae16bf14f8541855f",
+    strip_prefix = "icu-release-77-1",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/unicode-org/icu/archive/release-77-1.zip",
+        "https://github.com/unicode-org/icu/archive/release-77-1.zip",
+    ],
 )
 
 http_archive(
     name = "com_google_sentencepiece",
-    strip_prefix = "sentencepiece-0.1.96",
-    sha256 = "8409b0126ebd62b256c685d5757150cf7fcb2b92a2f2b98efb3f38fc36719754",
-    urls = [
-        "https://github.com/google/sentencepiece/archive/refs/tags/v0.1.96.zip"
-    ],
     build_file = "//third_party/sentencepiece:BUILD",
-    patches = ["//third_party/sentencepiece:sp.patch"],
     patch_args = ["-p1"],
+    patches = ["//third_party/sentencepiece:sp.patch"],
+    sha256 = "8409b0126ebd62b256c685d5757150cf7fcb2b92a2f2b98efb3f38fc36719754",
+    strip_prefix = "sentencepiece-0.1.96",
+    urls = [
+        "https://github.com/google/sentencepiece/archive/refs/tags/v0.1.96.zip",
+    ],
 )
 
 http_archive(
     name = "cppitertools",
-    urls = ["https://github.com/ryanhaining/cppitertools/archive/refs/tags/v2.0.zip"],
     sha256 = "e56741b108d6baced98c4ccd83fd0d5a545937f2845978799c28d0312c0dee3d",
     strip_prefix = "cppitertools-2.0",
+    urls = ["https://github.com/ryanhaining/cppitertools/archive/refs/tags/v2.0.zip"],
 )
 
 http_archive(
@@ -56,10 +54,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    strip_prefix = "tensorflow-40998f44c0c500ce0f6e3b1658dfbc54f838a82a",
     sha256 = "5a5bc4599964c71277dcac0d687435291e5810d2ac2f6283cc96736febf73aaf",
+    strip_prefix = "tensorflow-40998f44c0c500ce0f6e3b1658dfbc54f838a82a",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/40998f44c0c500ce0f6e3b1658dfbc54f838a82a.zip"
+        "https://github.com/tensorflow/tensorflow/archive/40998f44c0c500ce0f6e3b1658dfbc54f838a82a.zip",
     ],
 )
 
@@ -73,14 +71,25 @@ http_archive(
 )
 
 http_archive(
+    name = "pybind11_bazel",
+    sha256 = "e10d65e64d101d2d3d0a52fdf04b1a5116e0cff16c9e0d0b1b1c2ed0e1b69e5d",
+    strip_prefix = "pybind11_bazel-b1d64d363b8cb6e8b7d9b9b1263b651410d7e4c5",
+    urls = ["https://github.com/pybind/pybind11_bazel/archive/b1d64d363b8cb6e8b7d9b9b1263b651410d7e4c5.tar.gz"],
+)
+
+load("@pybind11_bazel//:python_configure.bzl", "pybind_python_configure")
+
+pybind_python_configure(name = "local_config_python")
+
+http_archive(
     name = "pybind11",
+    build_file = "@pybind11_bazel//:BUILD",
+    sha256 = "efc901aa0aab439a3fea6efeaf930b5a349fb06394bf845c64ce15a9cf8f0240",
+    strip_prefix = "pybind11-2.13.4",
     urls = [
         "https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11/archive/v2.13.4.tar.gz",
         "https://github.com/pybind/pybind11/archive/v2.13.4.tar.gz",
     ],
-    sha256 = "efc901aa0aab439a3fea6efeaf930b5a349fb06394bf845c64ce15a9cf8f0240",
-    strip_prefix = "pybind11-2.13.4",
-    build_file = "//third_party/pybind11:BUILD.bzl",
 )
 
 http_archive(
@@ -99,27 +108,31 @@ load("//tensorflow_text:tftext.bzl", "py_deps_profile")
 
 py_deps_profile(
     name = "release_or_nightly",
-    requirements_in = "//oss_scripts/pip_package:requirements.in",
-    pip_repo_name = "pypi",
     deps_map = {
-        "tensorflow": ["tf-nightly", "tf_header_lib", "libtensorflow_framework"],
-        "tf-keras": ["tf-keras-nightly"]
+        "tensorflow": [
+            "tf-nightly",
+            "tf_header_lib",
+            "libtensorflow_framework",
+        ],
+        "tf-keras": ["tf-keras-nightly"],
     },
+    pip_repo_name = "pypi",
+    requirements_in = "//oss_scripts/pip_package:requirements.in",
     switch = {
-        "IS_NIGHTLY": "nightly"
-    }
+        "IS_NIGHTLY": "nightly",
+    },
 )
 
 load("@org_tensorflow//third_party/py:python_init_repositories.bzl", "python_init_repositories")
 
 python_init_repositories(
+    default_python_version = "system",
     requirements = {
         "3.9": "//oss_scripts/pip_package:requirements_lock_3_9.txt",
         "3.10": "//oss_scripts/pip_package:requirements_lock_3_10.txt",
         "3.11": "//oss_scripts/pip_package:requirements_lock_3_11.txt",
         "3.12": "//oss_scripts/pip_package:requirements_lock_3_12.txt",
     },
-    default_python_version = "system",
 )
 
 load("@org_tensorflow//third_party/py:python_init_toolchains.bzl", "python_init_toolchains")
@@ -136,18 +149,28 @@ install_deps()
 
 # Initialize TensorFlow dependencies.
 load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
+
 tf_workspace3()
+
 load("@org_tensorflow//tensorflow:workspace2.bzl", "tf_workspace2")
+
 tf_workspace2()
+
 load("@org_tensorflow//tensorflow:workspace1.bzl", "tf_workspace1")
+
 tf_workspace1()
+
 load("@org_tensorflow//tensorflow:workspace0.bzl", "tf_workspace0")
+
 tf_workspace0()
 
 # Set up Android.
 load("@org_tensorflow//third_party/android:android_configure.bzl", "android_configure")
-android_configure(name="local_config_android")
+
+android_configure(name = "local_config_android")
+
 load("@local_config_android//:android.bzl", "android_workspace")
+
 android_workspace()
 
 load(
