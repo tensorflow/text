@@ -13,7 +13,7 @@ licenses(["notice"])
 
 # Visibility rules
 package(
-    default_applicable_licenses = ["//tensorflow_text/core/kernels:license"],
+    default_applicable_licenses = [":license"],
     default_visibility = ["//visibility:public"],
 )
 
