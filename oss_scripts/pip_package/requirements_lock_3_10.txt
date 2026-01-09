@@ -169,7 +169,7 @@ urllib3==2.5.0
     # via
     #   -r @release_or_nightly/requirements.in
     #   requests
-werkzeug==3.1.4
+werkzeug==3.1.5
     # via tensorboard
 wheel==0.45.1
     # via astunparse
