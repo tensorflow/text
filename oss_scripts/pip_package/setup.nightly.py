@@ -46,7 +46,7 @@ from setuptools.command.install import install
 from setuptools.dist import Distribution
 
 project_name = 'tensorflow-text-nightly'
-project_version = 'REPLACE_ME'
+project_version = '2.20.0'
 
 
 class BinaryDistribution(Distribution):
@@ -86,8 +86,7 @@ setup(
     zip_safe=False,
     cmdclass={'install': InstallPlatlib},
     distclass=BinaryDistribution,
-    install_requires=[
-    ],
+    install_requires=[],
     extras_require={
         'tests': [
             'absl-py',
@@ -106,6 +105,7 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',

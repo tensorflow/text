@@ -80,6 +80,7 @@ cc_library(
     ],
     deps = [
         ":headers",
+        "@org_tensorflow_text//third_party/icu/data:icu_normalization_data",
     ],
 )
 

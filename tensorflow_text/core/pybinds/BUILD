@@ -1,7 +1,7 @@
 # Code that exposes C++ libraries to Python via pybind11.
 
 # Placeholder: load py_test
-load("//third_party/tensorflow:tensorflow.google.bzl", "pybind_extension")
+load("//tensorflow_text:tftext.bzl", "if_pywrap", "pybind_extension", "pywrap_binaries", "pywrap_library")
 
 licenses(["notice"])
 
@@ -16,30 +16,7 @@ pybind_extension(
     srcs = [
         "tflite_registrar.cc",
     ],
-    additional_exported_symbols = [
-        "AddByteSplit",
-        "AddByteSplitByOffsets",
-        "AddFastBertNormalize",
-        "AddFastSentencepieceDetokenize",
-        "AddFastSentencepieceTokenize",
-        "AddFastWordpieceTokenize",
-        "AddFastWordpieceDetokenize",
-        "AddNgramsStringJoin",
-        "AddRaggedTensorToTensor",
-        "AddRoundRobinGenerateMasks",
-        "AddRoundRobinTrim",
-        "AddSentenceFragmenterV2",
-        "AddUtf8Binarize",
-        "AddWhitespaceTokenize",
-        "SELECT_TFTEXT_OPS",
-    ],
-    enable_stub_generation = True,
-    module_name = "tflite_registrar",
-    pytype_srcs = [
-        "tflite_registrar.pyi",
-    ],
     deps = [
-        "@pybind11",
         # lite:framework tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels:builtin_ops tensorflow dep,
@@ -50,19 +27,10 @@ pybind_extension(
 pybind_extension(
     name = "pywrap_fast_bert_normalizer_model_builder",
     srcs = ["pywrap_fast_bert_normalizer_model_builder.cc"],
-    additional_exported_symbols = [
-        "BuildFastBertNormalizerModel",
-    ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
-    module_name = "pywrap_fast_bert_normalizer_model_builder",
-    pytype_srcs = [
-        "pywrap_fast_bert_normalizer_model_builder.pyi",
-    ],
     deps = [
         "//tensorflow_text/core/kernels:fast_bert_normalizer_model_builder",
-        "@pybind11",
     ],
 )
 
@@ -73,28 +41,26 @@ py_test(
         "//tensorflow_text:python/ops/test_data/fast_bert_normalizer_model.fb",
         "//tensorflow_text:python/ops/test_data/fast_bert_normalizer_model_lower_case_nfd_strip_accents.fb",
     ],
+    tags = [
+        "-sickbay",  # Depends on ICU version.
+    ],
     deps = [
         ":pywrap_fast_bert_normalizer_model_builder",
+        "@absl_py//absl/flags",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
-    ],
+    ] + if_pywrap([":pybinds_library"]),
 )
 
 pybind_extension(
     name = "pywrap_fast_wordpiece_tokenizer_model_builder",
     srcs = ["pywrap_fast_wordpiece_tokenizer_model_builder.cc"],
-    additional_exported_symbols = [
-        "BuildFastWordpieceModel",
-    ],
     copts = ["-fexceptions"],
     data = [
         "pywrap_fast_wordpiece_tokenizer_model_builder.pyi",
     ],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
-    module_name = "pywrap_fast_wordpiece_tokenizer_model_builder",
     deps = [
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_model_builder",
-        "@pybind11",
     ],
 )
 
@@ -107,29 +73,20 @@ py_test(
     deps = [
         ":pywrap_fast_wordpiece_tokenizer_model_builder",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
-    ],
+    ] + if_pywrap([":pybinds_library"]),
 )
 
 pybind_extension(
     name = "pywrap_phrase_tokenizer_model_builder",
     srcs = ["pywrap_phrase_tokenizer_model_builder.cc"],
-    additional_exported_symbols = [
-        "BuildPhraseModel",
-    ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
-    module_name = "pywrap_phrase_tokenizer_model_builder",
-    pytype_srcs = [
-        "pywrap_phrase_tokenizer_model_builder.pyi",
-    ],
     visibility = [
         "//knowledge/cerebra/nlu/models/smartv2/input:__pkg__",
         "//tensorflow_text:__subpackages__",
     ],
     deps = [
         "//tensorflow_text/core/kernels:phrase_tokenizer_model_builder",
-        "@pybind11",
     ],
 )
 
@@ -142,46 +99,26 @@ py_test(
     deps = [
         ":pywrap_phrase_tokenizer_model_builder",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
-    ],
+    ] + if_pywrap([":pybinds_library"]),
 )
 
 pybind_extension(
     name = "pywrap_model_converter",
     srcs = ["pywrap_model_converter.cc"],
-    additional_exported_symbols = [
-        "ConvertSentencepieceModel",
-        "ConvertSentencepieceModelForDecoder",
-        "GetVocabularySize",
-    ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
-    module_name = "pywrap_model_converter",
-    pytype_srcs = [
-        "pywrap_model_converter.pyi",
-    ],
     deps = [
         "//tensorflow_text/core/kernels/sentencepiece:model_converter",
-        "@pybind11",
     ],
 )
 
 pybind_extension(
     name = "pywrap_whitespace_tokenizer_config_builder",
     srcs = ["pywrap_whitespace_tokenizer_config_builder.cc"],
-    additional_exported_symbols = [
-        "BuildWhitespaceTokenizerConfig",
-    ],
     copts = ["-fexceptions"],
-    enable_stub_generation = True,
     features = ["-use_header_modules"],
-    module_name = "pywrap_whitespace_tokenizer_config_builder",
-    pytype_srcs = [
-        "pywrap_whitespace_tokenizer_config_builder.pyi",
-    ],
     deps = [
         "//tensorflow_text/core/kernels:whitespace_tokenizer_config_builder",
-        "@pybind11",
     ],
 )
 
@@ -191,5 +128,23 @@ py_test(
     deps = [
         ":pywrap_whitespace_tokenizer_config_builder",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
+    ] + if_pywrap([":pybinds_library"]),
+)
+
+pywrap_library(
+    name = "pybinds_library",
+    deps = [
+        ":pywrap_fast_bert_normalizer_model_builder",
+        ":pywrap_fast_wordpiece_tokenizer_model_builder",
+        ":pywrap_model_converter",
+        ":pywrap_phrase_tokenizer_model_builder",
+        ":pywrap_whitespace_tokenizer_config_builder",
+        ":tflite_registrar",
     ],
+)
+
+pywrap_binaries(
+    name = "pybinds_binaries",
+    dep = ":pybinds_library",
+    visibility = ["//visibility:public"],
 )

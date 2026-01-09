@@ -6,16 +6,12 @@ load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 # Placeholder: load proto_library
 load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
-load("//tools/build_defs/license:license.bzl", "license")
 # [internal] load cc_proto_library.bzl
 
 licenses(["notice"])
 
 # Visibility rules
-package(
-    default_applicable_licenses = [":license"],
-    default_visibility = ["//visibility:public"],
-)
+package(default_visibility = ["//visibility:public"])
 
 exports_files(["LICENSE"])
 
@@ -340,6 +336,7 @@ cc_library(
     deps = [
         "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
         "@darts_clone",
     ],
 )
@@ -1408,9 +1405,4 @@ cc_test(
         # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:wordpiece_tokenizer_cc",
     ],
-)
-
-license(
-    name = "license",
-    package_name = "kernels",
 )

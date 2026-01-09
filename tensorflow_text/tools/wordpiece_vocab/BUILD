@@ -1,5 +1,6 @@
 # Placeholder: load py_library
 # Placeholder: load py_test
+load("//tensorflow_text:tftext.bzl", "if_pywrap")
 
 licenses(["notice"])
 
@@ -34,7 +35,9 @@ py_test(
         "@pypi//numpy:pkg",
         # python/data/ops:dataset_ops tensorflow dep,
         "//tensorflow_text:ops",
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_library(

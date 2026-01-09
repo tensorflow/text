@@ -27,14 +27,18 @@ py_binary(
     ],
 )
 
-sh_binary(
+py_binary(
     name = "build_pip_package",
-    srcs = ["build_pip_package.sh"],
+    srcs = ["build_pip_package.py"],
     data = [
         "LICENSE",
         "MANIFEST.in",
         "setup.nightly.py",
         "setup.py",
         "//tensorflow_text",
+        "//tensorflow_text/core/pybinds:pybinds_binaries",
+    ],
+    deps = [
+        "@pypi_setuptools//:pkg",
     ],
 )
