@@ -60,7 +60,7 @@ immutabledict==4.2.2
     # via tensorflow-datasets
 importlib-resources==6.5.2
     # via etils
-keras==3.13.0
+keras==3.12.0
     # via tensorflow
 libclang==18.1.1
     # via tensorflow
