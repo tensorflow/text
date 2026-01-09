@@ -1,7 +1,7 @@
 # Limit libraries based on compatibility.
 absl-py>=1.0  # Python 3.10 issues.
 numpy==2.0.2; python_version=="3.9"
-numpy==2.1.3; python_version<="3.10"
+numpy==2.1.3; python_version=="3.10"
 h5py==3.13.0;
 urllib3==2.5.0
 setuptools>=70.1  # bdist_wheel support.
