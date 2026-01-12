@@ -238,7 +238,6 @@ tf_cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
-        "//third_party/icu/data:icu_normalization_data",
         "@icu//:common",
         "@icu//:nfkc_cf",  # Needed for NFKC_Casefold Unicode Normalization form.
         "@com_googlesource_code_re2//:re2",
@@ -337,6 +336,7 @@ cc_library(
     deps = [
         "@com_google_absl//absl/container:flat_hash_set",
         "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
         "@darts_clone",
     ],
 )
@@ -413,7 +413,7 @@ cc_test(
         ":fast_wordpiece_tokenizer_model_builder",
         "@com_google_googletest//:gtest_main",
         "@com_google_absl//absl/flags:flag",
-        "//third_party/icu:headers",
+        "@icu//:headers",
         # tf:lib tensorflow dep,
     ],
 )
@@ -681,7 +681,6 @@ tf_cc_library(
     ],
     deps = [
         ":edit_changes_cc_proto",
-        "//third_party/icu/data:icu_normalization_data",
         "@com_google_absl//absl/strings",
         "@icu//:nfkc",
         "@icu//:nfkc_cf",

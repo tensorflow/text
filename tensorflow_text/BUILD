@@ -1,8 +1,7 @@
-# Placeholder: load py_library
 # Placeholder: load py_test
 load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
-load("//tensorflow_text:tftext.bzl", "extra_py_deps", "py_tf_text_library")
+load("//tensorflow_text:tftext.bzl", "extra_py_deps", "if_pywrap", "py_library", "py_tf_text_library")
 # [internal] load build_test.bzl
 
 # Visibility rules
@@ -77,6 +76,10 @@ py_library(
         "python/ops/__init__.py",
         "tools/__init__.py",
     ],
+    # TODO: b/459693180 - Opt in the library for lazy imports as this will yield a significant
+    # performance gain for some of its users. This is currently not possible as it breaks a number
+    # of tests in //third_party/tensorflow_text/.
+    lazy_imports = False,
     deps = [
         ":bert_tokenizer",
         ":boise_offset_converter",
@@ -202,7 +205,9 @@ py_test(
         ":tensorflow_text",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -229,7 +234,9 @@ py_test(
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
         "@release_or_nightly//:tf_keras_pkg",
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -314,7 +321,9 @@ py_test(
         # python/platform:client_testlib tensorflow dep,
         "//tensorflow_text:normalize_ops",
         "//tensorflow_text/core/pybinds:pywrap_fast_bert_normalizer_model_builder",
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_library(
@@ -353,7 +362,9 @@ py_test(
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -387,7 +398,9 @@ py_test(
         "@absl_py//absl/testing:parameterized",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
         "@release_or_nightly//:tf_keras_pkg",
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -431,7 +444,9 @@ py_test(
         # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -474,7 +489,9 @@ py_test(
         # python/ops:array_ops tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -531,7 +548,9 @@ py_test(
         # python/ops:variables tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_library(
@@ -558,7 +577,9 @@ py_test(
         # python/ops:variables tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_library(
@@ -701,7 +722,9 @@ py_test(
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -869,7 +892,9 @@ py_test(
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -1128,7 +1153,9 @@ py_test(
         # python/ops/ragged:ragged_map_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_library(
@@ -1239,7 +1266,9 @@ py_test(
         "@pypi//numpy:pkg",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
         "@release_or_nightly//:tf_keras_pkg",
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -1277,7 +1306,9 @@ py_test(
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 filegroup(
@@ -1375,7 +1406,9 @@ py_test(
         "@release_or_nightly//:tf_keras_pkg",
         # python/framework:test_lib tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -1480,7 +1513,9 @@ py_test(
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_tf_text_library(
@@ -1597,7 +1632,9 @@ py_test(
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
         # python/framework:dtypes tensorflow dep,
         # python/user_ops:ops tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
 
 py_test(
@@ -1611,5 +1648,7 @@ py_test(
         "@absl_py//absl/testing:parameterized",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
         # python/user_ops:ops tensorflow dep,
-    ],
+    ] + if_pywrap([
+        "//tensorflow_text/core/pybinds:pybinds_library",
+    ]),
 )
