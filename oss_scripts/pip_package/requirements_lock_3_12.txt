@@ -935,8 +935,8 @@ tensorflow-datasets==4.9.9 \
     --hash=sha256:9cb245cad97e7d227f0b8e006491cfef860ff8d4b9d84a3c68f8b96d6295355e \
     --hash=sha256:b94902d414cdc12a1014cda9ee5815c502c3d44215b780e06dacbd7949abd14e
     # via -r @release_or_nightly/requirements.in
-tensorflow-metadata==1.17.2 \
-    --hash=sha256:7da3f8501d6ccfcdbe1a56e975c3624150ce6829048ab9efe62409c362d509b4
+tensorflow-metadata==1.17.3 \
+    --hash=sha256:452912e6398b3cb7302f0de6139dea794b3be1bd0eb40e6765eb3a04e51ea991
     # via
     #   -r @release_or_nightly/requirements.in
     #   tensorflow-datasets
@@ -949,7 +949,7 @@ termcolor==3.2.0 \
 tf-keras==2.20.1 \
     --hash=sha256:3f0e0a34d9a4c8758f24fdc1053e6e335f16ab5534c7d34f1899b8924779760c \
     --hash=sha256:884be5938fb0b2b53b1583c1ae2b660ef87215377c29b5b6a77fd221b472aeaf
-    # via -r /usr/local/google/home/cantonios/.cache/bazel/_bazel_cantonios/49384a00218e7525ae8ea3b1e3042e4a/external/release_or_nightly/requirements.in
+    # via -r @release_or_nightly/requirements.in
 toml==0.10.2 \
     --hash=sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b \
     --hash=sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f
