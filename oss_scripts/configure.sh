@@ -73,16 +73,10 @@ if [ -z "$HERMETIC_PYTHON_VERSION" ]; then
 fi
 export HERMETIC_PYTHON_VERSION
 
-# NIGHTLY broken, don't try to upgrade deps.
-# Only auto-upgrade requirements for nightly and if >= 3.11.
-# HERMETIC_PYTHON_VERSION_MINOR="${HERMETIC_PYTHON_VERSION#*.}"
-# if [[ "$IS_NIGHTLY" == "nightly" ]] && [[ 11 -le $HERMETIC_PYTHON_VERSION_MINOR  ]]; then
-#   REQUIREMENTS_EXTRA_FLAGS="--upgrade"
-#   if [[ "$TF_VERSION" == *"rc"* ]]; then
-#     REQUIREMENTS_EXTRA_FLAGS="$REQUIREMENTS_EXTRA_FLAGS --pre"
-#   fi
-#   bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
-# fi
+# Only auto-upgrade requirements for nightly.
+if [[ "$IS_NIGHTLY" == "nightly" ]]; then
+  bazel run //oss_scripts/pip_package:requirements.update -- --upgrade
+fi
 
 TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
 SHARED_LIBRARY_NAME="libtensorflow_framework.so.2"
