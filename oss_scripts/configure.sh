@@ -53,10 +53,10 @@ fi
 # fi
 
 # Copy the current bazelversion of TF.
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/master/.bazelversion -o .bazelversion
+curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.20.0/.bazelversion -o .bazelversion
 
 # Copy the building configuration of TF.
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/master/.bazelrc -o .bazelrc
+curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.20.0/.bazelrc -o .bazelrc
 # This line breaks Windows builds, so we remove it.
 sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 
