@@ -61,10 +61,10 @@ http_archive(
 
 http_archive(
     name = "org_tensorflow",
-    sha256 = "213edf03ac7c4e74d8eb2074216ae8c8ae4f325c6bc22efd16cfdeed2073bd66",
-    strip_prefix = "tensorflow-2.20.0",
     patch_args = ["-p1"],
     patches = ["//third_party/tensorflow:tensorflow.core.BUILD.patch"],
+    sha256 = "1a25308b15036bf8006ada5c9955ddc9a217792e6fc24deee04626ec07013f2c",
+    strip_prefix = "tensorflow-2.20.0",
     urls = [
         "https://github.com/tensorflow/tensorflow/archive/refs/tags/v2.20.0.zip",
     ],
