@@ -42,5 +42,5 @@ fi
 echo "Updating WORKSPACE file to use TensorFlow commit $commit_slug"
 sed -E -i $ext "s/strip_prefix = \"tensorflow-.+\",/strip_prefix = \"tensorflow-${commit_slug}\",/" WORKSPACE
 sed -E -i $ext "s|\"https://github.com/tensorflow/tensorflow/archive/.+\.zip\"|\"https://github.com/tensorflow/tensorflow/archive/${commit_slug}.zip\"|" WORKSPACE
-prev_shasum=$(grep -A 1 -e "strip_prefix.*tensorflow-" WORKSPACE | tail -1 | awk -F '"' '{print $2}')
+prev_shasum=$(grep -B 1 -e "strip_prefix.*tensorflow-" WORKSPACE | grep "sha256" | cut -d'"' -f2)
 sed -i $ext "s/sha256 = \"${prev_shasum}\",//" WORKSPACE
