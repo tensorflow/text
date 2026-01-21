@@ -16,7 +16,7 @@ absl-py==2.3.1 \
     #   tensorflow
     #   tensorflow-datasets
     #   tensorflow-metadata
-array-record==0.5.1 \
+array-record==0.5.1 ; sys_platform == 'linux' \
     --hash=sha256:0ee01775a1c6155103a8cfd8b65ab7609f96b1213332474430013191314e78d8 \
     --hash=sha256:248fb29086cb3a6322a5d8b8332d77713a030bc54f0bacdf215a6d3185f73f90 \
     --hash=sha256:3dbfac79589b53ad765d247b4b6b6c108623053950a8ae36d8a5f2bfec396bd1 \
