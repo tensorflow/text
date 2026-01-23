@@ -16,7 +16,7 @@ absl-py==2.3.1 \
     #   tensorflow
     #   tensorflow-datasets
     #   tensorflow-metadata
-array-record==0.5.1 \
+array-record==0.5.1 ; sys_platform == 'linux' \
     --hash=sha256:0ee01775a1c6155103a8cfd8b65ab7609f96b1213332474430013191314e78d8 \
     --hash=sha256:248fb29086cb3a6322a5d8b8332d77713a030bc54f0bacdf215a6d3185f73f90 \
     --hash=sha256:3dbfac79589b53ad765d247b4b6b6c108623053950a8ae36d8a5f2bfec396bd1 \
@@ -34,6 +34,7 @@ array-record==0.5.1 \
     --hash=sha256:ea3969b9f954f6f01ddac64f59eea45392dc4eb8c1bf3d1ca5c9bcfd7f8d46e7 \
     --hash=sha256:f08eea9a4afbfa05fb7fafaa007b89e286a8a27a7775cb80338199576ffe07b4
     # via tensorflow-datasets
+array-record==0.4.1 ; sys_platform == 'darwin'
 astunparse==1.6.3 \
     --hash=sha256:5ad93a8456f0d084c3456d059fd9a92cce667963232cbf763eac3bc5b7940872 \
     --hash=sha256:c2652417f2c8b5bb325c885ae329bdf3f86424075c4fd1a128674bc6fba4b8e8
