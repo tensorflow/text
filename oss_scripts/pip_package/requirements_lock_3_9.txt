@@ -16,25 +16,12 @@ absl-py==2.3.1 \
     #   tensorflow
     #   tensorflow-datasets
     #   tensorflow-metadata
-array-record==0.5.1 ; sys_platform == 'linux' \
-    --hash=sha256:0ee01775a1c6155103a8cfd8b65ab7609f96b1213332474430013191314e78d8 \
-    --hash=sha256:248fb29086cb3a6322a5d8b8332d77713a030bc54f0bacdf215a6d3185f73f90 \
-    --hash=sha256:3dbfac79589b53ad765d247b4b6b6c108623053950a8ae36d8a5f2bfec396bd1 \
-    --hash=sha256:4a4de494dc1c0ec175187da2a252b18581965f605443c23f7385c5189642f9bf \
-    --hash=sha256:6ebe99f37e3a797322f4f5cfc6902b5e852012ba2729fac628aad6affb225247 \
-    --hash=sha256:897362036f2920093eff3d729c2a6e1844e3077f513d6bd29640cd02f98e07c7 \
-    --hash=sha256:8ebd7c12c0a159a44c6c8fdaf915036fcddfdfa499a878ddcff9761c6d1af685 \
-    --hash=sha256:927f5f0bdbb141e75d370ade9ce784514babcb78f86d23badbab2d7fd6b7cd48 \
-    --hash=sha256:9922862216a9d3be76fdc27968af1ec0ea20f986329998ba45b0f01ee3e646fa \
-    --hash=sha256:a0911cca3f71aa6724ae08c351e486acc2dcdc098df0e4ae9aa920f16aee2385 \
-    --hash=sha256:b9f2e304e59a17af9f5bf2a86b93ad4700d0eeb85d742a884aa38dc0b54dda5b \
-    --hash=sha256:c4e6e5cef45a82641f4bb008c2a1409cd043f46dd3f0e5a2e7f232416435186d \
-    --hash=sha256:e39b2001fbed6f6d621a5f2079609037167ee06bf977fd6c37d225043c39a015 \
-    --hash=sha256:e6b297b9241d10f072f00a85e97c8743c9e623be20e413ab3403b9326ed98890 \
-    --hash=sha256:ea3969b9f954f6f01ddac64f59eea45392dc4eb8c1bf3d1ca5c9bcfd7f8d46e7 \
-    --hash=sha256:f08eea9a4afbfa05fb7fafaa007b89e286a8a27a7775cb80338199576ffe07b4
-    # via tensorflow-datasets
-array-record==0.4.1 ; sys_platform == 'darwin'
+array-record==0.4.1 ; python_version == "3.9" \
+    --hash=sha256:6a0c8ed6fdfaaf2cecd3d5c6b9c13e116ad3299649611c8fd184d64557fbaba8 \
+    --hash=sha256:a74e9c0075860777b79e4b3ac278f67add270acf78520d3b9cf8c325aef42951
+    # via
+    #   -r @release_or_nightly/requirements.in
+    #   tensorflow-datasets
 astunparse==1.6.3 \
     --hash=sha256:5ad93a8456f0d084c3456d059fd9a92cce667963232cbf763eac3bc5b7940872 \
     --hash=sha256:c2652417f2c8b5bb325c885ae329bdf3f86424075c4fd1a128674bc6fba4b8e8
