@@ -3,6 +3,13 @@ workspace(name = "org_tensorflow_text")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//third_party/bazel:http.bzl", "custom_http_archive")
 
+# githu.com/tensorflow#104948 - Support latest Xcode.
+http_archive(
+    name = "build_bazel_apple_support",
+    sha256 = "1ae6fcf983cff3edab717636f91ad0efff2e5ba75607fdddddfd6ad0dbdfaf10",
+    urls = ["https://github.com/bazelbuild/apple_support/releases/download/1.24.5/apple_support.1.24.5.tar.gz"],
+)
+
 custom_http_archive(
     name = "icu",
     exclude = [
