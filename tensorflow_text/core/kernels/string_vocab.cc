@@ -19,6 +19,7 @@ namespace text {
 
 StringVocab::StringVocab(const std::vector<std::string>& vocab)
     : vocab_(vocab) {
+  index_map_.reserve(vocab.size());
   for (int i = 0; i < vocab.size(); ++i) {
     index_map_[vocab_[i]] = i;
   }
