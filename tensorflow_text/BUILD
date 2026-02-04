@@ -2,12 +2,16 @@
 load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("//tensorflow_text:tftext.bzl", "extra_py_deps", "if_pywrap", "py_library", "py_tf_text_library")
+
 # [internal] load build_test.bzl
+load("//tools/build_defs/license:license.bzl", "license")
 
 # Visibility rules
 package(
     default_visibility = ["//visibility:public"],
 )
+
+license(name = "license")
 
 licenses(["notice"])
 
