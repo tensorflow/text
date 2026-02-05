@@ -11,7 +11,10 @@ load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
 licenses(["notice"])
 
 # Visibility rules
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = [
+    "//accessibility/maui/maui4text/prototypes/smart_highlight:__subpackages__",
+    "//visibility:public",
+])
 
 exports_files(["LICENSE"])
 
