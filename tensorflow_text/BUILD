@@ -84,6 +84,7 @@ py_library(
     # performance gain for some of its users. This is currently not possible as it breaks a number
     # of tests in //third_party/tensorflow_text/.
     lazy_imports = False,
+    strict_deps = False,
     deps = [
         ":bert_tokenizer",
         ":boise_offset_converter",
@@ -150,6 +151,7 @@ exports_files(
 py_library(
     name = "bert_tokenizer",
     srcs = ["python/ops/bert_tokenizer.py"],
+    strict_deps = False,
     tags = ["ignore_srcs"],
     deps = [
         ":normalize_ops",
@@ -168,6 +170,7 @@ py_test(
     size = "small",
     timeout = "moderate",
     srcs = ["python/ops/bert_tokenizer_test.py"],
+    strict_deps = False,
     deps = [
         ":bert_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -205,6 +208,7 @@ py_test(
     name = "boise_offset_converter_test",
     size = "medium",
     srcs = ["python/ops/boise_offset_converter_test.py"],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -233,6 +237,7 @@ py_test(
     name = "byte_splitter_test",
     size = "medium",
     srcs = ["python/ops/byte_splitter_test.py"],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -260,6 +265,7 @@ py_tf_text_library(
 py_library(
     name = "create_feature_bitmask_op",
     srcs = ["python/ops/create_feature_bitmask_op.py"],
+    strict_deps = False,
     deps = [
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
@@ -275,6 +281,7 @@ py_test(
     name = "create_feature_bitmask_op_test",
     size = "small",
     srcs = ["python/ops/create_feature_bitmask_op_test.py"],
+    strict_deps = False,
     deps = [
         ":create_feature_bitmask_op",
         # python/framework:constant_op tensorflow dep,
@@ -310,6 +317,7 @@ py_test(
     name = "fast_bert_normalizer_test",
     size = "small",
     srcs = ["python/ops/fast_bert_normalizer_test.py"],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
@@ -333,6 +341,7 @@ py_test(
 py_library(
     name = "fast_bert_tokenizer",
     srcs = ["python/ops/fast_bert_tokenizer.py"],
+    strict_deps = False,
     tags = ["ignore_srcs"],
     deps = [
         ":fast_bert_normalizer",
@@ -350,6 +359,7 @@ py_test(
     size = "small",
     timeout = "moderate",
     srcs = ["python/ops/fast_bert_tokenizer_test.py"],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
@@ -393,6 +403,7 @@ py_test(
     data = [
         ":python/ops/test_data/fast_sentencepiece.model",
     ],
+    strict_deps = False,
     deps = [
         ":fast_sentencepiece_tokenizer",
         ":tensorflow_text",
@@ -436,6 +447,7 @@ py_test(
     data = [
         ":python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
     ],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
@@ -482,6 +494,7 @@ py_test(
     data = [
         ":python/ops/test_data/phrase_tokenizer_model.fb",
     ],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@absl_py//absl/testing:parameterized",
@@ -516,6 +529,7 @@ py_test(
     name = "greedy_constrained_sequence_op_test",
     size = "small",
     srcs = ["python/ops/greedy_constrained_sequence_op_test.py"],
+    strict_deps = False,
     deps = [
         ":greedy_constrained_sequence_op",
         "@pypi//numpy:pkg",
@@ -528,6 +542,7 @@ py_test(
 py_library(
     name = "hub_module_splitter",
     srcs = ["python/ops/hub_module_splitter.py"],
+    strict_deps = False,
     deps = [
         ":splitter",
         # python/eager:monitoring tensorflow dep,
@@ -544,6 +559,7 @@ py_test(
     data = [
         ":test_data_segmenter_hub_module",
     ],
+    strict_deps = False,
     deps = [
         ":ops",
         # python/framework:ops tensorflow dep,
@@ -560,6 +576,7 @@ py_test(
 py_library(
     name = "hub_module_tokenizer",
     srcs = ["python/ops/hub_module_tokenizer.py"],
+    strict_deps = False,
     deps = [
         ":hub_module_splitter",
         ":tokenization",
@@ -573,6 +590,7 @@ py_test(
     data = [
         ":test_data_segmenter_hub_module",
     ],
+    strict_deps = False,
     deps = [
         ":ops",
         # python/framework:ops tensorflow dep,
@@ -589,6 +607,7 @@ py_test(
 py_library(
     name = "item_selector_ops",
     srcs = ["python/ops/item_selector_ops.py"],
+    strict_deps = False,
     deps = [
         # python/framework:dtypes tensorflow dep,
         # python/framework:ops tensorflow dep,
@@ -617,6 +636,7 @@ py_test(
     name = "item_selector_ops_test",
     size = "medium",
     srcs = ["python/ops/item_selector_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":item_selector_ops",
         # python/framework:dtypes tensorflow dep,
@@ -631,6 +651,7 @@ py_test(
 py_library(
     name = "masking_ops",
     srcs = ["python/ops/masking_ops.py"],
+    strict_deps = False,
     deps = [
         # python/framework:dtypes tensorflow dep,
         # python/ops:array_ops tensorflow dep,
@@ -652,6 +673,7 @@ py_test(
     name = "masking_ops_test",
     size = "medium",
     srcs = ["python/ops/masking_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":item_selector_ops",
         ":masking_ops",
@@ -684,6 +706,7 @@ py_tf_text_library(
 py_test(
     name = "mst_ops_test",
     srcs = ["python/ops/mst_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":mst_ops",
         # python/framework:constant_op tensorflow dep,
@@ -717,6 +740,7 @@ py_test(
     name = "ngrams_op_test",
     size = "medium",
     srcs = ["python/ops/ngrams_op_test.py"],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -749,6 +773,7 @@ py_test(
     name = "normalize_ops_test",
     size = "small",
     srcs = ["python/ops/normalize_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":normalize_ops",
         # python/framework:errors tensorflow dep,
@@ -761,6 +786,7 @@ py_test(
 py_library(
     name = "pad_along_dimension_op",
     srcs = ["python/ops/pad_along_dimension_op.py"],
+    strict_deps = False,
     deps = [
         # python/framework:dtypes tensorflow dep,
         # python/framework:errors tensorflow dep,
@@ -775,6 +801,7 @@ py_test(
     name = "pad_along_dimension_op_test",
     size = "medium",
     srcs = ["python/ops/pad_along_dimension_op_test.py"],
+    strict_deps = False,
     deps = [
         ":pad_along_dimension_op",
         "@absl_py//absl/testing:parameterized",
@@ -792,6 +819,7 @@ py_test(
 py_library(
     name = "pad_model_inputs_ops",
     srcs = ["python/ops/pad_model_inputs_ops.py"],
+    strict_deps = False,
     deps = [
         # python/framework:constant_op tensorflow dep,
         # python/framework:dtypes tensorflow dep,
@@ -811,6 +839,7 @@ py_library(
 py_test(
     name = "pad_model_inputs_ops_test",
     srcs = ["python/ops/pad_model_inputs_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":pad_model_inputs_ops",
         "@absl_py//absl/testing:parameterized",
@@ -824,6 +853,7 @@ py_test(
 py_library(
     name = "pointer_ops",
     srcs = ["python/ops/pointer_ops.py"],
+    strict_deps = False,
     deps = [
         # python/framework:dtypes tensorflow dep,
         # python/framework:ops tensorflow dep,
@@ -844,6 +874,7 @@ py_library(
 py_test(
     name = "gather_with_default_op_test",
     srcs = ["python/ops/gather_with_default_op_test.py"],
+    strict_deps = False,
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -859,6 +890,7 @@ py_test(
 py_test(
     name = "span_alignment_op_test",
     srcs = ["python/ops/span_alignment_op_test.py"],
+    strict_deps = False,
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -871,6 +903,7 @@ py_test(
 py_test(
     name = "span_overlaps_op_test",
     srcs = ["python/ops/span_overlaps_op_test.py"],
+    strict_deps = False,
     deps = [
         ":pointer_ops",
         "@absl_py//absl/testing:parameterized",
@@ -888,6 +921,7 @@ py_test(
 py_test(
     name = "ragged_tensor_to_tensor_test",
     srcs = ["python/ragged/ragged_tensor_to_tensor_test.py"],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -916,6 +950,7 @@ py_test(
     name = "regex_split_ops_test",
     size = "medium",
     srcs = ["python/ops/regex_split_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":regex_split_ops",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -926,6 +961,7 @@ py_test(
 py_library(
     name = "segment_combiner_ops",
     srcs = ["python/ops/segment_combiner_ops.py"],
+    strict_deps = False,
     deps = [
         # python/framework:dtypes tensorflow dep,
         # python/framework:ops tensorflow dep,
@@ -937,6 +973,7 @@ py_library(
 py_test(
     name = "segment_combiner_ops_test",
     srcs = ["python/ops/segment_combiner_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":segment_combiner_ops",
         "@absl_py//absl/testing:parameterized",
@@ -972,6 +1009,7 @@ py_test(
     name = "sentence_breaking_ops_test",
     size = "small",
     srcs = ["python/ops/sentence_breaking_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":sentence_breaking_ops",
         "@absl_py//absl/testing:parameterized",
@@ -1014,6 +1052,7 @@ py_test(
     data = [
         ":python/ops/test_data/test_oss_model.model",
     ],
+    strict_deps = False,
     deps = [
         ":sentencepiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -1029,6 +1068,7 @@ py_test(
 py_library(
     name = "sliding_window_op",
     srcs = ["python/ops/sliding_window_op.py"],
+    strict_deps = False,
     deps = [
         # python/framework:errors tensorflow dep,
         # python/framework:ops tensorflow dep,
@@ -1041,6 +1081,7 @@ py_test(
     name = "sliding_window_op_test",
     size = "small",
     srcs = ["python/ops/sliding_window_op_test.py"],
+    strict_deps = False,
     deps = [
         ":sliding_window_op",
         "@absl_py//absl/testing:parameterized",
@@ -1072,6 +1113,7 @@ py_test(
     name = "split_merge_from_logits_tokenizer_test",
     size = "small",
     srcs = ["python/ops/split_merge_from_logits_tokenizer_test.py"],
+    strict_deps = False,
     deps = [
         ":split_merge_from_logits_tokenizer",
         # python/framework:errors tensorflow dep,
@@ -1100,6 +1142,7 @@ py_test(
     name = "split_merge_tokenizer_test",
     size = "small",
     srcs = ["python/ops/split_merge_tokenizer_test.py"],
+    strict_deps = False,
     deps = [
         ":split_merge_tokenizer",
         # python/framework:test_lib tensorflow dep,
@@ -1111,6 +1154,7 @@ py_test(
 py_library(
     name = "splitter",
     srcs = ["python/ops/splitter.py"],
+    strict_deps = False,
     deps = [
         # python/module tensorflow dep,
     ],
@@ -1141,6 +1185,7 @@ py_test(
     name = "state_based_sentence_breaker_op_test",
     size = "medium",
     srcs = ["python/ops/state_based_sentence_breaker_op_test.py"],
+    strict_deps = False,
     deps = [
         ":state_based_sentence_breaker_op",
         ":tensorflow_text",
@@ -1165,6 +1210,7 @@ py_test(
 py_library(
     name = "string_ops",
     srcs = ["python/ops/string_ops.py"],
+    strict_deps = False,
     deps = [
         # python/ops:string_ops tensorflow dep,
     ] + extra_py_deps(),
@@ -1174,6 +1220,7 @@ py_test(
     name = "coerce_to_valid_utf8_op_test",
     size = "small",
     srcs = ["python/ops/coerce_to_valid_utf8_op_test.py"],
+    strict_deps = False,
     deps = [
         ":string_ops",
         # python/framework:test_lib tensorflow dep,
@@ -1199,6 +1246,7 @@ py_test(
     name = "text_similarity_metric_ops_test",
     size = "small",
     srcs = ["python/metrics/text_similarity_metric_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":text_similarity_metric_ops",
         "@absl_py//absl/testing:parameterized",
@@ -1215,6 +1263,7 @@ py_test(
 py_library(
     name = "todense_layer",
     srcs = ["python/keras/layers/todense.py"],
+    strict_deps = False,
     deps = [
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
         "@release_or_nightly//:tf_keras_pkg",
@@ -1226,6 +1275,7 @@ py_test(
     size = "large",
     srcs = ["python/keras/layers/todense_test.py"],
     shard_count = 2,
+    strict_deps = False,
     deps = [
         ":todense_layer",
         "@absl_py//absl/testing:parameterized",
@@ -1239,6 +1289,7 @@ py_test(
 py_library(
     name = "tokenization",
     srcs = ["python/ops/tokenization.py"],
+    strict_deps = False,
     deps = [
         ":splitter",
         # python/module tensorflow dep,
@@ -1248,6 +1299,7 @@ py_library(
 py_library(
     name = "tokenization_layers",
     srcs = ["python/keras/layers/tokenization_layers.py"],
+    strict_deps = False,
     deps = [
         ":unicode_script_tokenizer",
         ":whitespace_tokenizer_v2",
@@ -1264,6 +1316,7 @@ py_test(
     size = "large",
     srcs = ["python/keras/layers/tokenization_layers_test.py"],
     shard_count = 20,
+    strict_deps = False,
     deps = [
         ":tokenization_layers",
         "@absl_py//absl/testing:parameterized",
@@ -1300,6 +1353,7 @@ py_tf_text_library(
 py_test(
     name = "trimmer_ops_test",
     srcs = ["python/ops/trimmer_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         ":trimmer_ops",
@@ -1325,6 +1379,7 @@ filegroup(
 py_library(
     name = "unicode_char_tokenizer",
     srcs = ["python/ops/unicode_char_tokenizer.py"],
+    strict_deps = False,
     deps = [
         ":tokenization",
         # python/framework:dtypes tensorflow dep,
@@ -1342,6 +1397,7 @@ py_test(
     size = "large",
     srcs = ["python/ops/unicode_char_tokenizer_test.py"],
     shard_count = 5,
+    strict_deps = False,
     deps = [
         ":unicode_char_tokenizer",
         # python/framework:constant_op tensorflow dep,
@@ -1376,6 +1432,7 @@ py_test(
     size = "large",
     srcs = ["python/ops/unicode_script_tokenizer_test.py"],
     shard_count = 5,
+    strict_deps = False,
     deps = [
         ":unicode_script_tokenizer",
         # python/framework:constant_op tensorflow dep,
@@ -1403,6 +1460,7 @@ py_test(
     name = "utf8_binarize_op_test",
     size = "small",
     srcs = ["python/ops/utf8_binarize_op_test.py"],
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         ":utf8_binarize_op",
@@ -1433,6 +1491,7 @@ py_test(
     name = "viterbi_constrained_sequence_op_test",
     size = "small",
     srcs = ["python/ops/viterbi_constrained_sequence_op_test.py"],
+    strict_deps = False,
     deps = [
         ":viterbi_constrained_sequence_op",
         ":viterbi_decode",
@@ -1446,6 +1505,7 @@ py_test(
 py_library(
     name = "viterbi_decode",
     srcs = ["python/numpy/viterbi_decode.py"],
+    strict_deps = False,
     deps = [
         "@pypi//numpy:pkg",
     ] + extra_py_deps(),
@@ -1455,6 +1515,7 @@ py_test(
     name = "viterbi_decode_test",
     size = "small",
     srcs = ["python/numpy/viterbi_decode_test.py"],
+    strict_deps = False,
     deps = [
         ":viterbi_decode",
         "@absl_py//absl/testing:absltest",
@@ -1509,6 +1570,7 @@ py_test(
     size = "large",
     srcs = ["python/ops/whitespace_tokenizer_test.py"],
     shard_count = 4,
+    strict_deps = False,
     deps = [
         ":tensorflow_text",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -1554,6 +1616,7 @@ py_test(
     name = "wordpiece_tokenizer_test",
     size = "small",
     srcs = ["python/ops/wordpiece_tokenizer_test.py"],
+    strict_deps = False,
     deps = [
         ":wordpiece_tokenizer",
         "@absl_py//absl/testing:parameterized",
@@ -1571,6 +1634,7 @@ py_test(
 py_library(
     name = "wordshape_ops",
     srcs = ["python/ops/wordshape_ops.py"],
+    strict_deps = False,
     deps = [
         # python/framework:ops tensorflow dep,
         # python/ops:array_ops_stack tensorflow dep,
@@ -1582,6 +1646,7 @@ py_test(
     name = "wordshape_ops_test",
     size = "small",
     srcs = ["python/ops/wordshape_ops_test.py"],
+    strict_deps = False,
     deps = [
         ":wordshape_ops",
         # python/framework:test_lib tensorflow dep,
@@ -1600,11 +1665,15 @@ py_test(
 # regular expression that is matched against the benchmark methods' name.
 # e.g. --benchmark_filter="wordpiece" will run the Wordpiece Tokenizer benchmarks.
 
-py_library(name = "profiler_lib")
+py_library(
+    name = "profiler_lib",
+    strict_deps = False,
+)
 
 py_library(
     name = "benchmark_utils",
     srcs = ["python/benchmarks/benchmark_utils.py"],
+    strict_deps = False,
     deps = [
         "@pypi//numpy:pkg",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -1628,6 +1697,7 @@ py_test(
         ":python/ops/test_data/test_oss_model.model",
         ":test_data_segmenter_hub_module",
     ],
+    strict_deps = False,
     deps = [
         ":benchmark_utils",
         ":ops",
@@ -1645,6 +1715,7 @@ py_test(
     name = "ops_benchmarks",
     size = "medium",
     srcs = ["python/benchmarks/ops_benchmarks.py"],
+    strict_deps = False,
     deps = [
         ":benchmark_utils",
         ":ops",

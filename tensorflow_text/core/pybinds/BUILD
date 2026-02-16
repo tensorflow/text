@@ -41,6 +41,7 @@ py_test(
         "//tensorflow_text:python/ops/test_data/fast_bert_normalizer_model.fb",
         "//tensorflow_text:python/ops/test_data/fast_bert_normalizer_model_lower_case_nfd_strip_accents.fb",
     ],
+    strict_deps = False,
     tags = [
         "-sickbay",  # Depends on ICU version.
     ],
@@ -70,6 +71,7 @@ py_test(
     data = [
         "//tensorflow_text:python/ops/test_data/fast_wordpiece_tokenizer_model.fb",
     ],
+    strict_deps = False,
     deps = [
         ":pywrap_fast_wordpiece_tokenizer_model_builder",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -96,6 +98,7 @@ py_test(
     data = [
         "//tensorflow_text:python/ops/test_data/phrase_tokenizer_model_test.fb",
     ],
+    strict_deps = False,
     deps = [
         ":pywrap_phrase_tokenizer_model_builder",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
@@ -125,6 +128,7 @@ pybind_extension(
 py_test(
     name = "pywrap_whitespace_tokenizer_config_builder_test",
     srcs = ["pywrap_whitespace_tokenizer_config_builder_test.py"],
+    strict_deps = False,
     deps = [
         ":pywrap_whitespace_tokenizer_config_builder",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
