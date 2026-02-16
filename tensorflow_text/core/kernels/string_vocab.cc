@@ -1,4 +1,4 @@
-// Copyright 2025 TF.Text Authors.
+// Copyright 2026 TF.Text Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,18 @@
 
 #include "tensorflow_text/core/kernels/string_vocab.h"
 
+#include <string>
+#include <vector>
+
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
+
 namespace tensorflow {
 namespace text {
 
 StringVocab::StringVocab(const std::vector<std::string>& vocab)
     : vocab_(vocab) {
+  index_map_.reserve(vocab.size());
   for (int i = 0; i < vocab.size(); ++i) {
     index_map_[vocab_[i]] = i;
   }

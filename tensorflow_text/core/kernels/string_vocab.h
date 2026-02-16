@@ -1,4 +1,4 @@
-// Copyright 2025 TF.Text Authors.
+// Copyright 2026 TF.Text Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 #include <vector>
 
 #include "absl/container/flat_hash_map.h"
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
 #include "tensorflow_text/core/kernels/wordpiece_tokenizer.h"
 
 namespace tensorflow {
