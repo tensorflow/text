@@ -1238,7 +1238,9 @@ cc_library(
     hdrs = ["string_vocab.h"],
     deps = [
         ":wordpiece_tokenizer",
+        "//third_party/absl/types:optional",
         "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/strings",
     ],
 )
 
