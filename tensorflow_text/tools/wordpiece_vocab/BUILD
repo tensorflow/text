@@ -13,6 +13,7 @@ package(
 py_library(
     name = "wordpiece_vocab",
     srcs = ["__init__.py"],
+    strict_deps = False,
     deps = [
         ":bert_vocab_from_dataset",
         ":wordpiece_tokenizer_learner_lib",
@@ -22,6 +23,7 @@ py_library(
 py_library(
     name = "wordpiece_tokenizer_learner_lib",
     srcs = ["wordpiece_tokenizer_learner_lib.py"],
+    strict_deps = False,
     deps = [
         "@pypi//numpy:pkg",
     ],
@@ -30,6 +32,7 @@ py_library(
 py_test(
     name = "wordpiece_tokenizer_learner_test",
     srcs = ["wordpiece_tokenizer_learner_test.py"],
+    strict_deps = False,
     deps = [
         ":wordpiece_tokenizer_learner_lib",
         "@pypi//numpy:pkg",
@@ -43,6 +46,7 @@ py_test(
 py_library(
     name = "bert_vocab_from_dataset",
     srcs = ["bert_vocab_from_dataset.py"],
+    strict_deps = False,
     deps = [
         ":wordpiece_tokenizer_learner_lib",
         "//tensorflow_text:bert_tokenizer",
@@ -52,6 +56,7 @@ py_library(
 py_test(
     name = "bert_vocab_from_dataset_test",
     srcs = ["bert_vocab_from_dataset_test.py"],
+    strict_deps = False,
     deps = [
         ":bert_vocab_from_dataset",
         ":wordpiece_tokenizer_learner_lib",
