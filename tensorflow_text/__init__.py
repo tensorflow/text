@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2025 TF.Text Authors.
+# Copyright 2026 TF.Text Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ _allowed_symbols = [
     "find_source_offsets",
     "gather_with_default",
     "greedy_constrained_sequence",
+    "item_selector_ops",
     "keras",
     "mask_language_model",
     "max_spanning_tree",
