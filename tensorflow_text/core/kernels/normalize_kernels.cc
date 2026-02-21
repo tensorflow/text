@@ -59,9 +59,9 @@ class CaseFoldUTF8Op : public tensorflow::OpKernel {
                     icu_error.errorName(),
                     ": Could not retrieve ICU NFKC_CaseFold normalizer")));
 
-    for (int64 i = 0; i < input_vec.size(); ++i) {
-      string output_text;
-      icu::StringByteSink<string> byte_sink(&output_text);
+    for (int64_t i = 0; i < input_vec.size(); ++i) {
+      std::string output_text;
+      icu::StringByteSink<std::string> byte_sink(&output_text);
       const auto& input = input_vec(i);
       nfkc_cf->normalizeUTF8(0, icu::StringPiece(input.data(), input.size()),
                              byte_sink, nullptr, icu_error);
@@ -78,9 +78,9 @@ REGISTER_KERNEL_BUILDER(Name("CaseFoldUTF8").Device(tensorflow::DEVICE_CPU),
 
 namespace {
 
-string GetNormalizationForm(OpKernelConstruction* context) {
-  string normalization_form;
-  ([=](string* c) -> void {
+std::string GetNormalizationForm(OpKernelConstruction* context) {
+  std::string normalization_form;
+  ([=](std::string* c) -> void {
     OP_REQUIRES_OK(context, context->GetAttr("normalization_form", c));
   })(&normalization_form);
   return absl::AsciiStrToUpper(normalization_form);
@@ -137,9 +137,9 @@ class NormalizeUTF8Op : public tensorflow::OpKernel {
               "Unknown normalization form requrested: ", normalization_form_)));
     }
 
-    for (int64 i = 0; i < input_vec.size(); ++i) {
-      string output_text;
-      icu::StringByteSink<string> byte_sink(&output_text);
+    for (int64_t i = 0; i < input_vec.size(); ++i) {
+      std::string output_text;
+      icu::StringByteSink<std::string> byte_sink(&output_text);
       const auto& input = input_vec(i);
       normalizer->normalizeUTF8(0, icu::StringPiece(input.data(), input.size()),
                                 byte_sink, nullptr, icu_error);
@@ -153,7 +153,7 @@ class NormalizeUTF8Op : public tensorflow::OpKernel {
   }
 
  private:
-  string normalization_form_;
+  std::string normalization_form_;
 };
 
 REGISTER_KERNEL_BUILDER(Name("NormalizeUTF8").Device(tensorflow::DEVICE_CPU),
@@ -168,7 +168,7 @@ namespace {
 // reconstruct the icu::Edits object from the serialized `changes` string when
 // the variant is at the graph input.
 struct OffsetMapVariant {
-  string changes;
+  std::string changes;
   icu::Edits edits_;
 
   std::string TypeName() const { return "(anonymous)::OffsetMapVariant"; }
@@ -185,18 +185,18 @@ void OffsetMapVariant::Encode(tensorflow::VariantTensorData* data) const {
     change->set_old_length(it.oldLength());
     change->set_new_length(it.newLength());
   }
-  string changes_str = changes.SerializeAsString();
+  std::string changes_str = changes.SerializeAsString();
   data->set_metadata(changes_str);
 }
 
 bool OffsetMapVariant::Decode(const tensorflow::VariantTensorData& data) {
-  string serialized;
+  std::string serialized;
   data.get_metadata(&serialized);
   EditChanges changes;
   changes.ParseFromString(serialized);
   icu::Edits edit;
   icu::ErrorCode icu_error;
-  for (int64 j = 0; j < changes.change_size(); ++j) {
+  for (int64_t j = 0; j < changes.change_size(); ++j) {
     auto* change = changes.mutable_change(j);
     int old_length = change->old_length();
     int new_length = change->new_length();
@@ -268,11 +268,11 @@ class NormalizeUTF8WithOffsetsMapOp : public tensorflow::OpKernel {
                       normalization_form_)));
     }
 
-    for (int64 i = 0; i < input_vec.size(); ++i) {
+    for (int64_t i = 0; i < input_vec.size(); ++i) {
       OffsetMapVariant variant;
-      string output_text;
+      std::string output_text;
       icu::Edits edits;
-      icu::StringByteSink<string> byte_sink(&output_text);
+      icu::StringByteSink<std::string> byte_sink(&output_text);
       const auto& input = input_vec(i);
       normalizer->normalizeUTF8(0, icu::StringPiece(input.data(), input.size()),
                                 byte_sink, &edits, icu_error);
@@ -289,7 +289,7 @@ class NormalizeUTF8WithOffsetsMapOp : public tensorflow::OpKernel {
   }
 
  private:
-  string normalization_form_;
+  std::string normalization_form_;
 };
 
 REGISTER_KERNEL_BUILDER(
@@ -307,18 +307,18 @@ class FindSourceOffsetsOp : public tensorflow::OpKernel {
     const tensorflow::Tensor& input_offsets_values = context->input(1);
     const tensorflow::Tensor& input_offsets_splits = context->input(2);
 
-    const auto& input_offsets_values_vec = input_offsets_values.flat<int64>();
+    const auto& input_offsets_values_vec = input_offsets_values.flat<int64_t>();
     const auto& input_offsets_splits_vec =
         input_offsets_splits.flat<SPLITS_TYPE>();
     const auto& edits_vec = edits_values.flat<Variant>();
 
     icu::ErrorCode icu_error;
-    int64 cur_split_index_begin = 0;
-    int64 cur_split_index_end = 0;
-    std::vector<int64> output_offsets_values(input_offsets_values_vec.size());
-    int64 idx_edits = 0;
-    int64 idx_output = 0;
-    for (int64 i = 0; i < input_offsets_splits_vec.size() - 1; ++i) {
+    int64_t cur_split_index_begin = 0;
+    int64_t cur_split_index_end = 0;
+    std::vector<int64_t> output_offsets_values(input_offsets_values_vec.size());
+    int64_t idx_edits = 0;
+    int64_t idx_output = 0;
+    for (int64_t i = 0; i < input_offsets_splits_vec.size() - 1; ++i) {
       cur_split_index_begin = input_offsets_splits_vec(i);
       cur_split_index_end = input_offsets_splits_vec(i + 1);
       if (cur_split_index_begin == cur_split_index_end) {
@@ -331,7 +331,7 @@ class FindSourceOffsetsOp : public tensorflow::OpKernel {
       auto iter = edits_vec(idx_edits++)
                       .get<OffsetMapVariant>()
                       ->edits_.getFineChangesIterator();
-      for (int64 j = cur_split_index_begin; j < cur_split_index_end; ++j) {
+      for (int64_t j = cur_split_index_begin; j < cur_split_index_end; ++j) {
         output_offsets_values[idx_output++] =
             iter.sourceIndexFromDestinationIndex(input_offsets_values_vec(j),
                                                  icu_error);
@@ -342,16 +342,16 @@ class FindSourceOffsetsOp : public tensorflow::OpKernel {
                     "Input offset tensor dimension did not match the offset "
                     "map dimension."));
 
-    int64 output_offsets_values_size = output_offsets_values.size();
+    int64_t output_offsets_values_size = output_offsets_values.size();
     Tensor* output_offsets_values_tensor = nullptr;
     OP_REQUIRES_OK(context, context->allocate_output(
                                 "output_offsets_values",
                                 TensorShape({output_offsets_values_size}),
                                 &output_offsets_values_tensor));
     auto output_offsets_values_data =
-        output_offsets_values_tensor->flat<int64>().data();
+        output_offsets_values_tensor->flat<int64_t>().data();
     memcpy(output_offsets_values_data, output_offsets_values.data(),
-           output_offsets_values_size * sizeof(int64));
+           output_offsets_values_size * sizeof(int64_t));
   }
 
  private:
@@ -360,11 +360,11 @@ class FindSourceOffsetsOp : public tensorflow::OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("FindSourceOffsets")
                             .Device(tensorflow::DEVICE_CPU)
-                            .TypeConstraint<int64>("Tsplits"),
-                        FindSourceOffsetsOp<int64>);
+                            .TypeConstraint<int64_t>("Tsplits"),
+                        FindSourceOffsetsOp<int64_t>);
 REGISTER_KERNEL_BUILDER(Name("FindSourceOffsets")
                             .Device(tensorflow::DEVICE_CPU)
-                            .TypeConstraint<int32>("Tsplits"),
-                        FindSourceOffsetsOp<int32>);
+                            .TypeConstraint<int32_t>("Tsplits"),
+                        FindSourceOffsetsOp<int32_t>);
 }  // namespace text
 }  // namespace tensorflow
