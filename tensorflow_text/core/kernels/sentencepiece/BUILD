@@ -128,6 +128,7 @@ cc_library(
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
         "@com_google_sentencepiece//:sentencepiece_model_cc_proto",
+        "@com_google_sentencepiece//:sentencepiece_processor",
     ],
 )
 
