@@ -8,7 +8,10 @@ load("//tools/build_defs/license:license.bzl", "license")
 
 # Visibility rules
 package(
-    default_visibility = ["//visibility:public"],
+    default_visibility = [
+        "//java/com/google/android/apps/inputmethod/libs:__subpackages__",
+        "//visibility:public",
+    ],
 )
 
 license(name = "license")
