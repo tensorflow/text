@@ -48,15 +48,15 @@ class WhitespaceTokenizeWithOffsetsKernelTest
 
 TEST_F(WhitespaceTokenizeWithOffsetsKernelTest, Test) {
   MakeOp();
-  AddInputFromArray<int32>(TensorShape({6}), {111, 112, 32, 116, 117, 118});
-  AddInputFromArray<int64>(TensorShape({3}), {0, 4, 6});
+  AddInputFromArray<int32_t>(TensorShape({6}), {111, 112, 32, 116, 117, 118});
+  AddInputFromArray<int64_t>(TensorShape({3}), {0, 4, 6});
   TF_ASSERT_OK(RunOpKernel());
 
-  std::vector<int32> expected_values({111, 112, 116, 117, 118});
-  std::vector<int64> expected_values_inner_splits({0, 2, 3, 5});
-  std::vector<int64> expected_offset_starts({0, 3, 0});
-  std::vector<int64> expected_offset_limits({2, 4, 2});
-  std::vector<int64> output_outer_splits({0, 2, 3});
+  std::vector<int32_t> expected_values({111, 112, 116, 117, 118});
+  std::vector<int64_t> expected_values_inner_splits({0, 2, 3, 5});
+  std::vector<int64_t> expected_offset_starts({0, 3, 0});
+  std::vector<int64_t> expected_offset_limits({2, 4, 2});
+  std::vector<int64_t> output_outer_splits({0, 2, 3});
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_values));
   EXPECT_THAT(*GetOutput(1), VectorEq(expected_values_inner_splits));
   EXPECT_THAT(*GetOutput(2), VectorEq(expected_offset_starts));
