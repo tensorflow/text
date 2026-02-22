@@ -80,6 +80,8 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
                reverse=False,
                add_bos=False,
                add_eos=False,
+               num_threads=1,
+               chunk_size=0,
                return_nbest=False,
                name=None):
     """Creates & initializes a Sentencepiece processor.
@@ -101,6 +103,10 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
       add_eos: Add end of sentence token to the result (Default = false). When
         `reverse=True` beginning/end of sentence tokens are added after
         reversing.
+      num_threads: If `> 1`, the input is split up into chunks of size
+        `chunk_size` and tokenized in parallel with this many threads.
+      chunk_size: Only used if `num_threads > 1`. The input is split into
+        chunks of this size and tokenized in parallel.
       return_nbest: If True requires that `nbest_size` is a scalar and `> 1`.
         Returns the `nbest_size` best tokenizations for each sentence instead
         of a single one. The returned tensor has shape
@@ -118,6 +124,8 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
     self.reverse = reverse
     self.add_bos = add_bos
     self.add_eos = add_eos
+    self.num_threads = num_threads
+    self.chunk_size = chunk_size
     self.return_nbest = return_nbest
     self._model_resource = _SentencepieceModelResource(model, name)
 
@@ -154,7 +162,8 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
               gen_sentencepiece_tokenizer.sentencepiece_tokenize_op(
                   self._model_resource.resource_handle, input_tensor,
                   self.nbest_size, self.alpha, self.add_bos, self.add_eos,
-                  self.reverse, self.out_type, return_nbest=self.return_nbest))
+                  self.reverse, self.num_threads, self.chunk_size,
+                  self.out_type, return_nbest=self.return_nbest))
           tokens = RaggedTensor.from_nested_row_splits(
               flat_values=output_values,
               nested_row_splits=[row_splits],

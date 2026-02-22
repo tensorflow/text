@@ -29,6 +29,7 @@
 #include "tensorflow/core/framework/device_base.h"
 #include "tensorflow/core/framework/node_def_util.h"
 #include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/op_requires.h"
 #include "tensorflow/core/framework/resource_mgr.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_types.h"
@@ -267,6 +268,10 @@ class SentencepieceTokenizeOp : public OpKernel {
  public:
   explicit SentencepieceTokenizeOp(OpKernelConstruction* ctx) : OpKernel(ctx) {
     ctx->GetAttr("return_nbest", &return_nbest_).IgnoreError();
+
+    // Parallel encode options.
+    ctx->GetAttr("num_threads", &num_threads_).IgnoreError();
+    ctx->GetAttr("chunk_size", &chunk_size_).IgnoreError();
   }
 
   void Compute(OpKernelContext* ctx) override {
@@ -310,6 +315,8 @@ class SentencepieceTokenizeOp : public OpKernel {
         nbest_tokens(return_nbest_ ? num_of_input_values : 0);
     if (num_of_input_values > 0) {
       const bool return_nbest = return_nbest_;
+      const int32 num_threads = num_threads_;
+      const int32 chunk_size = chunk_size_;
       const auto& worker_threads =
           *(ctx->device()->tensorflow_cpu_worker_threads());
       ::tensorflow::Shard(
@@ -318,8 +325,8 @@ class SentencepieceTokenizeOp : public OpKernel {
           num_of_input_values,         // total number of data to process.
           kCostPerUnit,                // cost per unit
           [ctx, sp, &input_values_flat, &tokens, &nbest_tokens,
-          &nbest_size_tensor, &alpha_tensor,
-          return_nbest](int64 start, int64 limit) {
+          &nbest_size_tensor, &alpha_tensor, &chunk_size,
+          &num_threads, return_nbest](int64 start, int64 limit) {
             absl::ReaderMutexLock lock(&sp->mu);
             for (int i = start; i < limit; ++i) {
               const int32 nbest_size = nbest_size_tensor->dims() == 1
@@ -330,8 +337,17 @@ class SentencepieceTokenizeOp : public OpKernel {
                                         input_values_flat(i), nbest_size,
                                         &nbest_tokens[i])));
               } else if (nbest_size == 0 || nbest_size == 1) {
-                OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Encode(
-                                        input_values_flat(i), &tokens[i])));
+                if (num_threads == 1) {
+                  OP_REQUIRES_OK(
+                      ctx,
+                      ToTFStatus(sp->processor.Encode(
+                          input_values_flat(i), &tokens[i])));
+                } else {
+                  OP_REQUIRES_OK(
+                      ctx, ToTFStatus(sp->processor.ParallelEncode(
+                          input_values_flat(i), chunk_size, num_threads,
+                          &tokens[i])));
+                }
               } else {
                 const float alpha = alpha_tensor->dims() == 1
                                         ? alpha_tensor->vec<float>()(i)
@@ -380,6 +396,8 @@ class SentencepieceTokenizeOp : public OpKernel {
   }
 
   bool return_nbest_{false};
+  int32_t num_threads_{1};
+  int32_t chunk_size_{0};
 };
 
 REGISTER_KERNEL_BUILDER(Name("SentencepieceTokenizeOp")
