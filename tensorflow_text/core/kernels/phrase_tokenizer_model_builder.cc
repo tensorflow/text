@@ -45,7 +45,7 @@ class PhraseBuilder {
   absl::StatusOr<std::string> ExportToFlatBuffer() const;
 
  private:
-  absl::optional<StringVocab> vocab_;
+  std::unique_ptr<StringVocab> vocab_;
   std::vector<uint32_t> trie_data_;
   std::string unk_token_;
   int unk_token_id_;
@@ -64,7 +64,7 @@ absl::Status PhraseBuilder::BuildModel(const std::vector<std::string>& vocab,
   prob_ = prob;
   split_end_punctuation_ = split_end_punctuation;
 
-  vocab_.emplace(vocab);
+  vocab_ = std::make_unique<StringVocab>(vocab);
   if (vocab_->Size() != vocab.size()) {
     return absl::FailedPreconditionError(
         "Tokens in the vocabulary must be unique.");
