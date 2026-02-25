@@ -206,7 +206,7 @@ class FastWordpieceBuilder {
     trie_array_[node_id] &= 0xFFFFFEFF;
   }
 
-  absl::optional<StringVocab> vocab_;
+  std::unique_ptr<StringVocab> vocab_;
 
   int max_bytes_per_token_ = -1;
 
@@ -264,7 +264,7 @@ absl::Status FastWordpieceBuilder::BuildModel(
   no_pretokenization_ = no_pretokenization;
   support_detokenization_ = support_detokenization;
 
-  vocab_.emplace(vocab);
+  vocab_ = std::make_unique<StringVocab>(vocab);
   if (vocab_->Size() != vocab.size()) {
     return absl::FailedPreconditionError(
         "Tokens in the vocabulary must be unique.");
@@ -830,7 +830,7 @@ absl::Status FastWordpieceBuilder::PrecomputeResultForSuffixIndicator() {
   LookupStatus status = WordpieceTokenize(
       suffix_indicator_, max_bytes_per_token_, /*max_chars_per_subtoken=*/-1,
       suffix_indicator_, /*use_unknown_token=*/true, unk_token_,
-      /*split_unknown_characters=*/false, &vocab_.value(), &subwords,
+      /*split_unknown_characters=*/false, vocab_.get(), &subwords,
       &begin_offset, &end_offset, &num_word_pieces);
   precomputed_result_for_suffix_indicator_.reserve(subwords.size());
   if (!status.success) {
