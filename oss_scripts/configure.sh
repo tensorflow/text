@@ -39,18 +39,19 @@ elif (which python) | grep -q "python"; then
   installed_python="python"
 fi
 
-# if [[ $($installed_python -m pip show tensorflow) == *tensorflow* ]] ||
-#    [[ $($installed_python -m pip show tensorflow-macos) == *tensorflow-macos* ]] ||
-#    [[ $($installed_python -m pip show tf-nightly) == *tf-nightly* ]]; then
-#   echo 'Using installed tensorflow.'
-# else
-#   echo 'Installing tensorflow.'
-#   if [[ "$IS_NIGHTLY" == "nightly" ]]; then
-#     $installed_python -m pip install --no-deps tf-nightly
-#   else
-#     $installed_python -m pip install --no-deps tensorflow==2.20
-#   fi
-# fi
+if [[ $($installed_python -m pip show tensorflow) == *tensorflow* ]] ||
+   [[ $($installed_python -m pip show tensorflow-macos) == *tensorflow-macos* ]] ||
+   [[ $($installed_python -m pip show tf-nightly) == *tf-nightly* ]] ||
+   [[ $($installed_python -m pip show tf-nightly-macos) == *tf-nightly-macos* ]]; then
+  echo 'Using installed tensorflow.'
+else
+  echo 'Installing tensorflow.'
+  if [[ "$IS_NIGHTLY" == "nightly" ]]; then
+    $installed_python -m pip install --no-deps tf-nightly
+  else
+    $installed_python -m pip install --no-deps tensorflow==2.20
+  fi
+fi
 
 # Copy the current bazelversion of TF.
 curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.20.0/.bazelversion -o .bazelversion
