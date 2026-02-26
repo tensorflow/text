@@ -19,6 +19,8 @@
 #include <vector>
 
 #include "absl/container/flat_hash_map.h"
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
 #include "tensorflow_text/core/kernels/wordpiece_tokenizer.h"
 
 namespace tensorflow {

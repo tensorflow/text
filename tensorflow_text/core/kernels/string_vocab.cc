@@ -14,6 +14,12 @@
 
 #include "tensorflow_text/core/kernels/string_vocab.h"
 
+#include <string>
+#include <vector>
+
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
+
 namespace tensorflow {
 namespace text {
 
