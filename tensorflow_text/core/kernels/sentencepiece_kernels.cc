@@ -69,7 +69,7 @@ struct SentencepieceResource : public ResourceBase {
   }
 
   Status AsGraphDef(GraphDefBuilder* builder, Node** out) const override {
-    absl::ReaderMutexLock l(&mu);
+    absl::ReaderMutexLock l(mu);
     // We set use_node_name_sharing with a unique node name so that the resource
     // can outlive the kernel. This means that the lifetime of the re-created
     // resource will be tied to the lifetime of the resource manager it is
@@ -132,13 +132,13 @@ tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
   {
     // Because we expect most of the time no change in these options, we grab
     // the reader lock once and do a quick check first.
-    absl::ReaderMutexLock l(&sp->mu);
+    absl::ReaderMutexLock l(sp->mu);
     if (sp->SameOptions(add_bos, add_eos, reverse)) {
       return absl::OkStatus();
     }
   }
 
-  absl::WriterMutexLock lock(&sp->mu);
+  absl::WriterMutexLock lock(sp->mu);
   if (sp->SameOptions(add_bos, add_eos, reverse)) {
     return absl::OkStatus();
   }
@@ -193,7 +193,7 @@ class SentencepieceOp : public OpKernel {
   }
 
   void Compute(OpKernelContext* ctx) override {
-    absl::MutexLock lock(&mu_);
+    absl::MutexLock lock(mu_);
 
     if (!sp_set_) {
       OP_REQUIRES_OK(ctx, cinfo_.Init(ctx->resource_manager(), def(),
@@ -318,9 +318,9 @@ class SentencepieceTokenizeOp : public OpKernel {
           num_of_input_values,         // total number of data to process.
           kCostPerUnit,                // cost per unit
           [ctx, sp, &input_values_flat, &tokens, &nbest_tokens,
-          &nbest_size_tensor, &alpha_tensor,
-          return_nbest](int64 start, int64 limit) {
-            absl::ReaderMutexLock lock(&sp->mu);
+           &nbest_size_tensor, &alpha_tensor,
+           return_nbest](int64 start, int64 limit) {
+            absl::ReaderMutexLock lock(sp->mu);
             for (int i = start; i < limit; ++i) {
               const int32 nbest_size = nbest_size_tensor->dims() == 1
                                          ? nbest_size_tensor->vec<int32>()(i)
@@ -459,9 +459,9 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
           num_of_input_values,         // total number of data to process.
           kCostPerUnit,
           [ctx, sp, &input_values_flat, &results, &nbest_results,
-          &nbest_size_tensor, &alpha_tensor,
-          return_nbest](int64 start, int64 limit) {
-            absl::ReaderMutexLock lock(&sp->mu);
+           &nbest_size_tensor, &alpha_tensor,
+           return_nbest](int64 start, int64 limit) {
+            absl::ReaderMutexLock lock(sp->mu);
             for (int i = start; i < limit; ++i) {
               const int32 nbest_size = nbest_size_tensor->dims() == 1
                                          ? nbest_size_tensor->vec<int32>()(i)
@@ -595,7 +595,7 @@ class SentencepieceDetokenizeOp : public OpKernel {
           kCostPerUnit,
           [ctx, sp, &input_values_flat, &input_splits_flat, &output_flat](
               int64 start, int64 limit) {
-            absl::ReaderMutexLock lock(&sp->mu);
+            absl::ReaderMutexLock lock(sp->mu);
             for (int i = start; i < limit; ++i) {
               if (i + 1 >= input_splits_flat.size()) {
                 ctx->CtxFailure(errors::OutOfRange("Invalid splits; ", i));
@@ -689,7 +689,7 @@ class SentencepieceIdToStringOp : public OpKernel {
         ctx, ctx->allocate_output(0, input_tensor.shape(), &output_tensor));
     auto output_tensor_flat = output_tensor->flat<tensorflow::tstring>();
 
-    absl::ReaderMutexLock lock(&sp->mu);
+    absl::ReaderMutexLock lock(sp->mu);
     for (int i = 0; i < input_tensor_flat.size(); ++i) {
       output_tensor_flat(i) = sp->processor.IdToPiece(input_tensor_flat(i));
     }
@@ -721,7 +721,7 @@ class SentencepieceStringToIdOp : public OpKernel {
         ctx, ctx->allocate_output(0, input_tensor.shape(), &output_tensor));
     auto output_tensor_flat = output_tensor->flat<int32>();
 
-    absl::ReaderMutexLock lock(&sp->mu);
+    absl::ReaderMutexLock lock(sp->mu);
     for (int i = 0; i < input_tensor_flat.size(); ++i) {
       output_tensor_flat(i) = sp->processor.PieceToId(input_tensor_flat(i));
     }
