@@ -84,9 +84,9 @@ class MstSolverTest : public ::testing::Test {
 };
 
 using Solvers =
-    ::testing::Types<MstSolver<uint8, int16>, MstSolver<uint16, int32>,
-                     MstSolver<uint32, int64>, MstSolver<uint16, float>,
-                     MstSolver<uint32, double>>;
+    ::testing::Types<MstSolver<uint8_t, int16_t>, MstSolver<uint16_t, int32_t>,
+                     MstSolver<uint32_t, int64_t>, MstSolver<uint16_t, float>,
+                     MstSolver<uint32_t, double>>;
 TYPED_TEST_SUITE(MstSolverTest, Solvers);
 
 TYPED_TEST(MstSolverTest, FailIfNoNodes) {

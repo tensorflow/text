@@ -38,7 +38,7 @@ ScoreAccessor::ScoreAccessor(const Tensor &score_tensor,
   data_ = score_tensor.flat<float>().data();
   if (lengths_tensor.dtype() == DT_INT64) {
     use_long_lengths_ = true;
-    long_lengths_ = lengths_tensor.flat<int64>().data();
+    long_lengths_ = lengths_tensor.flat<int64_t>().data();
   } else {
     use_long_lengths_ = false;
     lengths_ = lengths_tensor.flat<int>().data();
@@ -66,7 +66,7 @@ float ScoreAccessor::GetScore(int batch_idx, int step_idx,
   return data_[batch_offset_ * batch_idx + step_offset_ * step_idx + score_idx];
 }
 
-int64 ScoreAccessor::GetLength(int batch_idx) const {
+int64_t ScoreAccessor::GetLength(int batch_idx) const {
   DCHECK_LE(batch_idx, batch_size_);
   if (use_long_lengths_) {
     return long_lengths_[batch_idx];
@@ -82,18 +82,18 @@ bool ScoreAccessor::has_explicit_batch() const { return has_explicit_batch_; }
 
 // Perform Viterbi analysis on a single batch item.
 void ViterbiAnalysis(
-    const ScoreAccessor &scores,
-    const tensorflow::TTypes<const float>::Matrix &transition_weights,
-    const tensorflow::TTypes<const bool>::Matrix &allowed_transitions,
+    const ScoreAccessor& scores,
+    const tensorflow::TTypes<const float>::Matrix& transition_weights,
+    const tensorflow::TTypes<const bool>::Matrix& allowed_transitions,
     const int batch, bool use_log_space, bool use_start_end_states,
-    int32 *output_data) {
+    int32_t* output_data) {
   VLOG(2) << "Analyzing batch " << batch;
   const bool has_transition_weights = transition_weights.size() != 0;
   const bool has_allowed_transitions = allowed_transitions.size() != 0;
   const int num_states = scores.num_scores();
   const int out_of_bounds_index = num_states;
 
-  int64 num_steps = scores.GetLength(batch);
+  int64_t num_steps = scores.GetLength(batch);
 
   // Create two vectors to hold scores. These will be bound to referents later
   // so the names here are somewhat irrelevant.
@@ -344,14 +344,14 @@ void ViterbiAnalysis(
   if (best_source_state == kErrorState) {
     // If the best source is an error state, the path is unknowable. Report
     // error states for the whole sequence.
-    for (int64 i = 0; i < scores.GetLength(batch); ++i) {
+    for (int64_t i = 0; i < scores.GetLength(batch); ++i) {
       output_data[i] = kErrorState;
     }
   } else {
     // If the best source is a 'real' state, report the state path.
     int steps_to_report = scores.GetLength(batch);
     int previous_state = best_source_state;
-    for (int64 i = steps_to_report - 1; i >= 0; --i) {
+    for (int64_t i = steps_to_report - 1; i >= 0; --i) {
       output_data[i] = previous_state;
       previous_state = backpointers[i][previous_state];
     }
@@ -359,16 +359,16 @@ void ViterbiAnalysis(
 }
 
 void GreedyAnalysis(
-    const ScoreAccessor &scores,
-    const tensorflow::TTypes<const float>::Matrix &transition_weights,
-    const tensorflow::TTypes<const bool>::Matrix &allowed_transitions,
+    const ScoreAccessor& scores,
+    const tensorflow::TTypes<const float>::Matrix& transition_weights,
+    const tensorflow::TTypes<const bool>::Matrix& allowed_transitions,
     int batch, bool use_log_space, bool use_start_end_states,
-    int32 *output_data) {
+    int32_t* output_data) {
   const bool has_transition_weights = transition_weights.size() != 0;
   const bool has_allowed_transitions = allowed_transitions.size() != 0;
   const int num_states = scores.num_scores();
   const int out_of_bounds_index = num_states;
-  int64 num_steps = scores.GetLength(batch);
+  int64_t num_steps = scores.GetLength(batch);
 
   for (int step = 0; step < num_steps; ++step) {
     // Do final step calculations if this is the final step in the sequence

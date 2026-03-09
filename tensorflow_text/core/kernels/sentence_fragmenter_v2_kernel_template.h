@@ -120,11 +120,11 @@ absl::Status SentenceFragmenterV2Op<Rt>::Invoke(InvokeContext* context) {
   const auto document = input_values->template As<tensorflow::tstring, 1>();
 
   // Outputs
-  std::vector<int64> fragment_start;
-  std::vector<int64> fragment_end;
-  std::vector<int64> fragment_properties;
-  std::vector<int64> terminal_punc_token;
-  std::vector<int64> output_row_lengths;
+  std::vector<int64_t> fragment_start;
+  std::vector<int64_t> fragment_end;
+  std::vector<int64_t> fragment_properties;
+  std::vector<int64_t> terminal_punc_token;
+  std::vector<int64_t> output_row_lengths;
 
   // Iterate through all the documents and find fragments.
   for (int i = 0; i < document.Dim(0); ++i) {

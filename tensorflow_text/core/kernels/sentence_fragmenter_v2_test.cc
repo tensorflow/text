@@ -736,7 +736,7 @@ TEST_F(IsEmoticonTest, IsEmoticon) {
 TEST(SentenceFragmenterTest, Basic) {
   //                             1
   //                   012345678901234
-  string test_input = "Hello. Foo bar!";
+  std::string test_input = "Hello. Foo bar!";
   SentenceFragmenterV2 fragmenter(test_input);
   std::vector<SentenceFragment> fragments;
   EXPECT_TRUE(fragmenter.FindFragments(&fragments).ok());
@@ -749,7 +749,7 @@ TEST(SentenceFragmenterTest, Basic) {
 TEST(SentenceFragmenterTest, BasicEllipsis) {
   //                             1
   //                   012345678901234
-  string test_input = "Hello...foo bar";
+  std::string test_input = "Hello...foo bar";
   SentenceFragmenterV2 fragmenter(test_input);
   std::vector<SentenceFragment> fragments;
   EXPECT_TRUE(fragmenter.FindFragments(&fragments).ok());
@@ -763,7 +763,7 @@ TEST(SentenceFragmenterTest, BasicEllipsis) {
 TEST(SentenceFragmenterTest, Parentheses) {
   //                             1         2
   //                   012345678901234567890123456789
-  string test_input = "Hello (who are you...) foo bar";
+  std::string test_input = "Hello (who are you...) foo bar";
   SentenceFragmenterV2 fragmenter(test_input);
   std::vector<SentenceFragment> fragments;
   EXPECT_TRUE(fragmenter.FindFragments(&fragments).ok());
@@ -776,7 +776,7 @@ TEST(SentenceFragmenterTest, Parentheses) {
 TEST(SentenceFragmenterTest, MidFragmentParentheses) {
   //                             1         2
   //                   012345678901234567890123456789
-  string test_input = "Hello (who are you) world? Foo bar";
+  std::string test_input = "Hello (who are you) world? Foo bar";
   SentenceFragmenterV2 fragmenter(test_input);
   std::vector<SentenceFragment> fragments;
   EXPECT_TRUE(fragmenter.FindFragments(&fragments).ok());
@@ -789,7 +789,7 @@ TEST(SentenceFragmenterTest, MidFragmentParentheses) {
 TEST(SentenceFragmenterTest, PunctuationAfterParentheses) {
   //                             1         2
   //                   01234567890123456789012345678
-  string test_input = "Hello (who are you)? Foo bar!";
+  std::string test_input = "Hello (who are you)? Foo bar!";
   SentenceFragmenterV2 fragmenter(test_input);
   std::vector<SentenceFragment> fragments;
   EXPECT_TRUE(fragmenter.FindFragments(&fragments).ok());
@@ -802,7 +802,7 @@ TEST(SentenceFragmenterTest, PunctuationAfterParentheses) {
 TEST(SentenceFragmenterTest, ManyFinalPunctuations) {
   //                             1         2
   //                   0123456789012345678901234
-  string test_input = "Hello!!!!! Who are you??";
+  std::string test_input = "Hello!!!!! Who are you??";
   SentenceFragmenterV2 fragmenter(test_input);
   std::vector<SentenceFragment> fragments;
   EXPECT_TRUE(fragmenter.FindFragments(&fragments).ok());
@@ -815,7 +815,7 @@ TEST(SentenceFragmenterTest, ManyFinalPunctuations) {
 TEST(SentenceFragmenterTest, NewLine) {
   //                             1         2             3
   //                   012345678901234567890 1 23456 7 89012 3 45678
-  string test_input = "Who let the dogs out?\r\nWho?\r\nWho?\r\nWho?";
+  std::string test_input = "Who let the dogs out?\r\nWho?\r\nWho?\r\nWho?";
   SentenceFragmenterV2 fragmenter(test_input);
   std::vector<SentenceFragment> fragments;
   EXPECT_TRUE(fragmenter.FindFragments(&fragments).ok());
@@ -832,7 +832,7 @@ TEST(SentenceFragmenterTest, NewLine) {
 TEST(SentenceFragmenterTest, WhiteSpaceInPunctuation) {
   //                             1         2
   //                   0123456789012345678901234
-  string test_input = "Hello?? !!! Who are you??";
+  std::string test_input = "Hello?? !!! Who are you??";
   SentenceFragmenterV2 fragmenter(test_input);
   std::vector<SentenceFragment> fragments;
   EXPECT_TRUE(fragmenter.FindFragments(&fragments).ok());
@@ -850,7 +850,7 @@ TEST(FragmentBoundaryMatchTest, NoStateChange) {
   FragmentBoundaryMatch f;
   //                   ||
   //                   012345678901234
-  string test_input = "Hello...foo bar";
+  std::string test_input = "Hello...foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_FALSE(f.GotTerminalPunc());
@@ -864,7 +864,7 @@ TEST(FragmentBoundaryMatchTest, BasicEllipsis) {
   FragmentBoundaryMatch f;
   //                   |  |
   //                   0123456789
-  string test_input = "...foo bar";
+  std::string test_input = "...foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
@@ -878,7 +878,7 @@ TEST(FragmentBoundaryMatchTest, BasicPeriod) {
   FragmentBoundaryMatch f;
   //                   ||
   //                   0123456789
-  string test_input = ". Foo bar";
+  std::string test_input = ". Foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
@@ -892,7 +892,7 @@ TEST(FragmentBoundaryMatchTest, BasicAcronym) {
   FragmentBoundaryMatch f;
   //                   |  |
   //                   0123456789
-  string test_input = "A.B. xyz";
+  std::string test_input = "A.B. xyz";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
@@ -906,7 +906,7 @@ TEST(FragmentBoundaryMatchTest, LongerAcronym) {
   FragmentBoundaryMatch f;
   //                   |    |
   //                   0123456789
-  string test_input = "I.B.M. yo";
+  std::string test_input = "I.B.M. yo";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
@@ -920,7 +920,7 @@ TEST(FragmentBoundaryMatchTest, Emoticon) {
   FragmentBoundaryMatch f;
   //                   |   |
   //                   0123456789012
-  string test_input = ">:-( hello...";
+  std::string test_input = ">:-( hello...";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
@@ -934,7 +934,7 @@ TEST(FragmentBoundaryMatchTest, ParensWithEllipsis) {
   FragmentBoundaryMatch f;
   //                   ||
   //                   0123456789012345
-  string test_input = ".foo...) foo bar";
+  std::string test_input = ".foo...) foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
@@ -948,7 +948,7 @@ TEST(FragmentBoundaryMatchTest, ClosingParenWithEllipsis) {
   FragmentBoundaryMatch f;
   //                   |  |
   //                   012345678901
-  string test_input = "...) foo bar";
+  std::string test_input = "...) foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
@@ -962,7 +962,7 @@ TEST(FragmentBoundaryMatchTest, BeginAndEndParenWithEllipsis) {
   FragmentBoundaryMatch f;
   //                   ||
   //                   0123456789012
-  string test_input = "(...) foo bar";
+  std::string test_input = "(...) foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_FALSE(f.GotTerminalPunc());
@@ -986,7 +986,7 @@ TEST(FragmentBoundaryMatchTest, AcronymInSentence) {
   FragmentBoundaryMatch f;
   //                   |   |
   //                   0123456789012
-  string test_input = "U.S. don't be surprised.";
+  std::string test_input = "U.S. don't be surprised.";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
@@ -1000,7 +1000,7 @@ TEST(FragmentBoundaryMatchTest, HelloWithEllipsis) {
   FragmentBoundaryMatch f;
   //                   ||
   //                   01234567890
-  string test_input = "o...foo bar";
+  std::string test_input = "o...foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_FALSE(f.GotTerminalPunc());
@@ -1024,7 +1024,7 @@ TEST(FragmentBoundaryMatchTest, ThreeStatesWithClosigParen) {
   FragmentBoundaryMatch f;
   //                   ||
   //                   0123456789012
-  string test_input = "w...) foo bar";
+  std::string test_input = "w...) foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_FALSE(f.GotTerminalPunc());
@@ -1068,7 +1068,7 @@ TEST(FragmentBoundaryMatchTest, NoTransition) {
   FragmentBoundaryMatch f;
   //                   |  |
   //                   0123456789012
-  string test_input = "...foo bar";
+  std::string test_input = "...foo bar";
   int index = 0;
   EXPECT_TRUE(f.Advance(index, test_input));
   EXPECT_TRUE(f.GotTerminalPunc());
