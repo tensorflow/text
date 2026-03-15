@@ -42,7 +42,7 @@ class RegexSplitOp : public tensorflow::OpKernel {
                 errors::InvalidArgument(
                     "Pattern must be scalar, but received ",
                     delim_regex_pattern_tensor->shape().DebugString()));
-    const string delim_regex_pattern =
+    const std::string delim_regex_pattern =
         delim_regex_pattern_tensor->flat<tstring>()(0);
     delim_re = CachedDelimRE2(delim_regex_pattern);
     OP_REQUIRES(
@@ -59,7 +59,7 @@ class RegexSplitOp : public tensorflow::OpKernel {
         errors::InvalidArgument(
             "Pattern must be scalar, but received ",
             keep_delim_regex_pattern_tensor->shape().DebugString()));
-    const string keep_delim_regex_pattern =
+    const std::string keep_delim_regex_pattern =
         keep_delim_regex_pattern_tensor->flat<tstring>()(0);
     keep_delim_re = CachedKeepDelimRE2(keep_delim_regex_pattern);
     OP_REQUIRES(
@@ -73,10 +73,10 @@ class RegexSplitOp : public tensorflow::OpKernel {
     OP_REQUIRES_OK(ctx, ctx->input("input", &input_tensor));
     const auto& input_flat = input_tensor->flat<tstring>();
 
-    std::vector<int64> begin_offsets;
-    std::vector<int64> end_offsets;
+    std::vector<int64_t> begin_offsets;
+    std::vector<int64_t> end_offsets;
     std::vector<absl::string_view> tokens;
-    std::vector<int64> row_splits;
+    std::vector<int64_t> row_splits;
     row_splits.push_back(0);
 
     for (size_t i = 0; i < input_flat.size(); ++i) {
@@ -88,13 +88,13 @@ class RegexSplitOp : public tensorflow::OpKernel {
 
     // Emit the flat Tensors needed to construct RaggedTensors for tokens,
     // start, end offsets.
-    std::vector<int64> tokens_shape;
+    std::vector<int64_t> tokens_shape;
     tokens_shape.push_back(tokens.size());
 
-    std::vector<int64> offsets_shape;
+    std::vector<int64_t> offsets_shape;
     offsets_shape.push_back(begin_offsets.size());
 
-    std::vector<int64> row_splits_shape;
+    std::vector<int64_t> row_splits_shape;
     row_splits_shape.push_back(row_splits.size());
 
     Tensor* output_tokens_tensor = nullptr;
@@ -107,19 +107,19 @@ class RegexSplitOp : public tensorflow::OpKernel {
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output("begin_offsets", TensorShape(offsets_shape),
                                   &output_begin_offsets_tensor));
-    auto output_begin_offsets = output_begin_offsets_tensor->flat<int64>();
+    auto output_begin_offsets = output_begin_offsets_tensor->flat<int64_t>();
 
     Tensor* output_end_offsets_tensor = nullptr;
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output("end_offsets", TensorShape(offsets_shape),
                                   &output_end_offsets_tensor));
-    auto output_end_offsets = output_end_offsets_tensor->flat<int64>();
+    auto output_end_offsets = output_end_offsets_tensor->flat<int64_t>();
 
     Tensor* output_row_splits_tensor = nullptr;
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output("row_splits", TensorShape(row_splits_shape),
                                   &output_row_splits_tensor));
-    auto output_row_splits = output_row_splits_tensor->flat<int64>();
+    auto output_row_splits = output_row_splits_tensor->flat<int64_t>();
 
     // Copy outputs to Tensors.
     for (size_t i = 0; i < tokens.size(); ++i) {
@@ -141,7 +141,7 @@ class RegexSplitOp : public tensorflow::OpKernel {
   }
 
  private:
-  std::shared_ptr<RE2> CachedDelimRE2(const string& pattern) {
+  std::shared_ptr<RE2> CachedDelimRE2(const std::string& pattern) {
     {
       tf_shared_lock l(delim_mu_);
       if (delim_re_ != nullptr && delim_re_->pattern() == pattern) {
@@ -159,7 +159,7 @@ class RegexSplitOp : public tensorflow::OpKernel {
     }
   }
 
-  std::shared_ptr<RE2> CachedKeepDelimRE2(const string& pattern) {
+  std::shared_ptr<RE2> CachedKeepDelimRE2(const std::string& pattern) {
     {
       tf_shared_lock l(keep_delim_mu_);
       if (keep_delim_re_ != nullptr && keep_delim_re_->pattern() == pattern) {

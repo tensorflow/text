@@ -75,8 +75,8 @@ TEST_F(ConstrainedSequenceInputValidationTest, WorksWithInt64InputLengths) {
                            }});
 
   // Add the sequence_lengths input.
-  std::vector<int64> input_lengths({1, 1, 1});
-  AddInputFromArray<int64>(TensorShape({3}), input_lengths);
+  std::vector<int64_t> input_lengths({1, 1, 1});
+  AddInputFromArray<int64_t>(TensorShape({3}), input_lengths);
 
   // Add the allowed_transitions input.
   AddInputFromArray<bool>(TensorShape({5, 5}),
@@ -99,8 +99,8 @@ TEST_F(ConstrainedSequenceInputValidationTest, WorksWithInt64InputLengths) {
   // The third sequence's highest score is 0, which is ok.
 
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));

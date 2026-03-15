@@ -53,8 +53,8 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
                     scores_tensor.shape().DebugString()));
 
     // Batch size and input dimension (B and M in the op docstring).
-    const int64 batch_size = scores_tensor.shape().dim_size(0);
-    const int64 input_dim = scores_tensor.shape().dim_size(1);
+    const int64_t batch_size = scores_tensor.shape().dim_size(0);
+    const int64_t input_dim = scores_tensor.shape().dim_size(1);
 
     // Check shapes.
     const tensorflow::TensorShape shape_b({batch_size});
@@ -81,18 +81,19 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
                                                      &argmax_sources_tensor));
 
     // Acquire shaped and typed references.
-    const BatchedSizes num_nodes_b = num_nodes_tensor.vec<int32>();
+    const BatchedSizes num_nodes_b = num_nodes_tensor.vec<int32_t>();
     const BatchedScores scores_bxmxm = scores_tensor.tensor<Score, 3>();
     BatchedMaxima max_scores_b = max_scores_tensor->vec<Score>();
-    BatchedSources argmax_sources_bxm = argmax_sources_tensor->matrix<int32>();
+    BatchedSources argmax_sources_bxm =
+        argmax_sources_tensor->matrix<int32_t>();
 
     // Solve the batch of MST problems in parallel.  Set a high cycles per unit
     // to encourage finer sharding.
-    constexpr int64 kCyclesPerUnit = 1000 * 1000 * 1000;
+    constexpr int64_t kCyclesPerUnit = 1000 * 1000 * 1000;
     std::vector<absl::Status> statuses(batch_size);
     context->device()->tensorflow_cpu_worker_threads()->workers->ParallelFor(
-        batch_size, kCyclesPerUnit, [&](int64 begin, int64 end) {
-          for (int64 problem = begin; problem < end; ++problem) {
+        batch_size, kCyclesPerUnit, [&](int64_t begin, int64_t end) {
+          for (int64_t problem = begin; problem < end; ++problem) {
             statuses[problem] = RunSolver(problem, num_nodes_b, scores_bxmxm,
                                           max_scores_b, argmax_sources_bxm);
           }
@@ -103,10 +104,10 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
   }
 
  private:
-  using BatchedSizes = typename tensorflow::TTypes<int32>::ConstVec;
+  using BatchedSizes = typename tensorflow::TTypes<int32_t>::ConstVec;
   using BatchedScores = typename tensorflow::TTypes<Score, 3>::ConstTensor;
   using BatchedMaxima = typename tensorflow::TTypes<Score>::Vec;
-  using BatchedSources = typename tensorflow::TTypes<int32>::Matrix;
+  using BatchedSources = typename tensorflow::TTypes<int32_t>::Matrix;
 
   // Solves for the maximum spanning tree of the digraph defined by the values
   // at index |problem| in |num_nodes_b| and |scores_bxmxm|.  On success, sets
@@ -116,8 +117,8 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
                          BatchedScores scores_bxmxm, BatchedMaxima max_scores_b,
                          BatchedSources argmax_sources_bxm) const {
     // Check digraph size overflow.
-    const int32 num_nodes = num_nodes_b(problem);
-    const int32 input_dim = argmax_sources_bxm.dimension(1);
+    const int32_t num_nodes = num_nodes_b(problem);
+    const int32_t input_dim = argmax_sources_bxm.dimension(1);
     if (num_nodes > input_dim) {
       return tensorflow::errors::InvalidArgument(
           "number of nodes in digraph ", problem,
@@ -161,7 +162,7 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
     max_scores_b(problem) = max_score;
 
     // Pad the source list with -1.
-    for (int32 i = num_nodes; i < input_dim; ++i) {
+    for (int32_t i = num_nodes; i < input_dim; ++i) {
       argmax_sources_bxm(problem, i) = -1;
     }
 
@@ -175,16 +176,16 @@ class MaxSpanningTreeOpKernel : public tensorflow::OpKernel {
 // Use Index=uint16, which allows digraphs containing up to 32,767 nodes.
 REGISTER_KERNEL_BUILDER(Name("MaxSpanningTree")
                             .Device(tensorflow::DEVICE_CPU)
-                            .TypeConstraint<int32>("T"),
-                        MaxSpanningTreeOpKernel<uint16, int32>);
+                            .TypeConstraint<int32_t>("T"),
+                        MaxSpanningTreeOpKernel<uint16_t, int32_t>);
 REGISTER_KERNEL_BUILDER(Name("MaxSpanningTree")
                             .Device(tensorflow::DEVICE_CPU)
                             .TypeConstraint<float>("T"),
-                        MaxSpanningTreeOpKernel<uint16, float>);
+                        MaxSpanningTreeOpKernel<uint16_t, float>);
 REGISTER_KERNEL_BUILDER(Name("MaxSpanningTree")
                             .Device(tensorflow::DEVICE_CPU)
                             .TypeConstraint<double>("T"),
-                        MaxSpanningTreeOpKernel<uint16, double>);
+                        MaxSpanningTreeOpKernel<uint16_t, double>);
 
 }  // namespace text
 }  // namespace tensorflow

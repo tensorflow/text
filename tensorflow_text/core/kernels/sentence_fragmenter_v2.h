@@ -140,7 +140,7 @@ struct SentenceFragment {
     HAS_SENTENTIAL_CLOSE_PAREN = 0x0008,  // e.g.: (Mushrooms are fungi!)
   };
   // A mask of the above listed properties.
-  uint32 properties = 0;
+  uint32_t properties = 0;
   int terminal_punc_token = -1;
 };
 
