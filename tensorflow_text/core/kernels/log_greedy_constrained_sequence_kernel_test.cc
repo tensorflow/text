@@ -22,7 +22,7 @@
 #include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/core/kernels/ops_testutil.h"
-#include "tensorflow/core/lib/core/status_test_util.h"
+
 #include "tensorflow/core/platform/status.h"
 #include "tensorflow/core/platform/types.h"
 #include "tensorflow_text/core/kernels/text_kernels_test_util.h"
@@ -41,7 +41,7 @@ class LogGreedyConstrainedSequenceTest : public tensorflow::OpsTestBase {
  public:
   void SetUpOpWithDefaults() {
     // Prepare graph.
-    TF_ASSERT_OK(NodeDefBuilder("tested_op", "ConstrainedSequence")
+    ASSERT_TRUE(NodeDefBuilder("tested_op", "ConstrainedSequence")
                      .Attr("Tin", DT_INT32)
                      .Attr("use_viterbi", false)
                      .Attr("use_log_space", true)
@@ -50,8 +50,8 @@ class LogGreedyConstrainedSequenceTest : public tensorflow::OpsTestBase {
                      .Input(FakeInput())
                      .Input(FakeInput())
                      .Input(FakeInput())
-                     .Finalize(node_def()));
-    TF_ASSERT_OK(InitOp());
+                     .Finalize(node_def()).ok());
+    ASSERT_TRUE(InitOp().ok());
   }
 };
 
@@ -89,7 +89,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0, 0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // The first sequence's highest score is 2, but OUT->2 is not ok, so it's 1.
   // The second sequence's highest score is 3, which is ok.
@@ -135,7 +135,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // The first sequence's highest score is 2, but OUT->2 is not ok, so it's 1.
   // The second sequence's highest score is 3, which is ok.
@@ -179,7 +179,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0, 0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // The sequence's highest score is 2, but OUT->2 is not ok, so it's 1.
   // Validate the output.
@@ -221,7 +221,7 @@ TEST_F(LogGreedyConstrainedSequenceTest, int64inint32out) {
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0, 0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // The first sequence's highest score is 2, but OUT->2 is not ok, so it's 1.
   // The second sequence's highest score is 3, which is ok.
@@ -267,7 +267,7 @@ TEST_F(LogGreedyConstrainedSequenceTest, TwoDimensionalSequenceLengths) {
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0, 0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // The first sequence's highest score is 2, but OUT->2 is not ok, so it's 1.
   // The second sequence's highest score is 3, which is ok.
@@ -314,7 +314,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0, 0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // The first sequence's highest score is 2, but OUT->2 is not ok; the next
   // highest is 1, but 1->OUT is not OK; the next highest is 0, which is OK.
@@ -356,7 +356,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
                                                  0.5, 0.5, 0.5, 0.5, 1.0,  //
                                                  0.1, 0.5, 0.5, 1.0, 1.0});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // All scores should be summed with the last row in the weight tensor, so
   // the 'real' scores are:
@@ -399,7 +399,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
                                                  0.5, 0.5, 0.5, 0.5, 1.0,  //
                                                  0.1, 0.5, 0.5, 1.0, 1.0});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // All scores should be summed with the last row in the weight tensor, so
   // the 'real' scores are:
@@ -443,7 +443,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
                                                  0.5, 0.5, 0.5, 0.5, 0.1,  //
                                                  0.1, 0.5, 0.5, 1.0, 1.0});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // All scores should be summed with the last row and the last column in the
   // score tensor, so the real scores are:
@@ -494,7 +494,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
                                                  0.5, 0.5, 0.5, 0.5, 0.1,  //
                                                  0.1, 0.5, 0.5, 1.0, 1.0});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // All scores should be summed with the last row and the last column in the
   // score tensor, so the real scores are:
@@ -549,7 +549,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
                                                  0.5, 0.5, 0.5, 0.5, 1.0,  // 3
                                                  0.1, 0.5, 0.5, 1.0, 1.0});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // STEP 1:
   // All scores should be summed with the last row in the weight tensor, so
@@ -611,7 +611,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
                                                  0.5, 0.5, 0.5, 0.5, 1.0,  // 3
                                                  0.1, 0.5, 0.5, 1.0, 1.0});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // STEP 1:
   // All scores should be summed with the last row in the weight tensor, so
@@ -665,7 +665,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0, 0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   std::vector<int32> expected_transitions({3, 0, 1});
   std::vector<int64> expected_offsets({0, 1, 2, 3});
@@ -704,7 +704,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
                                                     0.0, 0.0, 0.0, 0.0, 0.0,
                                                 });
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // Because all weights are zero, the max values should be the max of the
   // scores.
@@ -749,7 +749,7 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0, 0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // Validate the output.
 

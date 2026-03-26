@@ -1,0 +1,23 @@
+diff --git a/third_party/xla/xla/tsl/platform/default/build_config_root.bzl b/third_party/xla/xla/tsl/platform/default/build_config_root.bzl
+--- a/third_party/xla/xla/tsl/platform/default/build_config_root.bzl
++++ b/third_party/xla/xla/tsl/platform/default/build_config_root.bzl
+@@ -89,9 +89,6 @@
+ # used for all framework_shared_object platforms including MacOS.
+ # buildifier: disable=function-docstring
+ def if_static(extra_deps, otherwise = [], macos = []):
+-    if use_pywrap_rules():
+-        return extra_deps
+-
+     ret = {
+         str(Label("//xla/tsl:framework_shared_object")): otherwise,
+         "//conditions:default": extra_deps,
+@@ -102,9 +99,6 @@
+
+ # TODO(b/356020232): remove completely after migration is done
+ def if_static_and_not_mobile(extra_deps, otherwise = []):
+-    if use_pywrap_rules():
+-        return extra_deps
+-
+     return select({
+         str(Label("//xla/tsl:framework_shared_object")): otherwise,
+         str(Label("//xla/tsl:android")): otherwise,

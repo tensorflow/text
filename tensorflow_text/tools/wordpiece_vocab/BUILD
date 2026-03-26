@@ -1,5 +1,5 @@
-load("@xla//third_party/rules_python/python:py_library.bzl", "py_library")
-load("@xla//third_party/rules_python/python:py_test.bzl", "py_test")
+load("//third_party/rules_python/python:py_library.bzl", "py_library")
+load("//third_party/rules_python/python:py_test.bzl", "py_test")
 load("//tensorflow_text:tftext.bzl", "if_pywrap")
 
 licenses(["notice"])

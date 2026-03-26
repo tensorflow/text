@@ -1,0 +1,8 @@
+diff --git a/tensorflow/core/ops/BUILD b/tensorflow/core/ops/BUILD
+--- a/tensorflow/core/ops/BUILD
++++ b/tensorflow/core/ops/BUILD
+@@ -295,4 +295,2 @@
+         ":filesystem_ops_op_lib",
+-        ":function_ops_op_lib",
+-        ":functional_ops_op_lib",
+         ":image_ops_op_lib",

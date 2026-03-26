@@ -1,0 +1,17 @@
+diff --git a/tensorflow/core/grappler/optimizers/BUILD b/tensorflow/core/grappler/optimizers/BUILD
+--- a/tensorflow/core/grappler/optimizers/BUILD
++++ b/tensorflow/core/grappler/optimizers/BUILD
+@@ -632,5 +632,5 @@
+     defines = select({
+         "//tensorflow:fuchsia": ["NO_LLVM_SUPPORT=1"],
+         "//tensorflow:ios_x86_64": ["NO_LLVM_SUPPORT=1"],
+-        "//conditions:default": ["NO_LLVM_SUPPORT=0"],
++        "//conditions:default": ["NO_LLVM_SUPPORT=1"],
+     }),
+@@ -673,5 +673,5 @@
+         "//tensorflow:fuchsia": [],
+         # LLVM does not build on most apple platforms.
+         "//tensorflow:ios_x86_64": [],
+-        "//conditions:default": [":tfg_optimizer_hook"],
++        "//conditions:default": [],
+     }),

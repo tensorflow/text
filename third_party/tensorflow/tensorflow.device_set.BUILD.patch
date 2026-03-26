@@ -1,0 +1,22 @@
+diff --git a/tensorflow/core/common_runtime/BUILD b/tensorflow/core/common_runtime/BUILD
+--- a/tensorflow/core/common_runtime/BUILD
++++ b/tensorflow/core/common_runtime/BUILD
+@@ -835,6 +835,7 @@ cc_library(
+     deps = [
+         ":device",
+         ":device_factory",
++        "//tensorflow/core/util:managed_stack_trace",
+         "//tensorflow/core:lib",
+         "//tensorflow/core:lib_internal",
+         "@com_google_absl//absl/container:flat_hash_map",
+diff --git a/tensorflow/core/util/BUILD b/tensorflow/core/util/BUILD
+--- a/tensorflow/core/util/BUILD
++++ b/tensorflow/core/util/BUILD
+@@ -538,6 +538,7 @@ cc_library(
+     visibility = [
+         "//tensorflow:__pkg__",
+         "//tensorflow/c/eager:__pkg__",
++        "//tensorflow/core/common_runtime:__pkg__",
+         "//tensorflow/compiler/mlir/tensorflow:__pkg__",
+         "//tensorflow/core:__pkg__",
+         "//tensorflow/core/common_runtime/eager:__pkg__",

@@ -1,6 +1,6 @@
 # Code that exposes C++ libraries to Python via pybind11.
 
-load("@xla//third_party/rules_python/python:py_test.bzl", "py_test")
+load("//third_party/rules_python/python:py_test.bzl", "py_test")
 load("//tensorflow_text:tftext.bzl", "if_pywrap", "pybind_extension", "pywrap_binaries", "pywrap_library")
 
 licenses(["notice"])

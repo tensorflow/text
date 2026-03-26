@@ -21,10 +21,27 @@
 #ifndef TENSORFLOW_TEXT_CORE_KERNELS_TEXT_KERNELS_TEST_UTIL_H_
 #define TENSORFLOW_TEXT_CORE_KERNELS_TEXT_KERNELS_TEST_UTIL_H_
 
+#include <vector>
+
 #include <gmock/gmock.h>
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
-#include "tensorflow/core/framework/tensor_testutil.h"
+
+namespace tensorflow {
+namespace test {
+// Local ODR-safe implementation of AsTensor (avoids dependency on testlib).
+// Constructs a tensor from |vals| with the given |shape|.
+template <typename T>
+Tensor AsTensor(const std::vector<T>& vals, const TensorShape& shape) {
+  Tensor ret(DataTypeToEnum<T>::value,
+             TensorShape({static_cast<int64_t>(vals.size())}));
+  std::copy_n(vals.data(), vals.size(), ret.flat<T>().data());
+  Tensor out;
+  CHECK(out.CopyFrom(ret, shape));
+  return out;
+}
+}  // namespace test
+}  // namespace tensorflow
 
 namespace tensorflow {
 namespace text_kernels_test_util {

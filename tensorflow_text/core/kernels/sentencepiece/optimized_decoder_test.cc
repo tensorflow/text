@@ -31,14 +31,11 @@ limitations under the License.
 
 #include <fstream>
 
-#include "file/base/path.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "absl/strings/str_format.h"
-#include "src/sentencepiece.proto.h"
+#include "src/sentencepiece.pb.h"
 #include "src/sentencepiece_processor.h"
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/lite/kernels/test_util.h"
 #include "tensorflow_text/core/kernels/sentencepiece/model_converter.h"
 
 namespace tensorflow {
@@ -46,12 +43,6 @@ namespace text {
 namespace sentencepiece {
 
 namespace internal {
-
-absl::Status TFReadFileToString(const std::string& filepath,
-                                std::string* data) {
-  return tensorflow::ReadFileToString(tensorflow::Env::Default(), filepath,
-                                      data);
-}
 
 absl::Status StdReadFileToString(const std::string& filepath,
                                  std::string* data) {
@@ -72,14 +63,13 @@ absl::Status StdReadFileToString(const std::string& filepath,
 namespace {
 
 static char kConfigFilePath[] =
-    "/tensorflow_text/python/ops/test_data/"
+    "tensorflow_text/python/ops/test_data/"
     "fast_sentencepiece.model";
 
 TEST(OptimizedEncoder, ConfigConverter) {
   std::string config;
 
-  auto status = internal::TFReadFileToString(
-      file::JoinPath(::testing::SrcDir(), kConfigFilePath), &config);
+  auto status = internal::StdReadFileToString(kConfigFilePath, &config);
   ASSERT_TRUE(status.ok());
 
   ::sentencepiece::SentencePieceProcessor processor;

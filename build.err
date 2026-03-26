@@ -1,0 +1,34 @@
+INFO: Reading 'startup' options from /home/cantonios/dev/tensorflow_text/.bazelrc: --windows_enable_symlinks
+INFO: Options provided by the client:
+  Inherited 'common' options: --isatty=0 --terminal_columns=158
+INFO: Reading rc options for 'test' from /home/cantonios/dev/tensorflow_text/.bazelrc:
+  Inherited 'common' options: --announce_rc --experimental_cc_shared_library --experimental_link_static_libraries_once=false --incompatible_enforce_config_setting_visibility --noenable_bzlmod --incompatible_enable_cc_toolchain_resolution --noincompatible_enable_android_toolchain_resolution --experimental_repo_remote_exec --java_runtime_version=remotejdk_21
+INFO: Reading rc options for 'test' from /home/cantonios/dev/tensorflow_text/.bazelrc:
+  Inherited 'build' options: --repo_env=ML_WHEEL_TYPE=snapshot --repo_env=ML_WHEEL_BUILD_DATE= --repo_env=ML_WHEEL_VERSION_SUFFIX= --define framework_shared_object=true --define tsl_protobuf_header_only=true --define=allow_oversize_protos=true --spawn_strategy=standalone -c opt --repo_env=USE_PYWRAP_RULES=True --copt=-DGRPC_BAZEL_BUILD --host_copt=-DGRPC_BAZEL_BUILD --action_env=GRPC_BAZEL_RUNTIME=1 --repo_env=PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=upb --action_env=PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=upb --repo_env=RULES_PYTHON_ENABLE_PYSTAR=1 --define=grpc_no_ares=true --features=-force_no_whole_archive --host_features=-force_no_whole_archive --enable_platform_specific_config --define=with_xla_support=true --config=short_logs --config=v2 --@rules_python//python/config_settings:precompile=force_disabled --action_env TF_CXX11_ABI_FLAG=
+INFO: Reading rc options for 'test' from /home/cantonios/dev/tensorflow_text/.bazelrc:
+  'test' options: --test_env=GTEST_INSTALL_FAILURE_SIGNAL_HANDLER=1 --test_env=TF_USE_LEGACY_KERAS=1
+INFO: Found applicable config definition build:short_logs in file /home/cantonios/dev/tensorflow_text/.bazelrc: --output_filter=DONT_MATCH_ANYTHING
+INFO: Found applicable config definition build:v2 in file /home/cantonios/dev/tensorflow_text/.bazelrc: --define=tf_api_version=2 --action_env=TF2_BEHAVIOR=1
+INFO: Found applicable config definition build:linux in file /home/cantonios/dev/tensorflow_text/.bazelrc: --host_copt=-w --copt=-Wno-all --copt=-Wno-extra --copt=-Wno-deprecated --copt=-Wno-deprecated-declarations --copt=-Wno-ignored-attributes --copt=-Wno-array-bounds --copt=-Wunused-result --copt=-Werror=unused-result --copt=-Wswitch --copt=-Werror=switch --define=PREFIX=/usr --define=PROTOBUF_INCLUDE_PATH=$(PREFIX)/include --cxxopt=-std=c++17 --host_cxxopt=-std=c++17 --config=dynamic_kernels --experimental_guard_against_concurrent_changes
+INFO: Found applicable config definition build:dynamic_kernels in file /home/cantonios/dev/tensorflow_text/.bazelrc: --define=dynamic_loaded_kernels=true --copt=-DAUTOLOAD_DYNAMIC_KERNELS
+Computing main repo mapping: 
+Loading: 
+Loading: 0 packages loaded
+Analyzing: 357 targets (0 packages loaded, 0 targets configured)
+Analyzing: 357 targets (0 packages loaded, 0 targets configured)
+[0 / 1] checking cached actions
+ERROR: /home/cantonios/dev/tensorflow_text/tensorflow_text/core/pybinds/BUILD:138:15: WinDefFileParse tensorflow_text/core/pybinds/_pybinds_library_common_def.gen.def failed: (Exit 2): no_op.bat failed: error executing WinDefFileParse command (from target //tensorflow_text/core/pybinds:_pybinds_library_common_def) 
+  (cd /home/cantonios/.cache/bazel/_bazel_cantonios/1808d8afb5b8b7032b0384e0635fa50a/execroot/org_tensorflow_text && \
+  exec env - \
+  external/bazel_tools/tools/def_parser/no_op.bat bazel-out/k8-opt/bin/tensorflow_text/core/pybinds/_pybinds_library_common_def.gen.def '' @bazel-out/k8-opt/bin/tensorflow_text/core/pybinds/_pybinds_library_common_def.gen.def-0.params)
+# Configuration: 060dc0a13798b2ae3a90cf6f57dd08e9bc7a704880355041030a89a2b5ce8977
+# Execution platform: @@local_execution_config_platform//:platform
+external/bazel_tools/tools/def_parser/no_op.bat: 1: ::: not found
+external/bazel_tools/tools/def_parser/no_op.bat: 2: ::: not found
+external/bazel_tools/tools/def_parser/no_op.bat: 3: Syntax error: "(" unexpected
+INFO: Analyzed 357 targets (0 packages loaded, 0 targets configured).
+INFO: Analysis succeeded for only 356 of 357 top-level targets
+INFO: Found 266 targets and 91 test targets...
+INFO: Elapsed time: 1.700s, Critical Path: 0.02s
+INFO: 2 processes: 2 internal.
+ERROR: Build did NOT complete successfully

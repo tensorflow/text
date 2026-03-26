@@ -17,6 +17,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "absl/flags/flag.h"
+#include "absl/strings/str_join.h"
 #include "icu4c/source/common/unicode/uchar.h"
 #include "tensorflow/core/platform/env.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_builder.h"
@@ -44,8 +45,9 @@ TEST(FastWordpieceTokenizerTest, LoadAndTokenize) {
   //  * unk_token = "<unk>"
   //  * suffix_indicator = "##"
   //  * max_bytes_per_token = 100
-  ASSERT_OK_AND_ASSIGN(
-      auto tokenizer, FastWordpieceTokenizer::Create(config_flatbuffer.data()));
+  auto tokenizer_or = FastWordpieceTokenizer::Create(config_flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::string input = "abcdefghz";
   std::vector<std::string> output_tokens;
@@ -84,8 +86,9 @@ TEST_P(TestPunctuationVersionMismatch, Test) {
       tensorflow::Env::Default(), kTestConfigUnicodePath, &config_flatbuffer);
   ASSERT_TRUE(status.ok());
 
-  ASSERT_OK_AND_ASSIGN(
-      auto tokenizer, FastWordpieceTokenizer::Create(config_flatbuffer.data()));
+  auto tokenizer_or = FastWordpieceTokenizer::Create(config_flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::vector<std::string> output_tokens;
   std::vector<int> output_ids;
@@ -1207,13 +1210,15 @@ using TestTokenizeSingleWord = testing::TestWithParam<Spec>;
 
 TEST_P(TestTokenizeSingleWord, Test) {
   const Spec& spec = GetParam();
-  ASSERT_OK_AND_ASSIGN(
-      std::string flatbuffer,
+  auto flatbuffer_or =
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
                                       spec.suffix_indicator, spec.unk_token,
-                                      /*no_pretokenization=*/true));
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+                                      /*no_pretokenization=*/true);
+  ASSERT_TRUE(flatbuffer_or.ok());
+  std::string flatbuffer = flatbuffer_or.value();
+  auto tokenizer_or = FastWordpieceTokenizer::Create(flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::vector<std::string> output_tokens;
   std::vector<int> output_ids;
@@ -1229,13 +1234,15 @@ TEST_P(TestTokenizeSingleWord, Test) {
 
 TEST_P(TestTokenizeSingleWord, TestNoOutputPieces) {
   const Spec& spec = GetParam();
-  ASSERT_OK_AND_ASSIGN(
-      std::string flatbuffer,
+  auto flatbuffer_or =
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
                                       spec.suffix_indicator, spec.unk_token,
-                                      true /* no_pretokenization */));
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+                                      true /* no_pretokenization */);
+  ASSERT_TRUE(flatbuffer_or.ok());
+  std::string flatbuffer = flatbuffer_or.value();
+  auto tokenizer_or = FastWordpieceTokenizer::Create(flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::vector<int> output_ids;
   std::vector<int> output_begin_offsets;
@@ -1249,13 +1256,15 @@ TEST_P(TestTokenizeSingleWord, TestNoOutputPieces) {
 
 TEST_P(TestTokenizeSingleWord, TestNoOutputPiecesOnlyOutputIds) {
   const Spec& spec = GetParam();
-  ASSERT_OK_AND_ASSIGN(
-      std::string flatbuffer,
+  auto flatbuffer_or =
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
                                       spec.suffix_indicator, spec.unk_token,
-                                      true /* no_pretokenization */));
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+                                      true /* no_pretokenization */);
+  ASSERT_TRUE(flatbuffer_or.ok());
+  std::string flatbuffer = flatbuffer_or.value();
+  auto tokenizer_or = FastWordpieceTokenizer::Create(flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::vector<int> output_ids;
   tokenizer.Tokenize(spec.input, &output_ids);
@@ -1265,13 +1274,15 @@ TEST_P(TestTokenizeSingleWord, TestNoOutputPiecesOnlyOutputIds) {
 TEST_P(TestTokenizeSingleWord, TestNoOutputPiecesWithPositiveSentenceOffsets) {
   const Spec& spec = GetParam();
   const int offset_in_sentence = 123;
-  ASSERT_OK_AND_ASSIGN(
-      std::string flatbuffer,
+  auto flatbuffer_or =
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
                                       spec.suffix_indicator, spec.unk_token,
-                                      true /* no_pretokenization */));
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+                                      true /* no_pretokenization */);
+  ASSERT_TRUE(flatbuffer_or.ok());
+  std::string flatbuffer = flatbuffer_or.value();
+  auto tokenizer_or = FastWordpieceTokenizer::Create(flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::vector<int> output_ids;
   std::vector<int> output_begin_offsets;
@@ -2433,12 +2444,14 @@ using TestTokenizeText = testing::TestWithParam<Spec>;
 
 TEST_P(TestTokenizeText, Test) {
   const Spec& spec = GetParam();
-  ASSERT_OK_AND_ASSIGN(
-      std::string flatbuffer,
+  auto flatbuffer_or =
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token));
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+                                      spec.suffix_indicator, spec.unk_token);
+  ASSERT_TRUE(flatbuffer_or.ok());
+  std::string flatbuffer = flatbuffer_or.value();
+  auto tokenizer_or = FastWordpieceTokenizer::Create(flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::vector<std::string> output_tokens;
   std::vector<int> output_ids;
@@ -2454,12 +2467,14 @@ TEST_P(TestTokenizeText, Test) {
 
 TEST_P(TestTokenizeText, TestNoOutputPieces) {
   const Spec& spec = GetParam();
-  ASSERT_OK_AND_ASSIGN(
-      std::string flatbuffer,
+  auto flatbuffer_or =
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token));
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+                                      spec.suffix_indicator, spec.unk_token);
+  ASSERT_TRUE(flatbuffer_or.ok());
+  std::string flatbuffer = flatbuffer_or.value();
+  auto tokenizer_or = FastWordpieceTokenizer::Create(flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::vector<int> output_ids;
   std::vector<int> output_begin_offsets;
@@ -2473,12 +2488,14 @@ TEST_P(TestTokenizeText, TestNoOutputPieces) {
 
 TEST_P(TestTokenizeText, TestNoOutputPiecesOnlyOutputIds) {
   const Spec& spec = GetParam();
-  ASSERT_OK_AND_ASSIGN(
-      std::string flatbuffer,
+  auto flatbuffer_or =
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
-                                      spec.suffix_indicator, spec.unk_token));
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+                                      spec.suffix_indicator, spec.unk_token);
+  ASSERT_TRUE(flatbuffer_or.ok());
+  std::string flatbuffer = flatbuffer_or.value();
+  auto tokenizer_or = FastWordpieceTokenizer::Create(flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   std::vector<int> output_ids;
   tokenizer.Tokenize(spec.input, &output_ids);
@@ -2530,18 +2547,21 @@ using TestTokenizeDetokenize = testing::TestWithParam<Spec>;
 
 TEST_P(TestTokenizeDetokenize, Test) {
   const Spec& spec = GetParam();
-  ASSERT_OK_AND_ASSIGN(
-      std::string flatbuffer,
+  auto flatbuffer_or =
       BuildModelAndExportToFlatBuffer(spec.vocab, spec.max_bytes_per_token,
                                       spec.suffix_indicator, spec.unk_token,
                                       /*no_pretokenization=*/true,
-                                      /*support_detokenization=*/true));
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       FastWordpieceTokenizer::Create(flatbuffer.data()));
+                                      /*support_detokenization=*/true);
+  ASSERT_TRUE(flatbuffer_or.ok());
+  std::string flatbuffer = flatbuffer_or.value();
+  auto tokenizer_or = FastWordpieceTokenizer::Create(flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   // Test detokenization.
-  ASSERT_OK_AND_ASSIGN(auto output_text,
-                       tokenizer.Detokenize(spec.expected_token_ids));
+  auto output_text_or = tokenizer.Detokenize(spec.expected_token_ids);
+  ASSERT_TRUE(output_text_or.ok());
+  auto output_text = output_text_or.value();
   EXPECT_THAT(output_text, spec.expected_detokenized_text);
 }
 

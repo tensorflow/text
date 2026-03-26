@@ -16,7 +16,7 @@
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference_testutil.h"
 #include "tensorflow/core/framework/tensor_testutil.h"
-#include "tensorflow/core/lib/core/status_test_util.h"
+
 #include "tensorflow/core/platform/test.h"
 
 namespace tensorflow {
@@ -30,13 +30,13 @@ TEST(RoundRobinGenerateMasksOpTest, ShapeFn) {
     std::vector<NodeDefBuilder::NodeOut> inputs, input_splits;
     for (int i = 0; i < n; i++) inputs.emplace_back("a", 0, DT_INT32);
     for (int i = 0; i < n; i++) input_splits.emplace_back("b", 0, DT_INT64);
-    TF_ASSERT_OK(NodeDefBuilder("test", "TFText>RoundRobinGenerateMasks")
+    ASSERT_TRUE(NodeDefBuilder("test", "TFText>RoundRobinGenerateMasks")
                      .Input({"max_seq", 0, DT_INT32})
                      .Input(inputs)
                      .Input(input_splits)
                      .Attr("N", n)
                      .Attr("Tsplits", DT_INT64)
-                     .Finalize(&op.node_def));
+                     .Finalize(&op.node_def).ok());
   };
   set_op(1);
   INFER_OK(op, "?;[?];[?]", "[?]");
@@ -71,13 +71,13 @@ TEST(RoundRobinTrimOpTest, ShapeFn) {
     std::vector<NodeDefBuilder::NodeOut> inputs, input_splits;
     for (int i = 0; i < n; i++) inputs.emplace_back("a", 0, DT_INT32);
     for (int i = 0; i < n; i++) input_splits.emplace_back("b", 0, DT_INT64);
-    TF_ASSERT_OK(NodeDefBuilder("test", "TFText>RoundRobinTrim")
+    ASSERT_TRUE(NodeDefBuilder("test", "TFText>RoundRobinTrim")
                      .Input({"max_seq", 0, DT_INT32})
                      .Input(inputs)
                      .Input(input_splits)
                      .Attr("N", n)
                      .Attr("Tsplits", DT_INT64)
-                     .Finalize(&op.node_def));
+                     .Finalize(&op.node_def).ok());
   };
   set_op(1);
   INFER_OK(op, "?;[?];[?]", "[?];[?]");

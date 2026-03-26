@@ -1,10 +1,9 @@
 load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
-load("@xla//third_party/rules_python/python:py_test.bzl", "py_test")
+load("//third_party/rules_python/python:py_test.bzl", "py_test")
 load("//tensorflow_text:tftext.bzl", "extra_py_deps", "if_pywrap", "py_library", "py_tf_text_library")
 
-# [internal] load build_test.bzl
-load("//tools/build_defs/license:license.bzl", "license")
+load("@rules_license//rules:license.bzl", "license")
 
 # Visibility rules
 package(
@@ -131,7 +130,7 @@ py_library(
         ":wordpiece_tokenizer",
         ":wordshape_ops",
         # python/util:all_util tensorflow dep,
-        "//tensorflow_text/core/pybinds:tflite_registrar",
+        "//tensorflow_text/core/pybinds:pybinds_library",
         "//tensorflow_text/tools/wordpiece_vocab",
     ] + extra_py_deps(),
 )
@@ -309,7 +308,7 @@ py_tf_text_library(
         # python/module tensorflow dep,
         # python/ops:array_ops_stack tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_fast_bert_normalizer_model_builder",
+        "//tensorflow_text/core/pybinds:pybinds_library",
     ],
 )
 
@@ -390,7 +389,7 @@ py_tf_text_library(
         "//tensorflow_text/core/kernels/sentencepiece:sentencepiece_detokenizer_kernel",
     ],
     deps = [
-        "//tensorflow_text/core/pybinds:pywrap_model_converter",
+        "//tensorflow_text/core/pybinds:pybinds_library",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
 )
@@ -435,7 +434,7 @@ py_tf_text_library(
         # python/ops:array_ops_stack tensorflow dep,
         # python/ops:math_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_fast_wordpiece_tokenizer_model_builder",
+        "//tensorflow_text/core/pybinds:pybinds_library",
     ],
 )
 
@@ -482,7 +481,7 @@ py_tf_text_library(
         # python/ops:array_ops_stack tensorflow dep,
         # python/ops:math_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_phrase_tokenizer_model_builder",
+        "//tensorflow_text/core/pybinds:pybinds_library",
     ],
 )
 
@@ -1561,7 +1560,7 @@ py_tf_text_library(
         # python/ops/ragged:ragged_conversion_ops tensorflow dep,
         # python/ops/ragged:ragged_string_ops tensorflow dep,
         # python/ops/ragged:ragged_tensor tensorflow dep,
-        "//tensorflow_text/core/pybinds:pywrap_whitespace_tokenizer_config_builder",
+        "//tensorflow_text/core/pybinds:pybinds_library",
     ],
 )
 
