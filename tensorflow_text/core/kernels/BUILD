@@ -153,36 +153,16 @@ tf_cc_library(
     ],
 )
 
-# Test-only version that uses @org_tensorflow (not @release_or_nightly) to
-# avoid duplicate global initializer conflicts when also linking ops_testutil.
-cc_library(
-    name = "constrained_sequence_op_for_test",
-    testonly = True,
-    srcs = [
-        "constrained_sequence.cc",
-        "constrained_sequence_kernel.cc",
-        "//tensorflow_text/core/ops:constrained_sequence_op.cc",
-    ],
-    hdrs = ["constrained_sequence.h"],
-    alwayslink = 1,
-    deps = [
-        "@com_google_absl//absl/base:core_headers",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/core:lib",
-    ],
-)
-
 cc_test(
     name = "constrained_sequence_kernel_input_validation_test",
     srcs = ["constrained_sequence_kernel_input_validation_test.cc"],
     deps = [
-        ":constrained_sequence_op_for_test",
         ":text_kernels_test_util",
+        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
         "@org_tensorflow//tensorflow/core/framework:fake_input",
         "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
         "@org_tensorflow//tensorflow/core/platform:test_main",
-        "@release_or_nightly//:tensorflow_libtensorflow_framework",
     ],
 )
 
@@ -190,13 +170,12 @@ cc_test(
     name = "exp_greedy_constrained_sequence_kernel_test",
     srcs = ["exp_greedy_constrained_sequence_kernel_test.cc"],
     deps = [
-        ":constrained_sequence_op_for_test",
         ":text_kernels_test_util",
+        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
         "@org_tensorflow//tensorflow/core/framework:fake_input",
         "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
         "@org_tensorflow//tensorflow/core/platform:test_main",
-        "@release_or_nightly//:tensorflow_libtensorflow_framework",
     ],
 )
 
@@ -204,13 +183,12 @@ cc_test(
     name = "exp_viterbi_constrained_sequence_kernel_test",
     srcs = ["exp_viterbi_constrained_sequence_kernel_test.cc"],
     deps = [
-        ":constrained_sequence_op_for_test",
         ":text_kernels_test_util",
+        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
         "@org_tensorflow//tensorflow/core/framework:fake_input",
         "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
         "@org_tensorflow//tensorflow/core/platform:test_main",
-        "@release_or_nightly//:tensorflow_libtensorflow_framework",
     ],
 )
 
@@ -311,13 +289,12 @@ cc_test(
     name = "log_greedy_constrained_sequence_kernel_test",
     srcs = ["log_greedy_constrained_sequence_kernel_test.cc"],
     deps = [
-        ":constrained_sequence_op_for_test",
         ":text_kernels_test_util",
+        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
         "@org_tensorflow//tensorflow/core/framework:fake_input",
         "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
         "@org_tensorflow//tensorflow/core/platform:test_main",
-        "@release_or_nightly//:tensorflow_libtensorflow_framework",
     ],
 )
 
@@ -325,13 +302,12 @@ cc_test(
     name = "log_viterbi_constrained_sequence_kernel_test",
     srcs = ["log_viterbi_constrained_sequence_kernel_test.cc"],
     deps = [
-        ":constrained_sequence_op_for_test",
         ":text_kernels_test_util",
+        "//tensorflow_text:constrained_sequence_op_cc",
         "@com_google_googletest//:gtest_main",
         "@org_tensorflow//tensorflow/core/framework:fake_input",
         "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
         "@org_tensorflow//tensorflow/core/platform:test_main",
-        "@release_or_nightly//:tensorflow_libtensorflow_framework",
     ],
 )
 
@@ -648,42 +624,16 @@ tf_cc_library(
     ],
 )
 
-# Test-only version using @org_tensorflow to avoid duplicate global initializers.
-cc_library(
-    name = "ngrams_op_for_test",
-    testonly = True,
-    srcs = [
-        "ngrams_kernel.cc",
-        "//tensorflow_text/core/ops:ngrams_op.cc",
-    ],
-    hdrs = [
-        "ngrams_kernel.h",
-        "ngrams_kernel_template.h",
-    ],
-    alwayslink = 1,
-    deps = [
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@org_tensorflow//tensorflow/core:framework",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:op_kernel",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:status_macros",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tensor_view",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim",
-    ],
-)
-
 cc_test(
     name = "ngrams_kernel_test",
     srcs = ["ngrams_kernel_test.cc"],
     deps = [
-        ":ngrams_op_for_test",
+        "//tensorflow_text:ngrams_op_cc",
         "@com_google_googletest//:gtest_main",
         "@org_tensorflow//tensorflow/core:testlib",
         "@org_tensorflow//tensorflow/core/framework:fake_input",
         "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
         "@org_tensorflow//tensorflow/core/platform:test_main",
-        "@release_or_nightly//:tensorflow_libtensorflow_framework",
     ],
 )
 
@@ -1065,10 +1015,9 @@ cc_library(
     hdrs = ["text_kernels_test_util.h"],
     deps = [
         "@com_google_googletest//:gtest",
-        "@org_tensorflow//tensorflow/core:framework",
+        "@release_or_nightly//:tensorflow_tf_header_lib",
     ],
 )
-
 
 tflite_cc_library(
     name = "tflite_ops",
@@ -1134,31 +1083,16 @@ tf_cc_library(
     ],
 )
 
-cc_library(
-    name = "unicode_script_tokenizer_op_for_test",
-    testonly = True,
-    srcs = [
-        "unicode_script_tokenize_kernel.cc",
-        "//tensorflow_text/core/ops:unicode_script_tokenize_op.cc",
-    ],
-    alwayslink = 1,
-    deps = [
-        "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-    ],
-)
-
 cc_test(
     name = "unicode_script_tokenize_kernel_test",
     srcs = ["unicode_script_tokenize_kernel_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        ":unicode_script_tokenizer_op_for_test",
+        "//tensorflow_text:unicode_script_tokenizer_cc",
         "@com_google_googletest//:gtest_main",
         "@org_tensorflow//tensorflow/core/framework:fake_input",
         "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
         "@org_tensorflow//tensorflow/core/platform:test_main",
-        "@release_or_nightly//:tensorflow_libtensorflow_framework",
     ],
 )
 
@@ -1174,31 +1108,16 @@ tf_cc_library(
     ],
 )
 
-cc_library(
-    name = "whitespace_tokenize_op_for_test",
-    testonly = True,
-    srcs = [
-        "whitespace_tokenize_kernel.cc",
-        "//tensorflow_text/core/ops:whitespace_tokenize_op.cc",
-    ],
-    alwayslink = 1,
-    deps = [
-        "@icu//:common",
-        "@org_tensorflow//tensorflow/core:framework",
-    ],
-)
-
 cc_test(
     name = "whitespace_tokenize_kernel_test",
     srcs = ["whitespace_tokenize_kernel_test.cc"],
     deps = [
         ":text_kernels_test_util",
-        ":whitespace_tokenize_op_for_test",
+        "//tensorflow_text:whitespace_tokenizer_cc",
         "@com_google_googletest//:gtest_main",
         "@org_tensorflow//tensorflow/core/framework:fake_input",
         "@org_tensorflow//tensorflow/core/kernels:ops_testutil",
         "@org_tensorflow//tensorflow/core/platform:test_main",
-        "@release_or_nightly//:tensorflow_libtensorflow_framework",
     ],
 )
 
