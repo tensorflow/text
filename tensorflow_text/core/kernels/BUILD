@@ -11,7 +11,10 @@ load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
 licenses(["notice"])
 
 # Visibility rules
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = [
+    "//photos/vision/visionkit/pipeline/clients/context_awareness:__pkg__",
+    "//visibility:public",
+])
 
 exports_files(["LICENSE"])
 
