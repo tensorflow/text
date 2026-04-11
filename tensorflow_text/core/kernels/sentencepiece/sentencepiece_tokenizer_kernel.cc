@@ -61,8 +61,8 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
     const auto& reverse_tensor = ctx->input(kReverseInput);
     const bool reverse = reverse_tensor.scalar<bool>()();
 
-    std::vector<int32> encoded;
-    std::vector<int32> splits;
+    std::vector<int32_t> encoded;
+    std::vector<int32_t> splits;
     for (int i = 0; i < num_of_input_values; ++i) {
       const auto res = sentencepiece::EncodeString(
           input_values_flat(i), model_tensor.data(), add_bos, add_eos, reverse);
@@ -77,11 +77,11 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
     tensorflow::Tensor* output_values_tensor = nullptr;
     tensorflow::Tensor* output_splits_tensor = nullptr;
     OP_REQUIRES(ctx, encoded.size() < std::numeric_limits<int32_t>::max(),
-                errors::InvalidArgument(
+                absl::InvalidArgumentError(
                     "Encoded input must contain less than 2^31 characters."));
-    OP_REQUIRES(
-        ctx, splits.size() + 1 < std::numeric_limits<int32_t>::max(),
-        errors::InvalidArgument("Splits tensor is limited to 2^31-1 values."));
+    OP_REQUIRES(ctx, splits.size() + 1 < std::numeric_limits<int32_t>::max(),
+                absl::InvalidArgumentError(
+                    "Splits tensor is limited to 2^31-1 values."));
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(0, {static_cast<int32_t>(encoded.size())},
                                   &output_values_tensor));
@@ -89,8 +89,8 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
         ctx, ctx->allocate_output(1, {static_cast<int32_t>(splits.size()) + 1},
                                   &output_splits_tensor));
 
-    auto values_tensor_flat = output_values_tensor->vec<int32>();
-    auto splits_tensor_flat = output_splits_tensor->vec<int32>();
+    auto values_tensor_flat = output_values_tensor->vec<int32_t>();
+    auto splits_tensor_flat = output_splits_tensor->vec<int32_t>();
     for (int32_t i = 0; i < encoded.size(); ++i) {
       values_tensor_flat(i) = encoded[i];
     }
