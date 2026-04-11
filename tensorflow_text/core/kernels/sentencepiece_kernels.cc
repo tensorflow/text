@@ -75,7 +75,7 @@ struct SentencepieceResource : public ResourceBase {
     // resource will be tied to the lifetime of the resource manager it is
     // created in.
     static std::atomic<int64> counter(0);
-    std::string unique_node_name = strings::StrCat(
+    std::string unique_node_name = absl::StrCat(
         "SentencepieceResourceFromGraphDef", "/", counter.fetch_add(1));
     std::string model = processor.model_proto().SerializeAsString();
     *out = ops::SourceOp(
