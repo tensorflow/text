@@ -31,7 +31,7 @@ class SpanningTreeIterator {
  public:
   // An array that provides the source of the inbound arc for each node.  Roots
   // are represented as self-loops.
-  using SourceList = std::vector<uint32>;
+  using SourceList = std::vector<uint32_t>;
 
   // Creates a spanning tree iterator.  If |forest| is true, then this iterates
   // over forests instead of trees (i.e., multiple roots are allowed).
@@ -41,7 +41,7 @@ class SpanningTreeIterator {
   // true) of a complete digraph containing |num_nodes| nodes.  Each tree is
   // passed to the |functor| as a SourceList.
   template <class Functor>
-  void ForEachTree(uint32 num_nodes, Functor functor) {
+  void ForEachTree(uint32_t num_nodes, Functor functor) {
     // Conveniently, the all-zero vector represents a valid tree.
     SourceList sources(num_nodes, 0);
     do {
@@ -54,7 +54,7 @@ class SpanningTreeIterator {
   bool HasCycle(const SourceList &sources);
 
   // Returns the number of roots in the |sources|.
-  static uint32 NumRoots(const SourceList &sources);
+  static uint32_t NumRoots(const SourceList& sources);
 
   // Advances |sources| to the next source list, or returns false if there are
   // no more source lists.

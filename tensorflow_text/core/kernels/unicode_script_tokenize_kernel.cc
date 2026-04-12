@@ -58,7 +58,7 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
   void Compute(OpKernelContext* context) override {
     // Get inputs
     const Tensor& input_values_tensor = context->input(0);
-    const auto input_values_flat = input_values_tensor.flat<int32>();
+    const auto input_values_flat = input_values_tensor.flat<int32_t>();
     const Tensor& input_splits_tensor = context->input(1);
     const auto input_splits_flat = input_splits_tensor.flat<SPLITS_TYPE>();
 
@@ -80,10 +80,10 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
     auto output_outer_splits_flat =
         output_outer_splits_tensor->flat<SPLITS_TYPE>();
 
-    std::vector<int32> output_values;
+    std::vector<int32_t> output_values;
     std::vector<SPLITS_TYPE> output_values_inner_splits;
-    std::vector<int64> output_offset_starts;
-    std::vector<int64> output_offset_limits;
+    std::vector<int64_t> output_offset_starts;
+    std::vector<int64_t> output_offset_limits;
 
     // Loop over the codepoints (a split at a time) and create splits of tokens.
     icu::ErrorCode status;
@@ -92,12 +92,13 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
       output_outer_splits_flat(splits_idx) = output_offset_starts.size();
       UScriptCode prev_script = USCRIPT_INVALID_CODE;
       bool token_has_start_set = false;
-      int32 curr_skipped_spaces = 0;  // Used when computing the end of a token
+      int32_t curr_skipped_spaces =
+          0;  // Used when computing the end of a token
       const int curr_word_start_idx = input_splits_flat(splits_idx);
       bool was_space = false;
       for (int values_idx = curr_word_start_idx;
            values_idx < input_splits_flat(splits_idx + 1); values_idx++) {
-        const int32 input_value = input_values_flat(values_idx);
+        const int32_t input_value = input_values_flat(values_idx);
         const bool is_space = u_isUWhiteSpace(input_value);
         UScriptCode script = uscript_getScript(input_value, status);
         // Split these failures out as if they are a different code and ignore
@@ -166,11 +167,11 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
   do {                                                                       \
   } while (false)
 
-    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_values, int32);
+    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_values, int32_t);
     DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_values_inner_splits,
                                             SPLITS_TYPE);
-    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_offset_starts, int64);
-    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_offset_limits, int64);
+    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_offset_starts, int64_t);
+    DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR(output_offset_limits, int64_t);
 
 #undef DECLARE_ALLOCATE_AND_FILL_OUTPUT_TENSOR
   }
@@ -183,12 +184,12 @@ class UnicodeScriptTokenizeWithOffsetsOp : public OpKernel {
 
 REGISTER_KERNEL_BUILDER(Name("UnicodeScriptTokenizeWithOffsets")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int32>("Tsplits"),
-                        UnicodeScriptTokenizeWithOffsetsOp<int32>);
+                            .TypeConstraint<int32_t>("Tsplits"),
+                        UnicodeScriptTokenizeWithOffsetsOp<int32_t>);
 REGISTER_KERNEL_BUILDER(Name("UnicodeScriptTokenizeWithOffsets")
                             .Device(DEVICE_CPU)
-                            .TypeConstraint<int64>("Tsplits"),
-                        UnicodeScriptTokenizeWithOffsetsOp<int64>);
+                            .TypeConstraint<int64_t>("Tsplits"),
+                        UnicodeScriptTokenizeWithOffsetsOp<int64_t>);
 
 }  // namespace text
 }  // namespace tensorflow

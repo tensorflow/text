@@ -68,22 +68,22 @@ bool IsBreakChar(absl::string_view text) {
 // allows us to retrieve the corresponding data from logits.  I.e., the logits
 // for the i-th character from text are logits(batch_index, i, 0) (for the
 // "split" action) and logits(batch_index, i, 1) (for the "merge" action).
-Status TokenizeByLogits(const absl::string_view& text,
-                        const TTypes<const float, 3>::Tensor& logits,
-                        int batch_index,
-                        bool force_split_at_break_character,
-                        std::vector<std::string>* tokens,
-                        std::vector<int>* begin_offset,
-                        std::vector<int>* end_offset, int* num_tokens) {
+absl::Status TokenizeByLogits(const absl::string_view& text,
+                              const TTypes<const float, 3>::Tensor& logits,
+                              int batch_index,
+                              bool force_split_at_break_character,
+                              std::vector<std::string>* tokens,
+                              std::vector<int>* begin_offset,
+                              std::vector<int>* end_offset, int* num_tokens) {
   std::vector<absl::string_view> chars;
   if (!GetUTF8Chars(text, &chars)) {
-    return Status(
+    return absl::Status(
         static_cast<absl::StatusCode>(absl::StatusCode::kInvalidArgument),
         absl::StrCat("Input string is not utf8 valid: ", text));
   }
 
   if (chars.size() > logits.dimension(1)) {
-    return Status(
+    return absl::Status(
         static_cast<absl::StatusCode>(absl::StatusCode::kInvalidArgument),
         absl::StrCat("Number of logits, ", logits.dimension(1),
                      ", is insufficient for text \"", text, "\""));
@@ -132,17 +132,16 @@ class TokenizerFromLogitsOp : public OpKernel {
     const Tensor* logits;
     OP_REQUIRES_OK(ctx, ctx->input("logits", &logits));
     OP_REQUIRES(ctx, strings->dim_size(0) == logits->dim_size(0),
-                errors::InvalidArgument("Expecting logits to have ",
-                                        strings->dim_size(0),
-                                        " rows, got ",
-                                        logits->dim_size(0)));
+                absl::InvalidArgumentError(absl::StrCat(
+                    "Expecting logits to have ", strings->dim_size(0),
+                    " rows, got ", logits->dim_size(0))));
     const Tensor* force_split_at_break_character;
     OP_REQUIRES_OK(ctx, ctx->input("force_split_at_break_character",
                                    &force_split_at_break_character));
     const bool force_split_at_break_character_bool =
         force_split_at_break_character->scalar<bool>()();
 
-    std::vector<string> tokens;
+    std::vector<std::string> tokens;
     std::vector<int> begin_offset;
     std::vector<int> end_offset;
     std::vector<int> output_row_splits(1, 0);
@@ -154,13 +153,14 @@ class TokenizerFromLogitsOp : public OpKernel {
     // Iterate through all the values and tokenize them.
     const auto& strings_vec = strings->flat<tstring>();
     OP_REQUIRES(ctx, logits_tensor.dimension(0) >= strings_vec.size(),
-                errors::Internal("Bad logits dimension #0: ",
-                                 logits_tensor.dimension(0), " < ",
-                                 strings_vec.size()));
+                absl::InternalError(absl::StrCat(
+                    "Bad logits dimension #0: ", logits_tensor.dimension(0),
+                    " < ", strings_vec.size())));
     // Dimension #1 of logits will be checked inside TokenizeByLogits.
-    OP_REQUIRES(ctx, logits_tensor.dimension(2) == 2,
-                errors::Internal("Bad logits dimension #2: ",
-                                 logits_tensor.dimension(2), " != 2"));
+    OP_REQUIRES(
+        ctx, logits_tensor.dimension(2) == 2,
+        absl::InternalError(absl::StrCat(
+            "Bad logits dimension #2: ", logits_tensor.dimension(2), " != 2")));
     for (int i = 0; i < strings_vec.size(); ++i) {
       // Tokenize into tokens and record the offset locations.
       int num_tokens = 0;
@@ -175,10 +175,10 @@ class TokenizerFromLogitsOp : public OpKernel {
       output_row_splits.push_back(num_tokens + output_row_splits.back());
     }
 
-    std::vector<int64> output_tokens_shape;
+    std::vector<int64_t> output_tokens_shape;
     output_tokens_shape.push_back(tokens.size());
 
-    std::vector<int64> output_row_splits_shape;
+    std::vector<int64_t> output_row_splits_shape;
     output_row_splits_shape.push_back(output_row_splits.size());
 
     Tensor* output_values;
@@ -192,19 +192,19 @@ class TokenizerFromLogitsOp : public OpKernel {
                    ctx->allocate_output("row_splits",
                                         TensorShape(output_row_splits_shape),
                                         &output_row_splits_tensor));
-    auto output_row_splits_vec = output_row_splits_tensor->vec<int64>();
+    auto output_row_splits_vec = output_row_splits_tensor->vec<int64_t>();
 
     Tensor* start_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("start_values",
                                              TensorShape(output_tokens_shape),
                                              &start_values));
-    auto start_values_vec = start_values->vec<int64>();
+    auto start_values_vec = start_values->vec<int64_t>();
 
     Tensor* limit_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("limit_values",
                                              TensorShape(output_tokens_shape),
                                              &limit_values));
-    auto limit_values_vec = limit_values->vec<int64>();
+    auto limit_values_vec = limit_values->vec<int64_t>();
 
     for (int i = 0; i < tokens.size(); ++i) {
       output_values_vec(i) = tokens[i];
