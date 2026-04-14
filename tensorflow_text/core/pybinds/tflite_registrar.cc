@@ -14,16 +14,16 @@
 
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/pytypes.h"
-#include "tensorflow_text/core/kernels/byte_splitter_tflite.h"
-#include "tensorflow_text/core/kernels/fast_bert_normalizer_tflite.h"
-#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_tflite.h"
-#include "tensorflow_text/core/kernels/ngrams_tflite.h"
-#include "tensorflow_text/core/kernels/ragged_tensor_to_tensor_tflite.h"
-#include "tensorflow_text/core/kernels/round_robin_trimmer_tflite.h"
-#include "tensorflow_text/core/kernels/sentence_fragmenter_v2_tflite.h"
-#include "tensorflow_text/core/kernels/sentencepiece/py_tflite_registerer.h"
-#include "tensorflow_text/core/kernels/utf8_binarize_tflite.h"
-#include "tensorflow_text/core/kernels/whitespace_tokenizer_tflite.h"
+#include "tensorflow/core/kernels/text/byte_splitter_tflite.h"
+#include "tensorflow/core/kernels/text/fast_bert_normalizer_tflite.h"
+#include "tensorflow/core/kernels/text/fast_wordpiece_tokenizer_tflite.h"
+#include "tensorflow/core/kernels/text/ngrams_tflite.h"
+#include "tensorflow/core/kernels/text/ragged_tensor_to_tensor_tflite.h"
+#include "tensorflow/core/kernels/text/round_robin_trimmer_tflite.h"
+#include "tensorflow/core/kernels/text/sentence_fragmenter_v2_tflite.h"
+#include "tensorflow/core/kernels/text/sentencepiece/py_tflite_registerer.h"
+#include "tensorflow/core/kernels/text/utf8_binarize_tflite.h"
+#include "tensorflow/core/kernels/text/whitespace_tokenizer_tflite.h"
 
 PYBIND11_MODULE(tflite_registrar, m) {
   m.doc() = R"pbdoc(

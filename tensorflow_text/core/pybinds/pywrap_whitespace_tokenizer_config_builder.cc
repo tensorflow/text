@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
+
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/stl.h"
-#include "tensorflow_text/core/kernels/whitespace_tokenizer_config_builder.h"
+#include "tensorflow/core/kernels/text/whitespace_tokenizer_config_builder.h"
 
 namespace tensorflow {
 namespace text {
