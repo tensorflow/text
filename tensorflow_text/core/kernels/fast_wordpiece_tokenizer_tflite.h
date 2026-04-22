@@ -12,24 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef THIRD_PARTY_TENSORFLOW_TEXT_GOOGLE_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_TFLITE_H_
-#define THIRD_PARTY_TENSORFLOW_TEXT_GOOGLE_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_TFLITE_H_
+#ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_TFLITE_H_
+#define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_TFLITE_H_
 
-#include "tensorflow/lite/mutable_op_resolver.h"
+#include "tensorflow/core/kernels/text/fast_wordpiece_tokenizer_tflite.h"
 
-namespace tflite {
-namespace ops {
-namespace custom {
-namespace text {
-
-extern "C" void AddFastWordpieceTokenize(::tflite::MutableOpResolver* resolver);
-
-extern "C" void AddFastWordpieceDetokenize(
-    ::tflite::MutableOpResolver* resolver);
-
-}  // namespace text
-}  // namespace custom
-}  // namespace ops
-}  // namespace tflite
-
-#endif  // THIRD_PARTY_TENSORFLOW_TEXT_GOOGLE_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_TFLITE_H_
+#endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_TFLITE_H_

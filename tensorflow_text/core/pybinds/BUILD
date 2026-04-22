@@ -5,11 +5,14 @@ load("//tensorflow_text:tftext.bzl", "if_pywrap", "pybind_extension", "pywrap_bi
 
 licenses(["notice"])
 
-package(default_visibility = [
-    "//nlp/sage/nlu/features/python:__pkg__",
-    "//nlp/semantic_parsing/learning/neural/portable/tools/release:__pkg__",
-    "//tensorflow_text:__subpackages__",
-])
+package(
+    default_applicable_licenses = ["//tensorflow_text:license"],
+    default_visibility = [
+        "//nlp/sage/nlu/features/python:__pkg__",
+        "//nlp/semantic_parsing/learning/neural/portable/tools/release:__pkg__",
+        "//tensorflow_text:__subpackages__",
+    ],
+)
 
 pybind_extension(
     name = "tflite_registrar",
@@ -17,10 +20,19 @@ pybind_extension(
         "tflite_registrar.cc",
     ],
     deps = [
+        "@org_tensorflow//tensorflow/core/kernels/text:byte_splitter_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text:fast_bert_normalizer_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text:fast_wordpiece_tokenizer_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text:ngrams_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text:ragged_tensor_to_tensor_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text:round_robin_trimmer_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text:sentence_fragmenter_v2_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text:utf8_binarize_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text:whitespace_tokenizer_tflite",
+        "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:py_tflite_registerer",
         # lite:framework tensorflow dep,
         # lite/c:common tensorflow dep,
         # lite/kernels:builtin_ops tensorflow dep,
-        "//tensorflow_text/core/kernels:tflite_ops",
     ],
 )
 
@@ -30,7 +42,7 @@ pybind_extension(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//tensorflow_text/core/kernels:fast_bert_normalizer_model_builder",
+        "@org_tensorflow//tensorflow/core/kernels/text:fast_bert_normalizer_model_builder",
     ],
 )
 
@@ -61,7 +73,7 @@ pybind_extension(
     ],
     features = ["-use_header_modules"],
     deps = [
-        "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_model_builder",
+        "@org_tensorflow//tensorflow/core/kernels/text:fast_wordpiece_tokenizer_model_builder",
     ],
 )
 
@@ -88,7 +100,7 @@ pybind_extension(
         "//tensorflow_text:__subpackages__",
     ],
     deps = [
-        "//tensorflow_text/core/kernels:phrase_tokenizer_model_builder",
+        "@org_tensorflow//tensorflow/core/kernels/text:phrase_tokenizer_model_builder",
     ],
 )
 
@@ -111,7 +123,7 @@ pybind_extension(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//tensorflow_text/core/kernels/sentencepiece:model_converter",
+        "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:model_converter",
     ],
 )
 
@@ -121,7 +133,7 @@ pybind_extension(
     copts = ["-fexceptions"],
     features = ["-use_header_modules"],
     deps = [
-        "//tensorflow_text/core/kernels:whitespace_tokenizer_config_builder",
+        "@org_tensorflow//tensorflow/core/kernels/text:whitespace_tokenizer_config_builder",
     ],
 )
 

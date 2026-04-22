@@ -15,25 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BOISE_OFFSET_CONVERTER_KERNEL_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BOISE_OFFSET_CONVERTER_KERNEL_H_
 
-#include "tensorflow/lite/kernels/shim/tf_op_shim.h"
-#include "tensorflow_text/core/kernels/boise_offset_converter_kernel_template.h"
-
-namespace tensorflow {
-namespace text {
-
-class OffsetsToBoiseTagsOpKernel
-    : public tflite::shim::TfOpKernel<OffsetsToBoiseTagsOp> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-class BoiseTagsToOffsetsOpKernel
-    : public tflite::shim::TfOpKernel<BoiseTagsToOffsetsOp> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/boise_offset_converter_kernel.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BOISE_OFFSET_CONVERTER_KERNEL_H_
