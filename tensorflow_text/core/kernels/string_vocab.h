@@ -15,34 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_STRING_VOCAB_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_STRING_VOCAB_H_
 
-#include <string>
-#include <vector>
-
-#include "absl/container/flat_hash_map.h"
-#include "tensorflow_text/core/kernels/wordpiece_tokenizer.h"
-
-namespace tensorflow {
-namespace text {
-
-// An implementation of WordpieceVocab, used (1) to store the input vocabulary
-// and (2) to call the original implementation of WordPiece tokenization to
-// pre-compute the result for the suffix indicator string.
-class StringVocab : public WordpieceVocab {
- public:
-  explicit StringVocab(const std::vector<std::string>& vocab);
-  StringVocab(const StringVocab&) = delete;
-  StringVocab& operator=(const StringVocab&) = delete;
-  LookupStatus Contains(absl::string_view key, bool* value) const override;
-  absl::optional<int> LookupId(absl::string_view key) const;
-  // Returns the key of `vocab_id` or empty if `vocab_id` is not valid.
-  absl::optional<absl::string_view> LookupWord(int vocab_id) const;
-  int Size() const { return index_map_.size(); }
-
- private:
-  std::vector<std::string> vocab_;
-  absl::flat_hash_map<absl::string_view, int> index_map_;
-};
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/string_vocab.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_STRING_VOCAB_H_

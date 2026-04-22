@@ -15,25 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_PHRASE_TOKENIZER_KERNEL_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_PHRASE_TOKENIZER_KERNEL_H_
 
-#include "tensorflow/lite/kernels/shim/tf_op_shim.h"
-#include "tensorflow_text/core/kernels/phrase_tokenizer_kernel_template.h"
-
-namespace tensorflow {
-namespace text {
-
-class PhraseTokenizeOpKernel
-    : public tflite::shim::TfOpKernel<PhraseTokenizeOp> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-class PhraseDetokenizeOpKernel
-    : public tflite::shim::TfOpKernel<PhraseDetokenizeOp> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/phrase_tokenizer_kernel.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_PHRASE_TOKENIZER_KERNEL_H_

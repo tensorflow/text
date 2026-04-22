@@ -15,30 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_CONFIG_BUILDER_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_CONFIG_BUILDER_H_
 
-#include <string>
-
-
-namespace tensorflow {
-namespace text {
-
-// Builds a WhitespaceTokenizer config object. This contains the Unicode
-// codepoints which are considered whitespaces.
-//
-// The config object is a series of bytes, where each bit represents a Unicode
-// character and is 1 if it is a whitespace character, and 0 otherwise.
-//
-// Returns:
-//   The bytes of the config as a string.
-std::string BuildWhitespaceTokenizerConfig();
-
-// Builds a string full of all the whitespace characters. It is mainly used
-// for testing and validation.
-//
-// Returns:
-//   A string of Unicode whitespace characters.
-std::string BuildWhitespaceString();
-
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/whitespace_tokenizer_config_builder.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_CONFIG_BUILDER_H_

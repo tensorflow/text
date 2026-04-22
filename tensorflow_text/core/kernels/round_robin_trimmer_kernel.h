@@ -15,29 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_KERNEL_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_KERNEL_H_
 
-#include "tensorflow/lite/kernels/shim/tf_op_shim.h"
-#include "tensorflow_text/core/kernels/round_robin_trimmer_kernel_template.h"
-
-namespace tensorflow {
-namespace text {
-
-template <typename T, typename Tsplits>
-class RoundRobinGenerateMasksOpKernel
-    : public tflite::shim::TfOpKernel<RoundRobinGenerateMasksOp, T, Tsplits> {
- public:
-  using tflite::shim::TfOpKernel<RoundRobinGenerateMasksOp, T,
-                                 Tsplits>::TfOpKernel;
-};
-
-template <typename T, typename Tsplits>
-class RoundRobinTrimOpKernel
-    : public tflite::shim::TfOpKernel<RoundRobinTrimOp, T, Tsplits> {
- public:
-  using tflite::shim::TfOpKernel<RoundRobinTrimOp, T, Tsplits>::TfOpKernel;
-};
-
-}  // namespace text
-}  // namespace tensorflow
-
+#include "tensorflow/core/kernels/text/round_robin_trimmer_kernel.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_KERNEL_H_

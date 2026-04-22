@@ -15,19 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_BERT_NORMALIZER_TF_KERNEL_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_BERT_NORMALIZER_TF_KERNEL_H_
 
-#include "tensorflow/lite/kernels/shim/tf_op_shim.h"
-#include "tensorflow_text/core/kernels/fast_bert_normalizer_kernel_template.h"
-
-namespace tensorflow {
-namespace text {
-
-class FastBertNormalizeOpKernel
-    : public tflite::shim::TfOpKernel<FastBertNormalizeOp> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/fast_bert_normalizer_tf_kernel.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_BERT_NORMALIZER_TF_KERNEL_H_

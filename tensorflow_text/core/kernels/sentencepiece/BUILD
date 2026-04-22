@@ -1,137 +1,153 @@
-# Memorymappable, WASM compilable, implementation of the encoder.
-#
+"""Sentencepiece kernels for tf.text ops.
+All implementation files moved to //third_party/tensorflow/core/kernels/text/sentencepiece.
+"""
 
-load("@flatbuffers//:build_defs.bzl", "flatbuffer_cc_library")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
-load("@rules_cc//cc:cc_test.bzl", "cc_test")
-load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
 
 licenses(["notice"])
 
-# Visibility rules
 package(
     default_applicable_licenses = ["//tensorflow_text:license"],
+    default_compatible_with = ["//buildenv/target:non_prod"],
     default_visibility = ["//visibility:public"],
 )
 
-filegroup(
+# Aliases to relocated targets
+
+ALIAS_NAMES = [
+    "testdata",
+    "config_fbs",
+    "sp_headers",
+    "config",
+    "encoder_config",
+    "decoder_config",
+    "double_array_trie_test",
+    "sentencepiece_tokenizer_kernel",
+    "sentencepiece_detokenizer_kernel",
+    "sentencepiece_tokenizer_tflite",
+    "sentencepiece_detokenizer_tflite",
+    "optimized_encoder_test",
+    "optimized_decoder_test",
+    "macos",
+    "apple",
+]
+
+alias(
     name = "testdata",
-    srcs = [
-        "//tensorflow_text:python/ops/test_data/fast_sentencepiece.model",
-    ],
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:testdata",
 )
 
-filegroup(
+alias(
     name = "config_fbs",
-    srcs = ["config.fbs"],
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:config_fbs",
 )
 
-filegroup(
+alias(
     name = "sp_headers",
-    srcs = [
-        "py_tflite_registerer.h",
-    ],
-    visibility = ["//visibility:public"],
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:sp_headers",
 )
 
-flatbuffer_cc_library(
+alias(
     name = "config",
-    srcs = [
-        "config.fbs",
-    ],
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:config",
 )
 
-flatbuffer_cc_library(
+alias(
     name = "encoder_config",
-    srcs = [
-        "encoder_config.fbs",
-    ],
-    includes = [":config_fbs"],
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:encoder_config",
 )
 
-flatbuffer_cc_library(
+alias(
     name = "decoder_config",
-    srcs = [
-        "decoder_config.fbs",
-    ],
-    includes = [":config_fbs"],
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:decoder_config",
 )
+
+alias(
+    name = "double_array_trie_test",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:double_array_trie_test",
+)
+
+alias(
+    name = "sentencepiece_tokenizer_kernel",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:sentencepiece_tokenizer_kernel",
+)
+
+alias(
+    name = "sentencepiece_detokenizer_kernel",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:sentencepiece_detokenizer_kernel",
+)
+
+alias(
+    name = "sentencepiece_tokenizer_tflite",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:sentencepiece_tokenizer_tflite",
+)
+
+alias(
+    name = "sentencepiece_detokenizer_tflite",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:sentencepiece_detokenizer_tflite",
+)
+
+alias(
+    name = "optimized_encoder_test",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:optimized_encoder_test",
+)
+
+alias(
+    name = "optimized_decoder_test",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:optimized_decoder_test",
+)
+
+alias(
+    name = "macos",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:macos",
+)
+
+alias(
+    name = "apple",
+    actual = "@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:apple",
+)
+
+LIBRARY_HEADERS = {
+    "utils": "utils.h",
+    "double_array_trie": "double_array_trie.h",
+    "double_array_trie_builder": "double_array_trie_builder.h",
+    "sentencepiece_constants": "sentencepiece_constants.h",
+    "model_converter": "model_converter.h",
+    "optimized_encoder": "optimized_encoder.h",
+    "optimized_decoder": "optimized_decoder.h",
+    "sentencepiece_tokenizer_h": "sentencepiece_tokenizer.h",
+    "sentencepiece_detokenizer_h": "sentencepiece_detokenizer.h",
+    "py_tflite_registerer": "py_tflite_registerer.h",
+}
 
 cc_library(
     name = "utils",
-    srcs = [
-    ],
-    hdrs = [
-        "utils.h",
-    ],
+    hdrs = ["utils.h"],
+    deps = ["@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:utils"],
 )
 
 cc_library(
     name = "double_array_trie",
-    srcs = [
-    ],
-    hdrs = [
-        "double_array_trie.h",
-    ],
-    deps = [
-        ":config",
-        ":utils",
-    ],
+    hdrs = ["double_array_trie.h"],
+    deps = ["@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:double_array_trie"],
 )
 
 cc_library(
     name = "double_array_trie_builder",
-    srcs = [
-        "double_array_trie_builder.cc",
-    ],
-    hdrs = [
-        "double_array_trie_builder.h",
-    ],
-    deps = [
-        ":config",
-        ":utils",
-        "@darts_clone",
-    ],
-)
-
-cc_test(
-    name = "double_array_trie_test",
-    srcs = [
-        "double_array_trie_test.cc",
-    ],
-    deps = [
-        ":double_array_trie",
-        ":double_array_trie_builder",
-        ":encoder_config",
-        "@com_google_googletest//:gtest_main",
-    ],
+    hdrs = ["double_array_trie_builder.h"],
+    deps = ["@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:double_array_trie_builder"],
 )
 
 cc_library(
     name = "sentencepiece_constants",
-    srcs = [],
     hdrs = ["sentencepiece_constants.h"],
+    deps = ["@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:sentencepiece_constants"],
 )
 
 cc_library(
     name = "model_converter",
-    srcs = [
-        "model_converter.cc",
-    ],
-    hdrs = [
-        "model_converter.h",
-    ],
-    deps = [
-        ":config",
-        ":decoder_config",
-        ":double_array_trie_builder",
-        ":encoder_config",
-        ":sentencepiece_constants",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_sentencepiece//:sentencepiece_model_cc_proto",
-    ],
+    hdrs = ["model_converter.h"],
+    deps = ["@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:model_converter"],
 )
 
 cc_library(
@@ -150,24 +166,14 @@ cc_library(
 
 cc_library(
     name = "optimized_decoder",
-    srcs = [
-        "optimized_decoder.cc",
-    ],
-    hdrs = [
-        "optimized_decoder.h",
-    ],
-    deps = [
-        "config",
-        ":decoder_config",
-        ":double_array_trie",
-    ],
+    hdrs = ["optimized_decoder.h"],
+    deps = ["@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:optimized_decoder"],
 )
 
 cc_library(
     name = "sentencepiece_tokenizer_h",
-    hdrs = [
-        "sentencepiece_tokenizer.h",
-    ],
+    hdrs = ["sentencepiece_tokenizer.h"],
+    deps = ["@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:sentencepiece_tokenizer_h"],
 )
 
 cc_library(
@@ -177,192 +183,8 @@ cc_library(
     ],
 )
 
-tf_cc_library(
-    name = "sentencepiece_tokenizer_kernel",
-    srcs = ["sentencepiece_tokenizer_kernel.cc"],
-    tf_deps = [
-        # tf:lib tensorflow dep,
-        # tf:framework tensorflow dep,
-    ],
-    deps = [
-        ":optimized_encoder",
-        ":sentencepiece_tokenizer_h",
-    ],
-)
-
-tf_cc_library(
-    name = "sentencepiece_detokenizer_kernel",
-    srcs = ["sentencepiece_detokenizer_kernel.cc"],
-    tf_deps = [
-        # tf:lib tensorflow dep,
-        # tf:framework tensorflow dep,
-    ],
-    deps = [
-        ":optimized_decoder",
-        ":sentencepiece_detokenizer_h",
-        "@com_google_absl//absl/status",
-    ],
-)
-
-tflite_cc_library(
-    name = "sentencepiece_tokenizer_tflite",
-    srcs = ["sentencepiece_tokenizer_tflite.cc"],
-    deps =
-        [
-            ":optimized_encoder",
-            ":sentencepiece_tokenizer_h",
-            "@flatbuffers",
-            # lite:framework tensorflow dep,
-            # lite:string_util tensorflow dep,
-            # lite/c:common tensorflow dep,
-            # lite/kernels:kernel_util tensorflow dep,
-            # lite/kernels/internal:tensor tensorflow dep,
-        ],
-)
-
-tflite_cc_library(
-    name = "sentencepiece_detokenizer_tflite",
-    srcs = ["sentencepiece_detokenizer_tflite.cc"],
-    deps =
-        [
-            ":optimized_decoder",
-            ":sentencepiece_detokenizer_h",
-            "@flatbuffers",
-            # lite:framework tensorflow dep,
-            # lite:string_util tensorflow dep,
-            # lite/c:common tensorflow dep,
-            # lite/kernels:kernel_util tensorflow dep,
-            # lite/kernels/internal:tensor tensorflow dep,
-        ],
-)
-
-cc_test(
-    name = "optimized_encoder_test",
-    srcs = [
-        "optimized_encoder_test.cc",
-    ],
-    data = [
-        ":testdata",
-    ],
-    deps = [
-        ":double_array_trie_builder",
-        ":encoder_config",
-        ":model_converter",
-        ":optimized_encoder",
-        "//file/base:path",
-        "//file/localfile",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings:str_format",
-        "@com_google_sentencepiece//:sentencepiece_cc_proto",
-        "@com_google_sentencepiece//:sentencepiece_processor",
-        # tf:lib tensorflow dep,
-        # lite/kernels:test_util tensorflow dep,
-    ],
-)
-
-cc_test(
-    name = "optimized_decoder_test",
-    srcs = [
-        "optimized_decoder_test.cc",
-    ],
-    data = [
-        ":testdata",
-    ],
-    deps = [
-        ":model_converter",
-        ":optimized_decoder",
-        "//file/base:path",
-        "//file/localfile",
-        "@com_google_googletest//:gtest_main",
-        "@com_google_absl//absl/strings:str_format",
-        "@com_google_sentencepiece//:sentencepiece_cc_proto",
-        "@com_google_sentencepiece//:sentencepiece_processor",
-        # tf:lib tensorflow dep,
-        # lite/kernels:test_util tensorflow dep,
-    ],
-)
-
-tflite_cc_library(
+cc_library(
     name = "py_tflite_registerer",
-    srcs = ["py_tflite_registerer.cc"],
     hdrs = ["py_tflite_registerer.h"],
-    deps = [
-        ":sentencepiece_detokenizer_tflite",
-        ":sentencepiece_tokenizer_tflite",
-        # lite:framework tensorflow dep,
-        # lite/kernels:builtin_ops tensorflow dep,
-    ],
-    alwayslink = 1,
-)
-
-config_setting(
-    name = "armeabi_v7a_and_fastbuild",
-    constraint_values = ["//third_party/bazel_platforms/cpu:armv7"],
-    values = {
-        "compilation_mode": "fastbuild",
-    },
-    visibility = ["//visibility:public"],
-)
-
-config_setting(
-    name = "armeabi_v7a_and_dbg",
-    constraint_values = ["//third_party/bazel_platforms/cpu:armv7"],
-    values = {
-        "compilation_mode": "dbg",
-    },
-    visibility = ["//visibility:public"],
-)
-
-config_setting(
-    name = "android",
-    values = {"crosstool_top": "//external:android/crosstool"},
-    visibility = ["//visibility:public"],
-)
-
-config_setting(
-    name = "macos_i386",
-    values = {
-        "apple_platform_type": "macos",
-        "cpu": "darwin",
-    },
-    visibility = ["//visibility:public"],
-)
-
-config_setting(
-    name = "macos_x86_64",
-    values = {
-        "apple_platform_type": "macos",
-        "cpu": "darwin_x86_64",
-    },
-    visibility = ["//visibility:public"],
-)
-
-alias(
-    name = "macos",
-    actual = select({
-        ":macos_i386": ":macos_i386",
-        ":macos_x86_64": ":macos_x86_64",
-        "//conditions:default": ":macos_i386",  # Arbitrarily chosen from above.
-    }),
-    visibility = ["//visibility:public"],
-)
-
-config_setting(
-    name = "ios",
-    values = {
-        "crosstool_top": "@bazel_tools//tools/cpp:toolchain",
-        "apple_platform_type": "ios",
-    },
-    visibility = ["//visibility:public"],
-)
-
-alias(
-    name = "apple",
-    actual = select({
-        ":macos": ":macos",
-        ":ios": ":ios",
-        "//conditions:default": ":ios",  # Arbitrarily chosen from above.
-    }),
-    visibility = ["//visibility:public"],
+    deps = ["@org_tensorflow//tensorflow/core/kernels/text/sentencepiece:py_tflite_registerer"],
 )

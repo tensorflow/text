@@ -15,19 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_TFLITE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_TFLITE_H_
 
-#include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/mutable_op_resolver.h"
-
-namespace tflite {
-namespace ops {
-namespace custom {
-namespace text {
-
-extern "C" void AddSentenceFragmenterV2(::tflite::MutableOpResolver* resolver);
-
-}  // namespace text
-}  // namespace custom
-}  // namespace ops
-}  // namespace tflite
+#include "tensorflow/core/kernels/text/sentence_fragmenter_v2_tflite.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_TFLITE_H_

@@ -12,16 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "tensorflow_text/core/kernels/whitespace_tokenizer_kernel.h"
+#ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_MODEL_GENERATED_H_
+#define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_MODEL_GENERATED_H_
 
-#include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/kernels/text/fast_wordpiece_tokenizer_model_generated.h"
 
-namespace tensorflow {
-namespace text {
-
-REGISTER_KERNEL_BUILDER(Name(WhitespaceTokenizeWithOffsetsV2OpKernel::OpName())
-                            .Device(tensorflow::DEVICE_CPU),
-                        WhitespaceTokenizeWithOffsetsV2OpKernel);
-
-}  // namespace text
-}  // namespace tensorflow
+#endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_MODEL_GENERATED_H_
