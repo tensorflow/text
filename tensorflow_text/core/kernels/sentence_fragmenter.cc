@@ -30,7 +30,7 @@ void SetFragmentProperty(SentenceFragment::Property property,
 }
 
 // Returns true iff a token has any of the given properties.
-bool TokenHasProperty(uint32 properties, const Token &token) {
+bool TokenHasProperty(uint32_t properties, const Token& token) {
   return token.text_properties() & properties;
 }
 

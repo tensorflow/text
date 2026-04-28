@@ -96,8 +96,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // The third sequence's highest score is 0, which is ok.
 
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -142,8 +142,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // The third sequence's highest score is 0, which is ok.
 
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -183,8 +183,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
 
   // The sequence's highest score is 2, but OUT->2 is not ok, so it's 1.
   // Validate the output.
-  std::vector<int32> expected_transitions({1});
-  std::vector<int64> expected_offsets({0, 1});
+  std::vector<int32_t> expected_transitions({1});
+  std::vector<int64_t> expected_offsets({0, 1});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -228,8 +228,8 @@ TEST_F(LogGreedyConstrainedSequenceTest, int64inint32out) {
   // The third sequence's highest score is 0, which is ok.
   // Validate the output.
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -274,8 +274,8 @@ TEST_F(LogGreedyConstrainedSequenceTest, TwoDimensionalSequenceLengths) {
   // The third sequence's highest score is 0, which is ok.
 
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -321,8 +321,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // The second sequence's highest score is 3, OUT->3 is OK and 3->OUT is OK.
   // The third sequence's highest score is 0, OUT->0 is OK and 0->OUT is OK.
   // Validate the output.
-  std::vector<int32> expected_transitions({0, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({0, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -364,8 +364,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // 2: {1.1, 9.5, 11.5, 6.0}   (max is 2)
   // 3: {100.1, 24.5, 3.5, 5.0} (max is 0)
   // Validate the output.
-  std::vector<int32> expected_transitions({0, 2, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({0, 2, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -407,8 +407,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // 2: {1.1, 9.5, 11.5, 6.0}   (max is 2)
   // 3: {100.1, 24.5, 3.5, 5.0} (max is 0)
   // Validate the output.
-  std::vector<int32> expected_transitions({0, 2, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({0, 2, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -451,8 +451,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // 2: {1.1, 9.5, 11.5, 6.0}   (max is 2)
   // 3: {100.1, 24.5, 3.5, 5.0} (max is 0)
   // Validate the output.
-  std::vector<int32> expected_transitions({0, 2, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({0, 2, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -502,8 +502,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // 2: {1.1, 9.5, 11.5, 6.0}   (max is 2, but 2->NUL is not OK, so 1.)
   // 3: {100.1, 24.5, 3.5, 5.0} (max is 0, but NUL->0 is not OK, so 1.)
   // Validate the output.
-  std::vector<int32> expected_transitions({3, 1, 1});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({3, 1, 1});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -565,8 +565,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // 0. 3: In state 0, so use row 0 in the weight tensor. Weights are
   // {1.5, 11.5, 1.5, 11}; 0->1 is OK but 1->OUT is not, so 3.
 
-  std::vector<int32> expected_transitions({2, 2, 2, 0, 1, 3});
-  std::vector<int64> expected_offsets({0, 2, 4, 6});
+  std::vector<int32_t> expected_transitions({2, 2, 2, 0, 1, 3});
+  std::vector<int64_t> expected_offsets({0, 2, 4, 6});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -626,8 +626,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
   // 3: In state 0, so use row 0 in the weight tensor.
   // Weights are {1.5, 11.5, 1.5, 11}; 0->1 is OK but 1->OUT is not, so 3.
 
-  std::vector<int32> expected_transitions({2, 2, 2, 1, 3});
-  std::vector<int64> expected_offsets({0, 2, 3, 5});
+  std::vector<int32_t> expected_transitions({2, 2, 2, 1, 3});
+  std::vector<int64_t> expected_offsets({0, 2, 3, 5});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -667,8 +667,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
 
   TF_ASSERT_OK(RunOpKernel());
 
-  std::vector<int32> expected_transitions({3, 0, 1});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({3, 0, 1});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -708,8 +708,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
 
   // Because all weights are zero, the max values should be the max of the
   // scores.
-  std::vector<int32> expected_transitions({0, 2, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({0, 2, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -753,8 +753,8 @@ TEST_F(LogGreedyConstrainedSequenceTest,
 
   // Validate the output.
 
-  std::vector<int32> expected_transitions({-1, -1, -1, -1, -1, -1});
-  std::vector<int64> expected_offsets({0, 2, 4, 6});
+  std::vector<int32_t> expected_transitions({-1, -1, -1, -1, -1, -1});
+  std::vector<int64_t> expected_offsets({0, 2, 4, 6});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));

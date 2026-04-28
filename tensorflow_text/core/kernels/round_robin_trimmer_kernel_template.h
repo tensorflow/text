@@ -147,7 +147,7 @@ template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
 absl::Status RoundRobinTrimOp<Rt, T, Tsplits>::Invoke(InvokeContext* context) {
   // Inputs
   SH_ASSIGN_OR_RETURN(const auto msl, context->GetInput(kMaxSeqLength));
-  const int max_sequence_length = msl->template AsScalar<tensorflow::int32>();
+  const int max_sequence_length = msl->template AsScalar<int32_t>();
 
   std::vector<absl::Span<T>> list_of_values(number_of_segments_);
   std::vector<absl::Span<Tsplits>> list_of_splits(number_of_segments_);
@@ -295,7 +295,7 @@ absl::Status RoundRobinGenerateMasksOp<Rt, T, Tsplits>::Invoke(
     InvokeContext* context) {
   // Inputs
   SH_ASSIGN_OR_RETURN(const auto msl, context->GetInput(kMaxSeqLength));
-  const int max_sequence_length = msl->template AsScalar<tensorflow::int32>();
+  const int max_sequence_length = msl->template AsScalar<int32_t>();
 
   std::vector<absl::Span<Tsplits>> list_of_splits(number_of_segments_);
   for (int i = 0; i < number_of_segments_; ++i) {

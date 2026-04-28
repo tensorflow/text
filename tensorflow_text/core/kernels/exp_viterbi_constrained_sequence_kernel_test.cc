@@ -96,8 +96,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // The third sequence's highest score is 0, which is ok.
 
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -142,8 +142,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // The third sequence's highest score is 0, which is ok.
 
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -183,8 +183,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
 
   // The sequence's highest score is 2, but OUT->2 is not ok, so it's 1.
   // Validate the output.
-  std::vector<int32> expected_transitions({1});
-  std::vector<int64> expected_offsets({0, 1});
+  std::vector<int32_t> expected_transitions({1});
+  std::vector<int64_t> expected_offsets({0, 1});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -228,8 +228,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest, int64inint32out) {
   // The third sequence's highest score is 0, which is ok.
   // Validate the output.
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -274,8 +274,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest, TwoDimensionalSequenceLengths) {
   // The third sequence's highest score is 0, which is ok.
 
   // Validate the output.
-  std::vector<int32> expected_transitions({1, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({1, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -321,8 +321,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // The second sequence's highest score is 3, OUT->3 is OK and 3->OUT is OK.
   // The third sequence's highest score is 0, OUT->0 is OK and 0->OUT is OK.
   // Validate the output.
-  std::vector<int32> expected_transitions({0, 3, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({0, 3, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -364,8 +364,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // 2: {0.1, 4.5, 5.5, 5.0}   (max is 2)
   // 3: {10.0, 12.0, 1.5, 4.0} (max is 1)
   // Validate the output.
-  std::vector<int32> expected_transitions({3, 2, 1});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({3, 2, 1});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -407,8 +407,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // 2: {0.1, 4.5, 5.5, 5.0}   (max is 2)
   // 3: {10.0, 12.0, 1.5, 4.0} (max is 1)
   // Validate the output.
-  std::vector<int32> expected_transitions({3, 2, 1});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({3, 2, 1});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -451,8 +451,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // 2: {0.1, 4.5, 5.5, 0.5}   (max is 2)
   // 3: {10.0, 12.0, 1.5, 0.4} (max is 1)
   // Validate the output.
-  std::vector<int32> expected_transitions({2, 2, 1});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({2, 2, 1});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -505,8 +505,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // 2: {.5, 4.5, 5.5, 2.5}   (max is 2)
   // 3: {50.0, 12.0, 1.5,2.0} (max is 0)
   // Validate the output.
-  std::vector<int32> expected_transitions({0, 2, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({0, 2, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -556,8 +556,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // 2: {0.1, 4.5, 5.5, 5.0}   (max is 2). OUT->2 is OK.
   // 3: {10.0, 12.0, 1.5, 4.0} (max is 1). OUT->1 is not OK, so go with 0.
   // Note that X->OUT is set to always be OK here.
-  std::vector<int32> expected_transitions({3, 2, 0});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({3, 2, 0});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -646,8 +646,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   //  1->OUT is not valid, so final scores are [5, 0, 5, 50] for a final
   //  state of 3 and a sequence of [0, 3].
 
-  std::vector<int32> expected_transitions({3, 2, 3, 3, 0, 3});
-  std::vector<int64> expected_offsets({0, 2, 4, 6});
+  std::vector<int32_t> expected_transitions({3, 2, 3, 3, 0, 3});
+  std::vector<int64_t> expected_offsets({0, 2, 4, 6});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -729,8 +729,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   //  1->OUT is not valid, so final scores are [5, 0, 5, 50] for a final
   //  state of 3 and a sequence of [0, 3].
 
-  std::vector<int32> expected_transitions({3, 2, 2, 0, 3});
-  std::vector<int64> expected_offsets({0, 2, 3, 5});
+  std::vector<int32_t> expected_transitions({3, 2, 2, 0, 3});
+  std::vector<int64_t> expected_offsets({0, 2, 3, 5});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -771,8 +771,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
   // In the case of a tie between weights, the higher state number wins;
   // if all weights are zero, the states should all be 3.
 
-  std::vector<int32> expected_transitions({3, 3, 3});
-  std::vector<int64> expected_offsets({0, 1, 2, 3});
+  std::vector<int32_t> expected_transitions({3, 3, 3});
+  std::vector<int64_t> expected_offsets({0, 1, 2, 3});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -816,8 +816,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest,
 
   // Validate the output.
 
-  std::vector<int32> expected_transitions({-1, -1, -1, -1, -1, -1});
-  std::vector<int64> expected_offsets({0, 2, 4, 6});
+  std::vector<int32_t> expected_transitions({-1, -1, -1, -1, -1, -1});
+  std::vector<int64_t> expected_offsets({0, 2, 4, 6});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));
@@ -899,8 +899,8 @@ TEST_F(ExpViterbiConstrainedSequenceTest, OutputsInt32RaggedTensor) {
 
   TF_ASSERT_OK(RunOpKernel());
 
-  std::vector<int32> expected_transitions({3, 2, 2, 0, 3});
-  std::vector<int64> expected_offsets({0, 2, 3, 5});
+  std::vector<int32_t> expected_transitions({3, 2, 2, 0, 3});
+  std::vector<int64_t> expected_offsets({0, 2, 3, 5});
 
   // Validate the output.
   EXPECT_THAT(*GetOutput(0), VectorEq(expected_transitions));

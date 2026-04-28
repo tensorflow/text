@@ -35,13 +35,12 @@ absl::Status UnicodeUtil::GetOneUChar(const absl::string_view& input,
   const char* source = input.data();
   const char* limit = input.data() + input.length();
   if (!converter_) {
-    return tensorflow::errors::Internal(
-        absl::StrCat("Converter has not been initialized!"));
+    return absl::InternalError("Converter has not been initialized!");
   }
   *result = ucnv_getNextUChar(converter_, &source, limit, &status);
 
   if (U_FAILURE(status)) {
-    return tensorflow::errors::Internal(
+    return absl::InternalError(
         absl::StrCat("Failed to decode string, error status=", status));
   }
 

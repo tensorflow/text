@@ -35,40 +35,41 @@ namespace text {
 using ::testing::Contains;
 
 // Returns the random seed, or 0 for a weak random seed.
-int64 GetSeed() { return absl::GetFlag(FLAGS_seed); }
+int64_t GetSeed() { return absl::GetFlag(FLAGS_seed); }
 
 // Returns the number of trials to run for each random comparison.
-int64 GetNumTrials() { return absl::GetFlag(FLAGS_num_trials); }
+int64_t GetNumTrials() { return absl::GetFlag(FLAGS_num_trials); }
 
 // Testing rig.  Runs a comparison between a brute-force MST solver and the
 // MstSolver<> on random digraphs.  When the first test parameter is true,
 // solves for forests instead of trees.  The second test parameter defines the
 // size of the test digraph.
 class MstSolverRandomComparisonTest
-    : public ::testing::TestWithParam<::testing::tuple<bool, uint32>> {
+    : public ::testing::TestWithParam<::testing::tuple<bool, uint32_t>> {
  protected:
   // Use integer scores so score comparisons are exact.
-  using Solver = MstSolver<uint32, int32>;
+  using Solver = MstSolver<uint32_t, int32_t>;
 
   // An array providing a source node for each node.  Roots are self-loops.
   using SourceList = SpanningTreeIterator::SourceList;
 
   // A row-major n x n matrix whose i,j entry gives the score of the arc from i
   // to j, and whose i,i entry gives the score of selecting i as a root.
-  using ScoreMatrix = std::vector<int32>;
+  using ScoreMatrix = std::vector<int32_t>;
 
   // Returns true if this should be a forest.
   bool forest() const { return ::testing::get<0>(GetParam()); }
 
   // Returns the number of nodes for digraphs.
-  uint32 num_nodes() const { return ::testing::get<1>(GetParam()); }
+  uint32_t num_nodes() const { return ::testing::get<1>(GetParam()); }
 
   // Returns the score of the arcs in |sources| based on the |scores|.
-  int32 ScoreArcs(const ScoreMatrix &scores, const SourceList &sources) const {
+  int32_t ScoreArcs(const ScoreMatrix& scores,
+                    const SourceList& sources) const {
     CHECK_EQ(num_nodes() * num_nodes(), scores.size());
-    int32 score = 0;
-    for (uint32 target = 0; target < num_nodes(); ++target) {
-      const uint32 source = sources[target];
+    int32_t score = 0;
+    for (uint32_t target = 0; target < num_nodes(); ++target) {
+      const uint32_t source = sources[target];
       score += scores[target + source * num_nodes()];
     }
     return score;
@@ -77,14 +78,14 @@ class MstSolverRandomComparisonTest
   // Returns the score of the maximum spanning tree (or forest, if the first
   // test parameter is true) of the dense digraph defined by the |scores|, and
   // sets |argmax_trees| to contain all maximal trees.
-  int32 RunBruteForceMstSolver(const ScoreMatrix &scores,
-                               std::set<SourceList> *argmax_trees) {
+  int32_t RunBruteForceMstSolver(const ScoreMatrix& scores,
+                                 std::set<SourceList>* argmax_trees) {
     CHECK_EQ(num_nodes() * num_nodes(), scores.size());
-    int32 max_score;
+    int32_t max_score;
     argmax_trees->clear();
 
-    iterator_.ForEachTree(num_nodes(), [&](const SourceList &sources) {
-      const int32 score = ScoreArcs(scores, sources);
+    iterator_.ForEachTree(num_nodes(), [&](const SourceList& sources) {
+      const int32_t score = ScoreArcs(scores, sources);
       if (argmax_trees->empty() || max_score < score) {
         max_score = score;
         argmax_trees->clear();
@@ -98,14 +99,14 @@ class MstSolverRandomComparisonTest
   }
 
   // As above, but uses the |solver_| and extracts only one |argmax_tree|.
-  int32 RunMstSolver(const ScoreMatrix &scores, SourceList *argmax_tree) {
+  int32_t RunMstSolver(const ScoreMatrix& scores, SourceList* argmax_tree) {
     CHECK_EQ(num_nodes() * num_nodes(), scores.size());
     TF_CHECK_OK(solver_.Init(forest(), num_nodes()));
 
     // Add all roots and arcs.
-    for (uint32 source = 0; source < num_nodes(); ++source) {
-      for (uint32 target = 0; target < num_nodes(); ++target) {
-        const int32 score = scores[target + source * num_nodes()];
+    for (uint32_t source = 0; source < num_nodes(); ++source) {
+      for (uint32_t target = 0; target < num_nodes(); ++target) {
+        const int32_t score = scores[target + source * num_nodes()];
         if (source == target) {
           solver_.AddRoot(target, score);
         } else {
@@ -123,7 +124,8 @@ class MstSolverRandomComparisonTest
   // Returns a random ScoreMatrix spanning num_nodes() nodes.
   ScoreMatrix RandomScores() {
     ScoreMatrix scores(num_nodes() * num_nodes());
-    for (int32 &value : scores) value = static_cast<int32>(prng_() % 201) - 100;
+    for (int32_t& value : scores)
+      value = static_cast<int32_t>(prng_() % 201) - 100;
     return scores;
   }
 
@@ -132,7 +134,7 @@ class MstSolverRandomComparisonTest
   void RunComparison() {
     // Seed the PRNG, possibly non-deterministically.  Log the seed value so the
     // test results can be reproduced, even when the seed is non-deterministic.
-    uint32 seed = GetSeed();
+    uint32_t seed = GetSeed();
     if (seed == 0) seed = time(nullptr);
     prng_.seed(seed);
     LOG(INFO) << "seed = " << seed;
@@ -142,11 +144,12 @@ class MstSolverRandomComparisonTest
       const ScoreMatrix scores = RandomScores();
 
       std::set<SourceList> expected_argmax_trees;
-      const int32 expected_max_score =
+      const int32_t expected_max_score =
           RunBruteForceMstSolver(scores, &expected_argmax_trees);
 
       SourceList actual_argmax_tree;
-      const int32 actual_max_score = RunMstSolver(scores, &actual_argmax_tree);
+      const int32_t actual_max_score =
+          RunMstSolver(scores, &actual_argmax_tree);
 
       // In case of ties, MstSolver will find a maximal spanning tree, but we
       // don't know which one.
@@ -168,7 +171,7 @@ class MstSolverRandomComparisonTest
 
 INSTANTIATE_TEST_SUITE_P(AllowForest, MstSolverRandomComparisonTest,
                          ::testing::Combine(::testing::Bool(),
-                                            ::testing::Range<uint32>(1, 9)));
+                                            ::testing::Range<uint32_t>(1, 9)));
 
 TEST_P(MstSolverRandomComparisonTest, Comparison) { RunComparison(); }
 

@@ -47,7 +47,7 @@ class WrappedConverter {
     }
   }
 
-  void init(const string& name) {
+  void init(const std::string& name) {
     if (converter_ && name == name_) {
       // Note: this reset is not typically needed, but if not done, then in some
       // cases the cached converter will maintain state of input endianness
@@ -75,7 +75,7 @@ class WrappedConverter {
   }
 
   UConverter* converter_ = nullptr;
-  string name_;
+  std::string name_;
 };
 
 struct ErrorOptions {
@@ -88,7 +88,7 @@ struct ErrorOptions {
 absl::Status GetErrorOptions(OpKernelConstruction* context, ErrorOptions* out) {
   *out = ErrorOptions();
 
-  string error_policy;
+  std::string error_policy;
   TF_RETURN_IF_ERROR(context->GetAttr("errors", &error_policy));
 
   if (error_policy == "replace") {
@@ -98,18 +98,19 @@ absl::Status GetErrorOptions(OpKernelConstruction* context, ErrorOptions* out) {
   } else if (error_policy == "strict") {
     out->error_on_malformatting = true;
   } else {
-    return InvalidArgument(
+    return absl::InvalidArgumentError(
         "errors policy must be one of 'strict', 'replace', or 'ignore'");
   }
 
-  int32 replacement_char;
+  int32_t replacement_char;
   TF_RETURN_IF_ERROR(context->GetAttr("replacement_char", &replacement_char));
 
   if (replacement_char >= UCHAR_MIN_VALUE &&
       replacement_char <= UCHAR_MAX_VALUE) {
     out->subst = replacement_char;
   } else {
-    return InvalidArgument("replacement_char out of unicode codepoint range");
+    return absl::InvalidArgumentError(
+        "replacement_char out of unicode codepoint range");
   }
 
   if (context->HasAttr("replace_control_characters")) {
@@ -141,10 +142,10 @@ class SentenceFragmentsOp : public OpKernel {
     std::unique_ptr<WrappedConverter> input_encoder =
         std::make_unique<WrappedConverter>();
     input_encoder->init(input_encoding_);
-    OP_REQUIRES(
-        context, input_encoder->converter_,
-        InvalidArgument("Could not create converter for input encoding: " +
-                        input_encoding_));
+    OP_REQUIRES(context, input_encoder->converter_,
+                absl::InvalidArgumentError(
+                    "Could not create converter for input encoding: " +
+                    input_encoding_));
   }
 
   void Compute(::tensorflow::OpKernelContext* context) override {
@@ -157,11 +158,11 @@ class SentenceFragmentsOp : public OpKernel {
                                name##_tensor->shape().DebugString())));       \
   const auto& name = name##_tensor->vec<dtype>();
 
-    DECLARE_AND_VALIDATE_INPUT_VECTOR(row_lengths, int64);
-    DECLARE_AND_VALIDATE_INPUT_VECTOR(token_start, int64);
-    DECLARE_AND_VALIDATE_INPUT_VECTOR(token_end, int64);
+    DECLARE_AND_VALIDATE_INPUT_VECTOR(row_lengths, int64_t);
+    DECLARE_AND_VALIDATE_INPUT_VECTOR(token_start, int64_t);
+    DECLARE_AND_VALIDATE_INPUT_VECTOR(token_end, int64_t);
     DECLARE_AND_VALIDATE_INPUT_VECTOR(token_word, tstring);
-    DECLARE_AND_VALIDATE_INPUT_VECTOR(token_properties, int64);
+    DECLARE_AND_VALIDATE_INPUT_VECTOR(token_properties, int64_t);
 
 #undef DECLARE_AND_VALIDATE_INPUT_TENSOR
 
@@ -170,10 +171,10 @@ class SentenceFragmentsOp : public OpKernel {
       input_encoder = std::make_unique<WrappedConverter>();
     }
     input_encoder->init(input_encoding_);
-    OP_REQUIRES(
-        context, input_encoder->converter_,
-        InvalidArgument("Could not create converter for input encoding: " +
-                        input_encoding_));
+    OP_REQUIRES(context, input_encoder->converter_,
+                absl::InvalidArgumentError(
+                    "Could not create converter for input encoding: " +
+                    input_encoding_));
 
     UConverter* converter = input_encoder->converter_;
     UnicodeUtil util(converter);
@@ -186,7 +187,7 @@ class SentenceFragmentsOp : public OpKernel {
                 num_elements == token_start.size() &&
                     token_start.size() == token_end.size() &&
                     token_end.size() == token_word.size(),
-                InvalidArgument(absl::StrCat(
+                absl::InvalidArgumentError(absl::StrCat(
                     "num_elements(", num_elements, "), token_start(",
                     token_start.size(), "), token_end(", token_end.size(),
                     "), token_word(", token_word.size(),
@@ -216,10 +217,10 @@ class SentenceFragmentsOp : public OpKernel {
       fragments.push_back(std::move(frags));
     }
 
-    std::vector<int64> fragment_shape;
+    std::vector<int64_t> fragment_shape;
     fragment_shape.push_back(num_fragments);
 
-    std::vector<int64> doc_batch_shape;
+    std::vector<int64_t> doc_batch_shape;
     doc_batch_shape.push_back(fragments.size());
 
 #define DECLARE_OUTPUT_TENSOR(name, out_shape)                                 \
@@ -256,7 +257,7 @@ class SentenceFragmentsOp : public OpKernel {
   }
 
  private:
-  string input_encoding_;
+  std::string input_encoding_;
   ErrorOptions error_options_;
 };
 

@@ -62,10 +62,10 @@ class DisjointSetForestTest : public ::testing::Test {
 };
 
 using Forests = ::testing::Types<
-    DisjointSetForest<uint8, false>, DisjointSetForest<uint8, true>,
-    DisjointSetForest<uint16, false>, DisjointSetForest<uint16, true>,
-    DisjointSetForest<uint32, false>, DisjointSetForest<uint32, true>,
-    DisjointSetForest<uint64, false>, DisjointSetForest<uint64, true>>;
+    DisjointSetForest<uint8_t, false>, DisjointSetForest<uint8_t, true>,
+    DisjointSetForest<uint16_t, false>, DisjointSetForest<uint16_t, true>,
+    DisjointSetForest<uint32_t, false>, DisjointSetForest<uint32_t, true>,
+    DisjointSetForest<uint64_t, false>, DisjointSetForest<uint64_t, true>>;
 TYPED_TEST_SUITE(DisjointSetForestTest, Forests);
 
 TYPED_TEST(DisjointSetForestTest, DefaultEmpty) {
@@ -111,12 +111,13 @@ TYPED_TEST(DisjointSetForestTest, Populated) {
 // merged set can be controlled.
 class DisjointSetForestNoUnionByRankTest : public ::testing::Test {
  protected:
-  using Forest = DisjointSetForest<uint32, false>;
+  using Forest = DisjointSetForest<uint32_t, false>;
 
   // Expects that the roots of the |forest| match |expected_roots|.
-  void ExpectRoots(const std::vector<uint32> &expected_roots, Forest *forest) {
+  void ExpectRoots(const std::vector<uint32_t>& expected_roots,
+                   Forest* forest) {
     ASSERT_EQ(expected_roots.size(), forest->size());
-    for (uint32 i = 0; i < forest->size(); ++i) {
+    for (uint32_t i = 0; i < forest->size(); ++i) {
       EXPECT_EQ(expected_roots[i], forest->FindRoot(i));
     }
   }
