@@ -95,6 +95,9 @@ std::tuple<int, utils::string_view> find_replacement(
     const flatbuffers::Vector<int8_t>& replacements) {
   const auto max_match = dat.LongestPrefixMatch(utils::string_view(data, len));
   if (!max_match.empty()) {
+    if (max_match.id < 0 || max_match.id >= replacements.size()) {
+      return std::make_tuple(0, utils::string_view(nullptr, 0));
+    }
     // Because flatbuffer byte is signed char which is not the same as char,
     // there is the reinterpret_cast here.
     const char* replaced_string_ptr =
@@ -195,6 +198,9 @@ EncoderResult EncodeNormalizedString(const std::string& str,
     }
     auto lattice_update = [&lattice, i,
                            piece_scores](const DoubleArrayTrie::Match& m) {
+      if (m.id < 0 || m.id >= piece_scores->size()) {
+        return;
+      }
       LatticeElement& target_element = lattice[i + m.match_length];
       const float score = lattice[i].score + (*piece_scores)[m.id];
       if (target_element.prev_position < 0 || target_element.score < score) {

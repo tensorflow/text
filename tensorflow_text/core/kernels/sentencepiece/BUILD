@@ -140,7 +140,6 @@ cc_library(
         "optimized_encoder.h",
     ],
     deps = [
-        ":config",
         ":double_array_trie",
         ":encoder_config",
     ],
@@ -198,7 +197,7 @@ tf_cc_library(
     deps = [
         ":optimized_decoder",
         ":sentencepiece_detokenizer_h",
-        # tf/protobuf:error_codes_proto_impl_cc tensorflow dep,
+        "@com_google_absl//absl/status",
     ],
 )
 
