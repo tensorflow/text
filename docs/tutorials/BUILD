@@ -1,5 +1,9 @@
 load("//third_party/py/tensorflow_docs/google:tf_org.bzl", "tf_org_check_links", "tf_org_notebook_test")
 
+package(
+    default_applicable_licenses = ["//tensorflow_text:license"],
+)
+
 licenses(["notice"])
 
 tf_org_check_links(name = "check_links")
