@@ -32,6 +32,7 @@ limitations under the License.
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/platform/errors.h"
+#include "tensorflow/core/framework/op_requires.h"
 #include "tensorflow_text/core/kernels/sentencepiece/optimized_decoder.h"
 #include "tensorflow_text/core/kernels/sentencepiece/sentencepiece_detokenizer.h"
 
@@ -60,6 +61,12 @@ class TFSentencepieceDetokenizerOp : public tensorflow::OpKernel {
     for (int i = 0; i < num_of_sentences; i++) {
       // Create a vector of int32 from input according to spans.
       const int split_size = input_splits_flat(i + 1) - input_splits_flat(i);
+      OP_REQUIRES(
+          ctx,
+          split_size >= 0 &&
+              (input_offset + split_size) <= input_values_flat.size(),
+          errors::InvalidArgument("input_splits must be monotonically "
+                                  "non-decreasing and within bounds."));
       codes_for_split.clear();
       codes_for_split.reserve(split_size);
       for (int j = 0; j < split_size; ++j) {

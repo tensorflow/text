@@ -85,6 +85,12 @@ TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
   for (int i = 0; i < num_of_sentences; i++) {
     // Create a vector of int32 from input according to spans.
     const int split_size = input_splits_data[i + 1] - input_splits_data[i];
+    TF_LITE_ENSURE_MSG(
+        context,
+        split_size >= 0 &&
+            (input_offset + split_size) <= NumElements(input_encoded.dims),
+        "input_splits must be monotonically non-decreasing and "
+        "within bounds.");
     codes_for_split.clear();
     std::copy(input_encoded_data + input_offset,
               input_encoded_data + input_offset + split_size,

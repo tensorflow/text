@@ -9,7 +9,10 @@ load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
 licenses(["notice"])
 
 # Visibility rules
-package(default_visibility = ["//visibility:public"])
+package(
+    default_applicable_licenses = ["//tensorflow_text:license"],
+    default_visibility = ["//visibility:public"],
+)
 
 filegroup(
     name = "testdata",
@@ -140,7 +143,6 @@ cc_library(
         "optimized_encoder.h",
     ],
     deps = [
-        ":config",
         ":double_array_trie",
         ":encoder_config",
     ],
@@ -198,7 +200,7 @@ tf_cc_library(
     deps = [
         ":optimized_decoder",
         ":sentencepiece_detokenizer_h",
-        # tf/protobuf:error_codes_proto_impl_cc tensorflow dep,
+        "@com_google_absl//absl/status",
     ],
 )
 

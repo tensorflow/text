@@ -4,7 +4,10 @@ load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 licenses(["notice"])
 
-package(default_visibility = ["//visibility:private"])
+package(
+    default_applicable_licenses = ["//tensorflow_text:license"],
+    default_visibility = ["//visibility:private"],
+)
 
 exports_files(glob(["*.cc"]))
 

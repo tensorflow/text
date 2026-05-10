@@ -5,6 +5,7 @@ load("//tensorflow_text:tftext.bzl", "if_pywrap")
 licenses(["notice"])
 
 package(
+    default_applicable_licenses = ["//tensorflow_text:license"],
     default_visibility = [
         "//tensorflow_text:__subpackages__",
     ],

@@ -5,11 +5,14 @@ load("//tensorflow_text:tftext.bzl", "if_pywrap", "pybind_extension", "pywrap_bi
 
 licenses(["notice"])
 
-package(default_visibility = [
-    "//nlp/sage/nlu/features/python:__pkg__",
-    "//nlp/semantic_parsing/learning/neural/portable/tools/release:__pkg__",
-    "//tensorflow_text:__subpackages__",
-])
+package(
+    default_applicable_licenses = ["//tensorflow_text:license"],
+    default_visibility = [
+        "//nlp/sage/nlu/features/python:__pkg__",
+        "//nlp/semantic_parsing/learning/neural/portable/tools/release:__pkg__",
+        "//tensorflow_text:__subpackages__",
+    ],
+)
 
 pybind_extension(
     name = "tflite_registrar",
