@@ -214,6 +214,7 @@ tf_cc_library(
         "@com_google_absl//absl/memory",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
         "@icu//:common",
         # lite/kernels/shim:status_macros tensorflow dep,
     ],
@@ -350,7 +351,10 @@ cc_library(
         "darts_clone_trie_wrapper.h",
     ],
     deps = [
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -362,6 +366,7 @@ cc_test(
         ":darts_clone_trie_builder",
         ":darts_clone_trie_wrapper",
         "@com_google_absl//absl/status",
+        "@com_google_absl//absl/types:span",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -398,6 +403,7 @@ tf_cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
         "@icu//:nfkc",
         # lite/kernels/shim:status_macros tensorflow dep,
     ],
