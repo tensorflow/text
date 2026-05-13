@@ -30,9 +30,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "absl/types/span.h"
 
 namespace tensorflow {
 namespace text {
@@ -53,14 +51,14 @@ class DartsCloneTrieWrapper {
     uint32_t unit = 0;
   };
 
-  // Constructs an instance by passing in the span of the trie array data.
+  // Constructs an instance by passing in the pointer to the trie array data.
   // The caller needs to make sure that 'trie_array' points to a valid structure
   // returned by darts_clone trie builder. The caller also needs to maintain the
   // availability of 'trie_array' throughout the lifetime of this instance.
   static absl::StatusOr<DartsCloneTrieWrapper> Create(
-      absl::Span<const uint32_t> trie_array) {
-    if (trie_array.empty() || trie_array.data() == nullptr) {
-      return absl::InvalidArgumentError("trie_array is empty or nullptr.");
+      const uint32_t* trie_array) {
+    if (trie_array == nullptr) {
+      return absl::InvalidArgumentError("trie_array is nullptr.");
     }
     return DartsCloneTrieWrapper(trie_array);
   }
@@ -72,18 +70,13 @@ class DartsCloneTrieWrapper {
 
   // Creates a cursor pointing to the 'node_id'.
   TraversalCursor CreateTraversalCursor(uint32_t node_id) {
-    if (node_id >= trie_array_.size()) {
-      return {0, 0};
-    }
     return {node_id, trie_array_[node_id]};
   }
 
   // Sets the cursor to point to 'node_id'.
   void SetTraversalCursor(TraversalCursor& cursor, uint32_t node_id) {
-    if (node_id < trie_array_.size()) {
-      cursor.node_id = node_id;
-      cursor.unit = trie_array_[node_id];
-    }
+    cursor.node_id = node_id;
+    cursor.unit = trie_array_[node_id];
   }
 
   // Traverses one step from 'cursor' following 'ch'. If successful (i.e., there
@@ -91,9 +84,6 @@ class DartsCloneTrieWrapper {
   // Otherwise, does nothing (i.e., 'cursor' is not changed) and returns false.
   bool TryTraverseOneStep(TraversalCursor& cursor, unsigned char ch) const {
     const uint32_t next_node_id = cursor.node_id ^ offset(cursor.unit) ^ ch;
-    if (next_node_id >= trie_array_.size()) {
-      return false;
-    }
     const uint32_t next_node_unit = trie_array_[next_node_id];
     if (label(next_node_unit) != ch) {
       return false;
@@ -118,18 +108,15 @@ class DartsCloneTrieWrapper {
     if (!has_leaf(cursor.unit)) {
       return false;
     }
-    const uint32_t value_node_id = cursor.node_id ^ offset(cursor.unit);
-    if (value_node_id >= trie_array_.size()) {
-      return false;
-    }
-    const uint32_t value_unit = trie_array_[value_node_id];
+    const uint32_t value_unit =
+        trie_array_[cursor.node_id ^ offset(cursor.unit)];
     out_data = value(value_unit);
     return true;
   }
 
  private:
   // Use Create() instead of the constructor.
-  explicit DartsCloneTrieWrapper(absl::Span<const uint32_t> trie_array)
+  explicit DartsCloneTrieWrapper(const uint32_t* trie_array)
       : trie_array_(trie_array) {}
 
   // The actual implementation of TryTraverseSeveralSteps.
@@ -140,9 +127,6 @@ class DartsCloneTrieWrapper {
     for (; size > 0; --size, ++ptr) {
       const unsigned char ch = static_cast<const unsigned char>(*ptr);
       cur_id ^= offset(cur_unit) ^ ch;
-      if (cur_id >= trie_array_.size()) {
-        return false;
-      }
       cur_unit = trie_array_[cur_id];
       if (label(cur_unit) != ch) {
         return false;
@@ -173,8 +157,8 @@ class DartsCloneTrieWrapper {
     return static_cast<int>(unit & 0x7fffffff);
   }
 
-  // The dart trie array represented as a span for bounds awareness.
-  absl::Span<const uint32_t> trie_array_;
+  // The pointer to the darts trie array.
+  const uint32_t* trie_array_;
 };
 
 }  // namespace trie_utils

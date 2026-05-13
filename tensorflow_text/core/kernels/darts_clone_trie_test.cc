@@ -14,7 +14,6 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "absl/types/span.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_builder.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_wrapper.h"
 
@@ -32,7 +31,7 @@ TEST(DartsCloneTrieTest, CreateCursorPointToRootAndTryTraverseOneStep) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array));
+                       DartsCloneTrieWrapper::Create(trie_array.data()));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
   int data;
@@ -57,7 +56,7 @@ TEST(DartsCloneTrieTest, CreateCursorAndTryTraverseSeveralSteps) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array));
+                       DartsCloneTrieWrapper::Create(trie_array.data()));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
   int data;
@@ -77,7 +76,7 @@ TEST(DartsCloneTrieTest, TraversePathNotExisted) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array));
+                       DartsCloneTrieWrapper::Create(trie_array.data()));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
 
@@ -95,7 +94,7 @@ TEST(DartsCloneTrieTest, TraverseOnUtf8Path) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array));
+                       DartsCloneTrieWrapper::Create(trie_array.data()));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
   int data;
@@ -116,7 +115,7 @@ TEST(DartsCloneTrieTest, TraverseOnPartialUtf8Path) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array));
+                       DartsCloneTrieWrapper::Create(trie_array.data()));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
   int data;
@@ -136,7 +135,7 @@ TEST(DartsCloneTrieTest, TraverseOnUtf8PathNotExisted) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array));
+                       DartsCloneTrieWrapper::Create(trie_array.data()));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
 
@@ -182,20 +181,6 @@ TEST(DartsCloneTrieBuildError, NegativeValues) {
   // Create the trie instance.
   ASSERT_THAT(BuildDartsCloneTrie(vocab_tokens, vocab_values),
               StatusIs(util::error::INVALID_ARGUMENT));
-}
-
-TEST(DartsCloneTrieTest, OutOfBoundsAccessIsRejected) {
-  std::vector<std::string> vocab_tokens{"def", "\xe1\xb8\x8aZZ", "Abc"};
-  ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
-                       BuildDartsCloneTrie(vocab_tokens));
-  // Wrap using a constrained span to emulate an out-of-bounds access attempts.
-  auto span = absl::MakeSpan(trie_array.data(), 1);
-  ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(span));
-
-  DartsCloneTrieWrapper::TraversalCursor cursor =
-      trie.CreateTraversalCursorPointToRoot();
-  EXPECT_FALSE(trie.TryTraverseOneStep(cursor, 'd'));
 }
 
 }  // namespace trie_utils

@@ -434,7 +434,7 @@ absl::Status FastWordpieceBuilder::ConstructTrie(
                       trie_utils::BuildDartsCloneTrie(keys, values));
   SH_ASSIGN_OR_RETURN(
       trie_utils::DartsCloneTrieWrapper trie,
-      trie_utils::DartsCloneTrieWrapper::Create(trie_array_));
+      trie_utils::DartsCloneTrieWrapper::Create(trie_array_.data()));
   trie_.emplace(std::move(trie));
 
   if (trie_array_.size() >

@@ -229,7 +229,7 @@ FastBertNormalizerFactory::FastBertNormalizerFactory(
     return;
   }
   auto char_set_recognizer_mapper = FastBertNormalizer::Create(
-      trie_data_, data_for_codepoint_zero_, mapped_value_pool_.data());
+      trie_data_.data(), data_for_codepoint_zero_, mapped_value_pool_.data());
   if (!char_set_recognizer_mapper.ok()) {
     // Should never happen since the same code must have passed the unit tests.
     LOG(ERROR) << "Unexpected error: Failed to initialize "
