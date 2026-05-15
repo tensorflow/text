@@ -12,31 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TENSORFLOW_TEXT_CORE_KERNELS_REGEX_SPLIT_H_
-#define TENSORFLOW_TEXT_CORE_KERNELS_REGEX_SPLIT_H_
+#ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_REGEX_SPLIT_H_
+#define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_REGEX_SPLIT_H_
 
-#include <string>
-#include <vector>
+#include "tensorflow/core/kernels/text/regex_split.h"
 
-#include "absl/strings/string_view.h"
-#include "re2/re2.h"
-
-namespace tensorflow {
-namespace text {
-
-void RegexSplit(absl::string_view input, const RE2& re2, bool include_delimiter,
-                const RE2& include_delim_regex,
-                std::vector<absl::string_view>* tokens,
-                std::vector<long>* begin_offsets,  // NOLINT
-                std::vector<long>* end_offsets);   // NOLINT
-
-void RegexSplit(absl::string_view input, const RE2& re2, bool include_delimiter,
-                const RE2& include_delim_regex,
-                std::vector<absl::string_view>* tokens,
-                std::vector<long long>* begin_offsets,  // NOLINT
-                std::vector<long long>* end_offsets);  // NOLINT
-
-}  // namespace text
-}  // namespace tensorflow
-
-#endif  // TENSORFLOW_TEXT_CORE_KERNELS_REGEX_SPLIT_H_
+#endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_REGEX_SPLIT_H_

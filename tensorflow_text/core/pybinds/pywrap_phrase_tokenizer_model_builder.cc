@@ -17,7 +17,7 @@
 #include <stdexcept>
 
 #include "include/pybind11/pybind11.h"
-#include "tensorflow_text/core/kernels/phrase_tokenizer_model_builder.h"
+#include "tensorflow/core/kernels/text/phrase_tokenizer_model_builder.h"
 
 namespace tensorflow {
 namespace text {
