@@ -15,25 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BYTE_SPLITTER_KERNEL_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BYTE_SPLITTER_KERNEL_H_
 
-#include "tensorflow/lite/kernels/shim/tf_op_shim.h"
-#include "tensorflow_text/core/kernels/byte_splitter_kernel_template.h"
-
-namespace tensorflow {
-namespace text {
-
-class ByteSplitterWithOffsetsOpKernel
-    : public tflite::shim::TfOpKernel<ByteSplitterWithOffsetsOp> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-class ByteSplitByOffsetsOpKernel
-    : public tflite::shim::TfOpKernel<ByteSplitByOffsetsOp> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/byte_splitter_kernel.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BYTE_SPLITTER_KERNEL_H_

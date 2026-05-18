@@ -16,7 +16,7 @@
 
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/stl.h"
-#include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_builder.h"
+#include "tensorflow/core/kernels/text/fast_wordpiece_tokenizer_model_builder.h"
 
 namespace tensorflow {
 namespace text {
