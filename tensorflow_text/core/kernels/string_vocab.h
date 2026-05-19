@@ -33,9 +33,9 @@ class StringVocab : public WordpieceVocab {
   StringVocab(const StringVocab&) = delete;
   StringVocab& operator=(const StringVocab&) = delete;
   LookupStatus Contains(absl::string_view key, bool* value) const override;
-  absl::optional<int> LookupId(absl::string_view key) const;
+  std::optional<int> LookupId(absl::string_view key) const;
   // Returns the key of `vocab_id` or empty if `vocab_id` is not valid.
-  absl::optional<absl::string_view> LookupWord(int vocab_id) const;
+  std::optional<absl::string_view> LookupWord(int vocab_id) const;
   int Size() const { return index_map_.size(); }
 
  private:

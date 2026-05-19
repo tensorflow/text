@@ -71,7 +71,7 @@ absl::Status PhraseBuilder::BuildModel(const std::vector<std::string>& vocab,
   }
 
   // Determine `unk_token_id_`.
-  const absl::optional<int> unk_token_id = vocab_->LookupId(unk_token_);
+  const std::optional<int> unk_token_id = vocab_->LookupId(unk_token_);
   if (!unk_token_id.has_value()) {
     return absl::FailedPreconditionError("Cannot find unk_token in the vocab!");
   }
@@ -93,7 +93,7 @@ absl::StatusOr<std::string> PhraseBuilder::ExportToFlatBuffer() const {
   if (support_detokenization_) {
     vocab_fbs_vector.reserve(vocab_->Size());
     for (int i = 0; i < vocab_->Size(); ++i) {
-      const absl::optional<absl::string_view> word = vocab_->LookupWord(i);
+      const std::optional<absl::string_view> word = vocab_->LookupWord(i);
       if (!word.has_value()) {
         return absl::FailedPreconditionError(
             "Impossible. `token_id` is definitely within the range of vocab "
