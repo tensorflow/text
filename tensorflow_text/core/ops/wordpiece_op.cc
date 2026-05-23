@@ -93,7 +93,7 @@ REGISTER_OP("WordpieceTokenizeWithOffsets")
 absl::Status WordpieceTokenizeWithOffsetsShapeFn(InferenceContext* c) {
   ShapeHandle input_values = c->input(0);
   ShapeHandle vocab_lookup_table = c->input(1);
-  string output_row_partition_type;
+  std::string output_row_partition_type;
   TF_RETURN_IF_ERROR(c->WithRank(input_values, 1, &input_values));
   TF_RETURN_IF_ERROR(c->WithRank(vocab_lookup_table, 0, &vocab_lookup_table));
   TF_RETURN_IF_ERROR(c->GetAttr("output_row_partition_type",
