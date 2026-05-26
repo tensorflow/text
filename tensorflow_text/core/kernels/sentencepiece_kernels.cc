@@ -576,6 +576,9 @@ class SentencepieceDetokenizeOp : public OpKernel {
     const auto input_values_flat = input_values_tensor.flat<T>();
     const Tensor& input_splits_tensor = ctx->input(2);
     const auto input_splits_flat = input_splits_tensor.flat<Tsplits>();
+    OP_REQUIRES(ctx, input_splits_flat.size() > 0,
+                absl::InvalidArgumentError(
+                    "input_splits must have at least 1 element."));
     const int64 num_of_sentences = input_splits_flat.size() - 1;
 
     OP_REQUIRES_OK(ctx, HandleExtraOptions(ctx, sp));
