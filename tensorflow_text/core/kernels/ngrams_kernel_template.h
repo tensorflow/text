@@ -29,14 +29,23 @@ limitations under the License.
 #ifndef TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_KERNEL_TEMPLATE_H_
 #define TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_KERNEL_TEMPLATE_H_
 
+#include <algorithm>
+#include <cstdint>
+#include <cstring>
+#include <string>
+#include <vector>
+
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 #include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
+#include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow/lite/kernels/shim/tensor_view.h"
+#include "tensorflow_text/core/kernels/row_splits_validator.h"
 
 namespace tensorflow {
 namespace text {
@@ -191,6 +200,8 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
                            Shape(input_tensor_row_splits->Shape())));
         const auto input_buffer =
             input_tensor_row_splits->template Data<Tsplits>();
+        SH_RETURN_IF_ERROR(ValidateRowSplits<Tsplits>(
+            absl::MakeConstSpan(input_buffer.data(), input_buffer.size())));
         const auto output_buffer =
             output_tensor_row_splits->template Data<Tsplits>();
         std::memcpy(output_buffer.data(), input_buffer.data(),
@@ -213,6 +224,12 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
 
     const auto input_values_data =
         input_values->template Data<tensorflow::tstring>();
+
+    if (ctx->NumOutputs() != 1) {
+      SH_RETURN_IF_ERROR(ValidateRowSplits<Tsplits>(
+          absl::MakeConstSpan(input_row_splits, n_row_splits),
+          input_values_data.size()));
+    }
 
     // Create ngrams by looping through the innermost input splits.
     std::vector<std::string> buffer;
@@ -247,8 +264,8 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
   }
 
  protected:
-  inline static Shape OutputValuesTensorShape(const Shape& input_values_shape,
-                                              const int64_t width) {
+  static Shape OutputValuesTensorShape(const Shape& input_values_shape,
+                                       const int64_t width) {
     // If the input shape is unknown, so is the output shape.
     if (input_values_shape.Rank() == input_values_shape.kUnknownRank)
       return input_values_shape;

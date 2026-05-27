@@ -29,6 +29,16 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "row_splits_validator",
+    hdrs = ["row_splits_validator.h"],
+    compatible_with = ["//buildenv/target:prod"],
+    deps = [
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/types:span",
+    ],
+)
+
 cc_test(
     name = "boise_offset_converter_test",
     size = "small",
@@ -62,6 +72,7 @@ tf_cc_library(
     ],
     deps = [
         ":boise_offset_converter",
+        ":row_splits_validator",
         "@com_google_absl//absl/status",
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:shape tensorflow dep,
@@ -112,6 +123,7 @@ tf_cc_library(
     ],
     deps = [
         ":byte_splitter",
+        ":row_splits_validator",
         "@com_google_absl//absl/status",
         # lite/kernels/shim:op_kernel tensorflow dep,
         # lite/kernels/shim:shape tensorflow dep,
@@ -502,6 +514,7 @@ cc_library(
     hdrs = ["fast_wordpiece_tokenizer_kernel_template.h"],
     deps = [
         ":fast_wordpiece_tokenizer",
+        ":row_splits_validator",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         # lite/kernels/shim:op_kernel tensorflow dep,
@@ -615,6 +628,7 @@ tf_cc_library(
         # tf/platform:tstring tensorflow dep,
     ],
     deps = [
+        ":row_splits_validator",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/strings",
@@ -801,6 +815,7 @@ tf_cc_library(
     ],
     deps = [
         ":round_robin_trimmer",
+        ":row_splits_validator",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
         "@com_google_absl//absl/types:span",
@@ -1020,6 +1035,7 @@ tf_cc_library(
         # tf:lib tensorflow dep,
     ],
     deps = [
+        ":row_splits_validator",
         "@com_google_absl//absl/base:core_headers",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
@@ -1288,6 +1304,7 @@ cc_library(
     hdrs = ["phrase_tokenizer_kernel_template.h"],
     deps = [
         ":phrase_tokenizer",
+        ":row_splits_validator",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         # lite/kernels/shim:op_kernel tensorflow dep,
