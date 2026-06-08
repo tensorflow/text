@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "absl/status/status.h"
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
 
@@ -88,8 +89,13 @@ absl::Status RougeLShapeFn(InferenceContext* c) {
                               &output_nrows_plus_one));
 
   // Output shape is a 1-D tensor with size equal to number of splits minus 1.
+  DimensionHandle num_splits = c->Dim(output_nrows_plus_one, 0);
   DimensionHandle dim;
-  TF_RETURN_IF_ERROR(c->Subtract(c->Dim(output_nrows_plus_one, 0), 1, &dim));
+  if (c->ValueKnown(num_splits) && c->Value(num_splits) == 0) {
+    return absl::InvalidArgumentError("splits must have at least 1 element.");
+  } else {
+    TF_RETURN_IF_ERROR(c->Subtract(num_splits, 1, &dim));
+  }
 
   // All outputs have the same shape.
   c->set_output(0, c->Vector(dim));

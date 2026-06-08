@@ -15,6 +15,7 @@
 #include "tensorflow/core/framework/common_shape_fns.h"
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
+#include "absl/status/status.h"
 #include "tensorflow/core/lib/core/errors.h"
 
 namespace tensorflow {
@@ -62,8 +63,14 @@ REGISTER_OP("TFText>FastSentencepieceDetokenize")
       TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 1, &unused));
       TF_RETURN_IF_ERROR(c->WithRank(c->input(2), 1, &unused));
 
+      shape_inference::DimensionHandle num_splits = c->NumElements(c->input(2));
       shape_inference::DimensionHandle dim;
-      TF_RETURN_IF_ERROR(c->Subtract(c->NumElements(c->input(2)), 1, &dim));
+      if (c->ValueKnown(num_splits) && c->Value(num_splits) <= 0) {
+        return absl::InvalidArgumentError(
+            "input_splits must have at least 1 element.");
+      } else {
+        TF_RETURN_IF_ERROR(c->Subtract(num_splits, 1, &dim));
+      }
       c->set_output(0, c->Vector(dim));
       return absl::OkStatus();
     });

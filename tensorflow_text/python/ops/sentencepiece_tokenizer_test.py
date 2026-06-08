@@ -37,6 +37,9 @@ from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
 from tensorflow.python.saved_model import load
 from tensorflow.python.saved_model import save
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_sentencepiece_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_sentencepiece_tokenizer.so'))
 from tensorflow_text.python.ops.sentencepiece_tokenizer import SentencepieceTokenizer
 
 
@@ -450,6 +453,17 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
     sp = SentencepieceTokenizer(self.model)
     detokenized = sp.detokenize(constant_op.constant([], dtypes.int32))
     self.assertAllEqual('', detokenized)
+
+  def testEmptyInputSplitsDetokenizeOpZeroShape(self):
+    sp = SentencepieceTokenizer(self.model)
+    # Providing an empty tensor (length 0) as input_splits directly to the op
+    # should safely raise InvalidArgumentError instead of crashing.
+    with self.assertRaises((errors.InvalidArgumentError, ValueError)):
+      _ = gen_sentencepiece_tokenizer.sentencepiece_detokenize_op(
+          sp._model_resource.resource_handle,
+          constant_op.constant([], dtypes.int32),
+          constant_op.constant([], dtypes.int64),
+          add_bos=False, add_eos=False, reverse=False)
 
   def testReturnNbestAndDetokenize(self):
     sp = SentencepieceTokenizer(

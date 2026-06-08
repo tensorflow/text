@@ -33,6 +33,7 @@ limitations under the License.
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/platform/errors.h"
 #include "tensorflow/core/framework/op_requires.h"
+#include "absl/status/status.h"
 #include "tensorflow_text/core/kernels/sentencepiece/optimized_decoder.h"
 #include "tensorflow_text/core/kernels/sentencepiece/sentencepiece_detokenizer.h"
 
@@ -51,6 +52,9 @@ class TFSentencepieceDetokenizerOp : public tensorflow::OpKernel {
         input_values_tensor.flat<tensorflow::int32>();
     const auto& input_splits_tensor = ctx->input(kInputSplits);
     const auto input_splits_flat = input_splits_tensor.flat<Tsplits>();
+    OP_REQUIRES(ctx, input_splits_flat.size() > 0,
+                absl::InvalidArgumentError(
+                    "input_splits must have at least 1 element."));
     const int num_of_sentences = input_splits_flat.size() - 1;
     Tensor* output_tensor = nullptr;
     OP_REQUIRES_OK(ctx,
@@ -65,8 +69,8 @@ class TFSentencepieceDetokenizerOp : public tensorflow::OpKernel {
           ctx,
           split_size >= 0 &&
               (input_offset + split_size) <= input_values_flat.size(),
-          errors::InvalidArgument("input_splits must be monotonically "
-                                  "non-decreasing and within bounds."));
+          absl::InvalidArgumentError("input_splits must be monotonically "
+                                     "non-decreasing and within bounds."));
       codes_for_split.clear();
       codes_for_split.reserve(split_size);
       for (int j = 0; j < split_size; ++j) {
