@@ -13,7 +13,10 @@ licenses(["notice"])
 # Visibility rules
 package(
     default_applicable_licenses = ["//tensorflow_text:license"],
-    default_visibility = ["//visibility:public"],
+    default_visibility = [
+        "//learning/genai/beyond:__subpackages__",
+        "//visibility:public",
+    ],
 )
 
 exports_files(["LICENSE"])
