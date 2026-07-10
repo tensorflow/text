@@ -1,0 +1,17 @@
+diff --git a/third_party/xla/xla/tsl/framework/BUILD b/third_party/xla/xla/tsl/framework/BUILD
+--- a/third_party/xla/xla/tsl/framework/BUILD
++++ b/third_party/xla/xla/tsl/framework/BUILD
+@@ -152,9 +152,11 @@
+         "allocator.h",
+         "allocator_registry.cc",
+         "allocator_registry.h",
+-        "cpu_allocator_impl.cc",
+         "tracking_allocator.h",
+-    ],
++    ] + select({
++        "//xla/tsl:framework_shared_object": [],
++        "//conditions:default": ["cpu_allocator_impl.cc"],
++    }),
+     visibility = internal_visibility([
+         "//xla:__subpackages__",
+         "//tensorflow/core:__subpackages__",

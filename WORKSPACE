@@ -69,11 +69,19 @@ http_archive(
 http_archive(
     name = "org_tensorflow",
     patch_args = ["-p1"],
-    patches = ["//third_party/tensorflow:tensorflow.core.BUILD.patch"],
-    sha256 = "213edf03ac7c4e74d8eb2074216ae8c8ae4f325c6bc22efd16cfdeed2073bd66",
-    strip_prefix = "tensorflow-2.20.0",
+    patches = [
+        "//third_party/tensorflow:tensorflow.core.BUILD.patch",
+        "//third_party/tensorflow:tensorflow.common_runtime.BUILD.patch",
+        "//third_party/tensorflow:tensorflow.device_set.BUILD.patch",
+        "//third_party/tensorflow:tensorflow.framework.BUILD.patch",
+        "//third_party/tensorflow:tensorflow.grappler_optimizers.BUILD.patch",
+        "//third_party/tensorflow:tensorflow.xla_allocator_registry.BUILD.patch",
+        "//third_party/tensorflow:tensorflow.core.ops.BUILD.patch",
+    ],
+    sha256 = "0e1494185594ce7a6c1cf86c984da2f2d9bef24427104cb2c76c1ccee76ee986",
+    strip_prefix = "tensorflow-2.21.0",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/refs/tags/v2.20.0.zip",
+        "https://github.com/tensorflow/tensorflow/archive/refs/tags/v2.21.0.zip",
     ],
 )
 
@@ -104,7 +112,13 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_shell/releases/download/v0.4.1/rules_shell-v0.4.1.tar.gz",
 )
 
-# Initialize hermetic Python
+# Initialize TensorFlow base dependencies first: defines @xla and @tsl,
+# which are required by python_init_rules() in TF 2.21+.
+load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
+
+tf_workspace3()
+
+# Initialize hermetic Python (requires @xla to be defined by tf_workspace3).
 load("@org_tensorflow//third_party/py:python_init_rules.bzl", "python_init_rules")
 
 python_init_rules()
@@ -134,7 +148,6 @@ load("@org_tensorflow//third_party/py:python_init_repositories.bzl", "python_ini
 python_init_repositories(
     default_python_version = "system",
     requirements = {
-        "3.9": "//oss_scripts/pip_package:requirements_lock_3_9.txt",
         "3.10": "//oss_scripts/pip_package:requirements_lock_3_10.txt",
         "3.11": "//oss_scripts/pip_package:requirements_lock_3_11.txt",
         "3.12": "//oss_scripts/pip_package:requirements_lock_3_12.txt",
@@ -154,11 +167,7 @@ load("@pypi//:requirements.bzl", "install_deps")
 
 install_deps()
 
-# Initialize TensorFlow dependencies.
-load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
-
-tf_workspace3()
-
+# Initialize remaining TensorFlow dependencies.
 load("@org_tensorflow//tensorflow:workspace2.bzl", "tf_workspace2")
 
 tf_workspace2()
@@ -181,7 +190,7 @@ load("@local_config_android//:android.bzl", "android_workspace")
 android_workspace()
 
 load(
-    "@local_xla//third_party/py:python_wheel.bzl",
+    "@xla//third_party/py:python_wheel.bzl",
     "python_wheel_version_suffix_repository",
 )
 

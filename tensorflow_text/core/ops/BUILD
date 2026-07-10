@@ -16,10 +16,10 @@ cc_test(
         "byte_splitter_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
+        "@com_google_googletest//:gtest_main",
+        "@org_tensorflow//tensorflow/core:testlib",
+        "@org_tensorflow//tensorflow/core/platform:test_main",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim",
         "//tensorflow_text/core/kernels:byte_splitter_kernel",
     ],
 )
@@ -32,10 +32,10 @@ cc_test(
         "boise_offset_converter_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
+        "@com_google_googletest//:gtest_main",
+        "@org_tensorflow//tensorflow/core:testlib",
+        "@org_tensorflow//tensorflow/core/platform:test_main",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim",
         "//tensorflow_text/core/kernels:boise_offset_converter_kernel",
     ],
 )
@@ -48,10 +48,10 @@ cc_test(
         "fast_wordpiece_tokenizer_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
+        "@com_google_googletest//:gtest_main",
+        "@org_tensorflow//tensorflow/core:testlib",
+        "@org_tensorflow//tensorflow/core/platform:test_main",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim",
         "//tensorflow_text/core/kernels:fast_wordpiece_tokenizer_kernel",
     ],
 )
@@ -64,10 +64,10 @@ cc_test(
         "sentence_fragmenter_v2_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
+        "@com_google_googletest//:gtest_main",
+        "@org_tensorflow//tensorflow/core:testlib",
+        "@org_tensorflow//tensorflow/core/platform:test_main",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim",
         "//tensorflow_text/core/kernels:sentence_fragmenter_v2_kernel",
     ],
 )
@@ -80,11 +80,10 @@ cc_test(
         "trimmer_ops_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
-        # tf/framework:tensor_testutil tensorflow dep,
+        "@com_google_googletest//:gtest_main",
+        "@org_tensorflow//tensorflow/core:testlib",
+        "@org_tensorflow//tensorflow/core/platform:test_main",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim",
         "//tensorflow_text/core/kernels:round_robin_trimmer_kernel",
     ],
 )
@@ -97,11 +96,10 @@ cc_test(
         "utf8_binarize_op_test.cc",
     ],
     deps = [
-        # tf:framework tensorflow dep,
-        # tf:protos_all_cc tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
+        "@com_google_googletest//:gtest_main",
+        "@org_tensorflow//tensorflow/core:testlib",
+        "@org_tensorflow//tensorflow/core/platform:test_main",
+        "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim",
         "//tensorflow_text/core/kernels:utf8_binarize_kernel",
     ],
 )

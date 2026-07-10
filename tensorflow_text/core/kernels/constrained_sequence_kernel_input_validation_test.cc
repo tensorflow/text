@@ -22,7 +22,7 @@
 #include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/core/kernels/ops_testutil.h"
-#include "tensorflow/core/lib/core/status_test_util.h"
+
 #include "tensorflow/core/platform/status.h"
 #include "tensorflow/core/platform/types.h"
 #include "tensorflow_text/core/kernels/text_kernels_test_util.h"
@@ -42,17 +42,17 @@ class ConstrainedSequenceInputValidationTest : public tensorflow::OpsTestBase {
   void SetUpOpWithDefaults(bool use_start_end,
                            tensorflow::DataType input_datatype) {
     // Prepare graph.
-    TF_ASSERT_OK(NodeDefBuilder("tested_op", "ConstrainedSequence")
-                     .Attr("Tin", input_datatype)
-                     .Attr("use_viterbi", true)
-                     .Attr("use_log_space", true)
-                     .Attr("use_start_and_end_states", use_start_end)
-                     .Input(FakeInput())
-                     .Input(FakeInput())
-                     .Input(FakeInput())
-                     .Input(FakeInput())
-                     .Finalize(node_def()));
-    TF_ASSERT_OK(InitOp());
+    ASSERT_TRUE(NodeDefBuilder("tested_op", "ConstrainedSequence")
+                    .Attr("Tin", input_datatype)
+                    .Attr("use_viterbi", true)
+                    .Attr("use_log_space", true)
+                    .Attr("use_start_and_end_states", use_start_end)
+                    .Input(FakeInput())
+                    .Input(FakeInput())
+                    .Input(FakeInput())
+                    .Input(FakeInput())
+                    .Finalize(node_def()).ok());
+    ASSERT_TRUE(InitOp().ok());
   }
 
   void SetUpOpWithStartEnd() { SetUpOpWithDefaults(true, DT_INT32); }
@@ -92,7 +92,7 @@ TEST_F(ConstrainedSequenceInputValidationTest, WorksWithInt64InputLengths) {
   // Add the transition_weights input.
   AddInputFromArray<float>(TensorShape({0, 0}), {});
 
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   // The first sequence's highest score is 2, but OUT->2 is not ok, so it's 1.
   // The second sequence's highest score is 3, which is ok.

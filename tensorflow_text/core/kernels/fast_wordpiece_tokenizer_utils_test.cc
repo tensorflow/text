@@ -82,9 +82,9 @@ using TokenEncodingDecodingTest = testing::TestWithParam<TokenSpec>;
 
 TEST_P(TokenEncodingDecodingTest, GeneralTest) {
   const TokenSpec& spec = GetParam();
-  ASSERT_OK_AND_ASSIGN(
-      auto encoded_value,
-      EncodeToken(spec.token_id, spec.token_length, spec.is_suffix_token));
+  auto encoded_value_or = EncodeToken(spec.token_id, spec.token_length, spec.is_suffix_token);
+  ASSERT_TRUE(encoded_value_or.ok());
+  auto encoded_value = encoded_value_or.value();
   EXPECT_THAT(GetTokenId(encoded_value), spec.token_id);
   EXPECT_THAT(GetTokenLength(encoded_value), spec.token_length);
   EXPECT_THAT(IsSuffixToken(encoded_value), spec.is_suffix_token);

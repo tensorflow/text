@@ -20,7 +20,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "tensorflow/core/lib/core/status_test_util.h"
+
 
 namespace tensorflow {
 namespace text {
@@ -66,15 +66,15 @@ class MstSolverTest : public ::testing::Test {
   // As above, but expects success.  Does not assert anything about the solution
   // produced by the solver.
   void SolveAndExpectOk(int argmax_array_size) {
-    std::vector<Index> argmax(argmax_array_size);
-    TF_EXPECT_OK(solver_.Solve(&argmax));
+    std::vector<Index> actual_argmax(argmax_array_size);
+    EXPECT_TRUE(solver_.Solve(&actual_argmax).ok());
   }
 
   // As above, but expects the solution to be |expected_argmax| and infers the
   // argmax array size.
-  void SolveAndExpectArgmax(const std::vector<Index> &expected_argmax) {
+  void SolveAndExpectArgmax(const std::vector<Index>& expected_argmax) {
     std::vector<Index> actual_argmax(expected_argmax.size());
-    TF_ASSERT_OK(solver_.Solve(&actual_argmax));
+    ASSERT_TRUE(solver_.Solve(&actual_argmax).ok());
     EXPECT_EQ(expected_argmax, actual_argmax);
   }
 
@@ -109,7 +109,7 @@ TYPED_TEST(MstSolverTest, FailIfTooManyNodes) {
 TYPED_TEST(MstSolverTest, InfeasibleIfNoRootsNoArcs) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->SolveAndExpectError(kNumNodes, "Infeasible digraph");
   }
 }
@@ -117,7 +117,7 @@ TYPED_TEST(MstSolverTest, InfeasibleIfNoRootsNoArcs) {
 TYPED_TEST(MstSolverTest, InfeasibleIfNoRootsAllArcs) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllArcs(kNumNodes, 0);
     this->SolveAndExpectError(kNumNodes, "Infeasible digraph");
   }
@@ -126,7 +126,7 @@ TYPED_TEST(MstSolverTest, InfeasibleIfNoRootsAllArcs) {
 TYPED_TEST(MstSolverTest, FeasibleForForestOnlyIfAllRootsNoArcs) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     if (forest) {
       this->SolveAndExpectOk(kNumNodes);  // all roots is a valid forest
@@ -139,7 +139,7 @@ TYPED_TEST(MstSolverTest, FeasibleForForestOnlyIfAllRootsNoArcs) {
 TYPED_TEST(MstSolverTest, FeasibleIfAllRootsAllArcs) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     this->AddAllArcs(kNumNodes, 0);
     this->SolveAndExpectOk(kNumNodes);
@@ -149,7 +149,7 @@ TYPED_TEST(MstSolverTest, FeasibleIfAllRootsAllArcs) {
 TYPED_TEST(MstSolverTest, FailIfArgmaxArrayTooSmall) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     this->AddAllArcs(kNumNodes, 0);
     this->SolveAndExpectError(kNumNodes - 1,  // too small
@@ -160,7 +160,7 @@ TYPED_TEST(MstSolverTest, FailIfArgmaxArrayTooSmall) {
 TYPED_TEST(MstSolverTest, OkIfArgmaxArrayTooLarge) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     this->AddAllArcs(kNumNodes, 0);
     this->SolveAndExpectOk(kNumNodes + 1);  // too large
@@ -170,7 +170,7 @@ TYPED_TEST(MstSolverTest, OkIfArgmaxArrayTooLarge) {
 TYPED_TEST(MstSolverTest, SolveForAllRootsForestOnly) {
   const int kNumNodes = 10;
   const bool forest = true;
-  TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+  ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
   this->AddAllRoots(kNumNodes, 1);  // favor all root selections
   this->AddAllArcs(kNumNodes, 0);
   this->SolveAndExpectArgmax({0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
@@ -179,7 +179,7 @@ TYPED_TEST(MstSolverTest, SolveForAllRootsForestOnly) {
 TYPED_TEST(MstSolverTest, SolveForLeftToRightChain) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     this->AddAllArcs(kNumNodes, 0);
     for (int target = 1; target < kNumNodes; ++target) {
@@ -192,7 +192,7 @@ TYPED_TEST(MstSolverTest, SolveForLeftToRightChain) {
 TYPED_TEST(MstSolverTest, SolveForRightToLeftChain) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     this->AddAllArcs(kNumNodes, 0);
     for (int source = 1; source < kNumNodes; ++source) {
@@ -205,7 +205,7 @@ TYPED_TEST(MstSolverTest, SolveForRightToLeftChain) {
 TYPED_TEST(MstSolverTest, SolveForAllFromFirstTree) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     this->AddAllArcs(kNumNodes, 0);
     for (int target = 1; target < kNumNodes; ++target) {
@@ -218,7 +218,7 @@ TYPED_TEST(MstSolverTest, SolveForAllFromFirstTree) {
 TYPED_TEST(MstSolverTest, SolveForAllFromLastTree) {
   const int kNumNodes = 10;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     this->AddAllArcs(kNumNodes, 0);
     for (int target = 0; target + 1 < kNumNodes; ++target) {
@@ -231,7 +231,7 @@ TYPED_TEST(MstSolverTest, SolveForAllFromLastTree) {
 TYPED_TEST(MstSolverTest, SolveForBinaryTree) {
   const int kNumNodes = 15;
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, kNumNodes));
+    ASSERT_TRUE(this->solver_.Init(forest, kNumNodes).ok());
     this->AddAllRoots(kNumNodes, 0);
     this->AddAllArcs(kNumNodes, 0);
     for (int target = 1; target < kNumNodes; ++target) {
@@ -248,7 +248,7 @@ TYPED_TEST(MstSolverTest, SolveForBinaryTree) {
 
 TYPED_TEST(MstSolverTest, ScoreAccessors) {
   for (const bool forest : {false, true}) {
-    TF_ASSERT_OK(this->solver_.Init(forest, 10));
+    ASSERT_TRUE(this->solver_.Init(forest, 10).ok());
     this->solver_.AddArc(0, 1, 0);
     this->solver_.AddArc(1, 4, 1);
     this->solver_.AddArc(7, 6, 2);

@@ -1,0 +1,16 @@
+diff --git a/tensorflow/core/framework/BUILD b/tensorflow/core/framework/BUILD
+--- a/tensorflow/core/framework/BUILD
++++ b/tensorflow/core/framework/BUILD
+@@ -828,11 +828,2 @@
+     name = "tensor",
+-    srcs = [
+-        "log_memory.cc",
+-        "tensor.cc",
+-        "tensor_util.cc",
+-        "typed_allocator.cc",
+-        "types.cc",
+-        "variant.cc",
+-        "variant_op_registry.cc",
+-        "variant_tensor_data.cc",
+-    ],
++    srcs = [],

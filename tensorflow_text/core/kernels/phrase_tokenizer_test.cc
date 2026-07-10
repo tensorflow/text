@@ -51,8 +51,9 @@ TEST(PhraseTokenizerTest, Tokenize) {
       tensorflow::Env::Default(), kTestConfigPath, &config_flatbuffer);
   ASSERT_TRUE(status.ok());
 
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       PhraseTokenizer::Create(config_flatbuffer.data()));
+  auto tokenizer_or = PhraseTokenizer::Create(config_flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   tokenizer.Tokenize(input, &output_tokens, &output_token_ids);
   EXPECT_THAT(output_tokens, ElementsAre("I", "heard", "the news today"));
@@ -69,8 +70,9 @@ TEST(PhraseTokenizerTest, TokenizeLonger) {
       tensorflow::Env::Default(), kTestConfigPath, &config_flatbuffer);
   ASSERT_TRUE(status.ok());
 
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       PhraseTokenizer::Create(config_flatbuffer.data()));
+  auto tokenizer_or = PhraseTokenizer::Create(config_flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   tokenizer.Tokenize(input, &output_tokens, &output_token_ids);
   EXPECT_THAT(output_tokens,
@@ -86,8 +88,9 @@ TEST(PhraseTokenizerTest, DeTokenize) {
       tensorflow::Env::Default(), kTestConfigPath, &config_flatbuffer);
   ASSERT_TRUE(status.ok());
 
-  ASSERT_OK_AND_ASSIGN(auto tokenizer,
-                       PhraseTokenizer::Create(config_flatbuffer.data()));
+  auto tokenizer_or = PhraseTokenizer::Create(config_flatbuffer.data());
+  ASSERT_TRUE(tokenizer_or.ok());
+  auto tokenizer = std::move(tokenizer_or).value();
 
   auto output_string = tokenizer.Detokenize(input);
   EXPECT_EQ(output_string.value(), "I heard the news today");

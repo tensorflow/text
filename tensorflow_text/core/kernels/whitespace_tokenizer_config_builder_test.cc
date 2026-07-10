@@ -35,7 +35,6 @@
 #include "icu4c/source/common/unicode/utf.h"
 #include "icu4c/source/common/unicode/utf8.h"
 #include "icu4c/source/common/unicode/utypes.h"
-#include "tensorflow/core/platform/types.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer.h"
 
 namespace tensorflow {

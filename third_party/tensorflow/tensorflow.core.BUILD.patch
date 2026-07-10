@@ -1,13 +1,38 @@
 diff --git a/tensorflow/core/BUILD b/tensorflow/core/BUILD
-index 69a2c5fcaad..7e790302036 100644
 --- a/tensorflow/core/BUILD
 +++ b/tensorflow/core/BUILD
-@@ -1639,7 +1639,7 @@ tf_cuda_library(
+@@ -342,13 +342,10 @@
+     visibility = ["//visibility:public"],
+     deps = [
+-        ":function_ops_op_lib",
+-        ":functional_ops_op_lib",
+         ":lib",
+         ":lib_internal",
+         ":protos_all_cc",
+-        "//tensorflow/core/kernels:required",
+         "@com_google_absl//absl/status:status_matchers",
+         "@tsl//tsl/platform:test",
+         "@tsl//tsl/platform:test_benchmark",
+     ] + tf_additional_test_deps(),
+@@ -1637,7 +1634,8 @@
          "@eigen_archive//:eigen3",
      ] + if_static(
          extra_deps = [
 -            ":framework_internal_impl",
 +            # ":framework_internal_impl",
++            "//tensorflow/core/util:managed_stack_trace",
              "@com_google_protobuf//:protobuf",
          ],
          otherwise = [
+@@ -1837,10 +1835,3 @@
+     visibility = ["//visibility:public"],
+-    deps = ["//tensorflow/core/common_runtime:core_cpu_base_no_ops"] + if_static([
+-        ":function_ops_op_lib",
+-        ":functional_grad",
+-        ":functional_ops_op_lib",
+-        "//tensorflow/core/common_runtime:stats_publisher_interface",
+-        "//tensorflow/core/framework:bounds_check",
+-        "//tensorflow/core/kernels:required",
+-    ]),
++    deps = ["//tensorflow/core/common_runtime:core_cpu_base_no_ops"],
+     alwayslink = 1,

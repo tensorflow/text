@@ -4,11 +4,17 @@ This is used for the generation of the dynamic libraries used for custom ops.
 See: http://github.com/tensorflow/custom-op
 """
 
-load("@python//:defs.bzl", "interpreter")
-load("@python_version_repo//:py_version.bzl", "REQUIREMENTS_WITH_LOCAL_WHEELS")
+load("@python_version_repo//:py_version.bzl", "HERMETIC_PYTHON_VERSION", "REQUIREMENTS_WITH_LOCAL_WHEELS")
 load("@rules_python//python:pip.bzl", "package_annotation", "pip_parse")
 
 def tf_configure():
+    # In TF 2.21+, python_init_toolchains() creates versioned repos
+    # (e.g. @python_3_10, @python_3_10_host) instead of @python.
+    # pip_parse needs a real executable (not a select()-based alias), so we
+    # use the host repo which provides the actual interpreter binary.
+    _ver = HERMETIC_PYTHON_VERSION.replace(".", "_")
+    interpreter = "@python_%s_host//:python" % _ver
+
     tensorflow_annotation = """
 cc_library(
     name = "tf_header_lib",

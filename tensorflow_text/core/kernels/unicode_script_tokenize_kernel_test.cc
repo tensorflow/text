@@ -22,7 +22,7 @@
 #include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/kernels/ops_testutil.h"
 #include "tensorflow/core/lib/core/status.h"
-#include "tensorflow/core/lib/core/status_test_util.h"
+
 #include "tensorflow_text/core/kernels/text_kernels_test_util.h"
 
 namespace tensorflow {
@@ -38,11 +38,11 @@ class UnicodeScriptTokenizeWithOffsetsKernelTest
     : public tensorflow::OpsTestBase {
  public:
   void MakeOp() {
-    TF_ASSERT_OK(NodeDefBuilder("tested_op", "UnicodeScriptTokenizeWithOffsets")
+    ASSERT_TRUE(NodeDefBuilder("tested_op", "UnicodeScriptTokenizeWithOffsets")
                  .Input(FakeInput())
                  .Input(FakeInput())
-                 .Finalize(node_def()));
-    TF_ASSERT_OK(InitOp());
+                 .Finalize(node_def()).ok());
+    ASSERT_TRUE(InitOp().ok());
   }
 };
 
@@ -50,7 +50,7 @@ TEST_F(UnicodeScriptTokenizeWithOffsetsKernelTest, Test) {
   MakeOp();
   AddInputFromArray<int32_t>(TensorShape({6}), {111, 112, 32, 116, 117, 118});
   AddInputFromArray<int64_t>(TensorShape({3}), {0, 4, 6});
-  TF_ASSERT_OK(RunOpKernel());
+  ASSERT_TRUE(RunOpKernel().ok());
 
   std::vector<int32_t> expected_values({111, 112, 116, 117, 118});
   std::vector<int64_t> expected_values_inner_splits({0, 2, 3, 5});
