@@ -24,10 +24,10 @@ build_args=()
 if [ "$arch" == "x86_64" ]; then
   build_args+=("--config=release_cpu_linux")
   build_args+=("--platforms=@sigbuild-r2.17-clang_config_platform//:platform")
-  auditwheel_platform="manylinux2014_x86_64"
+  auditwheel_platform="manylinux_2_27_x86_64"
 elif [ "$arch" == "aarch64" ]; then
   build_args+=("--crosstool_top=@ml2014_aarch64_config_aarch64//crosstool:toolchain")
-  auditwheel_platform="manylinux2014_aarch64"
+  auditwheel_platform="manylinux_2_27_aarch64"
 fi
 
 # Build wheel for each Python version.
