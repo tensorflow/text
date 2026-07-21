@@ -15,15 +15,18 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BYTE_SPLITTER_KERNEL_TEMPLATE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BYTE_SPLITTER_KERNEL_TEMPLATE_H_
 
-#include <iostream>
+#include <cstdint>
+#include <string>
 #include <vector>
 
 #include "absl/status/status.h"
+#include "absl/strings/str_cat.h"
 #include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/byte_splitter.h"
+#include "tensorflow_text/core/kernels/row_splits_validator.h"
 
 namespace tensorflow {
 namespace text {
@@ -276,6 +279,13 @@ template <tflite::shim::Runtime Rt>
   SH_ASSIGN_OR_RETURN(const auto in_splits_view,
                       context->GetInput(kInputRowSplits));
   const auto in_splits = in_splits_view->template As<int64_t, 1>();
+
+  if (starts.Dim(0) != ends.Dim(0)) {
+    return absl::InvalidArgumentError(
+        "starts and ends must have the same size.");
+  }
+  SH_RETURN_IF_ERROR(ValidateRowSplits<int64_t>(
+      absl::MakeConstSpan(in_splits.Ptr(), in_splits.Dim(0)), starts.Dim(0)));
 
   ByteSplitter splitter;
 
