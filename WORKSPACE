@@ -207,6 +207,8 @@ cc_toolchain_deps()
 
 register_toolchains("@rules_ml_toolchain//cc:linux_x86_64_linux_x86_64")
 
+register_toolchains("@rules_ml_toolchain//cc:linux_aarch64_linux_aarch64")
+
 load(
     "@rules_ml_toolchain//gpu/cuda:cuda_json_init_repository.bzl",
     "cuda_json_init_repository",
