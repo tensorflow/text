@@ -12,22 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef THIRD_PARTY_TENSORFLOW_TEXT_GOOGLE_KERNELS_UTF8_BINARIZE_TFLITE_H_
-#define THIRD_PARTY_TENSORFLOW_TEXT_GOOGLE_KERNELS_UTF8_BINARIZE_TFLITE_H_
+#ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_TFLITE_H_
+#define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_TFLITE_H_
 
-#include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/mutable_op_resolver.h"
+#include "tensorflow/core/kernels/text/utf8_binarize_tflite.h"
 
-namespace tflite {
-namespace ops {
-namespace custom {
-namespace text {
-
-extern "C" void AddUtf8Binarize(::tflite::MutableOpResolver* resolver);
-
-}  // namespace text
-}  // namespace custom
-}  // namespace ops
-}  // namespace tflite
-
-#endif  // THIRD_PARTY_TENSORFLOW_TEXT_GOOGLE_KERNELS_UTF8_BINARIZE_TFLITE_H_
+#endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_TFLITE_H_

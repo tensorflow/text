@@ -16,7 +16,7 @@
 
 #include "include/pybind11/pybind11.h"
 #include "include/pybind11/stl.h"
-#include "tensorflow_text/core/kernels/sentencepiece/model_converter.h"
+#include "tensorflow/core/kernels/text/sentencepiece/model_converter.h"
 
 namespace tensorflow {
 namespace text {

@@ -15,18 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_KERNEL_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_KERNEL_H_
 
-#include "tensorflow/lite/kernels/shim/tf_op_shim.h"
-#include "tensorflow_text/core/kernels/utf8_binarize_kernel_template.h"
-
-namespace tensorflow {
-namespace text {
-
-class Utf8BinarizeOpKernel : public tflite::shim::TfOpKernel<Utf8BinarizeOp> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/utf8_binarize_kernel.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_KERNEL_H_
