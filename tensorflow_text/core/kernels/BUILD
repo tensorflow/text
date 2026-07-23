@@ -13,7 +13,10 @@ licenses(["notice"])
 # Visibility rules
 package(
     default_applicable_licenses = ["//tensorflow_text:license"],
-    default_visibility = ["//visibility:public"],
+    default_visibility = [
+        "//third_party/tensorflow_models/google/recml/examples_analyzer:__subpackages__",
+        "//visibility:public",
+    ],
 )
 
 exports_files(["LICENSE"])
