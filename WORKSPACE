@@ -15,6 +15,8 @@ custom_http_archive(
     exclude = [
         # Build file does not contain all required targets.
         "icu4c/source/common/BUILD.bazel",
+        "icu4c/source/stubdata/BUILD.bazel",
+        "icu4c/source/i18n/BUILD.bazel",
     ],
     files = {
         "BUILD.bazel": "//third_party/icu:BUILD.bzl",
