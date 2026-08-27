@@ -23,9 +23,9 @@ exports_files(["LICENSE"])
 #   $ ICU_DATA_FILTER_FILE=filters.json ./runConfigureICU Linux
 #   $ make clean && make
 #   $ cd data/out/tmp
-#   $ genccode icudt64l.dat
-#   $ echo 'U_CAPI const void * U_EXPORT2 uprv_getICUData_other() { return icudt64l_dat.bytes; }' >> icudt64l_dat.c
-# This creates icudt64l_dat.c which you can rename and move in here.
+#   $ genccode -e icudt77 icudt77l.dat
+#   $ echo 'U_CAPI const void * U_EXPORT2 uprv_getICUData_other() { return icudt77_dat.bytes; }' >> icudt77_dat.c
+# This creates icudt77_dat.c which you can rename to normalization_data.c and move in here.
 cc_library(
     name = "icu_normalization_data",
     srcs = ["normalization_data.c"],
