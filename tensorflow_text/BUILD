@@ -5,11 +5,15 @@ load("//tensorflow_text:tftext.bzl", "extra_py_deps", "if_pywrap", "py_library",
 
 # [internal] load build_test.bzl
 load("//tools/build_defs/license:license.bzl", "license")
+load("//tools/build_defs/testing:bzl_library.bzl", "bzl_library")
 
 # Visibility rules
 package(
     default_applicable_licenses = [":license"],
-    default_visibility = ["//visibility:public"],
+    default_visibility = [
+        "//visibility:public",
+        "@org_tensorflow//tensorflow/core/kernels/text:__subpackages__",
+    ],
 )
 
 license(name = "license")
@@ -1727,4 +1731,19 @@ py_test(
     ] + if_pywrap([
         "//tensorflow_text/core/pybinds:pybinds_library",
     ]),
+)
+
+bzl_library(
+    name = "tftext_bzl",
+    srcs = ["tftext.bzl"],
+    parse_tests = False,
+    visibility = ["//visibility:private"],
+    deps = [
+        "//devtools/build_cleaner/skylark:build_defs_lib",
+        "//third_party/bazel_rules/rules_python/python:py_library_bzl",
+        "//third_party/gpus/cuda:build_defs_bzl",
+        "//third_party/pybind11/google3_utils:build_defs_bzl",
+        "//third_party/tensorflow:tensorflow_bzl",
+        "@rules_cc//cc:core_rules",
+    ],
 )

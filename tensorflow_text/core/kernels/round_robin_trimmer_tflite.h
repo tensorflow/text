@@ -15,21 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_TFLITE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_TFLITE_H_
 
-#include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/mutable_op_resolver.h"
-
-namespace tflite {
-namespace ops {
-namespace custom {
-namespace text {
-
-extern "C" void AddRoundRobinGenerateMasks(tflite::MutableOpResolver* resolver);
-
-extern "C" void AddRoundRobinTrim(::tflite::MutableOpResolver* resolver);
-
-}  // namespace text
-}  // namespace custom
-}  // namespace ops
-}  // namespace tflite
+#include "tensorflow/core/kernels/text/round_robin_trimmer_tflite.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_TFLITE_H_

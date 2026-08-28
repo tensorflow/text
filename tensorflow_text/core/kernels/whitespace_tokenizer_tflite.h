@@ -15,19 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_TFLITE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_TFLITE_H_
 
-#include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/mutable_op_resolver.h"
-
-namespace tflite {
-namespace ops {
-namespace custom {
-namespace text {
-
-extern "C" void AddWhitespaceTokenize(::tflite::MutableOpResolver* resolver);
-
-}  // namespace text
-}  // namespace custom
-}  // namespace ops
-}  // namespace tflite
+#include "tensorflow/core/kernels/text/whitespace_tokenizer_tflite.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_WHITESPACE_TOKENIZER_TFLITE_H_

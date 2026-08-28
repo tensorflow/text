@@ -15,19 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_KERNEL_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_KERNEL_H_
 
-#include "tensorflow/lite/kernels/shim/tf_op_shim.h"
-#include "tensorflow_text/core/kernels/sentence_fragmenter_v2_kernel_template.h"
-
-namespace tensorflow {
-namespace text {
-
-class SentenceFragmenterV2OpKernel
-    : public tflite::shim::TfOpKernel<SentenceFragmenterV2Op> {
- public:
-  using TfOpKernel::TfOpKernel;
-};
-
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/sentence_fragmenter_v2_kernel.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_KERNEL_H_

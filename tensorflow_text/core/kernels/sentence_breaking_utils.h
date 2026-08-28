@@ -12,57 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_BREAKING_UTILS_H_
-#define TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_BREAKING_UTILS_H_
+#ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_BREAKING_UTILS_H_
+#define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_BREAKING_UTILS_H_
 
-#include <string>
-#include "absl/strings/string_view.h"
-#include "icu4c/source/common/unicode/ucnv.h"
-#include "icu4c/source/common/unicode/ucnv_err.h"
-#include "icu4c/source/common/unicode/utypes.h"
-#include "tensorflow/core/lib/core/status.h"
+#include "tensorflow/core/kernels/text/sentence_breaking_utils.h"
 
-namespace tensorflow {
-namespace text {
-
-// A class of utils for identifying certain classes and properties of unicode
-// characters.
-class UnicodeUtil {
- public:
-  // `converter` not owned.
-  explicit UnicodeUtil(UConverter* converter) : converter_(converter) {}
-
-  // Returns true iff a string is terminal punctuation.
-  absl::Status IsTerminalPunc(const absl::string_view& input,
-                              bool* result) const;
-
-  // Returns true iff a string is close punctuation (close quote or close
-  // paren).
-  absl::Status IsClosePunc(const absl::string_view& input, bool* result) const;
-
-  // Returns true iff a string is an open paren.
-  absl::Status IsOpenParen(const absl::string_view& input, bool* result) const;
-
-  // Returns true iff a string is a close paren.
-  absl::Status IsCloseParen(const absl::string_view& input, bool* result) const;
-
-  // Returns true iff a word is made of punctuation characters only.
-  absl::Status IsPunctuationWord(const absl::string_view& input,
-                                 bool* result) const;
-
-  // Returns true iff a string is an ellipsis token ("...").
-  absl::Status IsEllipsis(const absl::string_view& input, bool* result) const;
-
- private:
-  absl::Status GetOneUChar(const absl::string_view&,
-                           bool* has_more_than_one_char, UChar32* result) const;
-
-  // not owned. mutable because UConverter contains some internal options and
-  // buffer.
-  mutable UConverter* converter_;
-};
-
-}  // namespace text
-}  // namespace tensorflow
-
-#endif  // TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_BREAKING_UTILS_H_
+#endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_BREAKING_UTILS_H_

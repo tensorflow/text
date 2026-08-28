@@ -15,21 +15,6 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_H_
 
-#include "absl/strings/string_view.h"
-#include "absl/types/span.h"
-
-namespace tensorflow {
-namespace text {
-
-// Stores low-endian floating-point bitwise representations of Unicode code
-// points of `input` in `result` (`result.size()` is required to be exactly
-// `word_length * bits_per_char` - output is padded / truncated accordingly).
-// Replacements (for invalid UTF sequences) are represented by the
-// `bits_per_char` lowest bits of `replacement`.
-void Utf8Binarize(absl::string_view input, int word_length, int bits_per_char,
-                  int replacement, /* out */ absl::Span<float> result);
-
-}  // namespace text
-}  // namespace tensorflow
+#include "tensorflow/core/kernels/text/utf8_binarize.h"
 
 #endif  // THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_UTF8_BINARIZE_H_
