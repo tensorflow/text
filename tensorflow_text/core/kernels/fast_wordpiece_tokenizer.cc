@@ -24,6 +24,7 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 #include "icu4c/source/common/unicode/uchar.h"
 #include "icu4c/source/common/unicode/utf8.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
@@ -56,7 +57,8 @@ FastWordpieceTokenizer::Create(const void* config_flatbuffer) {
         "FastWordpieceTokenizerConfig or its trie_array is null.");
   }
   auto trie_or = trie_utils::DartsCloneTrieWrapper::Create(
-      tokenizer.config_->trie_array()->data());
+      absl::MakeSpan(tokenizer.config_->trie_array()->data(),
+                     tokenizer.config_->trie_array()->size()));
   if (!trie_or.ok()) {
     return absl::InvalidArgumentError(
         "Failed to create DartsCloneTrieWrapper from "

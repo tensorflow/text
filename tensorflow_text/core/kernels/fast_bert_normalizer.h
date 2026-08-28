@@ -22,6 +22,7 @@
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 #include "icu4c/source/common/unicode/utf8.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_wrapper.h"
@@ -85,12 +86,13 @@ class FastBertNormalizer {
   //  which is not owned by this instance and should be kept alive through the
   //  lifetime of the instance.
   static absl::StatusOr<FastBertNormalizer> Create(
-      const uint32_t* trie_data, int data_for_codepoint_zero,
+      absl::Span<const uint32_t> trie_data, int data_for_codepoint_zero,
       const char* normalized_string_pool,
       size_t normalized_string_pool_size = static_cast<size_t>(-1)) {
-    if (trie_data == nullptr || normalized_string_pool == nullptr) {
+    if (trie_data.empty() || trie_data.data() == nullptr ||
+        normalized_string_pool == nullptr) {
       return absl::InvalidArgumentError(
-          "trie_data or normalized_string_pool is null");
+          "trie_data or normalized_string_pool is null or empty");
     }
     FastBertNormalizer result;
     SH_ASSIGN_OR_RETURN(auto trie,
@@ -123,7 +125,9 @@ class FastBertNormalizer {
           "FastBertNormalizerModel or its required fields are null");
     }
     return Create(
-        model->trie_array()->data(), model->data_for_codepoint_zero(),
+        absl::MakeSpan(model->trie_array()->data(),
+                       model->trie_array()->size()),
+        model->data_for_codepoint_zero(),
         reinterpret_cast<const char*>(model->normalized_string_pool()->data()),
         model->normalized_string_pool()->size());
   }
