@@ -56,7 +56,7 @@ FastWordpieceTokenizer::Create(const void* config_flatbuffer) {
         "FastWordpieceTokenizerConfig or its trie_array is null.");
   }
   auto trie_or = trie_utils::DartsCloneTrieWrapper::Create(
-      tokenizer.config_->trie_array()->data());
+      *tokenizer.config_->trie_array());
   if (!trie_or.ok()) {
     return absl::InvalidArgumentError(
         "Failed to create DartsCloneTrieWrapper from "

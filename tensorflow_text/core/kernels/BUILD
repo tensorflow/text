@@ -208,13 +208,12 @@ tf_cc_library(
     name = "fast_bert_normalizer",
     hdrs = ["fast_bert_normalizer.h"],
     deps = [
-        ":darts_clone_trie_builder",
         ":darts_clone_trie_wrapper",
         ":fast_bert_normalizer_model",
         "@com_google_absl//absl/base:core_headers",
-        "@com_google_absl//absl/memory",
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
         "@icu//:common",
         # lite/kernels/shim:status_macros tensorflow dep,
     ],
@@ -256,6 +255,7 @@ cc_test(
     deps = [
         ":fast_bert_normalizer",
         ":fast_bert_normalizer_model_builder",
+        "@com_google_absl//absl/types:span",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -351,7 +351,10 @@ cc_library(
         "darts_clone_trie_wrapper.h",
     ],
     deps = [
+        "@com_google_absl//absl/status",
         "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@com_google_absl//absl/types:span",
     ],
 )
 
@@ -362,7 +365,7 @@ cc_test(
     deps = [
         ":darts_clone_trie_builder",
         ":darts_clone_trie_wrapper",
-        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/types:span",
         "@com_google_googletest//:gtest_main",
     ],
 )

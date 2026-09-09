@@ -22,6 +22,7 @@
 #include "absl/base/optimization.h"
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 #include "icu4c/source/common/unicode/utf8.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_wrapper.h"
@@ -78,23 +79,27 @@ class FastBertNormalizer {
   // Creates an instance.
   //
   // Args:
-  //  * trie_data: the pointer to the trie data, which is not owned by this
-  //  instance and should be kept alive through the lifetime of the instance.
+  //  * trie_data: the trie data, which is not owned by this instance and should
+  //  be kept alive through the lifetime of the instance.
   //  * data_for_codepoint_zero: the mapped data for the codepoint zero.
   //  * normalized_string_pool: the pointer to the normalized string pool data,
   //  which is not owned by this instance and should be kept alive through the
   //  lifetime of the instance.
+  //  * normalized_string_pool_size: the size of the normalized string pool, if
+  //  known.
   static absl::StatusOr<FastBertNormalizer> Create(
-      const uint32_t* trie_data, int data_for_codepoint_zero,
+      absl::Span<const uint32_t> trie_data, int data_for_codepoint_zero,
       const char* normalized_string_pool,
       size_t normalized_string_pool_size = static_cast<size_t>(-1)) {
-    if (trie_data == nullptr || normalized_string_pool == nullptr) {
-      return absl::InvalidArgumentError(
-          "trie_data or normalized_string_pool is null");
+    if (trie_data.empty() || trie_data.data() == nullptr) {
+      return absl::InvalidArgumentError("trie_data is null or empty");
+    }
+    if (normalized_string_pool == nullptr) {
+      return absl::InvalidArgumentError("normalized_string_pool is null");
     }
     FastBertNormalizer result;
-    SH_ASSIGN_OR_RETURN(auto trie,
-                        trie_utils::DartsCloneTrieWrapper::Create(trie_data));
+    SH_ASSIGN_OR_RETURN(
+        auto trie, trie_utils::DartsCloneTrieWrapper::Create(trie_data));
     result.trie_ =
         std::make_unique<trie_utils::DartsCloneTrieWrapper>(std::move(trie));
     result.data_for_codepoint_zero_ = data_for_codepoint_zero;
@@ -123,7 +128,7 @@ class FastBertNormalizer {
           "FastBertNormalizerModel or its required fields are null");
     }
     return Create(
-        model->trie_array()->data(), model->data_for_codepoint_zero(),
+        *model->trie_array(), model->data_for_codepoint_zero(),
         reinterpret_cast<const char*>(model->normalized_string_pool()->data()),
         model->normalized_string_pool()->size());
   }
@@ -212,6 +217,7 @@ class FastBertNormalizer {
     auto copy_unchanged_input_to_output =
         [input_text, output_normalized_text, output_normalized_offset_mapping,
          &last_pos_to_copy_over](int exclusive_copy_end) {
+          (void)output_normalized_offset_mapping;
           // Copy from `last_pos_to_copy_over` to `exclusive_copy_end` and
           // update `last_pos_to_copy_over` accordingly.
           if (last_pos_to_copy_over < exclusive_copy_end) {

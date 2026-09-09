@@ -136,8 +136,7 @@ class FastWordpieceBuilder {
   absl::Status BuildModel(const std::vector<std::string>& vocab,
                           int max_bytes_per_token,
                           absl::string_view suffix_indicator,
-                          absl::string_view unk_token,
-                          bool no_pretokenization,
+                          absl::string_view unk_token, bool no_pretokenization,
                           bool support_detokenization);
 
   absl::StatusOr<std::string> ExportToFlatBuffer() const;
@@ -432,9 +431,8 @@ absl::Status FastWordpieceBuilder::ConstructTrie(
   }
   SH_ASSIGN_OR_RETURN(trie_array_,
                       trie_utils::BuildDartsCloneTrie(keys, values));
-  SH_ASSIGN_OR_RETURN(
-      trie_utils::DartsCloneTrieWrapper trie,
-      trie_utils::DartsCloneTrieWrapper::Create(trie_array_.data()));
+  SH_ASSIGN_OR_RETURN(trie_utils::DartsCloneTrieWrapper trie,
+                      trie_utils::DartsCloneTrieWrapper::Create(trie_array_));
   trie_.emplace(std::move(trie));
 
   if (trie_array_.size() >
@@ -484,23 +482,22 @@ absl::Status FastWordpieceBuilder::BuildOutgoingEdgeLabelsAlongVocabToken(
     if (!trie_->TryTraverseOneStep(cur_node, edge_label)) {
       // Should never happen, since we built trie using all of `vocab_token`.
       return absl::FailedPreconditionError(absl::StrCat(
-               "Cannot traverse from parent id ", cur_node.node_id,
-               " to child following the edge with label value of ",
-               static_cast<int>(edge_label),
-               " when processing a vocabulary token with token ID ",
-               vocab_token.TokenId(), " (0-based). This error happened at ",
-               "position ", char_pos, " (0-based) of the token. Before that, ",
-               "the prefix \"", token.substr(0, char_pos),
-               "\" of the token had been processed. This should never happen. ",
-               "This probably indicates that there are some unicode ",
-               "issues (e.g., byte '\\x0' in the middle) for the above ",
-               "mentioned token in the vocabulary file. All bytes of this ",
-               "questionable token (ID ", vocab_token.TokenId(), ") are: [",
-               absl::StrJoin(
-                   iter::imap([](auto ch) { return static_cast<int>(ch); },
-                              vocab_token.Token()),
-                   ", "),
-               "]."));
+          "Cannot traverse from parent id ", cur_node.node_id,
+          " to child following the edge with label value of ",
+          static_cast<int>(edge_label),
+          " when processing a vocabulary token with token ID ",
+          vocab_token.TokenId(), " (0-based). This error happened at ",
+          "position ", char_pos, " (0-based) of the token. Before that, ",
+          "the prefix \"", token.substr(0, char_pos),
+          "\" of the token had been processed. This should never happen. ",
+          "This probably indicates that there are some unicode ",
+          "issues (e.g., byte '\\x0' in the middle) for the above ",
+          "mentioned token in the vocabulary file. All bytes of this ",
+          "questionable token (ID ", vocab_token.TokenId(), ") are: [",
+          absl::StrJoin(iter::imap([](auto ch) { return static_cast<int>(ch); },
+                                   vocab_token.Token()),
+                        ", "),
+          "]."));
     }
     ++char_pos;
   }
@@ -929,10 +926,9 @@ absl::StatusOr<std::string> BuildModelAndExportToFlatBuffer(
     absl::string_view suffix_indicator, absl::string_view unk_token,
     bool no_pretokenization, bool support_detokenization) {
   FastWordpieceBuilder builder;
-  SH_RETURN_IF_ERROR(builder.BuildModel(vocab, max_bytes_per_token,
-                                        suffix_indicator, unk_token,
-                                        no_pretokenization,
-                                        support_detokenization));
+  SH_RETURN_IF_ERROR(builder.BuildModel(
+      vocab, max_bytes_per_token, suffix_indicator, unk_token,
+      no_pretokenization, support_detokenization));
   SH_ASSIGN_OR_RETURN(std::string flatbuffer, builder.ExportToFlatBuffer());
   return flatbuffer;
 }
