@@ -15,11 +15,19 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_KERNEL_TEMPLATE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_KERNEL_TEMPLATE_H_
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
+#include "absl/types/span.h"
+#include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
+#include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer.h"
+#include "tensorflow_text/core/kernels/row_splits_validator.h"
 
 namespace tensorflow {
 namespace text {
@@ -147,7 +155,7 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Invoke(
   // Create() is very cheap.
   auto fast_wordpiece_tokenizer =
       ::tensorflow::text::FastWordpieceTokenizer::Create(
-          wp_model->template Data<uint8>().data());
+          wp_model->template Data<uint8_t>().data());
   SH_RETURN_IF_ERROR(fast_wordpiece_tokenizer.status());
 
   // TODO(xysong): Optimize based on which information below is requested.
@@ -180,13 +188,13 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Invoke(
   SH_RETURN_IF_ERROR(this->template FillOutputTensor<std::string,
                                                      tensorflow::tstring>(
       subwords, kOutputSubwords, context));
-  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64_t>(
       subword_ids, kOutputIds, context));
-  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64_t>(
       row_splits, kOutputRowSplits, context));
-  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64_t>(
       begin_offset, kStartValues, context));
-  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64_t>(
       end_offset, kEndValues, context));
 
   return absl::OkStatus();
@@ -311,7 +319,11 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::Invoke(InvokeContext* context) {
 
   SH_ASSIGN_OR_RETURN(const auto input_row_splits,
                       context->GetInput(kInputRowSplits));
-  const auto& row_splits_vec = input_row_splits->template As<int64, 1>();
+  const auto& row_splits_vec = input_row_splits->template As<int64_t, 1>();
+
+  SH_RETURN_IF_ERROR(ValidateRowSplits<int64_t>(
+      absl::MakeConstSpan(row_splits_vec.Ptr(), row_splits_vec.Dim(0)),
+      values_vec.Dim(0)));
 
   SH_ASSIGN_OR_RETURN(const auto wp_model, context->GetInput(kWpModel));
   // OK to create on every call because FastWordpieceTokenizer is a
@@ -319,7 +331,7 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::Invoke(InvokeContext* context) {
   // Create() is very cheap.
   auto fast_wordpiece_tokenizer =
       ::tensorflow::text::FastWordpieceTokenizer::Create(
-          wp_model->template Data<uint8>().data());
+          wp_model->template Data<uint8_t>().data());
   SH_RETURN_IF_ERROR(fast_wordpiece_tokenizer.status());
 
   std::vector<std::string> sentences;

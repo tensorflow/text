@@ -16,16 +16,17 @@
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BOISE_OFFSET_CONVERTER_KERNEL_TEMPLATE_H_
 
 #include <cstdint>
-#include <iostream>
-#include <ostream>
+#include <string>
 #include <vector>
 
 #include "absl/status/status.h"
+#include "absl/strings/str_cat.h"
 #include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/boise_offset_converter.h"
+#include "tensorflow_text/core/kernels/row_splits_validator.h"
 
 namespace tensorflow {
 namespace text {
@@ -304,6 +305,16 @@ absl::Status OffsetsToBoiseTagsOp<Rt>::Invoke(InvokeContext* context) {
     }
   }
 
+  SH_RETURN_IF_ERROR(ValidateRowSplits<int64_t>(
+      absl::MakeConstSpan(input_token_begin_row_splits_vec.Ptr(),
+                          input_token_begin_row_splits_vec.Dim(0)),
+      input_token_begin_offsets_vec.Dim(0)));
+
+  SH_RETURN_IF_ERROR(ValidateRowSplits<int64_t>(
+      absl::MakeConstSpan(input_span_begin_row_splits_vec.Ptr(),
+                          input_span_begin_row_splits_vec.Dim(0)),
+      input_span_begin_offsets_vec.Dim(0)));
+
   // Outputs
   std::vector<std::string> boise_tags;
   std::vector<int32_t> input_token_begin_offsets_vec_i;
@@ -561,6 +572,11 @@ absl::Status BoiseTagsToOffsetsOp<Rt>::Invoke(InvokeContext* context) {
           "tags.");
     }
   }
+
+  SH_RETURN_IF_ERROR(ValidateRowSplits<int64_t>(
+      absl::MakeConstSpan(input_token_begin_row_splits_vec.Ptr(),
+                          input_token_begin_row_splits_vec.Dim(0)),
+      input_token_begin_offsets_vec.Dim(0)));
 
   // Outputs
   std::vector<int32_t> span_begin_offsets;

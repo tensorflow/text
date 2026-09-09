@@ -12,20 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <limits>
-#include <memory>
+#include <cstdint>
 #include <string>
 #include <vector>
 
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 #include "icu4c/source/common/unicode/uchar.h"
 #include "icu4c/source/common/unicode/umachine.h"
 #include "icu4c/source/common/unicode/utf8.h"
+#include "tensorflow/compiler/xla/tsl/platform/macros.h"
 #include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/op_requires.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
+#include "tensorflow/core/framework/types.h"
 #include "tensorflow/core/lib/core/status.h"
+#include "tensorflow/core/platform/errors.h"
+#include "tensorflow/core/platform/tstring.h"
+#include "tensorflow_text/core/kernels/row_splits_validator.h"
 
 namespace tensorflow {
 namespace text {
@@ -89,7 +96,7 @@ Status TokenizeByLabel(const absl::string_view& text,
   bool last_character_is_break_character = false;
   int start = 0;
   bool has_new_token_generated_for_text = false;
-  const auto& labels = labels_tensor.unaligned_flat<int32>();
+  const auto& labels = labels_tensor.unaligned_flat<int32_t>();
   for (int i = 0; i < chars.size(); ++i) {
     const bool is_break_character = IsBreakChar(chars[i]);
     if (!is_break_character) {
@@ -138,14 +145,18 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
                                         " elements, got ",
                                         row_splits->dim_size(0)));
 
-    std::vector<string> tokens;
+    std::vector<std::string> tokens;
     std::vector<int> begin_offset;
     std::vector<int> end_offset;
     std::vector<int> output_row_splits(1, 0);
 
     // Iterate through all the values and tokenize them.
-    const auto& values_vec = input_values->flat<tstring>();
-    const auto& row_splits_vec = row_splits->flat<int32>();
+    const auto& values_vec = input_values->flat<tensorflow::tstring>();
+    const auto& row_splits_vec = row_splits->flat<int32_t>();
+    OP_REQUIRES_OK(ctx, ValidateRowSplits<int32_t>(
+                            absl::MakeConstSpan(row_splits_vec.data(),
+                                                row_splits_vec.size()),
+                            labels->dim_size(0)));
     for (int i = 0; i < values_vec.size(); ++i) {
       // Tokenize into tokens and record the offset locations.
       int num_tokens = 0;
@@ -160,10 +171,10 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
       output_row_splits.push_back(num_tokens + output_row_splits.back());
     }
 
-    std::vector<int64> output_tokens_shape;
+    std::vector<int64_t> output_tokens_shape;
     output_tokens_shape.push_back(tokens.size());
 
-    std::vector<int64> output_row_splits_shape;
+    std::vector<int64_t> output_row_splits_shape;
     output_row_splits_shape.push_back(output_row_splits.size());
 
     Tensor* output_values;
@@ -177,19 +188,19 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
                    ctx->allocate_output("output_row_splits",
                                         TensorShape(output_row_splits_shape),
                                         &output_row_splits_tensor));
-    auto output_row_splits_vec = output_row_splits_tensor->vec<int64>();
+    auto output_row_splits_vec = output_row_splits_tensor->vec<int64_t>();
 
     Tensor* start_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("start_values",
                                              TensorShape(output_tokens_shape),
                                              &start_values));
-    auto start_values_vec = start_values->vec<int64>();
+    auto start_values_vec = start_values->vec<int64_t>();
 
     Tensor* limit_values;
     OP_REQUIRES_OK(ctx, ctx->allocate_output("limit_values",
                                              TensorShape(output_tokens_shape),
                                              &limit_values));
-    auto limit_values_vec = limit_values->vec<int64>();
+    auto limit_values_vec = limit_values->vec<int64_t>();
 
     for (int i = 0; i < tokens.size(); ++i) {
       output_values_vec(i) = tokens[i];

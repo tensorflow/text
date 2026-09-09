@@ -15,11 +15,19 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_PHRASE_TOKENIZER_KERNEL_TEMPLATE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_PHRASE_TOKENIZER_KERNEL_TEMPLATE_H_
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
+#include "absl/types/span.h"
+#include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
+#include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/phrase_tokenizer.h"
+#include "tensorflow_text/core/kernels/row_splits_validator.h"
 
 namespace tensorflow {
 namespace text {
@@ -126,7 +134,7 @@ absl::Status PhraseTokenizeOp<Rt>::Invoke(InvokeContext* context) {
   // lightweight, memory-mapped wrapper on `phrase_model` tensor, and thus
   // Create() is very cheap.
   auto phrase_tokenizer = ::tensorflow::text::PhraseTokenizer::Create(
-      phrase_model->template Data<uint8>().data());
+      phrase_model->template Data<uint8_t>().data());
   SH_RETURN_IF_ERROR(phrase_tokenizer.status());
 
   std::vector<std::string> subwords;
@@ -159,13 +167,13 @@ absl::Status PhraseTokenizeOp<Rt>::Invoke(InvokeContext* context) {
           kOutputIds,
           Shape({static_cast<int>(
               subword_ids.size())}))); /* same shape as `output_subwords` */
-  auto output_ids_vec = output_ids->template As<int64, 1>();
+  auto output_ids_vec = output_ids->template As<int64_t, 1>();
 
   SH_ASSIGN_OR_RETURN(
       auto output_row_splits,
       context->GetOutput(kOutputRowSplits,
                          Shape({static_cast<int>(row_splits.size())})));
-  auto output_row_splits_vec = output_row_splits->template As<int64, 1>();
+  auto output_row_splits_vec = output_row_splits->template As<int64_t, 1>();
 
   for (int i = 0; i < subwords.size(); ++i) {
     output_subwords_vec(i) = subwords[i];
@@ -299,14 +307,18 @@ absl::Status PhraseDetokenizeOp<Rt>::Invoke(InvokeContext* context) {
 
   SH_ASSIGN_OR_RETURN(const auto input_row_splits,
                       context->GetInput(kInputRowSplits));
-  const auto& row_splits_vec = input_row_splits->template As<int64, 1>();
+  const auto& row_splits_vec = input_row_splits->template As<int64_t, 1>();
+
+  SH_RETURN_IF_ERROR(ValidateRowSplits<int64_t>(
+      absl::MakeConstSpan(row_splits_vec.Ptr(), row_splits_vec.Dim(0)),
+      values_vec.Dim(0)));
 
   SH_ASSIGN_OR_RETURN(const auto phrase_model, context->GetInput(kPhraseModel));
   // OK to create on every call because PhraseTokenizer is a
   // lightweight, memory-mapped wrapper on `phrase_model` tensor, and thus
   // Create() is very cheap.
   auto phrase_tokenizer = ::tensorflow::text::PhraseTokenizer::Create(
-      phrase_model->template Data<uint8>().data());
+      phrase_model->template Data<uint8_t>().data());
   SH_RETURN_IF_ERROR(phrase_tokenizer.status());
 
   std::vector<std::string> sentences;

@@ -16,15 +16,17 @@
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_KERNEL_TEMPLATE_H_
 
 #include <cstdint>
-#include <iostream>
+#include <string>
 #include <vector>
 
 #include "absl/status/status.h"
+#include "absl/strings/str_cat.h"
 #include "absl/types/span.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/round_robin_trimmer.h"
+#include "tensorflow_text/core/kernels/row_splits_validator.h"
 
 namespace tensorflow {
 namespace text {
@@ -147,7 +149,7 @@ template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
 absl::Status RoundRobinTrimOp<Rt, T, Tsplits>::Invoke(InvokeContext* context) {
   // Inputs
   SH_ASSIGN_OR_RETURN(const auto msl, context->GetInput(kMaxSeqLength));
-  const int max_sequence_length = msl->template AsScalar<tensorflow::int32>();
+  const int max_sequence_length = msl->template AsScalar<int32_t>();
 
   std::vector<absl::Span<T>> list_of_values(number_of_segments_);
   std::vector<absl::Span<Tsplits>> list_of_splits(number_of_segments_);
@@ -158,6 +160,9 @@ absl::Status RoundRobinTrimOp<Rt, T, Tsplits>::Invoke(InvokeContext* context) {
     int row_split_idx = kInputRowSplits + number_of_segments_ - 1 + i;
     SH_ASSIGN_OR_RETURN(const auto rs, context->GetInput(row_split_idx));
     list_of_splits[i] = rs->template Data<Tsplits>();
+
+    SH_RETURN_IF_ERROR(ValidateRowSplits<Tsplits>(list_of_splits[i],
+                                                  list_of_values[i].size()));
   }
 
   // Compute
@@ -295,13 +300,17 @@ absl::Status RoundRobinGenerateMasksOp<Rt, T, Tsplits>::Invoke(
     InvokeContext* context) {
   // Inputs
   SH_ASSIGN_OR_RETURN(const auto msl, context->GetInput(kMaxSeqLength));
-  const int max_sequence_length = msl->template AsScalar<tensorflow::int32>();
+  const int max_sequence_length = msl->template AsScalar<int32_t>();
 
   std::vector<absl::Span<Tsplits>> list_of_splits(number_of_segments_);
   for (int i = 0; i < number_of_segments_; ++i) {
     int row_split_idx = kInputRowSplits + number_of_segments_ - 1 + i;
     SH_ASSIGN_OR_RETURN(const auto rs, context->GetInput(row_split_idx));
     list_of_splits[i] = rs->template Data<Tsplits>();
+
+    SH_ASSIGN_OR_RETURN(const auto fv, context->GetInput(kInputValues + i));
+    SH_RETURN_IF_ERROR(ValidateRowSplits<Tsplits>(
+        list_of_splits[i], fv->template Data<T>().size()));
   }
 
   // Compute
