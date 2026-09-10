@@ -32,6 +32,7 @@ limitations under the License.
 
 #include "absl/status/status.h"
 #include "absl/strings/str_replace.h"
+#include "src/model_interface.h"
 #include "src/sentencepiece_model.pb.h"
 #include "tensorflow_text/core/kernels/sentencepiece/decoder_config_generated.h"
 #include "tensorflow_text/core/kernels/sentencepiece/double_array_trie_builder.h"
@@ -41,6 +42,9 @@ limitations under the License.
 namespace tensorflow {
 namespace text {
 namespace sentencepiece {
+namespace {
+using ::sentencepiece::PieceToByte;
+}  // namespace
 
 std::tuple<std::vector<uint32_t>, std::vector<int8_t>>
 DecodePrecompiledCharsmap(
@@ -85,6 +89,7 @@ absl::StatusOr<std::string> ConvertSentencepieceModelToFlatBuffer(
     switch (piece.type()) {
       case ::sentencepiece::ModelProto::SentencePiece::NORMAL:
       case ::sentencepiece::ModelProto::SentencePiece::USER_DEFINED:
+      case ::sentencepiece::ModelProto::SentencePiece::BYTE:
         pieces.push_back(piece.piece());
         ids.push_back(index);
         if (piece.score() < min_score) {
@@ -160,11 +165,16 @@ ConvertSentencepieceModelToFlatBufferForDecoder(
     // In the original library all pieces processing is done during decoding.
     // Because it is independent from context or parameters we can do it in
     // advance here.
+    std::string out;
     switch (piece.type()) {
       case ::sentencepiece::ModelProto::SentencePiece::NORMAL:
       case ::sentencepiece::ModelProto::SentencePiece::USER_DEFINED:
         pieces.push_back(
             absl::StrReplaceAll(piece.piece(), {{kSpaceSymbol, " "}}));
+        break;
+      case ::sentencepiece::ModelProto::SentencePiece::BYTE:
+        out.append(1, PieceToByte(piece.piece()));
+        pieces.push_back(out);
         break;
       case ::sentencepiece::ModelProto::SentencePiece::UNKNOWN:
         pieces.push_back(
