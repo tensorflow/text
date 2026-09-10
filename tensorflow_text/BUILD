@@ -9,7 +9,10 @@ load("//tools/build_defs/license:license.bzl", "license")
 # Visibility rules
 package(
     default_applicable_licenses = [":license"],
-    default_visibility = ["//visibility:public"],
+    default_visibility = [
+        "//learning/genai/beyond:__subpackages__",
+        "//visibility:public",
+    ],
 )
 
 license(name = "license")
