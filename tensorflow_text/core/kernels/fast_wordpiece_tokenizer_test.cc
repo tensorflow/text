@@ -2549,6 +2549,10 @@ INSTANTIATE_TEST_SUITE_P(
     FastWordpieceTokenizerDetokenizeParameterizedTest, TestTokenizeDetokenize,
     testing::ValuesIn(GetTestSpecsForTokenizeDetokenize()));
 
+TEST(FastWordpieceTokenizerCreateTest, NullConfigFlatbufferFails) {
+  EXPECT_FALSE(FastWordpieceTokenizer::Create(nullptr).ok());
+}
+
 }  // namespace
 }  // namespace text
 }  // namespace tensorflow

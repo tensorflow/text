@@ -14,6 +14,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "absl/types/span.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_builder.h"
 #include "tensorflow_text/core/kernels/darts_clone_trie_wrapper.h"
 
@@ -31,7 +32,7 @@ TEST(DartsCloneTrieTest, CreateCursorPointToRootAndTryTraverseOneStep) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array.data()));
+                       DartsCloneTrieWrapper::Create(trie_array));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
   int data;
@@ -56,7 +57,7 @@ TEST(DartsCloneTrieTest, CreateCursorAndTryTraverseSeveralSteps) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array.data()));
+                       DartsCloneTrieWrapper::Create(trie_array));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
   int data;
@@ -76,7 +77,7 @@ TEST(DartsCloneTrieTest, TraversePathNotExisted) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array.data()));
+                       DartsCloneTrieWrapper::Create(trie_array));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
 
@@ -94,7 +95,7 @@ TEST(DartsCloneTrieTest, TraverseOnUtf8Path) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array.data()));
+                       DartsCloneTrieWrapper::Create(trie_array));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
   int data;
@@ -115,7 +116,7 @@ TEST(DartsCloneTrieTest, TraverseOnPartialUtf8Path) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array.data()));
+                       DartsCloneTrieWrapper::Create(trie_array));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
   int data;
@@ -135,7 +136,7 @@ TEST(DartsCloneTrieTest, TraverseOnUtf8PathNotExisted) {
   ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
                        BuildDartsCloneTrie(vocab_tokens));
   ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
-                       DartsCloneTrieWrapper::Create(trie_array.data()));
+                       DartsCloneTrieWrapper::Create(trie_array));
 
   DartsCloneTrieWrapper::TraversalCursor cursor;
 
@@ -181,6 +182,132 @@ TEST(DartsCloneTrieBuildError, NegativeValues) {
   // Create the trie instance.
   ASSERT_THAT(BuildDartsCloneTrie(vocab_tokens, vocab_values),
               StatusIs(util::error::INVALID_ARGUMENT));
+}
+
+TEST(DartsCloneTrieTest, OutOfBoundsTraverseOneStepRejected) {
+  // A malicious 1-element trie formatted to yield a large internal offset.
+  // 0x4E2000 is 5120000; right-shifted by 10 yields offset 5000.
+  // When traversing with 'a' (97), next_node_id = 0 ^ 5000 ^ 97 = 4905,
+  // which is far beyond the 1-element vector.
+  std::vector<uint32_t> malicious_trie = {0x4E2000};
+  ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
+                       DartsCloneTrieWrapper::Create(malicious_trie));
+
+  EXPECT_EQ(trie.size(), 1);
+  auto cursor = trie.CreateTraversalCursorPointToRoot();
+  EXPECT_FALSE(trie.TryTraverseOneStep(cursor, 'a'));
+  // Cursor should not have changed.
+  EXPECT_EQ(cursor.node_id, DartsCloneTrieWrapper::kRootNodeId);
+}
+
+TEST(DartsCloneTrieTest, OutOfBoundsTraverseSeveralStepsRejected) {
+  std::vector<uint32_t> malicious_trie = {0x4E2000};
+  ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
+                       DartsCloneTrieWrapper::Create(malicious_trie));
+
+  auto cursor = trie.CreateTraversalCursorPointToRoot();
+  EXPECT_FALSE(trie.TryTraverseSeveralSteps(cursor, "abc"));
+  EXPECT_EQ(cursor.node_id, DartsCloneTrieWrapper::kRootNodeId);
+}
+
+TEST(DartsCloneTrieTest, OutOfBoundsGetDataRejected) {
+  // 0x4E2100: offset 5000 and has_leaf bit 0x100 set.
+  std::vector<uint32_t> malicious_trie = {0x4E2100};
+  ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
+                       DartsCloneTrieWrapper::Create(malicious_trie));
+
+  auto cursor = trie.CreateTraversalCursorPointToRoot();
+  int data = 0;
+  EXPECT_FALSE(trie.TryGetData(cursor, data));
+}
+
+TEST(DartsCloneTrieTest, CreateWithInvalidSizeOrNullFails) {
+  std::vector<uint32_t> empty_trie;
+  EXPECT_THAT(DartsCloneTrieWrapper::Create(empty_trie),
+              StatusIs(absl::StatusCode::kInvalidArgument));
+  EXPECT_THAT(
+      DartsCloneTrieWrapper::Create(absl::Span<const uint32_t>(nullptr, 10)),
+      StatusIs(absl::StatusCode::kInvalidArgument));
+  uint32_t dummy = 0;
+  EXPECT_THAT(
+      DartsCloneTrieWrapper::Create(absl::Span<const uint32_t>(&dummy, 0)),
+      StatusIs(absl::StatusCode::kInvalidArgument));
+  EXPECT_THAT(DartsCloneTrieWrapper::Create(absl::Span<const uint32_t>()),
+              StatusIs(absl::StatusCode::kInvalidArgument));
+}
+
+TEST(DartsCloneTrieTest, CursorOutOfBoundsSafe) {
+  std::vector<uint32_t> malicious_trie = {0x4E2000};
+  ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
+                       DartsCloneTrieWrapper::Create(malicious_trie));
+
+  auto cursor = trie.CreateTraversalCursor(100);
+  EXPECT_EQ(cursor.node_id, 100);
+  EXPECT_EQ(cursor.unit, 0);
+
+  trie.SetTraversalCursor(cursor, 200);
+  EXPECT_EQ(cursor.node_id, 200);
+  EXPECT_EQ(cursor.unit, 0);
+
+  EXPECT_FALSE(trie.TryTraverseOneStep(cursor, 'a'));
+}
+
+TEST(DartsCloneTrieTest, InvalidCursorCannotTraverseEvenIfNextIdLandsInBounds) {
+  // A 2-element trie where element 0 has label 100.
+  // If cursor has node_id = 100 (out of bounds for size 2) and unit = 0:
+  // 100 ^ offset(0) ^ 100 = 0 (which is in bounds < 2, and label matches 100).
+  // Traversal must be rejected because the source cursor is out of bounds.
+  std::vector<uint32_t> trie_data = {100, 0};
+  ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
+                       DartsCloneTrieWrapper::Create(trie_data));
+
+  auto cursor = trie.CreateTraversalCursor(100);
+  EXPECT_EQ(cursor.node_id, 100);
+  EXPECT_FALSE(trie.TryTraverseOneStep(cursor, 100));
+  // Cursor must not have been modified.
+  EXPECT_EQ(cursor.node_id, 100);
+
+  // Several steps with empty path on invalid cursor must also be rejected.
+  EXPECT_FALSE(trie.TryTraverseSeveralSteps(cursor, ""));
+  EXPECT_EQ(cursor.node_id, 100);
+
+  // Several steps with non-empty path on invalid cursor must be rejected.
+  EXPECT_FALSE(trie.TryTraverseSeveralSteps(cursor, "d"));
+  EXPECT_EQ(cursor.node_id, 100);
+}
+
+TEST(DartsCloneTrieTest, InvalidCursorGetDataRejectedEvenIfLeafOffsetInBounds) {
+  // A 2-element trie. Element 0 is a leaf with value 42 (0x80000000 | 42).
+  std::vector<uint32_t> trie_data = {0x8000002A, 0};
+  ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
+                       DartsCloneTrieWrapper::Create(trie_data));
+
+  // Craft a cursor with out-of-bounds node_id = 100, but has_leaf bit (0x100)
+  // and offset = 100 ((100 >> 0) << 10 = 100 << 10 = 0x19000).
+  // value_node_id = 100 ^ offset(unit) = 100 ^ 100 = 0 (< 2).
+  DartsCloneTrieWrapper::TraversalCursor cursor;
+  cursor.node_id = 100;
+  cursor.unit = 0x100 | (100 << 10);
+  int data = 0;
+  EXPECT_FALSE(trie.TryGetData(cursor, data));
+}
+
+TEST(DartsCloneTrieTest,
+     SeveralStepsPartialMatchFailureLeavesCursorUnmodified) {
+  std::vector<std::string> vocab_tokens{"abc", "def"};
+  ASSERT_OK_AND_ASSIGN(std::vector<uint32_t> trie_array,
+                       BuildDartsCloneTrie(vocab_tokens));
+  ASSERT_OK_AND_ASSIGN(DartsCloneTrieWrapper trie,
+                       DartsCloneTrieWrapper::Create(trie_array));
+
+  auto cursor = trie.CreateTraversalCursorPointToRoot();
+  EXPECT_TRUE(trie.TryTraverseOneStep(cursor, 'a'));
+  const uint32_t original_node_id = cursor.node_id;
+
+  // "bz" matches 'b' but fails at 'z'.
+  EXPECT_FALSE(trie.TryTraverseSeveralSteps(cursor, "bz"));
+  // Cursor should still point to 'a', not moved to 'b'.
+  EXPECT_EQ(cursor.node_id, original_node_id);
 }
 
 }  // namespace trie_utils

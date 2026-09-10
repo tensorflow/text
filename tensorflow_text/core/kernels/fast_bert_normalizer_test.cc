@@ -14,10 +14,15 @@
 
 #include "tensorflow_text/core/kernels/fast_bert_normalizer.h"
 
+#include <cstdint>
 #include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "absl/types/span.h"
 #include "tensorflow_text/core/kernels/fast_bert_normalizer_model_builder.h"
 
 namespace tensorflow {
@@ -219,6 +224,29 @@ TEST_P(TestNormalization, TestNoGetOffsets) {
 
 INSTANTIATE_TEST_SUITE_P(FastBertNormalizerTest, TestNormalization,
                          testing::ValuesIn(GetTestSpecs()));
+
+TEST(FastBertNormalizerCreateTest, NullOrEmptySpanFails) {
+  std::vector<uint32_t> empty_vec;
+  EXPECT_FALSE(FastBertNormalizer::Create(empty_vec, 0, "").ok());
+  EXPECT_FALSE(
+      FastBertNormalizer::Create(absl::Span<const uint32_t>(), 0, "").ok());
+  uint32_t dummy = 0;
+  EXPECT_FALSE(
+      FastBertNormalizer::Create(absl::Span<const uint32_t>(&dummy, 0), 0, "")
+          .ok());
+  EXPECT_FALSE(
+      FastBertNormalizer::Create(absl::Span<const uint32_t>(nullptr, 5), 0, "")
+          .ok());
+  EXPECT_FALSE(
+      FastBertNormalizer::Create(absl::Span<const uint32_t>(&dummy, 1), 0,
+                                 nullptr)
+          .ok());
+}
+
+TEST(FastBertNormalizerCreateTest, NullModelFlatbufferFails) {
+  EXPECT_FALSE(FastBertNormalizer::Create(nullptr).ok());
+}
+
 }  // namespace
 }  // namespace text
 }  // namespace tensorflow
