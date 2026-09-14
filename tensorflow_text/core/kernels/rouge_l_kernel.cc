@@ -64,7 +64,8 @@ class RougeLOp : public OpKernel {
 
     // Alpha must be <=1.
     OP_REQUIRES(ctx, alpha <= 1,
-                errors::InvalidArgument("alpha must be <1 but was=", alpha));
+                absl::InvalidArgumentError(
+                    absl::StrCat("alpha must be <1 but was=", alpha)));
 
     // Ref and Hyp must have the same number of rows.
     OP_REQUIRES(ctx, ref_splits_flat.size() == hyp_splits_flat.size(),
@@ -73,17 +74,21 @@ class RougeLOp : public OpKernel {
                     "must equal hyp splits len=", hyp_splits_flat.size()));
 
     // All inputs must be vectors.
-    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(hyp_tensor.shape()),
-                errors::InvalidArgument("hypotheses values must be a vector"));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(ref_tensor.shape()),
-                errors::InvalidArgument("references values must be a vector"));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(hyp_splits.shape()),
-                errors::InvalidArgument("hypotheses splits must be a vector"));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(ref_splits.shape()),
-                errors::InvalidArgument("references splits must be a vector"));
+    OP_REQUIRES(
+        ctx, TensorShapeUtils::IsVector(hyp_tensor.shape()),
+        absl::InvalidArgumentError("hypotheses values must be a vector"));
+    OP_REQUIRES(
+        ctx, TensorShapeUtils::IsVector(ref_tensor.shape()),
+        absl::InvalidArgumentError("references values must be a vector"));
+    OP_REQUIRES(
+        ctx, TensorShapeUtils::IsVector(hyp_splits.shape()),
+        absl::InvalidArgumentError("hypotheses splits must be a vector"));
+    OP_REQUIRES(
+        ctx, TensorShapeUtils::IsVector(ref_splits.shape()),
+        absl::InvalidArgumentError("references splits must be a vector"));
     // Ref and Hyp must have at least one split.
     OP_REQUIRES(ctx, ref_splits_flat.size() > 0,
-                errors::InvalidArgument(
+                absl::InvalidArgumentError(
                     "ref splits len=0; must have at least 1 split"));
 
     // Output is a dense Tensor containing one row per input row.
@@ -113,12 +118,9 @@ class RougeLOp : public OpKernel {
       SPLITS_TYPE lhyp = hyp_splits_flat(i) - hyp_splits_flat(i-1);
       SPLITS_TYPE lref = ref_splits_flat(i) - ref_splits_flat(i-1);
       // Length of longest common substring.
-      int32 llcs = LongestCommonSubsequenceLength(hyp_splits_flat(i-1),
-                                                  hyp_splits_flat(i),
-                                                  hyp_tensor_flat,
-                                                  ref_splits_flat(i-1),
-                                                  ref_splits_flat(i),
-                                                  ref_tensor_flat);
+      int32_t llcs = LongestCommonSubsequenceLength(
+          hyp_splits_flat(i - 1), hyp_splits_flat(i), hyp_tensor_flat,
+          ref_splits_flat(i - 1), ref_splits_flat(i), ref_tensor_flat);
       auto measures = ComputeMeasures(lhyp, lref, llcs, alpha);
       f_measures_flat(i - 1) = std::get<0>(measures);
       p_measures_flat(i - 1) = std::get<1>(measures);
@@ -129,19 +131,18 @@ class RougeLOp : public OpKernel {
  private:
   // By using LCS, the ROUGE-L algorithm does not require consecutive matches
   // but rather credits the order of N-grams.
-  int32 LongestCommonSubsequenceLength(
-      const SPLITS_TYPE hyp_i,
-      const SPLITS_TYPE hyp_j,
-      const ConstFlatValues& hyp,
-      const SPLITS_TYPE ref_i,
-      const SPLITS_TYPE ref_j,
-      const ConstFlatValues& ref) {
+  int32_t LongestCommonSubsequenceLength(const SPLITS_TYPE hyp_i,
+                                         const SPLITS_TYPE hyp_j,
+                                         const ConstFlatValues& hyp,
+                                         const SPLITS_TYPE ref_i,
+                                         const SPLITS_TYPE ref_j,
+                                         const ConstFlatValues& ref) {
     SPLITS_TYPE lhyp = hyp_j - hyp_i;
     SPLITS_TYPE lref = ref_j - ref_i;
     // Create a scratch matrix to keep track of the LCS seen so far using DP.
     // http://www.algorithmist.com/index.php/Longest_Common_Subsequence
     Tensor scratch(DT_INT32, {lhyp + 2, lref + 2});
-    auto scratch2d = scratch.matrix<int32>();
+    auto scratch2d = scratch.matrix<int32_t>();
     for (SPLITS_TYPE x = hyp_i; x <= hyp_j + 1; x++) {
       for (SPLITS_TYPE y = ref_i; y <= ref_j + 1; y++) {
         SPLITS_TYPE a = x - hyp_i;
@@ -167,7 +168,7 @@ class RougeLOp : public OpKernel {
 
   std::tuple<float, float, float> ComputeMeasures(const SPLITS_TYPE lhyp_int,
                                                   const SPLITS_TYPE lref_int,
-                                                  const int32 llcs_int,
+                                                  const int32_t llcs_int,
                                                   const float alpha) {
     const float lhyp = static_cast<float>(lhyp_int);
     const float lref = static_cast<float>(lref_int);

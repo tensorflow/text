@@ -516,7 +516,7 @@ absl::Status MstSolver<Index, Score>::ContractionPhase() {
     // Find the maximum inbound arc for the current |target|, if any.
     const Arc *arc = MaximumInboundArc(target);
     if (arc == nullptr) {
-      return tensorflow::errors::FailedPrecondition("Infeasible digraph");
+      return absl::FailedPreconditionError("Infeasible digraph");
     }
     argmax_arcs_[target] = arc;
 
@@ -595,7 +595,7 @@ absl::Status MstSolver<Index, Score>::ExpansionPhase(absl::Span<Index> argmax) {
   // example illustrates, however, |num_roots| will be more than 1 if and only
   // if the original digraph is infeasible for trees.
   if (!forest_ && num_roots != 1) {
-    return tensorflow::errors::FailedPrecondition("Infeasible digraph");
+    return absl::FailedPreconditionError("Infeasible digraph");
   }
 
   return absl::OkStatus();

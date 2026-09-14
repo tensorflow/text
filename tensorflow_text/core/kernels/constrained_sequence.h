@@ -30,7 +30,7 @@ class ScoreAccessor {
   // Get a score out of the data tensor.
   float GetScore(int batch_idx, int step_idx, int score_idx) const;
 
-  int64 GetLength(int batch_idx) const;
+  int64_t GetLength(int batch_idx) const;
 
   int batch_size() const;
   int num_steps() const;
@@ -43,7 +43,7 @@ class ScoreAccessor {
 
   // A pointer into the underlying data of the lengths tensor. Not owned.
   const int *lengths_;
-  const int64 *long_lengths_;
+  const int64_t* long_lengths_;
 
   // Whether the passed lengths tensor is int32 or int64.
   bool use_long_lengths_;
@@ -72,19 +72,19 @@ class ScoreAccessor {
 
 // Perform Viterbi analysis on a single batch item.
 void ViterbiAnalysis(
-    const ScoreAccessor &scores,
-    const tensorflow::TTypes<const float>::Matrix &transition_weights,
-    const tensorflow::TTypes<const bool>::Matrix &allowed_transitions,
+    const ScoreAccessor& scores,
+    const tensorflow::TTypes<const float>::Matrix& transition_weights,
+    const tensorflow::TTypes<const bool>::Matrix& allowed_transitions,
     const int batch, bool use_log_space, bool use_start_end_states,
-    int32 *output_data);
+    int32_t* output_data);
 
 // Perform a greedy analysis on a single batch item.
 void GreedyAnalysis(
-    const ScoreAccessor &scores,
-    const tensorflow::TTypes<const float>::Matrix &transition_weights,
-    const tensorflow::TTypes<const bool>::Matrix &allowed_transitions,
+    const ScoreAccessor& scores,
+    const tensorflow::TTypes<const float>::Matrix& transition_weights,
+    const tensorflow::TTypes<const bool>::Matrix& allowed_transitions,
     int batch, bool use_log_space, bool use_start_end_states,
-    int32 *output_data);
+    int32_t* output_data);
 
 }  // namespace text
 }  // namespace tensorflow
