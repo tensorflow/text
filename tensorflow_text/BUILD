@@ -1,10 +1,10 @@
 load("@org_tensorflow//tensorflow/lite:build_def.bzl", "tflite_cc_shared_object")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
-load("@xla//third_party/rules_python/python:py_test.bzl", "py_test")
-load("//tensorflow_text:tftext.bzl", "extra_py_deps", "if_pywrap", "py_library", "py_tf_text_library")
 
 # [internal] load build_test.bzl
-load("//tools/build_defs/license:license.bzl", "license")
+load("@rules_license//rules:license.bzl", "license")
+load("@xla//third_party/rules_python/python:py_test.bzl", "py_test")
+load("//tensorflow_text:tftext.bzl", "extra_py_deps", "if_pywrap", "py_library", "py_tf_text_library")
 
 # Visibility rules
 package(
