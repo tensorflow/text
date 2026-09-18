@@ -77,11 +77,11 @@ class TFSentencepieceOp : public tensorflow::OpKernel {
     tensorflow::Tensor* output_values_tensor = nullptr;
     tensorflow::Tensor* output_splits_tensor = nullptr;
     OP_REQUIRES(ctx, encoded.size() < std::numeric_limits<int32_t>::max(),
-                errors::InvalidArgument(
+                absl::InvalidArgumentError(
                     "Encoded input must contain less than 2^31 characters."));
-    OP_REQUIRES(
-        ctx, splits.size() + 1 < std::numeric_limits<int32_t>::max(),
-        errors::InvalidArgument("Splits tensor is limited to 2^31-1 values."));
+    OP_REQUIRES(ctx, splits.size() + 1 < std::numeric_limits<int32_t>::max(),
+                absl::InvalidArgumentError(
+                    "Splits tensor is limited to 2^31-1 values."));
     OP_REQUIRES_OK(
         ctx, ctx->allocate_output(0, {static_cast<int32_t>(encoded.size())},
                                   &output_values_tensor));
