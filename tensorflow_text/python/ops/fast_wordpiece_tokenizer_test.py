@@ -31,10 +31,14 @@ from tensorflow.python.data.kernel_tests import test_base
 from tensorflow.python.data.ops import dataset_ops
 from tensorflow.python.eager import def_function
 from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import test
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_fast_wordpiece_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_fast_wordpiece_tokenizer.so'))
 from tensorflow_text.python.ops.fast_wordpiece_tokenizer import FastWordpieceTokenizer
 
 FLAGS = flags.FLAGS
@@ -486,6 +490,56 @@ class FastWordpieceOpOriginalTest(test_util.TensorFlowTestCase,
     )
     subwords = tokenizer.tokenize(tokens)
     self.assertAllEqual(subwords, expected_subwords)
+
+  def testDetokenizeInvalidRowSplits(self):
+    tokenizer = FastWordpieceTokenizer(
+        vocab=_ENGLISH_VOCAB, support_detokenization=True
+    )
+    # Non-monotonic row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r"Invalid input_row_splits"
+    ):
+      self.evaluate(
+          gen_fast_wordpiece_tokenizer.tf_text_fast_wordpiece_detokenize(
+              input_values=[0, 1, 2],
+              input_row_splits=[0, 3, 1],
+              wp_model=tokenizer._model,
+          )
+      )
+    # Out-of-bounds row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r"Invalid input_row_splits"
+    ):
+      self.evaluate(
+          gen_fast_wordpiece_tokenizer.tf_text_fast_wordpiece_detokenize(
+              input_values=[0, 1, 2],
+              input_row_splits=[0, 100],
+              wp_model=tokenizer._model,
+          )
+      )
+    # Negative initial row split.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r"Invalid input_row_splits"
+    ):
+      self.evaluate(
+          gen_fast_wordpiece_tokenizer.tf_text_fast_wordpiece_detokenize(
+              input_values=[0, 1, 2],
+              input_row_splits=[-1, 1],
+              wp_model=tokenizer._model,
+          )
+      )
+    # Empty row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must not be empty",
+    ):
+      self.evaluate(
+          gen_fast_wordpiece_tokenizer.tf_text_fast_wordpiece_detokenize(
+              input_values=[0, 1, 2],
+              input_row_splits=[],
+              wp_model=tokenizer._model,
+          )
+      )
 
 
 # The following WordPiece setup is used in `FastWordpieceOpAdditionalTest` and
