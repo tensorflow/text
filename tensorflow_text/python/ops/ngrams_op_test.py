@@ -30,6 +30,9 @@ from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_ngrams_op = load_library.load_op_library(resource_loader.get_path_to_datafile('_ngrams_op.so'))
 from tensorflow_text.core.pybinds import tflite_registrar
 from tensorflow_text.python.ops import ngrams_op
 
@@ -481,6 +484,64 @@ class NgramsV2OpTest(test_util.TensorFlowTestCase):
 
     # Assert the results are identical.
     self.assertAllEqual(tflite_result, tf_result)
+
+  def testInvalidRowSplits(self):
+    # Non-monotonic row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must be monotonically increasing",
+    ):
+      self.evaluate(
+          gen_ngrams_op.tf_text_ngrams_string_join(
+              input_values=[b"a", b"b", b"c"],
+              input_row_splits=[[0, 3, 1]],
+              width=2,
+              axis=-1,
+              string_separator=" ",
+          )
+      )
+    # Out-of-bounds row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits exceeds input_values size",
+    ):
+      self.evaluate(
+          gen_ngrams_op.tf_text_ngrams_string_join(
+              input_values=[b"a", b"b", b"c"],
+              input_row_splits=[[0, 100]],
+              width=2,
+              axis=-1,
+              string_separator=" ",
+          )
+      )
+    # Negative initial row split.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must be non-negative",
+    ):
+      self.evaluate(
+          gen_ngrams_op.tf_text_ngrams_string_join(
+              input_values=[b"a", b"b", b"c"],
+              input_row_splits=[[-1, 1]],
+              width=2,
+              axis=-1,
+              string_separator=" ",
+          )
+      )
+    # Empty row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must not be empty",
+    ):
+      self.evaluate(
+          gen_ngrams_op.tf_text_ngrams_string_join(
+              input_values=[b"a", b"b", b"c"],
+              input_row_splits=[constant_op.constant([], dtype=tf.int64)],
+              width=2,
+              axis=-1,
+              string_separator=" ",
+          )
+      )
 
 
 if __name__ == "__main__":
