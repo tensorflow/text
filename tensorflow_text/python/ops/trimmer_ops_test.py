@@ -18,9 +18,14 @@
 from absl.testing import parameterized
 
 from tensorflow.python.framework import constant_op
+from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_trimmer_ops = load_library.load_op_library(resource_loader.get_path_to_datafile('_trimmer_ops.so'))
 from tensorflow_text.python.ops import trimmer_ops
 
 
@@ -538,6 +543,100 @@ class RoundRobinTrimmerOpsTest(test.TestCase, parameterized.TestCase):
     actual = trimmer.trim(segments)
     for expected_seg, actual_seg in zip(expected, actual):
       self.assertAllEqual(expected_seg, actual_seg)
+
+  def testInvalidRowSplits(self):
+    # Non-monotonic row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must be monotonically increasing",
+    ):
+      self.evaluate(
+          gen_trimmer_ops.tf_text_round_robin_generate_masks(
+              max_sequence_length=3,
+              input_values=[[b"a", b"b", b"c"]],
+              input_row_splits=[[0, 2, 1]],
+          )
+      )
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must be monotonically increasing",
+    ):
+      self.evaluate(
+          gen_trimmer_ops.tf_text_round_robin_trim(
+              max_sequence_length=3,
+              input_values=[[b"a", b"b", b"c"]],
+              input_row_splits=[[0, 2, 1]],
+          )
+      )
+    # Out-of-bounds row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits exceeds input_values size",
+    ):
+      self.evaluate(
+          gen_trimmer_ops.tf_text_round_robin_generate_masks(
+              max_sequence_length=3,
+              input_values=[[b"a", b"b", b"c"]],
+              input_row_splits=[[0, 100]],
+          )
+      )
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits exceeds input_values size",
+    ):
+      self.evaluate(
+          gen_trimmer_ops.tf_text_round_robin_trim(
+              max_sequence_length=3,
+              input_values=[[b"a", b"b", b"c"]],
+              input_row_splits=[[0, 100]],
+          )
+      )
+    # Negative initial row split.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must be non-negative",
+    ):
+      self.evaluate(
+          gen_trimmer_ops.tf_text_round_robin_generate_masks(
+              max_sequence_length=3,
+              input_values=[[b"a", b"b", b"c"]],
+              input_row_splits=[[-1, 1]],
+          )
+      )
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must be non-negative",
+    ):
+      self.evaluate(
+          gen_trimmer_ops.tf_text_round_robin_trim(
+              max_sequence_length=3,
+              input_values=[[b"a", b"b", b"c"]],
+              input_row_splits=[[-1, 1]],
+          )
+      )
+    # Empty row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must not be empty",
+    ):
+      self.evaluate(
+          gen_trimmer_ops.tf_text_round_robin_generate_masks(
+              max_sequence_length=3,
+              input_values=[[b"a", b"b", b"c"]],
+              input_row_splits=[constant_op.constant([], dtype=dtypes.int64)],
+          )
+      )
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must not be empty",
+    ):
+      self.evaluate(
+          gen_trimmer_ops.tf_text_round_robin_trim(
+              max_sequence_length=3,
+              input_values=[[b"a", b"b", b"c"]],
+              input_row_splits=[constant_op.constant([], dtype=dtypes.int64)],
+          )
+      )
 
   # These two tests started to segfault after new TF integration,
   # Investigate after brunch cut tf.text

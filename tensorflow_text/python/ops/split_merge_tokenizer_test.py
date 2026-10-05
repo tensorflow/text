@@ -21,6 +21,7 @@ from __future__ import division
 from __future__ import print_function
 
 from tensorflow.python.framework import constant_op
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import ops
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops import array_ops
@@ -29,6 +30,9 @@ from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_tensor
 from tensorflow.python.platform import test
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_split_merge_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_split_merge_tokenizer.so'))
 from tensorflow_text.python.ops.split_merge_tokenizer import SplitMergeTokenizer
 
 
@@ -401,6 +405,60 @@ class SplitMergeTokenizerTest(test.TestCase):
     # Use the same arguments to test the tokenize() version, without offsets.
     tokens = self.tokenizer.tokenize(test_value, test_label)
     self.assertAllEqual(tokens, expected_tokens)
+
+  def testInvalidRowSplits(self):
+    # Non-monotonic row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'row_splits must be monotonically increasing',
+    ):
+      self.evaluate(
+          gen_split_merge_tokenizer.split_merge_tokenize_with_offsets(
+              input_values=[b'hello', b'world'],
+              labels=[0, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+              row_splits=[0, 8, 5],
+              force_split_at_break_character=True,
+          )
+      )
+    # Out-of-bounds row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'row_splits value .* exceeds labels size',
+    ):
+      self.evaluate(
+          gen_split_merge_tokenizer.split_merge_tokenize_with_offsets(
+              input_values=[b'hello'],
+              labels=[0, 1, 1, 1, 1],
+              row_splits=[0, 100],
+              force_split_at_break_character=True,
+          )
+      )
+    # Negative initial row split.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'row_splits must be non-negative',
+    ):
+      self.evaluate(
+          gen_split_merge_tokenizer.split_merge_tokenize_with_offsets(
+              input_values=[b'hello'],
+              labels=[0, 1, 1, 1, 1],
+              row_splits=[-1, 1],
+              force_split_at_break_character=True,
+          )
+      )
+    # Empty row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'Expecting row_splits have',
+    ):
+      self.evaluate(
+          gen_split_merge_tokenizer.split_merge_tokenize_with_offsets(
+              input_values=[b'hello'],
+              labels=[0, 1, 1, 1, 1],
+              row_splits=[],
+              force_split_at_break_character=True,
+          )
+      )
 
 
 if __name__ == '__main__':

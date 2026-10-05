@@ -15,6 +15,7 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_KERNEL_TEMPLATE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_KERNEL_TEMPLATE_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <vector>
@@ -28,6 +29,38 @@
 
 namespace tensorflow {
 namespace text {
+
+template <typename Tsplits>
+inline absl::Status ValidateRowSplits(absl::Span<const Tsplits> splits,
+                                      size_t expected_splits_size,
+                                      size_t values_size) {
+  // Check for valid row splits
+  if (splits.empty()) {
+    return absl::InvalidArgumentError("input_row_splits must not be empty.");
+  }
+  // Check for consistent row splits size
+  if (splits.size() != expected_splits_size) {
+    return absl::InvalidArgumentError(
+        "All input_row_splits must have the same size.");
+  }
+  // Check for negative values
+  if (splits[0] < 0) {
+    return absl::InvalidArgumentError("input_row_splits must be non-negative.");
+  }
+  // Check for monotonically increasing values
+  for (size_t j = 0; j + 1 < splits.size(); ++j) {
+    if (splits[j + 1] < splits[j]) {
+      return absl::InvalidArgumentError(
+          "input_row_splits must be monotonically increasing.");
+    }
+  }
+  // Check if the last element exceeds the values size
+  if (static_cast<size_t>(splits.back()) > values_size) {
+    return absl::InvalidArgumentError(
+        "input_row_splits exceeds input_values size.");
+  }
+  return absl::OkStatus();
+}
 
 template <tflite::shim::Runtime Rt, typename T, typename Tsplits>
 class RoundRobinTrimOp
@@ -153,11 +186,20 @@ absl::Status RoundRobinTrimOp<Rt, T, Tsplits>::Invoke(InvokeContext* context) {
   std::vector<absl::Span<Tsplits>> list_of_splits(number_of_segments_);
   for (int i = 0; i < number_of_segments_; ++i) {
     SH_ASSIGN_OR_RETURN(const auto fv, context->GetInput(kInputValues + i));
-    list_of_values[i] = fv->template Data<T>();
+    size_t values_size = 1;
+    for (const int dim : fv->Shape()) {
+      values_size *= dim;
+    }
+    // TfTensorView::Data<T>() uses TotalBytes() / sizeof(T), which over-counts
+    // for tstring tensors because TotalBytes() includes string heap payloads.
+    list_of_values[i] = fv->template Data<T>().subspan(0, values_size);
 
     int row_split_idx = kInputRowSplits + number_of_segments_ - 1 + i;
     SH_ASSIGN_OR_RETURN(const auto rs, context->GetInput(row_split_idx));
     list_of_splits[i] = rs->template Data<Tsplits>();
+
+    SH_RETURN_IF_ERROR(ValidateRowSplits<Tsplits>(
+        list_of_splits[i], list_of_splits[0].size(), list_of_values[i].size()));
   }
 
   // Compute
@@ -299,9 +341,18 @@ absl::Status RoundRobinGenerateMasksOp<Rt, T, Tsplits>::Invoke(
 
   std::vector<absl::Span<Tsplits>> list_of_splits(number_of_segments_);
   for (int i = 0; i < number_of_segments_; ++i) {
+    SH_ASSIGN_OR_RETURN(const auto fv, context->GetInput(kInputValues + i));
+    size_t values_size = 1;
+    for (const int dim : fv->Shape()) {
+      values_size *= dim;
+    }
+
     int row_split_idx = kInputRowSplits + number_of_segments_ - 1 + i;
     SH_ASSIGN_OR_RETURN(const auto rs, context->GetInput(row_split_idx));
     list_of_splits[i] = rs->template Data<Tsplits>();
+
+    SH_RETURN_IF_ERROR(ValidateRowSplits<Tsplits>(
+        list_of_splits[i], list_of_splits[0].size(), values_size));
   }
 
   // Compute
