@@ -33,7 +33,7 @@ LookupStatus StringVocab::Contains(absl::string_view key, bool* value) const {
 absl::optional<int> StringVocab::LookupId(absl::string_view key) const {
   auto it = index_map_.find(key);
   if (it == index_map_.end()) {
-    return absl::nullopt;
+    return std::nullopt;
   } else {
     return it->second;
   }
@@ -42,7 +42,7 @@ absl::optional<int> StringVocab::LookupId(absl::string_view key) const {
 // Returns the key of `vocab_id` or empty if `vocab_id` is not valid.
 absl::optional<absl::string_view> StringVocab::LookupWord(int vocab_id) const {
   if (vocab_id >= vocab_.size() || vocab_id < 0) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return vocab_[vocab_id];
 }
