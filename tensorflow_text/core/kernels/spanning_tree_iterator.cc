@@ -27,14 +27,15 @@ bool SpanningTreeIterator::HasCycle(const SourceList &sources) {
   visiting_.assign(sources.size(), false);
 
   // Search upwards from each node to find cycles.
-  for (uint32 initial_node = 0; initial_node < sources.size(); ++initial_node) {
+  for (uint32_t initial_node = 0; initial_node < sources.size();
+       ++initial_node) {
     // Search upwards to try to find a cycle.
-    uint32 current_node = initial_node;
+    uint32_t current_node = initial_node;
     while (true) {
       if (searched_[current_node]) break;        // already searched
       if (visiting_[current_node]) return true;  // revisiting implies cycle
       visiting_[current_node] = true;  // mark as being currently visited
-      const uint32 source_node = sources[current_node];
+      const uint32_t source_node = sources[current_node];
       if (source_node == current_node) break;  // self-loops are roots
       current_node = source_node;              // advance upwards
     }
@@ -45,7 +46,7 @@ bool SpanningTreeIterator::HasCycle(const SourceList &sources) {
       if (searched_[current_node]) break;  // already searched
       searched_[current_node] = true;
       visiting_[current_node] = false;
-      const uint32 source_node = sources[current_node];
+      const uint32_t source_node = sources[current_node];
       if (source_node == current_node) break;  // self-loops are roots
       current_node = source_node;              // advance upwards
     }
@@ -54,18 +55,18 @@ bool SpanningTreeIterator::HasCycle(const SourceList &sources) {
   return false;
 }
 
-uint32 SpanningTreeIterator::NumRoots(const SourceList &sources) {
-  uint32 num_roots = 0;
-  for (uint32 node = 0; node < sources.size(); ++node) {
+uint32_t SpanningTreeIterator::NumRoots(const SourceList& sources) {
+  uint32_t num_roots = 0;
+  for (uint32_t node = 0; node < sources.size(); ++node) {
     num_roots += (node == sources[node]);
   }
   return num_roots;
 }
 
 bool SpanningTreeIterator::NextSourceList(SourceList *sources) {
-  const uint32 num_nodes = sources->size();
-  for (uint32 i = 0; i < num_nodes; ++i) {
-    const uint32 new_source = ++(*sources)[i];
+  const uint32_t num_nodes = sources->size();
+  for (uint32_t i = 0; i < num_nodes; ++i) {
+    const uint32_t new_source = ++(*sources)[i];
     if (new_source < num_nodes) return true;  // absorbed in this digit
     (*sources)[i] = 0;  // overflowed this digit, carry to next digit
   }
@@ -76,7 +77,7 @@ bool SpanningTreeIterator::NextTree(SourceList *sources) {
   // Iterate source lists, skipping non-trees.
   while (NextSourceList(sources)) {
     // Check the number of roots.
-    const uint32 num_roots = NumRoots(*sources);
+    const uint32_t num_roots = NumRoots(*sources);
     if (forest_) {
       if (num_roots == 0) continue;
     } else {
