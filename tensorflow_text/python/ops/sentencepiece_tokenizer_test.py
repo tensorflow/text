@@ -532,6 +532,120 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
         result = sp.tokenize('whatever')
         result.eval()
 
+  @parameterized.parameters([
+      (False, False, dtypes.int32, False),
+      (False, True, dtypes.int32, False),
+      (True, False, dtypes.int32, False),
+      (True, True, dtypes.int32, False),
+      (False, False, dtypes.string, False),
+      (True, True, dtypes.string, False),
+      (False, False, dtypes.int32, True),
+      (True, True, dtypes.int32, True),
+  ])
+  def testPerCallBosEosOverrides(
+      self, add_bos, add_eos, out_type, return_nbest
+  ):
+    nbest_size = 2 if return_nbest else 0
+    shared_sp = SentencepieceTokenizer(
+        self.model,
+        out_type=out_type,
+        nbest_size=nbest_size,
+        add_bos=not add_bos,
+        add_eos=not add_eos,
+        return_nbest=return_nbest,
+    )
+    dedicated_sp = SentencepieceTokenizer(
+        self.model,
+        out_type=out_type,
+        nbest_size=nbest_size,
+        add_bos=add_bos,
+        add_eos=add_eos,
+        return_nbest=return_nbest,
+    )
+    inputs = [
+        constant_op.constant(_utf8('I love carpet')),
+        constant_op.constant(_utf8(['I love carpet', '', 'Never tell me'])),
+    ]
+    if not return_nbest:
+      inputs.append(
+          ragged_factory_ops.constant(
+              _utf8([['I love carpet', ''], ['Never tell me the odds']])
+          )
+      )
+    for inp in inputs:
+      actual = shared_sp.tokenize(inp, add_bos=add_bos, add_eos=add_eos)
+      expected = dedicated_sp.tokenize(inp)
+      self.assertAllEqual(actual, expected)
+
+      actual_tok, actual_starts, actual_ends = (
+          shared_sp.tokenize_with_offsets(
+              inp, add_bos=add_bos, add_eos=add_eos
+          )
+      )
+      expected_tok, expected_starts, expected_ends = (
+          dedicated_sp.tokenize_with_offsets(inp)
+      )
+      self.assertAllEqual(actual_tok, expected_tok)
+      self.assertAllEqual(actual_starts, expected_starts)
+      self.assertAllEqual(actual_ends, expected_ends)
+
+  def testConcurrentMixedBosEosOptionsOnSharedResource(self):
+    if not context.executing_eagerly():
+      self.skipTest('Concurrent eager execution test.')
+    import threading  # pylint: disable=g-import-not-at-top
+
+    shared_sp = SentencepieceTokenizer(
+        self.model, out_type=dtypes.int32, add_bos=False, add_eos=False
+    )
+    sentences = constant_op.constant(
+        _utf8(['I love carpet', 'Never tell me the odds', 'hello world'])
+    )
+    combos = [(False, False), (True, False), (False, True), (True, True)]
+    expected_by_combo = {
+        (bos, eos): SentencepieceTokenizer(
+            self.model, out_type=dtypes.int32, add_bos=bos, add_eos=eos
+        ).tokenize(sentences)
+        for bos, eos in combos
+    }
+    expected_offsets_by_combo = {
+        (bos, eos): SentencepieceTokenizer(
+            self.model, out_type=dtypes.int32, add_bos=bos, add_eos=eos
+        ).tokenize_with_offsets(sentences)
+        for bos, eos in combos
+    }
+
+    failures = []
+    barrier = threading.Barrier(len(combos) * 2)
+
+    def worker(bos, eos):
+      try:
+        with context.eager_mode():
+          barrier.wait()
+          for _ in range(50):
+            tok = shared_sp.tokenize(sentences, add_bos=bos, add_eos=eos)
+            self.assertAllEqual(tok, expected_by_combo[(bos, eos)])
+            wtok, starts, ends = shared_sp.tokenize_with_offsets(
+                sentences, add_bos=bos, add_eos=eos
+            )
+            exp_tok, exp_starts, exp_ends = expected_offsets_by_combo[
+                (bos, eos)
+            ]
+            self.assertAllEqual(wtok, exp_tok)
+            self.assertAllEqual(starts, exp_starts)
+            self.assertAllEqual(ends, exp_ends)
+      except Exception as exc:  # pylint: disable=broad-except
+        failures.append(exc)
+
+    threads = [
+        threading.Thread(target=worker, args=(bos, eos))
+        for bos, eos in combos * 2
+    ]
+    for thread in threads:
+      thread.start()
+    for thread in threads:
+      thread.join()
+    self.assertEmpty(failures)
+
 
 # Test that datasets depending on a sentencepiece tokenizer resources can be
 # serialized without external references.

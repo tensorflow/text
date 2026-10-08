@@ -121,12 +121,14 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
     self.return_nbest = return_nbest
     self._model_resource = _SentencepieceModelResource(model, name)
 
-  def tokenize(self, input, name=None):  # pylint: disable=redefined-builtin
+  def tokenize(self, input, name=None, add_bos=None, add_eos=None):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings.
 
     Args:
       input: A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
       name: The name argument that is passed to the op function.
+      add_bos: Optional bool override for `self.add_bos`.
+      add_eos: Optional bool override for `self.add_eos`.
 
     Returns:
       A `RaggedTensor` of tokenized text. The returned shape is the shape of the
@@ -138,14 +140,21 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
         raise ValueError("Rank of input_tensor must be statically known.")
       if ragged_tensor.is_ragged(input_tensor):
         # Recursively process the values of the ragged tensor.
-        tokens = self.tokenize(input_tensor.flat_values)
+        tokens = self.tokenize(
+            input_tensor.flat_values, add_bos=add_bos, add_eos=add_eos)
         return input_tensor.with_flat_values(tokens)
       else:
         if input_tensor.shape.ndims > 1:
           # Convert the input tensor to ragged and process it.
-          return self.tokenize(ragged_conversion_ops.from_tensor(input_tensor))
+          return self.tokenize(
+              ragged_conversion_ops.from_tensor(input_tensor),
+              add_bos=add_bos,
+              add_eos=add_eos)
         elif input_tensor.shape.ndims == 0:
-          tokens = self.tokenize(array_ops_stack.stack([input_tensor]))
+          tokens = self.tokenize(
+              array_ops_stack.stack([input_tensor]),
+              add_bos=add_bos,
+              add_eos=add_eos)
           return tokens.values
         else:
           # Our rank 1 tensor is the correct shape, so we can process it as
@@ -153,7 +162,9 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
           (output_values, row_splits) = (
               gen_sentencepiece_tokenizer.sentencepiece_tokenize_op(
                   self._model_resource.resource_handle, input_tensor,
-                  self.nbest_size, self.alpha, self.add_bos, self.add_eos,
+                  self.nbest_size, self.alpha,
+                  self.add_bos if add_bos is None else add_bos,
+                  self.add_eos if add_eos is None else add_eos,
                   self.reverse, self.out_type, return_nbest=self.return_nbest))
           tokens = RaggedTensor.from_nested_row_splits(
               flat_values=output_values,
@@ -161,7 +172,7 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
               validate=False)
           return tokens
 
-  def tokenize_with_offsets(self, input, name=None):  # pylint: disable=redefined-builtin
+  def tokenize_with_offsets(self, input, name=None, add_bos=None, add_eos=None):  # pylint: disable=redefined-builtin
     """Tokenizes a tensor of UTF-8 strings.
 
       This function returns a tuple containing the tokens along with
@@ -171,6 +182,8 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
     Args:
       input: A `RaggedTensor` or `Tensor` of UTF-8 strings with any shape.
       name: The name argument that is passed to the op function.
+      add_bos: Optional bool override for `self.add_bos`.
+      add_eos: Optional bool override for `self.add_eos`.
 
     Returns:
       A tuple `(tokens, start_offsets, end_offsets)` where:
@@ -190,8 +203,8 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
         raise ValueError("Rank of input_tensor must be statically known.")
       if ragged_tensor.is_ragged(input_tensor):
         # Recursively process the values of the ragged tensor
-        (tokens, starts,
-         ends) = self.tokenize_with_offsets(input_tensor.flat_values)
+        (tokens, starts, ends) = self.tokenize_with_offsets(
+            input_tensor.flat_values, add_bos=add_bos, add_eos=add_eos)
         tokens = input_tensor.with_flat_values(tokens)
         starts = input_tensor.with_flat_values(starts)
         ends = input_tensor.with_flat_values(ends)
@@ -200,10 +213,14 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
         if input_tensor.shape.ndims > 1:
           # Convert the input tensor to ragged and process it.
           return self.tokenize_with_offsets(
-              ragged_conversion_ops.from_tensor(input_tensor))
+              ragged_conversion_ops.from_tensor(input_tensor),
+              add_bos=add_bos,
+              add_eos=add_eos)
         elif input_tensor.shape.ndims == 0:
           (tokens, starts, ends) = self.tokenize_with_offsets(
-              array_ops_stack.stack([input_tensor]))
+              array_ops_stack.stack([input_tensor]),
+              add_bos=add_bos,
+              add_eos=add_eos)
           tokens = tokens.values
           starts = starts.values
           ends = ends.values
@@ -216,7 +233,9 @@ class SentencepieceTokenizer(TokenizerWithOffsets, Detokenizer):
                gen_sentencepiece_tokenizer
                .sentencepiece_tokenize_with_offsets_op(
                    self._model_resource.resource_handle, input_tensor,
-                   self.nbest_size, self.alpha, self.add_bos, self.add_eos,
+                   self.nbest_size, self.alpha,
+                   self.add_bos if add_bos is None else add_bos,
+                   self.add_eos if add_eos is None else add_eos,
                    self.reverse, self.out_type, return_nbest=self.return_nbest))
           tokens = RaggedTensor.from_nested_row_splits(
               flat_values=output_values,
