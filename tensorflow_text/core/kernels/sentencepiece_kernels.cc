@@ -54,22 +54,12 @@ namespace {
 struct SentencepieceResource : public ResourceBase {
   sentencepiece::SentencePieceProcessor processor;
   int64 memory_used;
-  bool add_bos = false;
-  bool add_eos = false;
-  bool reverse = false;
-  mutable absl::Mutex mu;
 
   string DebugString() const override { return "Sentencepiece Resource"; }
 
   int64 MemoryUsed() const override { return memory_used; }
 
-  bool SameOptions(bool add_bos, bool add_eos, bool reverse) const {
-    return (add_bos == this->add_bos) && (add_eos == this->add_eos) &&
-           (reverse == this->reverse);
-  }
-
   Status AsGraphDef(GraphDefBuilder* builder, Node** out) const override {
-    absl::ReaderMutexLock l(&mu);
     // We set use_node_name_sharing with a unique node name so that the resource
     // can outlive the kernel. This means that the lifetime of the re-created
     // resource will be tied to the lifetime of the resource manager it is
@@ -115,56 +105,63 @@ int32 GetPieceOrId<int32>(
   return sp.id();
 }
 
-tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
-                                      SentencepieceResource* sp) {
+struct ExtraOptions {
+  bool add_bos = false;
+  bool add_eos = false;
+  bool reverse = false;
+};
+
+template <typename T>
+T GetBosToken(const sentencepiece::SentencePieceProcessor& proc);
+
+template <>
+int32 GetBosToken<int32>(const sentencepiece::SentencePieceProcessor& proc) {
+  return proc.PieceToId(proc.model_proto().trainer_spec().bos_piece());
+}
+
+template <>
+tensorflow::tstring GetBosToken<tensorflow::tstring>(
+    const sentencepiece::SentencePieceProcessor& proc) {
+  return proc.model_proto().trainer_spec().bos_piece();
+}
+
+template <typename T>
+T GetEosToken(const sentencepiece::SentencePieceProcessor& proc);
+
+template <>
+int32 GetEosToken<int32>(const sentencepiece::SentencePieceProcessor& proc) {
+  return proc.PieceToId(proc.model_proto().trainer_spec().eos_piece());
+}
+
+template <>
+tensorflow::tstring GetEosToken<tensorflow::tstring>(
+    const sentencepiece::SentencePieceProcessor& proc) {
+  return proc.model_proto().trainer_spec().eos_piece();
+}
+
+tensorflow::Status ReadExtraOptions(
+    OpKernelContext* ctx, const sentencepiece::SentencePieceProcessor& proc,
+    ExtraOptions* opts) {
   const Tensor* add_bos_tensor = nullptr;
   TF_RETURN_IF_ERROR(ctx->input("add_bos", &add_bos_tensor));
-  const bool add_bos = add_bos_tensor->scalar<bool>()();
+  opts->add_bos = add_bos_tensor->scalar<bool>()();
 
   const Tensor* add_eos_tensor = nullptr;
   TF_RETURN_IF_ERROR(ctx->input("add_eos", &add_eos_tensor));
-  const bool add_eos = add_eos_tensor->scalar<bool>()();
+  opts->add_eos = add_eos_tensor->scalar<bool>()();
 
   const Tensor* reverse_tensor = nullptr;
   TF_RETURN_IF_ERROR(ctx->input("reverse", &reverse_tensor));
-  const bool reverse = reverse_tensor->scalar<bool>()();
+  opts->reverse = reverse_tensor->scalar<bool>()();
 
-  {
-    // Because we expect most of the time no change in these options, we grab
-    // the reader lock once and do a quick check first.
-    absl::ReaderMutexLock l(&sp->mu);
-    if (sp->SameOptions(add_bos, add_eos, reverse)) {
-      return absl::OkStatus();
-    }
+  if (opts->add_bos && proc.IsUnknown(GetBosToken<int32>(proc))) {
+    return errors::Internal("id for `", GetBosToken<tensorflow::tstring>(proc),
+                            "` is not defined.");
   }
-
-  absl::WriterMutexLock lock(&sp->mu);
-  if (sp->SameOptions(add_bos, add_eos, reverse)) {
-    return absl::OkStatus();
+  if (opts->add_eos && proc.IsUnknown(GetEosToken<int32>(proc))) {
+    return errors::Internal("id for `", GetEosToken<tensorflow::tstring>(proc),
+                            "` is not defined.");
   }
-  string options;
-  sp->add_bos = add_bos;
-  if (sp->add_bos) {
-    absl::StrAppend(&options, "bos");
-  }
-  sp->add_eos = add_eos;
-  if (sp->add_eos) {
-    if (!options.empty()) {
-      absl::StrAppend(&options, ":");
-    }
-    absl::StrAppend(&options, "eos");
-  }
-  sp->reverse = reverse;
-  if (sp->reverse) {
-    if (!options.empty()) {
-      absl::StrAppend(&options, ":");
-    }
-    absl::StrAppend(&options, "reverse");
-  }
-
-  TF_RETURN_IF_ERROR(ToTFStatus(sp->processor.SetEncodeExtraOptions(options)));
-  TF_RETURN_IF_ERROR(ToTFStatus(sp->processor.SetDecodeExtraOptions(options)));
-
   return absl::OkStatus();
 }
 
@@ -193,7 +190,7 @@ class SentencepieceOp : public OpKernel {
   }
 
   void Compute(OpKernelContext* ctx) override {
-    absl::MutexLock lock(&mu_);
+    absl::MutexLock lock(mu_);
 
     if (!sp_set_) {
       OP_REQUIRES_OK(ctx, cinfo_.Init(ctx->resource_manager(), def(),
@@ -288,7 +285,8 @@ class SentencepieceTokenizeOp : public OpKernel {
     const Tensor* alpha_tensor = nullptr;
     OP_REQUIRES_OK(ctx, ctx->input("alpha", &alpha_tensor));
 
-    OP_REQUIRES_OK(ctx, HandleExtraOptions(ctx, sp));
+    ExtraOptions opts;
+    OP_REQUIRES_OK(ctx, ReadExtraOptions(ctx, sp->processor, &opts));
 
     if (return_nbest_) {
       OP_REQUIRES(ctx, nbest_size_tensor->dims() == 0,
@@ -320,7 +318,6 @@ class SentencepieceTokenizeOp : public OpKernel {
           [ctx, sp, &input_values_flat, &tokens, &nbest_tokens,
           &nbest_size_tensor, &alpha_tensor,
           return_nbest](int64 start, int64 limit) {
-            absl::ReaderMutexLock lock(&sp->mu);
             for (int i = start; i < limit; ++i) {
               const int32 nbest_size = nbest_size_tensor->dims() == 1
                                          ? nbest_size_tensor->vec<int32>()(i)
@@ -352,9 +349,10 @@ class SentencepieceTokenizeOp : public OpKernel {
       }
       nbest_tokens.clear();
     }
+    const int64 extra = (opts.add_bos ? 1 : 0) + (opts.add_eos ? 1 : 0);
     int64 total_tokens = 0;
     for (auto& tokens_row : tokens) {
-      total_tokens += tokens_row.size();
+      total_tokens += tokens_row.size() + extra;
     }
 
     Tensor* output_values_tensor = nullptr;
@@ -369,11 +367,19 @@ class SentencepieceTokenizeOp : public OpKernel {
     auto values_tensor_flat = output_values_tensor->vec<T>();
     auto splits_tensor_flat = output_splits_tensor->vec<Tsplits>();
 
+    const T bos_tok = opts.add_bos ? GetBosToken<T>(sp->processor) : T();
+    const T eos_tok = opts.add_eos ? GetEosToken<T>(sp->processor) : T();
     int i = 0;
     splits_tensor_flat(0) = 0;
     for (int row = 0; row < tokens.size(); ++row) {
+      const int row_start = i;
+      if (opts.add_bos) values_tensor_flat(i++) = bos_tok;
       for (int col = 0; col < tokens[row].size(); ++col, ++i) {
         values_tensor_flat(i) = tokens[row][col];
+      }
+      if (opts.add_eos) values_tensor_flat(i++) = eos_tok;
+      if (opts.reverse) {
+        std::reverse(&values_tensor_flat(row_start), &values_tensor_flat(i));
       }
       splits_tensor_flat(row + 1) = i;
     }
@@ -431,7 +437,8 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
     const Tensor* alpha_tensor = nullptr;
     OP_REQUIRES_OK(ctx, ctx->input("alpha", &alpha_tensor));
 
-    OP_REQUIRES_OK(ctx, HandleExtraOptions(ctx, sp));
+    ExtraOptions opts;
+    OP_REQUIRES_OK(ctx, ReadExtraOptions(ctx, sp->processor, &opts));
 
     if (return_nbest_) {
       OP_REQUIRES(ctx, nbest_size_tensor->dims() == 0,
@@ -461,7 +468,6 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
           [ctx, sp, &input_values_flat, &results, &nbest_results,
           &nbest_size_tensor, &alpha_tensor,
           return_nbest](int64 start, int64 limit) {
-            absl::ReaderMutexLock lock(&sp->mu);
             for (int i = start; i < limit; ++i) {
               const int32 nbest_size = nbest_size_tensor->dims() == 1
                                          ? nbest_size_tensor->vec<int32>()(i)
@@ -492,9 +498,10 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
         }
       }
     }
+    const int64 extra = (opts.add_bos ? 1 : 0) + (opts.add_eos ? 1 : 0);
     int64 total_tokens = 0;
     for (auto& sp_result : results) {
-      total_tokens += sp_result.pieces_size();
+      total_tokens += sp_result.pieces_size() + extra;
     }
 
     Tensor* output_values_tensor = nullptr;
@@ -517,14 +524,35 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
     auto starts_tensor_flat = output_starts_tensor->vec<int64>();
     auto limits_tensor_flat = output_limits_tensor->vec<int64>();
 
+    const T bos_tok = opts.add_bos ? GetBosToken<T>(sp->processor) : T();
+    const T eos_tok = opts.add_eos ? GetEosToken<T>(sp->processor) : T();
     int i = 0;
     splits_tensor_flat(0) = 0;
     for (int row = 0; row < results.size(); ++row) {
+      const int row_start = i;
+      if (opts.add_bos) {
+        values_tensor_flat(i) = bos_tok;
+        starts_tensor_flat(i) = 0;
+        limits_tensor_flat(i) = 0;
+        ++i;
+      }
       for (auto& sp : results[row].pieces()) {
         values_tensor_flat(i) = GetPieceOrId<T>(sp);
         starts_tensor_flat(i) = sp.begin();
         limits_tensor_flat(i) = sp.end();
         ++i;
+      }
+      if (opts.add_eos) {
+        const int64 end_offset = results[row].text().size();
+        values_tensor_flat(i) = eos_tok;
+        starts_tensor_flat(i) = end_offset;
+        limits_tensor_flat(i) = end_offset;
+        ++i;
+      }
+      if (opts.reverse) {
+        std::reverse(&values_tensor_flat(row_start), &values_tensor_flat(i));
+        std::reverse(&starts_tensor_flat(row_start), &starts_tensor_flat(i));
+        std::reverse(&limits_tensor_flat(row_start), &limits_tensor_flat(i));
       }
       splits_tensor_flat(row + 1) = i;
     }
@@ -581,7 +609,8 @@ class SentencepieceDetokenizeOp : public OpKernel {
                     "input_splits must have at least 1 element."));
     const int64 num_of_sentences = input_splits_flat.size() - 1;
 
-    OP_REQUIRES_OK(ctx, HandleExtraOptions(ctx, sp));
+    ExtraOptions opts;
+    OP_REQUIRES_OK(ctx, ReadExtraOptions(ctx, sp->processor, &opts));
 
     Tensor* output_tensor;
     OP_REQUIRES_OK(ctx,
@@ -589,6 +618,12 @@ class SentencepieceDetokenizeOp : public OpKernel {
     auto output_flat = output_tensor->flat<tensorflow::tstring>();
 
     if (input_values_flat.size() > 0) {
+      using PieceType = typename std::conditional<
+          std::is_same<T, tstring>::value, std::string, T>::type;
+      const PieceType bos_tok =
+          opts.add_bos ? PieceType(GetBosToken<T>(sp->processor)) : PieceType();
+      const PieceType eos_tok =
+          opts.add_eos ? PieceType(GetEosToken<T>(sp->processor)) : PieceType();
       const auto& worker_threads =
           *(ctx->device()->tensorflow_cpu_worker_threads());
       ::tensorflow::Shard(
@@ -596,9 +631,8 @@ class SentencepieceDetokenizeOp : public OpKernel {
           worker_threads.workers,      // thread pool
           num_of_sentences,            // total number of data to process.
           kCostPerUnit,
-          [ctx, sp, &input_values_flat, &input_splits_flat, &output_flat](
-              int64 start, int64 limit) {
-            absl::ReaderMutexLock lock(&sp->mu);
+          [ctx, sp, &input_values_flat, &input_splits_flat, &output_flat, opts,
+           bos_tok, eos_tok](int64 start, int64 limit) {
             for (int i = start; i < limit; ++i) {
               if (i + 1 >= input_splits_flat.size()) {
                 ctx->CtxFailure(errors::OutOfRange("Invalid splits; ", i));
@@ -611,10 +645,19 @@ class SentencepieceDetokenizeOp : public OpKernel {
                     input_values_flat.size()));
                 return;
               }
-              const std::vector<typename std::conditional<
-                  std::is_same<T, tstring>::value, std::string, T>::type>
-                  pieces(&input_values_flat(input_splits_flat(i)),
-                        &input_values_flat(input_splits_flat(i + 1)));
+              std::vector<PieceType> pieces;
+              const int64 row_len =
+                  input_splits_flat(i + 1) - input_splits_flat(i);
+              pieces.reserve(row_len + (opts.add_bos ? 1 : 0) +
+                             (opts.add_eos ? 1 : 0));
+              if (opts.add_bos) pieces.push_back(bos_tok);
+              pieces.insert(pieces.end(),
+                            &input_values_flat(input_splits_flat(i)),
+                            &input_values_flat(input_splits_flat(i + 1)));
+              if (opts.add_eos) pieces.push_back(eos_tok);
+              if (opts.reverse) {
+                std::reverse(pieces.begin(), pieces.end());
+              }
               std::string output_flat_str;
               OP_REQUIRES_OK(ctx, ToTFStatus(sp->processor.Decode(
                                       pieces, &output_flat_str)));
@@ -692,7 +735,6 @@ class SentencepieceIdToStringOp : public OpKernel {
         ctx, ctx->allocate_output(0, input_tensor.shape(), &output_tensor));
     auto output_tensor_flat = output_tensor->flat<tensorflow::tstring>();
 
-    absl::ReaderMutexLock lock(&sp->mu);
     for (int i = 0; i < input_tensor_flat.size(); ++i) {
       output_tensor_flat(i) = sp->processor.IdToPiece(input_tensor_flat(i));
     }
@@ -724,7 +766,6 @@ class SentencepieceStringToIdOp : public OpKernel {
         ctx, ctx->allocate_output(0, input_tensor.shape(), &output_tensor));
     auto output_tensor_flat = output_tensor->flat<int32>();
 
-    absl::ReaderMutexLock lock(&sp->mu);
     for (int i = 0; i < input_tensor_flat.size(); ++i) {
       output_tensor_flat(i) = sp->processor.PieceToId(input_tensor_flat(i));
     }
