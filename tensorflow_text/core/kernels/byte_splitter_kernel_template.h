@@ -15,10 +15,12 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BYTE_SPLITTER_KERNEL_TEMPLATE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_BYTE_SPLITTER_KERNEL_TEMPLATE_H_
 
+#include <cstdint>
 #include <iostream>
 #include <vector>
 
 #include "absl/status/status.h"
+#include "absl/strings/str_cat.h"
 #include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/shape.h"
@@ -277,22 +279,49 @@ template <tflite::shim::Runtime Rt>
                       context->GetInput(kInputRowSplits));
   const auto in_splits = in_splits_view->template As<int64_t, 1>();
 
+  if (in_splits.Dim(0) != input_values.Dim(0) + 1) {
+    return absl::InvalidArgumentError(absl::StrCat(
+        "Expecting input_row_splits to have ", input_values.Dim(0) + 1,
+        " elements, got ", in_splits.Dim(0)));
+  }
+  if (starts.Dim(0) != ends.Dim(0)) {
+    return absl::InvalidArgumentError(absl::StrCat(
+        "input_start_offsets and input_end_offsets must have the same size, "
+        "got ",
+        starts.Dim(0), " and ", ends.Dim(0)));
+  }
+
+  if (in_splits(0) < 0 || in_splits(in_splits.Dim(0) - 1) > starts.Dim(0)) {
+    return absl::InvalidArgumentError(
+        "Invalid input_row_splits: splits must be non-negative, "
+        "monotonically increasing, and within offsets bounds.");
+  }
+  for (int i = 0; i < input_values.Dim(0); ++i) {
+    if (in_splits(i + 1) < in_splits(i)) {
+      return absl::InvalidArgumentError(
+          "Invalid input_row_splits: splits must be non-negative, "
+          "monotonically increasing, and within offsets bounds.");
+    }
+  }
+
   ByteSplitter splitter;
 
   // Outputs
   std::vector<absl::string_view> output_values;
   std::vector<int32_t> out_splits;
+  out_splits.reserve(in_splits.Dim(0));
 
   // Iterate through all the string values and split them.
   out_splits.push_back(0);
   for (int i = 0; i < input_values.Dim(0); ++i) {
-    SH_ASSIGN_OR_RETURN(auto batch,
+    const int64_t row_start = in_splits(i);
+    const int64_t row_end = in_splits(i + 1);
+    SH_ASSIGN_OR_RETURN(
+        auto batch,
         splitter.SplitByOffsets(
             input_values(i),
-            absl::MakeSpan(starts.Ptr() + in_splits(i),
-                          in_splits(i+1) - in_splits(i)),
-            absl::MakeSpan(ends.Ptr() + in_splits(i),
-                          in_splits(i+1) - in_splits(i))));
+            absl::MakeSpan(starts.Ptr() + row_start, row_end - row_start),
+            absl::MakeSpan(ends.Ptr() + row_start, row_end - row_start)));
     output_values.insert(output_values.end(), batch.begin(), batch.end());
     out_splits.push_back(batch.size() + out_splits.back());
   }

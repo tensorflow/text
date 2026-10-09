@@ -29,10 +29,13 @@ limitations under the License.
 #ifndef TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_KERNEL_TEMPLATE_H_
 #define TENSORFLOW_TEXT_CORE_KERNELS_NGRAMS_KERNEL_TEMPLATE_H_
 
+#include <cstddef>
+
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/span.h"
 #include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
@@ -162,12 +165,20 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
 
     SH_ASSIGN_OR_RETURN(const auto input_values, ctx->GetInput(kValues));
     const Shape input_values_shape(input_values->Shape());
+    size_t num_input_values = 1;
+    for (const int dim : *input_values_shape) {
+      num_input_values *= dim;
+    }
+    // TfTensorView::Data<T>() uses TotalBytes() / sizeof(T), which over-counts
+    // for tstring tensors because TotalBytes() includes string heap payloads.
+    const auto input_values_data =
+        input_values->template Data<tensorflow::tstring>().subspan(
+            0, num_input_values);
 
     // Tensor output
     if (ctx->NumOutputs() == 1) {
       // Generate mock input and output innermost row_splits.
-      int64_t total_tokens =
-          input_values->template Data<tensorflow::tstring>().size();
+      int64_t total_tokens = input_values_data.size();
       int64_t tokens_per_element =
           input_values_shape->at(input_values_shape->size() - 1);
       tensor_output_row_splits.resize(total_tokens / tokens_per_element + 1);
@@ -181,16 +192,48 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
       // RaggedTensor output
       int index = 0;
       const int num_row_splits = ctx->NumInputs() - kRowSplitsStart;
+      auto validate_splits = [](absl::Span<const Tsplits> splits,
+                                size_t max_val) -> absl::Status {
+        if (splits.empty()) {
+          return absl::InvalidArgumentError(
+              "input_row_splits must not be empty.");
+        }
+        if (splits[0] < 0) {
+          return absl::InvalidArgumentError(
+              "input_row_splits must be non-negative.");
+        }
+        for (size_t i = 0; i + 1 < splits.size(); ++i) {
+          if (splits[i + 1] < splits[i]) {
+            return absl::InvalidArgumentError(
+                "input_row_splits must be monotonically increasing.");
+          }
+        }
+        if (static_cast<size_t>(splits.back()) > max_val) {
+          return absl::InvalidArgumentError(
+              "input_row_splits exceeds input_values size.");
+        }
+        return absl::OkStatus();
+      };
       // Copy all input splits except for innermost into output splits.
       while (index < num_row_splits - 1) {
         SH_ASSIGN_OR_RETURN(const auto input_tensor_row_splits,
                             ctx->GetInput(kRowSplitsStart + index));
+        SH_ASSIGN_OR_RETURN(const auto next_tensor_row_splits,
+                            ctx->GetInput(kRowSplitsStart + index + 1));
+        const auto input_buffer =
+            input_tensor_row_splits->template Data<Tsplits>();
+        const auto next_buffer =
+            next_tensor_row_splits->template Data<Tsplits>();
+        if (next_buffer.empty()) {
+          return absl::InvalidArgumentError(
+              "input_row_splits must not be empty.");
+        }
+        SH_RETURN_IF_ERROR(
+            validate_splits(input_buffer, next_buffer.size() - 1));
         SH_ASSIGN_OR_RETURN(
             const auto output_tensor_row_splits,
             ctx->GetOutput(kRowSplitsStart + index,
                            Shape(input_tensor_row_splits->Shape())));
-        const auto input_buffer =
-            input_tensor_row_splits->template Data<Tsplits>();
         const auto output_buffer =
             output_tensor_row_splits->template Data<Tsplits>();
         std::memcpy(output_buffer.data(), input_buffer.data(),
@@ -200,19 +243,20 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
       // Set row splits variables to the innermost
       SH_ASSIGN_OR_RETURN(const auto input_tensor_row_splits,
                           ctx->GetInput(kRowSplitsStart + index));
+      const auto input_splits_data =
+          input_tensor_row_splits->template Data<Tsplits>();
+      SH_RETURN_IF_ERROR(
+          validate_splits(input_splits_data, input_values_data.size()));
+      input_row_splits = input_splits_data.data();
+      n_row_splits = input_splits_data.size();
+
       SH_ASSIGN_OR_RETURN(
           const auto output_tensor_row_splits,
           ctx->GetOutput(kRowSplitsStart + index,
                          Shape(input_tensor_row_splits->Shape())));
-      input_row_splits =
-          input_tensor_row_splits->template Data<Tsplits>().data();
       output_row_splits =
           output_tensor_row_splits->template Data<Tsplits>().data();
-      n_row_splits = input_tensor_row_splits->Shape().at(0);
     }
-
-    const auto input_values_data =
-        input_values->template Data<tensorflow::tstring>();
 
     // Create ngrams by looping through the innermost input splits.
     std::vector<std::string> buffer;
@@ -220,8 +264,8 @@ class NgramsStringJoin : public tflite::shim::OpKernelShim<NgramsStringJoin,
       // Set output splits using current number of created output values.
       output_row_splits[i] = buffer.size();
       std::vector<tensorflow::tstring> tokens;
-      for (int j = input_row_splits[i]; j < input_row_splits[i + 1]; ++j) {
-        tokens.emplace_back(input_values_data.at(j));
+      for (Tsplits j = input_row_splits[i]; j < input_row_splits[i + 1]; ++j) {
+        tokens.emplace_back(input_values_data[j]);
         if (tokens.size() < width_) continue;
         tokens.erase(tokens.begin(), tokens.begin() + tokens.size() - width_);
         buffer.push_back(absl::StrJoin(tokens, string_separator_));

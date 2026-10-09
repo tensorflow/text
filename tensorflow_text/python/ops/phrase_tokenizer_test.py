@@ -26,9 +26,13 @@ import tensorflow as tf
 
 from tensorflow.python.data.kernel_tests import test_base
 from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_phrase_tokenizer = load_library.load_op_library(resource_loader.get_path_to_datafile('_phrase_tokenizer.so'))
 from tensorflow_text.python.ops.phrase_tokenizer import PhraseTokenizer
 
 FLAGS = flags.FLAGS
@@ -90,6 +94,60 @@ class PhraseOpOriginalTest(test_util.TensorFlowTestCase,
         split_end_punctuation=True)
     subwords_t = tokenizer.tokenize(tokens_t)
     self.assertAllEqual(subwords_t, expected_subwords)
+
+  def testDetokenizeInvalidRowSplits(self):
+    tokenizer = PhraseTokenizer(
+        vocab=_ENGLISH_VOCAB,
+        unknown_token="<UNK>",
+        support_detokenization=True,
+        prob=0,
+        split_end_punctuation=True,
+    )
+    # Non-monotonic row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r"Invalid input_row_splits"
+    ):
+      self.evaluate(
+          gen_phrase_tokenizer.tf_text_phrase_detokenize(
+              input_values=[1, 2, 3],
+              input_row_splits=[0, 3, 1],
+              phrase_model=tokenizer._model,
+          )
+      )
+    # Out-of-bounds row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r"Invalid input_row_splits"
+    ):
+      self.evaluate(
+          gen_phrase_tokenizer.tf_text_phrase_detokenize(
+              input_values=[1, 2, 3],
+              input_row_splits=[0, 100],
+              phrase_model=tokenizer._model,
+          )
+      )
+    # Negative initial row split.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r"Invalid input_row_splits"
+    ):
+      self.evaluate(
+          gen_phrase_tokenizer.tf_text_phrase_detokenize(
+              input_values=[1, 2, 3],
+              input_row_splits=[-1, 1],
+              phrase_model=tokenizer._model,
+          )
+      )
+    # Empty row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r"input_row_splits must not be empty",
+    ):
+      self.evaluate(
+          gen_phrase_tokenizer.tf_text_phrase_detokenize(
+              input_values=[1, 2, 3],
+              input_row_splits=[],
+              phrase_model=tokenizer._model,
+          )
+      )
 
 
 @parameterized.parameters([

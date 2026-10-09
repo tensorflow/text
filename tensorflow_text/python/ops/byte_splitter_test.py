@@ -24,8 +24,12 @@ import tensorflow as tf
 import tensorflow_text as tf_text
 
 from tensorflow.lite.python import interpreter
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.platform import test
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_byte_splitter = load_library.load_op_library(resource_loader.get_path_to_datafile('_byte_splitter.so'))
 
 
 def _split(s):
@@ -427,6 +431,57 @@ class ByteSplitterTest(test_util.TensorFlowTestCase):
     else:
       tflite_result = output['output_1']
     self.assertAllEqual(tflite_result, tf_result)
+
+  def testByteSplitByOffsetsInvalidRowSplits(self):
+    # Non-monotonic row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r'Invalid input_row_splits'
+    ):
+      self.evaluate(
+          gen_byte_splitter.tf_text_byte_split_by_offsets(
+              input_values=[b'hello', b'world'],
+              input_start_offsets=[0, 1, 0],
+              input_end_offsets=[1, 2, 1],
+              input_row_splits=[0, 3, 1],
+          )
+      )
+    # Out-of-bounds row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r'Invalid input_row_splits'
+    ):
+      self.evaluate(
+          gen_byte_splitter.tf_text_byte_split_by_offsets(
+              input_values=[b'hello'],
+              input_start_offsets=[0, 1],
+              input_end_offsets=[1, 2],
+              input_row_splits=[0, 100],
+          )
+      )
+    # Negative initial row split.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r'Invalid input_row_splits'
+    ):
+      self.evaluate(
+          gen_byte_splitter.tf_text_byte_split_by_offsets(
+              input_values=[b'hello'],
+              input_start_offsets=[0, 1],
+              input_end_offsets=[1, 2],
+              input_row_splits=[-1, 1],
+          )
+      )
+    # Empty row splits.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'Expecting input_row_splits to have',
+    ):
+      self.evaluate(
+          gen_byte_splitter.tf_text_byte_split_by_offsets(
+              input_values=[b'hello'],
+              input_start_offsets=[0, 1],
+              input_end_offsets=[1, 2],
+              input_row_splits=[],
+          )
+      )
 
 
 if __name__ == '__main__':

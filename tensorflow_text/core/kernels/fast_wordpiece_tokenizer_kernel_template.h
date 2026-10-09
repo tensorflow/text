@@ -15,8 +15,12 @@
 #ifndef THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_KERNEL_TEMPLATE_H_
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_FAST_WORDPIECE_TOKENIZER_KERNEL_TEMPLATE_H_
 
+#include <cstdint>
+#include <utility>
+
 #include "absl/status/status.h"
 #include "absl/strings/str_cat.h"
+#include "absl/types/span.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer.h"
@@ -180,13 +184,13 @@ absl::Status FastWordpieceTokenizeWithOffsetsOp<Rt>::Invoke(
   SH_RETURN_IF_ERROR(this->template FillOutputTensor<std::string,
                                                      tensorflow::tstring>(
       subwords, kOutputSubwords, context));
-  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64_t>(
       subword_ids, kOutputIds, context));
-  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64_t>(
       row_splits, kOutputRowSplits, context));
-  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64_t>(
       begin_offset, kStartValues, context));
-  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64>(
+  SH_RETURN_IF_ERROR(this->template FillOutputTensor<int, int64_t>(
       end_offset, kEndValues, context));
 
   return absl::OkStatus();
@@ -311,7 +315,24 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::Invoke(InvokeContext* context) {
 
   SH_ASSIGN_OR_RETURN(const auto input_row_splits,
                       context->GetInput(kInputRowSplits));
-  const auto& row_splits_vec = input_row_splits->template As<int64, 1>();
+  const auto& row_splits_vec = input_row_splits->template As<int64_t, 1>();
+
+  if (row_splits_vec.Dim(0) == 0) {
+    return absl::InvalidArgumentError("input_row_splits must not be empty.");
+  }
+  if (row_splits_vec(0) < 0 ||
+      row_splits_vec(row_splits_vec.Dim(0) - 1) > values_vec.Dim(0)) {
+    return absl::InvalidArgumentError(
+        "Invalid input_row_splits: splits must be non-negative, "
+        "monotonically increasing, and within input_values bounds.");
+  }
+  for (int i = 0; i < row_splits_vec.Dim(0) - 1; ++i) {
+    if (row_splits_vec(i + 1) < row_splits_vec(i)) {
+      return absl::InvalidArgumentError(
+          "Invalid input_row_splits: splits must be non-negative, "
+          "monotonically increasing, and within input_values bounds.");
+    }
+  }
 
   SH_ASSIGN_OR_RETURN(const auto wp_model, context->GetInput(kWpModel));
   // OK to create on every call because FastWordpieceTokenizer is a
@@ -323,15 +344,17 @@ absl::Status FastWordpieceDetokenizeOp<Rt>::Invoke(InvokeContext* context) {
   SH_RETURN_IF_ERROR(fast_wordpiece_tokenizer.status());
 
   std::vector<std::string> sentences;
+  sentences.reserve(row_splits_vec.Dim(0) - 1);
 
   // Iterate through row_splits to split input_values.
   for (int i = 0; i < row_splits_vec.Dim(0) - 1; ++i) {
-    auto single_input =
-        absl::Span<const int>(values_vec.Ptr() + row_splits_vec(i),
-                              row_splits_vec(i + 1) - row_splits_vec(i));
+    const int64_t row_start = row_splits_vec(i);
+    const int64_t row_end = row_splits_vec(i + 1);
+    auto single_input = absl::Span<const int>(values_vec.Ptr() + row_start,
+                                              row_end - row_start);
     SH_ASSIGN_OR_RETURN(auto sentence,
                         fast_wordpiece_tokenizer->Detokenize(single_input));
-    sentences.push_back(sentence);
+    sentences.push_back(std::move(sentence));
   }
 
   const int words_size = sentences.size();
