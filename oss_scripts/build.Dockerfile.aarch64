@@ -22,16 +22,12 @@ RUN --mount=type=cache,target=/var/cache/apt \
     checkinstall \
     libffi-dev
 
-# Install pip dependencies needed for tensorflow-text
+# Install pip dependencies needed for packaging tensorflow-text wheels
 RUN --mount=type=cache,target=/root/.cache \
   ${PYTHON_BIN_PATH} -m pip install -U pip && \
   ${PYTHON_BIN_PATH} -m pip install -U \
-    absl-py \
     auditwheel \
-    etils[epath] \
     patchelf \
-    setuptools \
-    twine \
-    wheel;
+    twine;
 
 WORKDIR "/tmp/tensorflow_text"

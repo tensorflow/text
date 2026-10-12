@@ -7,7 +7,7 @@ set -e  # fail and exit on any command erroring
 
 # Verify correct version of Bazel
 installed_bazel_version=$(bazel version | grep label | sed -e 's/.*: //')
-tf_bazel_version=$(cat .bazelversion)
+tf_bazel_version=$(head -n 1 .bazelversion)
 if [ "$installed_bazel_version" != "$tf_bazel_version" ]; then
   echo "Incorrect version of Bazel installed."
   echo "Version $tf_bazel_version should be installed, but found version ${installed_bazel_version}."
@@ -15,8 +15,8 @@ if [ "$installed_bazel_version" != "$tf_bazel_version" ]; then
   exit 1
 fi
 
-# Set tensorflow version
-if [[ $osname != "Darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "Apple" ]]; then
+# Set tensorflow version if nightly or custom TF_VERSION is specified.
+if [[ "$IS_NIGHTLY" == "nightly" ]] || [[ -n "$TF_VERSION" ]]; then
   source oss_scripts/prepare_tf_dep.sh
 fi
 

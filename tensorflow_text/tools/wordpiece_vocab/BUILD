@@ -36,7 +36,9 @@ py_test(
     strict_deps = False,
     deps = [
         ":wordpiece_tokenizer_learner_lib",
+        "@pypi//absl_py:pkg",  # absl/testing:parameterized dep
         "@pypi//numpy:pkg",
+        "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
         # python/data/ops:dataset_ops tensorflow dep,
         "//tensorflow_text:ops",
     ] + if_pywrap([
@@ -61,7 +63,7 @@ py_test(
     deps = [
         ":bert_vocab_from_dataset",
         ":wordpiece_tokenizer_learner_lib",
-        "@absl_py//absl/testing:absltest",
+        "@pypi//absl_py:pkg",  # absl/testing:absltest dep
         "@pypi//numpy:pkg",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ],
