@@ -160,14 +160,12 @@ cc_test(
     name = "constrained_sequence_kernel_input_validation_test",
     srcs = ["constrained_sequence_kernel_input_validation_test.cc"],
     deps = [
+        ":kernel_test_base",
         ":text_kernels_test_util",
         "@com_google_googletest//:gtest_main",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
@@ -176,14 +174,12 @@ cc_test(
     name = "exp_greedy_constrained_sequence_kernel_test",
     srcs = ["exp_greedy_constrained_sequence_kernel_test.cc"],
     deps = [
+        ":kernel_test_base",
         ":text_kernels_test_util",
         "@com_google_googletest//:gtest_main",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
@@ -192,14 +188,12 @@ cc_test(
     name = "exp_viterbi_constrained_sequence_kernel_test",
     srcs = ["exp_viterbi_constrained_sequence_kernel_test.cc"],
     deps = [
+        ":kernel_test_base",
         ":text_kernels_test_util",
         "@com_google_googletest//:gtest_main",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
@@ -301,14 +295,12 @@ cc_test(
     name = "log_greedy_constrained_sequence_kernel_test",
     srcs = ["log_greedy_constrained_sequence_kernel_test.cc"],
     deps = [
+        ":kernel_test_base",
         ":text_kernels_test_util",
         "@com_google_googletest//:gtest_main",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
@@ -317,14 +309,12 @@ cc_test(
     name = "log_viterbi_constrained_sequence_kernel_test",
     srcs = ["log_viterbi_constrained_sequence_kernel_test.cc"],
     deps = [
+        ":kernel_test_base",
         ":text_kernels_test_util",
         "@com_google_googletest//:gtest_main",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:constrained_sequence_op_cc",
     ],
 )
@@ -850,8 +840,7 @@ cc_test(
         # tf:framework tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
+        # tf/framework:shape_inference_testutil tensorflow dep,
         "//tensorflow_text:text_similarity_metric_ops_cc",
     ],
 )
@@ -1031,15 +1020,16 @@ tf_cc_library(
     ],
 )
 
-cc_library(
+tf_cc_library(
     name = "text_kernels_test_util",
     testonly = 1,
     srcs = ["text_kernels_test_util.cc"],
     hdrs = ["text_kernels_test_util.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+    ],
     deps = [
         "@com_google_googletest//:gtest",
-        # tf:framework tensorflow dep,
-        # tf:testlib tensorflow dep,
     ],
 )
 
@@ -1111,13 +1101,11 @@ cc_test(
     name = "unicode_script_tokenize_kernel_test",
     srcs = ["unicode_script_tokenize_kernel_test.cc"],
     deps = [
+        ":kernel_test_base",
         ":text_kernels_test_util",
         "@com_google_googletest//:gtest_main",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:unicode_script_tokenizer_cc",
     ],
 )
@@ -1134,17 +1122,31 @@ tf_cc_library(
     ],
 )
 
+tf_cc_library(
+    name = "kernel_test_base",
+    testonly = 1,
+    hdrs = ["kernel_test_base.h"],
+    tf_deps = [
+        # tf:framework tensorflow dep,
+        # tf:lib tensorflow dep,
+        # tf:protos_all_cc tensorflow dep,
+    ],
+    deps = [
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/types:span",
+        "@com_google_googletest//:gtest",
+    ],
+)
+
 cc_test(
     name = "whitespace_tokenize_kernel_test",
     srcs = ["whitespace_tokenize_kernel_test.cc"],
     deps = [
+        ":kernel_test_base",
         ":text_kernels_test_util",
         "@com_google_googletest//:gtest_main",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
-        # tf:test tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
         "//tensorflow_text:whitespace_tokenizer_cc",
     ],
 )
@@ -1411,8 +1413,7 @@ cc_test(
         # tf:framework tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
-        # tf:testlib tensorflow dep,
-        # tf/kernels:ops_testutil tensorflow dep,
+        # tf/framework:shape_inference_testutil tensorflow dep,
         "//tensorflow_text:wordpiece_tokenizer_cc",
     ],
 )

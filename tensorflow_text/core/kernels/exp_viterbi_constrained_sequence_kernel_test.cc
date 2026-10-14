@@ -16,15 +16,12 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "tensorflow/core/framework/fake_input.h"
 #include "tensorflow/core/framework/node_def_builder.h"
-#include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/framework/types.pb.h"
-#include "tensorflow/core/kernels/ops_testutil.h"
-#include "tensorflow/core/lib/core/status_test_util.h"
 #include "tensorflow/core/platform/status.h"
 #include "tensorflow/core/platform/types.h"
+#include "tensorflow_text/core/kernels/kernel_test_base.h"
 #include "tensorflow_text/core/kernels/text_kernels_test_util.h"
 
 namespace tensorflow {
@@ -34,10 +31,10 @@ using tensorflow::FakeInput;
 using tensorflow::NodeDefBuilder;
 using tensorflow::Status;
 using tensorflow::TensorShape;
-using tensorflow::text_kernels_test_util::MatrixEq;
 using tensorflow::text_kernels_test_util::VectorEq;
 
-class ExpViterbiConstrainedSequenceTest : public tensorflow::OpsTestBase {
+class ExpViterbiConstrainedSequenceTest
+    : public tensorflow::text::KernelTestBase {
  public:
   void SetUpOpWithDefaults() {
     // Prepare graph.
