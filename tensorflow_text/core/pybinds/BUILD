@@ -46,7 +46,7 @@ py_test(
     ],
     strict_deps = False,
     tags = [
-        "-sickbay",  # Depends on ICU version.
+        "sickbay",  # Depends on ICU version.
     ],
     deps = [
         ":pywrap_fast_bert_normalizer_model_builder",
