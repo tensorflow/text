@@ -49,15 +49,16 @@ else
   if [[ "$IS_NIGHTLY" == "nightly" ]]; then
     $installed_python -m pip install --no-deps tf-nightly
   else
-    $installed_python -m pip install --no-deps tensorflow==2.20
+    $installed_python -m pip install --no-deps tensorflow==2.22.0rc0
   fi
 fi
 
 # Copy the current bazelversion of TF.
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.20.0/.bazelversion -o .bazelversion
+curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.22.0-rc0/.bazelversion -o .bazelversion
 
 # Copy the building configuration of TF.
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.20.0/.bazelrc -o .bazelrc
+curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.22.0-rc0/.bazelrc -o .bazelrc
+curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.22.0-rc0/bazel_downloader.cfg -o bazel_downloader.cfg
 # This line breaks Windows builds, so we remove it.
 sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 

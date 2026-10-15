@@ -21,13 +21,25 @@
 #ifndef TENSORFLOW_TEXT_CORE_KERNELS_TEXT_KERNELS_TEST_UTIL_H_
 #define TENSORFLOW_TEXT_CORE_KERNELS_TEXT_KERNELS_TEST_UTIL_H_
 
+#include <algorithm>
+#include <cstdint>
+#include <ostream>
+#include <vector>
+
 #include <gmock/gmock.h>
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
-#include "tensorflow/core/framework/tensor_testutil.h"
+#include "tensorflow/core/framework/types.h"
 
 namespace tensorflow {
 namespace text_kernels_test_util {
+
+template <typename DTYPE>
+Tensor MakeTensor(const std::vector<DTYPE>& values, const TensorShape& shape) {
+  Tensor t(DataTypeToEnum<DTYPE>::v(), shape);
+  std::copy(values.begin(), values.end(), t.flat<DTYPE>().data());
+  return t;
+}
 
 // GMock MatcherInterface for testing tensor equality.
 class TensorEqMatcher : public ::testing::MatcherInterface<Tensor> {
@@ -64,7 +76,7 @@ class TensorHasShapeMatcher : public ::testing::MatcherInterface<Tensor> {
 template <typename DTYPE>
 ::testing::Matcher<Tensor> TensorHasShapeAndValues(
     const TensorShape& shape, const std::vector<DTYPE>& values) {
-  Tensor expect = test::AsTensor<DTYPE>(values, shape);
+  Tensor expect = MakeTensor<DTYPE>(values, shape);
   // MakeMatcher takes ownership of the TensorEqMatcher.
   return ::testing::MakeMatcher(new TensorEqMatcher(expect));
 }
@@ -78,7 +90,7 @@ template <typename DTYPE>
 template <typename DTYPE>
 ::testing::Matcher<Tensor> VectorEq(const std::vector<DTYPE>& values) {
   int64_t nvals = values.size();
-  Tensor expect = test::AsTensor<DTYPE>(values, {nvals});
+  Tensor expect = MakeTensor<DTYPE>(values, TensorShape({nvals}));
   // MakeMatcher takes ownership of the TensorEqMatcher.
   return ::testing::MakeMatcher(new TensorEqMatcher(expect));
 }
@@ -106,7 +118,7 @@ template <typename DTYPE>
         << "Invalid use of MatrixEq: all rows must have equal length";
     flat.insert(flat.end(), row.begin(), row.end());
   }
-  Tensor expect = test::AsTensor<DTYPE>(flat, TensorShape({nrows, ncols}));
+  Tensor expect = MakeTensor<DTYPE>(flat, TensorShape({nrows, ncols}));
   // MakeMatcher takes ownership of the TensorEqMatcher.
   return ::testing::MakeMatcher(new TensorEqMatcher(expect));
 }
