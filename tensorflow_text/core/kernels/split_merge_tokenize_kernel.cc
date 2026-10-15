@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdint>
 #include <limits>
 #include <memory>
 #include <string>
@@ -23,9 +24,12 @@
 #include "icu4c/source/common/unicode/umachine.h"
 #include "icu4c/source/common/unicode/utf8.h"
 #include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/op_requires.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
+#include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/status.h"
+#include "tensorflow/core/platform/tstring.h"
 
 namespace tensorflow {
 namespace text {
@@ -127,25 +131,54 @@ class SplitMergeTokenizeWithOffsetsOp : public OpKernel {
   void Compute(OpKernelContext* ctx) override {
     const Tensor* input_values;
     OP_REQUIRES_OK(ctx, ctx->input("input_values", &input_values));
+    OP_REQUIRES(
+        ctx, TensorShapeUtils::IsVector(input_values->shape()),
+        errors::InvalidArgument("input_values must be a vector, got shape ",
+                                input_values->shape().DebugString()));
 
     const Tensor* labels;
     OP_REQUIRES_OK(ctx, ctx->input("labels", &labels));
+    OP_REQUIRES(ctx, TensorShapeUtils::IsVector(labels->shape()),
+                errors::InvalidArgument("labels must be a vector, got shape ",
+                                        labels->shape().DebugString()));
     const Tensor* row_splits;
     OP_REQUIRES_OK(ctx, ctx->input("row_splits", &row_splits));
+    OP_REQUIRES(
+        ctx, TensorShapeUtils::IsVector(row_splits->shape()),
+        errors::InvalidArgument("row_splits must be a vector, got shape ",
+                                row_splits->shape().DebugString()));
     OP_REQUIRES(ctx, input_values->dim_size(0) == row_splits->dim_size(0) - 1,
                 errors::InvalidArgument("Expecting row_splits have ",
                                         input_values->dim_size(0) + 1,
                                         " elements, got ",
                                         row_splits->dim_size(0)));
 
+    const auto& values_vec = input_values->flat<tstring>();
+    const auto& row_splits_vec = row_splits->flat<int32_t>();
+    OP_REQUIRES(
+        ctx, row_splits_vec(0) >= 0,
+        errors::InvalidArgument("row_splits must be non-negative, got ",
+                                row_splits_vec(0)));
+    for (int i = 0; i < values_vec.size(); ++i) {
+      OP_REQUIRES(
+          ctx, row_splits_vec(i + 1) >= row_splits_vec(i),
+          errors::InvalidArgument(
+              "row_splits must be monotonically increasing, got ",
+              row_splits_vec(i), " followed by ", row_splits_vec(i + 1)));
+    }
+    OP_REQUIRES(ctx, row_splits_vec(values_vec.size()) <= labels->dim_size(0),
+                errors::InvalidArgument(
+                    "row_splits value ", row_splits_vec(values_vec.size()),
+                    " exceeds labels size ", labels->dim_size(0)));
+
     std::vector<string> tokens;
     std::vector<int> begin_offset;
     std::vector<int> end_offset;
-    std::vector<int> output_row_splits(1, 0);
+    std::vector<int> output_row_splits;
+    output_row_splits.reserve(row_splits->dim_size(0));
+    output_row_splits.push_back(0);
 
     // Iterate through all the values and tokenize them.
-    const auto& values_vec = input_values->flat<tstring>();
-    const auto& row_splits_vec = row_splits->flat<int32>();
     for (int i = 0; i < values_vec.size(); ++i) {
       // Tokenize into tokens and record the offset locations.
       int num_tokens = 0;
