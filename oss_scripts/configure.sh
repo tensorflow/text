@@ -63,6 +63,8 @@ sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 
 write_to_bazelrc "build:manylinux2014 --config=release_cpu_linux"
 write_to_bazelrc "test --test_env=TF_USE_LEGACY_KERAS=1"
+write_to_bazelrc "common --features=-external_include_paths"
+write_to_bazelrc "common --host_features=-external_include_paths"
 
 if [ -z "$HERMETIC_PYTHON_VERSION" ]; then
   if [ -n "$PY_VERSION" ]; then
@@ -73,9 +75,28 @@ if [ -z "$HERMETIC_PYTHON_VERSION" ]; then
 fi
 export HERMETIC_PYTHON_VERSION
 
+if [[ -n "$HERMETIC_PYTHON_VERSION" ]]; then
+  write_to_bazelrc "build --repo_env=HERMETIC_PYTHON_VERSION=${HERMETIC_PYTHON_VERSION}"
+fi
+if [[ -n "$IS_NIGHTLY" ]]; then
+  write_to_bazelrc "build --repo_env=IS_NIGHTLY=${IS_NIGHTLY}"
+fi
+
 # Only auto-upgrade requirements for nightly.
 if [[ "$IS_NIGHTLY" == "nightly" ]]; then
   bazel run //oss_scripts/pip_package:requirements.update -- --upgrade
+  # Append tf-keras-nightly directly to the lockfile so its lagging
+  # Requires-Dist constraint on tf-nightly does not downgrade tf-nightly during
+  # pip-compile, while still providing @pypi_tf_keras_nightly for pip_parse.
+  $installed_python -c '
+import json, sys, urllib.request
+lock_path, pkg = sys.argv[1], sys.argv[2]
+data = json.loads(urllib.request.urlopen(f"https://pypi.org/pypi/{pkg}/json").read())
+ver = data["info"]["version"]
+hashes = ["    --hash=sha256:" + u["digests"]["sha256"] for u in data["urls"] if "sha256" in u.get("digests", {})]
+with open(lock_path, "a") as f:
+  f.write(f"\n{pkg}=={ver} \\\n" + " \\\n".join(hashes) + "\n")
+' "oss_scripts/pip_package/requirements_lock_${HERMETIC_PYTHON_VERSION//./_}.txt" "tf-keras-nightly"
 fi
 
 TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)
