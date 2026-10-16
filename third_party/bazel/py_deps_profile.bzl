@@ -13,8 +13,15 @@ def _py_deps_profile_impl(ctx):
     build_content = ['exports_files(["{}"])'.format(requirements_name)]
     for k, v in ctx.attr.deps_map.items():
         repo_name = v[0] if is_switch else k
-        requirements_in_substitutions[k + "\n"] = repo_name + "\n"
-        requirements_in_substitutions[k + "\r\n"] = repo_name + "\r\n"
+        if k == "tf-keras":
+            # Exclude tf-keras / tf-keras-nightly from requirements.in so its
+            # lagging Requires-Dist on tensorflow / tf-nightly does not
+            # downgrade or block pip-compile during requirements.update.
+            requirements_in_substitutions[k + "\n"] = ""
+            requirements_in_substitutions[k + "\r\n"] = ""
+        else:
+            requirements_in_substitutions[k + "\n"] = repo_name + "\n"
+            requirements_in_substitutions[k + "\r\n"] = repo_name + "\r\n"
         aliased_targets = ["pkg"] + v[1:]
         norm_repo_name = repo_name.replace("-", "_")
         norm_alas_name = k.replace("-", "_")
@@ -45,5 +52,8 @@ py_deps_profile = repository_rule(
         "pip_repo_name": attr.string(mandatory = True),
         "switch": attr.string_dict(mandatory = True),
     },
+    environ = [
+        "IS_NIGHTLY",
+    ],
     local = True,
 )

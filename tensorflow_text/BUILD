@@ -1711,6 +1711,7 @@ py_test(
         ":test_data_segmenter_hub_module",
     ],
     strict_deps = False,
+    tags = ["manual"],
     deps = [
         ":benchmark_utils",
         ":ops",
@@ -1729,6 +1730,7 @@ py_test(
     size = "medium",
     srcs = ["python/benchmarks/ops_benchmarks.py"],
     strict_deps = False,
+    tags = ["manual"],
     deps = [
         ":benchmark_utils",
         ":ops",
