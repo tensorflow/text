@@ -82,15 +82,6 @@ http_archive(
 )
 
 http_archive(
-    name = "org_tensorflow_datasets",
-    sha256 = "c6ff4e2306387f0ca45d4f616d9a1c5e79e02ef16d0a8958230a8049ea07fc98",
-    strip_prefix = "datasets-3.2.0",
-    urls = [
-        "https://github.com/tensorflow/datasets/archive/v3.2.0.zip",
-    ],
-)
-
-http_archive(
     name = "pybind11",
     build_file = "//third_party/pybind11:BUILD.bzl",
     sha256 = "efc901aa0aab439a3fea6efeaf930b5a349fb06394bf845c64ce15a9cf8f0240",
@@ -140,7 +131,6 @@ py_deps_profile(
     deps_map = {
         "tensorflow": [
             "tf-nightly",
-            "tf_headers",
             "tf_header_lib",
             "libtensorflow_framework",
         ],
@@ -190,6 +180,17 @@ load("@org_tensorflow//tensorflow:workspace0.bzl", "tf_workspace0")
 
 tf_workspace0()
 
+# Toolchains for ML projects hermetic builds.
+# Details: https://github.com/google-ml-infra/rules_ml_toolchain
+http_archive(
+    name = "rules_ml_toolchain",
+    sha256 = "54c1a357f71f611efdb4891ebd4bcbe4aeb6dfa7e473f14fd7ecad5062096616",
+    strip_prefix = "rules_ml_toolchain-d8cb9c2c168cd64000eaa6eda0781a9615a26ffe",
+    urls = [
+        "https://github.com/google-ml-infra/rules_ml_toolchain/archive/d8cb9c2c168cd64000eaa6eda0781a9615a26ffe.tar.gz",
+    ],
+)
+
 # Set up Android.
 load("@org_tensorflow//third_party/android:android_configure.bzl", "android_configure")
 
@@ -205,17 +206,6 @@ load(
 )
 
 python_wheel_version_suffix_repository(name = "tf_wheel_version_suffix")
-
-# Toolchains for ML projects hermetic builds.
-# Details: https://github.com/google-ml-infra/rules_ml_toolchain
-http_archive(
-    name = "rules_ml_toolchain",
-    sha256 = "54c1a357f71f611efdb4891ebd4bcbe4aeb6dfa7e473f14fd7ecad5062096616",
-    strip_prefix = "rules_ml_toolchain-d8cb9c2c168cd64000eaa6eda0781a9615a26ffe",
-    urls = [
-        "https://github.com/google-ml-infra/rules_ml_toolchain/archive/d8cb9c2c168cd64000eaa6eda0781a9615a26ffe.tar.gz",
-    ],
-)
 
 load(
     "@rules_ml_toolchain//cc/deps:cc_toolchain_deps.bzl",

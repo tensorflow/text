@@ -236,14 +236,6 @@ def tflite_cc_library(
         alwayslink = alwayslink,
     )
 
-def extra_py_deps():
-    return [
-        "@release_or_nightly//:tensorflow_pkg",
-        "@release_or_nightly//:tf_keras_pkg",
-        "@pypi_tensorflow_datasets//:pkg",
-        "@pypi_tensorflow_metadata//:pkg",
-    ]
-
 def py_library(name, lazy_imports = False, strict_deps = None, **kwargs):
     _ = (lazy_imports, strict_deps)  # buildifier: disable=unused-variable
     _py_library(
@@ -255,13 +247,14 @@ def pybind_extension(name, deps = None, **kwargs):
     deps = deps or []
     deps = deps + ["@pybind11//:pybind11"]
     _pybind_extension(
-        name=name,
-        deps=deps,
-        **kwargs,
+        name = name,
+        deps = deps,
+        **kwargs
     )
-    
+
 def if_pywrap(if_true = None, if_false = None):
     _ = (if_false,)  # buildifier: disable=unused-variable
+
     # Always use pywrap.
     return if_true or []
 

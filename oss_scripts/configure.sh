@@ -14,6 +14,8 @@
 # limitations under the License.
 # ==============================================================================
 
+set -e  # fail and exit on any command erroring
+
 function write_to_bazelrc() {
   echo "$1" >> .bazelrc
 }
@@ -29,28 +31,8 @@ function is_macos() {
   [[ "${osname}" == "darwin" ]]
 }
 
-# Remove .bazelrc if it already exist
-[ -e .bazelrc ] && rm .bazelrc
-
-# Don't install tensorflow locally.
-if (which python3) | grep -q "python3"; then
-  installed_python="python3"
-elif (which python) | grep -q "python"; then
-  installed_python="python"
-fi
-
-# if [[ $($installed_python -m pip show tensorflow) == *tensorflow* ]] ||
-#    [[ $($installed_python -m pip show tensorflow-macos) == *tensorflow-macos* ]] ||
-#    [[ $($installed_python -m pip show tf-nightly) == *tf-nightly* ]]; then
-#   echo 'Using installed tensorflow.'
-# else
-#   echo 'Installing tensorflow.'
-#   if [[ "$IS_NIGHTLY" == "nightly" ]]; then
-#     $installed_python -m pip install --no-deps tf-nightly
-#   else
-#     $installed_python -m pip install --no-deps tensorflow==2.22.0rc0
-#   fi
-# fi
+# Remove .bazelrc if it already exists
+rm -f .bazelrc
 
 # Copy the current bazelversion of TF.
 curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.22.0-rc0/.bazelversion -o .bazelversion
@@ -63,19 +45,39 @@ sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 
 write_to_bazelrc "build:manylinux2014 --config=release_cpu_linux"
 write_to_bazelrc "test --test_env=TF_USE_LEGACY_KERAS=1"
+write_to_bazelrc "test --test_tag_filters=-benchmark-test"
 
 if [ -z "$HERMETIC_PYTHON_VERSION" ]; then
   if [ -n "$PY_VERSION" ]; then
     HERMETIC_PYTHON_VERSION=$PY_VERSION
   else
-    HERMETIC_PYTHON_VERSION=$($installed_python  -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
+    if (which python3) | grep -q "python3"; then
+      installed_python="python3"
+    elif (which python) | grep -q "python"; then
+      installed_python="python"
+    fi
+    HERMETIC_PYTHON_VERSION=$($installed_python -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
   fi
 fi
 export HERMETIC_PYTHON_VERSION
 
-# Only auto-upgrade requirements for nightly.
-if [[ "$IS_NIGHTLY" == "nightly" ]]; then
-  bazel run //oss_scripts/pip_package:requirements.update -- --upgrade
+if [[ -n "$HERMETIC_PYTHON_VERSION" ]]; then
+  write_to_bazelrc "build --repo_env=HERMETIC_PYTHON_VERSION=${HERMETIC_PYTHON_VERSION}"
+fi
+if [[ -n "$IS_NIGHTLY" ]]; then
+  write_to_bazelrc "build --repo_env=IS_NIGHTLY=${IS_NIGHTLY}"
+fi
+if [[ -n "$TF_VERSION" ]]; then
+  write_to_bazelrc "build --repo_env=TF_VERSION=${TF_VERSION}"
+fi
+
+# Auto-upgrade requirements for nightly or when a specific TF_VERSION is requested.
+if [[ "$IS_NIGHTLY" == "nightly" ]] || [[ -n "$TF_VERSION" ]]; then
+  REQUIREMENTS_EXTRA_FLAGS="--upgrade"
+  if [[ "$TF_VERSION" == *"rc"* ]]; then
+    REQUIREMENTS_EXTRA_FLAGS="$REQUIREMENTS_EXTRA_FLAGS --pre"
+  fi
+  bazel run //oss_scripts/pip_package:requirements.update -- $REQUIREMENTS_EXTRA_FLAGS
 fi
 
 TF_ABIFLAG=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- abi)

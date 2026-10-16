@@ -24,7 +24,7 @@ tf_org_notebook_test(
     deps = [
         "//third_party/py/matplotlib",
         "@pypi//numpy:pkg",
-        #  tensorflow datasets dep,
+        "@pypi//tensorflow_datasets:pkg",
     ],
 )
 
@@ -43,9 +43,9 @@ tf_org_notebook_test(
     tags = ["requires-net:external"],
     deps = [
         "//third_party/py/matplotlib",
-        "@pypi//numpy:pkg",
-        #  tensorflow datasets dep,
         "//third_party/py/tensorflow_text",
+        "@pypi//numpy:pkg",
+        "@pypi//tensorflow_datasets:pkg",
     ],
 )
 
@@ -57,6 +57,6 @@ tf_org_notebook_test(
     deps = [
         "//third_party/py/matplotlib",
         "@pypi//numpy:pkg",
-        #  tensorflow datasets dep,
+        "@pypi//tensorflow_datasets:pkg",
     ],
 )
