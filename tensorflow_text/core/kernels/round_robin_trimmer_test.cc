@@ -14,9 +14,10 @@
 
 #include "tensorflow_text/core/kernels/round_robin_trimmer.h"
 
+#include <cstdint>
+#include <tuple>
 #include <utility>
 #include <vector>
-#include <tuple>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -224,6 +225,14 @@ TEST_P(RoundRobinTrimmerTest, Trim_int64) {
 INSTANTIATE_TEST_SUITE_P(RoundRobinTrimmerTestSuite,
                          RoundRobinTrimmerTest,
                          testing::ValuesIn(params));
+
+TEST(RoundRobinTrimmerSingleTest, NonMonotonicRowSplits) {
+  RoundRobinTrimmer<int, int> t(10);
+  std::vector<std::vector<int>> input_vals = {{1, 2, 3, 4, 5}};
+  std::vector<std::vector<int>> input_splits = {{0, 5, 2}};
+  auto [vals, splits] = t.TrimBatch(input_vals, input_splits);
+  EXPECT_THAT(splits[0], ::testing::ElementsAreArray({0, 5, 5}));
+}
 
 }  // namespace
 }  // namespace text
