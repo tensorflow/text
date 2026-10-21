@@ -13,11 +13,10 @@ fi
 # Run configure.
 source oss_scripts/configure.sh
 
-# Don't overwrite tensorflow version.
-# # Set tensorflow version
-# if [[ $osname != "darwin" ]] || [[ ! $(sysctl -n machdep.cpu.brand_string) =~ "Apple" ]]; then
-#   source oss_scripts/prepare_tf_dep.sh
-# fi
+# Set tensorflow version if nightly or custom TF_VERSION is specified.
+if [[ "$IS_NIGHTLY" == "nightly" ]] || [[ -n "$TF_VERSION" ]]; then
+  source oss_scripts/prepare_tf_dep.sh
+fi
 
 # Build the pip package.
 bazel run ${BUILD_ARGS[@]} --enable_runfiles //oss_scripts/pip_package:build_pip_package -- "$(realpath .)"
