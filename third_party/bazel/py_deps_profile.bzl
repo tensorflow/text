@@ -7,14 +7,16 @@ def _py_deps_profile_impl(ctx):
     for var_name, var_val in ctx.attr.switch.items():
         is_switch = is_switch or ctx.os.environ.get(var_name, "") == var_val
 
+    tf_version = ctx.os.environ.get("TF_VERSION", "")
     prefix = ctx.attr.pip_repo_name
     requirements_name = ctx.attr.requirements_in.name
     requirements_in_substitutions = {}
     build_content = ['exports_files(["{}"])'.format(requirements_name)]
     for k, v in ctx.attr.deps_map.items():
         repo_name = v[0] if is_switch else k
-        requirements_in_substitutions[k + "\n"] = repo_name + "\n"
-        requirements_in_substitutions[k + "\r\n"] = repo_name + "\r\n"
+        req_entry = "{}=={}".format(repo_name, tf_version) if (k == "tensorflow" and tf_version) else repo_name
+        requirements_in_substitutions[k + "\n"] = req_entry + "\n"
+        requirements_in_substitutions[k + "\r\n"] = req_entry + "\r\n"
         aliased_targets = ["pkg"] + v[1:]
         norm_repo_name = repo_name.replace("-", "_")
         norm_alas_name = k.replace("-", "_")
@@ -45,5 +47,9 @@ py_deps_profile = repository_rule(
         "pip_repo_name": attr.string(mandatory = True),
         "switch": attr.string_dict(mandatory = True),
     },
+    environ = [
+        "IS_NIGHTLY",
+        "TF_VERSION",
+    ],
     local = True,
 )

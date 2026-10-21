@@ -1,22 +1,21 @@
 #!/bin/bash
 set -e  # fail and exit on any command erroring
 
-if (which python3) | grep -q "python3"; then
-  installed_python="python3"
-elif (which python) | grep -q "python"; then
-  installed_python="python"
-fi
-
 ext=""
 osname="$(uname -s | tr 'A-Z' 'a-z')"
 if [[ "${osname}" == "darwin" ]]; then
   ext='""'
 fi
 
-# Update setup.nightly.py with current tf version.
+# Update the setup file with current tf version. build_pip_package uses
+# setup.nightly.py for nightly builds and setup.py otherwise.
+setup_file="oss_scripts/pip_package/setup.py"
+if [[ "$IS_NIGHTLY" == "nightly" ]]; then
+  setup_file="oss_scripts/pip_package/setup.nightly.py"
+fi
 tf_version=$(bazel run //oss_scripts/pip_package:tensorflow_build_info -- version)
-echo "Updating setup.nightly.py to version $tf_version"
-sed -i $ext "s/project_version = '.*'/project_version = '${tf_version}'/" oss_scripts/pip_package/setup.nightly.py
+echo "Updating $setup_file to version $tf_version"
+sed -i $ext "s/project_version = '.*'/project_version = '${tf_version}'/" "$setup_file"
 # Update __version__.
 echo "Updating __init__.py to version $tf_version"
 sed -i $ext "s/__version__ = .*\$/__version__ = \"${tf_version}\"/" tensorflow_text/__init__.py
