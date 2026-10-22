@@ -20,6 +20,7 @@ from tensorflow.python.util.all_util import remove_undocumented
 from tensorflow_text.core.pybinds import tflite_registrar
 from tensorflow_text.python import keras
 from tensorflow_text.python import metrics
+from tensorflow_text.python import mobile
 from tensorflow_text.python.ops import *
 
 # Public symbols in the "tensorflow_text" package.  Symbols are sorted in
