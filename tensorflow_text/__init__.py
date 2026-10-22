@@ -33,6 +33,7 @@ _allowed_symbols = [
     "FastSentencepieceTokenizer",
     "FastWordpieceTokenizer",
     "FirstNItemSelector",
+    "item_selector_ops",
     "HubModuleSplitter",
     "HubModuleTokenizer",
     "LastNItemSelector",
