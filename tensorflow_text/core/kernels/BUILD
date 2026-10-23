@@ -136,9 +136,12 @@ tf_cc_library(
     srcs = ["constrained_sequence.cc"],
     hdrs = ["constrained_sequence.h"],
     tf_deps = [
-        # tf:framework tensorflow dep,
-        # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
+        # tf/framework:tensor tensorflow dep,
+        # tf/framework:tensor_shape tensorflow dep,
+        # tf/framework:tensor_types tensorflow dep,
+        # tf/platform:logging tensorflow dep,
+        # tf/platform:types tensorflow dep,
     ],
 )
 
