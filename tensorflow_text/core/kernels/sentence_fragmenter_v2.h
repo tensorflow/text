@@ -34,12 +34,12 @@
 #ifndef TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_H_
 #define TENSORFLOW_TEXT_CORE_KERNELS_SENTENCE_FRAGMENTER_V2_H_
 
+#include <cstdint>
 #include <vector>
 
 #include "absl/status/status.h"
 #include "absl/strings/string_view.h"
 #include "icu4c/source/common/unicode/utypes.h"
-#include "tensorflow/core/lib/core/status.h"
 
 namespace tensorflow {
 namespace text {
@@ -140,7 +140,7 @@ struct SentenceFragment {
     HAS_SENTENTIAL_CLOSE_PAREN = 0x0008,  // e.g.: (Mushrooms are fungi!)
   };
   // A mask of the above listed properties.
-  uint32 properties = 0;
+  uint32_t properties = 0;
   int terminal_punc_token = -1;
 };
 

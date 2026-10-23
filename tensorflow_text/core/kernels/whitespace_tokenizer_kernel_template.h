@@ -20,7 +20,6 @@
 
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
-#include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/shape.h"
 #include "tensorflow/lite/kernels/shim/status_macros.h"

@@ -1,0 +1,33 @@
+diff --git a/tensorflow/lite/kernels/shim/BUILD b/tensorflow/lite/kernels/shim/BUILD
+--- a/tensorflow/lite/kernels/shim/BUILD
++++ b/tensorflow/lite/kernels/shim/BUILD
+@@ -13,6 +13,15 @@
+     licenses = ["notice"],
+ )
+ 
++exports_files(
++    [
++        "shape.cc",
++        "tf_op_shim.cc",
++        "tf_tensor_view.cc",
++    ],
++    visibility = ["//visibility:public"],
++)
++
+ filegroup(
+     name = "tf_headers",
+     srcs = [
+diff --git a/tensorflow/lite/kernels/shim/tf_op_shim.cc b/tensorflow/lite/kernels/shim/tf_op_shim.cc
+--- a/tensorflow/lite/kernels/shim/tf_op_shim.cc
++++ b/tensorflow/lite/kernels/shim/tf_op_shim.cc
+@@ -79,8 +79,8 @@ absl::StatusOr<AttrValue> TfInitContext::GetAttr(
+     return absl::InvalidArgumentError(
+         absl::StrCat("Non-existent attribute: ", attr_name, "\nop def:\n",
+                      context_->def().DebugString()));
+-  const auto& attr_value = context_->def().attr().at(attr_name);
+-  return TfAttrValueToShimAttrValue(attr_value);
++  const auto* attr_value = ::tensorflow::AttrSlice(context_->def()).Find(attr_name);
++  return TfAttrValueToShimAttrValue(*attr_value);
+ }
+ 
+ TfInvokeContext::TfInvokeContext(::tensorflow::OpKernelContext* context)

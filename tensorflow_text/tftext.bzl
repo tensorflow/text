@@ -9,6 +9,31 @@ load(
     _pywrap_library = "pywrap_library",
 )
 
+def _local_tf_op_shim():
+    """Returns a package-local `tf_op_shim` built against the TF wheel headers.
+
+    Only the three shim sources are compiled here. They are linked dynamically
+    against libtensorflow_framework.so (like any TF custom op), instead of
+    depending on @org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim, which
+    statically pulls TensorFlow implementation targets (protos, protobuf
+    runtime, lib_internal, ...) into every _<op>.so.
+    """
+    name = "tf_op_shim_oss"
+    if not native.existing_rule(name):
+        tf_cc_library(
+            name = name,
+            srcs = [
+                "@org_tensorflow//tensorflow/lite/kernels/shim:shape.cc",
+                "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim.cc",
+                "@org_tensorflow//tensorflow/lite/kernels/shim:tf_tensor_view.cc",
+            ],
+            deps = [
+                "@com_google_absl//absl/algorithm:container",
+                "@com_google_absl//absl/types:span",
+            ],
+        )
+    return ":" + name
+
 def py_tf_text_library(
         name,
         srcs = [],
@@ -55,7 +80,7 @@ def py_tf_text_library(
             }),
             alwayslink = 1,
             deps = cc_op_kernels +
-                   ["@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim"] +
+                   [_local_tf_op_shim()] +
                    select({
                        "@org_tensorflow//tensorflow:mobile": [
                            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",

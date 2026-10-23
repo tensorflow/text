@@ -72,7 +72,7 @@ http_archive(
     name = "org_tensorflow",
     patch_args = ["-p1"],
     patches = [
-        "//third_party/tensorflow:tensorflow.xla_if_static.bzl.patch",
+        "//third_party/tensorflow:tensorflow.shim_sources.patch",
     ],
     sha256 = "b7fc9646df01c14968e1546ad430a72f6ecc26867c085266f71f43968a6d5f5b",
     strip_prefix = "tensorflow-2.22.0-rc0",
