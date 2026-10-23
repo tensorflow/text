@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "absl/status/status.h"
+#include "absl/strings/str_cat.h"
 #include "tensorflow/core/platform/tstring.h"
 #include "tensorflow/lite/kernels/shim/op_kernel.h"
 #include "tensorflow/lite/kernels/shim/shape.h"
@@ -265,16 +266,18 @@ absl::Status OffsetsToBoiseTagsOp<Rt>::Invoke(InvokeContext* context) {
   }
 
   // Check row splits are the same for token begin, end offsets.
-  if (input_token_begin_row_splits_vec.Dim(0) !=
+  if (input_token_begin_row_splits_vec.Dim(0) == 0 ||
+      input_token_begin_row_splits_vec.Dim(0) !=
           input_token_end_row_splits_vec.Dim(0) ||
-      input_span_begin_row_splits_vec.Dim(0) !=
+      input_token_begin_row_splits_vec.Dim(0) !=
           input_span_begin_row_splits_vec.Dim(0) ||
       input_span_begin_row_splits_vec.Dim(0) !=
           input_span_end_row_splits_vec.Dim(0) ||
       input_span_begin_row_splits_vec.Dim(0) !=
           input_span_type_row_splits_vec.Dim(0)) {
     return absl::InvalidArgumentError(absl::StrCat(
-        "Row splits must have the same size for token and span. ",
+        "Row splits must be non-empty and have the same size for token and "
+        "span. ",
         " Token begin row splits shape: ",
         input_token_begin_row_splits_vec.Dim(0),
         " Token end row splits shape: ", input_token_end_row_splits_vec.Dim(0),
@@ -284,7 +287,7 @@ absl::Status OffsetsToBoiseTagsOp<Rt>::Invoke(InvokeContext* context) {
         input_span_type_row_splits_vec.Dim(0)));
   }
 
-  for (int i = 0; i < input_token_begin_row_splits_vec.Dim(0) - 1; ++i) {
+  for (int i = 0; i < input_token_begin_row_splits_vec.Dim(0); ++i) {
     if (input_token_begin_row_splits_vec(i) !=
         input_token_end_row_splits_vec(i)) {
       return absl::InvalidArgumentError(
@@ -293,7 +296,7 @@ absl::Status OffsetsToBoiseTagsOp<Rt>::Invoke(InvokeContext* context) {
   }
 
   // Check row splits are the same for span begin, end offsets and span type.
-  for (int i = 0; i < input_span_begin_row_splits_vec.Dim(0) - 1; ++i) {
+  for (int i = 0; i < input_span_begin_row_splits_vec.Dim(0); ++i) {
     if (input_span_begin_row_splits_vec(i) !=
             input_span_end_row_splits_vec(i) ||
         input_span_begin_row_splits_vec(i) !=
@@ -304,8 +307,40 @@ absl::Status OffsetsToBoiseTagsOp<Rt>::Invoke(InvokeContext* context) {
     }
   }
 
+  const int num_rows = input_token_begin_row_splits_vec.Dim(0) - 1;
+  if (input_token_begin_row_splits_vec(0) < 0 ||
+      input_token_begin_row_splits_vec(num_rows) >
+          input_token_begin_offsets_vec.Dim(0)) {
+    return absl::InvalidArgumentError(
+        "Invalid token row splits: splits must be non-negative, "
+        "monotonically increasing, and within token offsets bounds.");
+  }
+  if (input_span_begin_row_splits_vec(0) < 0 ||
+      input_span_begin_row_splits_vec(num_rows) >
+          input_span_begin_offsets_vec.Dim(0)) {
+    return absl::InvalidArgumentError(
+        "Invalid span row splits: splits must be non-negative, "
+        "monotonically increasing, and within span offsets bounds.");
+  }
+  for (int i = 0; i < num_rows; ++i) {
+    if (input_token_begin_row_splits_vec(i + 1) <
+        input_token_begin_row_splits_vec(i)) {
+      return absl::InvalidArgumentError(
+          "Invalid token row splits: splits must be non-negative, "
+          "monotonically increasing, and within token offsets bounds.");
+    }
+    if (input_span_begin_row_splits_vec(i + 1) <
+        input_span_begin_row_splits_vec(i)) {
+      return absl::InvalidArgumentError(
+          "Invalid span row splits: splits must be non-negative, "
+          "monotonically increasing, and within span offsets bounds.");
+    }
+  }
+
   // Outputs
   std::vector<std::string> boise_tags;
+  boise_tags.reserve(input_token_begin_row_splits_vec(num_rows) -
+                     input_token_begin_row_splits_vec(0));
   std::vector<int32_t> input_token_begin_offsets_vec_i;
   std::vector<int32_t> input_token_end_offsets_vec_i;
   std::vector<int32_t> input_span_begin_offsets_vec_i;
@@ -313,17 +348,25 @@ absl::Status OffsetsToBoiseTagsOp<Rt>::Invoke(InvokeContext* context) {
   std::vector<std::string> input_span_type_vec_i;
 
   // Iterate through all the input values and split them.
-  for (int i = 0; i < input_token_begin_row_splits_vec.Dim(0) - 1; ++i) {
-    int token_start_index = input_token_begin_row_splits_vec(i);
-    int token_end_index = input_token_begin_row_splits_vec(i + 1);
-    int span_start_index = input_span_begin_row_splits_vec(i);
-    int span_end_index = input_span_begin_row_splits_vec(i + 1);
+  for (int i = 0; i < num_rows; ++i) {
+    const int64_t token_start_index = input_token_begin_row_splits_vec(i);
+    const int64_t token_end_index = input_token_begin_row_splits_vec(i + 1);
+    const int64_t span_start_index = input_span_begin_row_splits_vec(i);
+    const int64_t span_end_index = input_span_begin_row_splits_vec(i + 1);
 
     input_token_begin_offsets_vec_i.clear();
     input_token_end_offsets_vec_i.clear();
     input_span_begin_offsets_vec_i.clear();
     input_span_end_offsets_vec_i.clear();
     input_span_type_vec_i.clear();
+
+    const int64_t num_tokens_i = token_end_index - token_start_index;
+    input_token_begin_offsets_vec_i.reserve(num_tokens_i);
+    input_token_end_offsets_vec_i.reserve(num_tokens_i);
+    const int64_t num_spans_i = span_end_index - span_start_index;
+    input_span_begin_offsets_vec_i.reserve(num_spans_i);
+    input_span_end_offsets_vec_i.reserve(num_spans_i);
+    input_span_type_vec_i.reserve(num_spans_i);
 
     for (int j = token_start_index; j < token_end_index; ++j) {
       input_token_begin_offsets_vec_i.push_back(
@@ -537,13 +580,14 @@ absl::Status BoiseTagsToOffsetsOp<Rt>::Invoke(InvokeContext* context) {
 
   // Check row splits are the same for token begin, end offsets and boise tags.
   // First, check dimensions are the same.
-  if (input_token_begin_row_splits_vec.Dim(0) !=
+  if (input_token_begin_row_splits_vec.Dim(0) == 0 ||
+      input_token_begin_row_splits_vec.Dim(0) !=
           input_token_end_row_splits_vec.Dim(0) ||
       input_token_begin_row_splits_vec.Dim(0) !=
           input_boise_tags_row_splits_vec.Dim(0)) {
     return absl::InvalidArgumentError(absl::StrCat(
-        "Row splits must have the same size for token begin/end offsets and "
-        "BOISE tags. ",
+        "Row splits must be non-empty and have the same size for token "
+        "begin/end offsets and BOISE tags. ",
         " Token begin row splits shape: ",
         input_token_begin_row_splits_vec.Dim(0),
         " Token end row splits shape: ", input_token_end_row_splits_vec.Dim(0),
@@ -551,14 +595,31 @@ absl::Status BoiseTagsToOffsetsOp<Rt>::Invoke(InvokeContext* context) {
         input_boise_tags_row_splits_vec.Dim(0)));
   }
   // Second, check values are the same.
-  for (int i = 0; i < input_token_begin_row_splits_vec.Dim(0) - 1; ++i) {
+  for (int i = 0; i < input_token_begin_row_splits_vec.Dim(0); ++i) {
     if (input_token_begin_row_splits_vec(i) !=
             input_token_end_row_splits_vec(i) ||
         input_token_begin_row_splits_vec(i) !=
             input_boise_tags_row_splits_vec(i)) {
       return absl::InvalidArgumentError(
-          "Row splits must be the same for token begin/end offsets ad BOISE "
+          "Row splits must be the same for token begin/end offsets and BOISE "
           "tags.");
+    }
+  }
+
+  const int num_rows = input_token_begin_row_splits_vec.Dim(0) - 1;
+  if (input_token_begin_row_splits_vec(0) < 0 ||
+      input_token_begin_row_splits_vec(num_rows) >
+          input_token_begin_offsets_vec.Dim(0)) {
+    return absl::InvalidArgumentError(
+        "Invalid row splits: splits must be non-negative, monotonically "
+        "increasing, and within token offsets bounds.");
+  }
+  for (int i = 0; i < num_rows; ++i) {
+    if (input_token_begin_row_splits_vec(i + 1) <
+        input_token_begin_row_splits_vec(i)) {
+      return absl::InvalidArgumentError(
+          "Invalid row splits: splits must be non-negative, monotonically "
+          "increasing, and within token offsets bounds.");
     }
   }
 
@@ -567,6 +628,7 @@ absl::Status BoiseTagsToOffsetsOp<Rt>::Invoke(InvokeContext* context) {
   std::vector<int32_t> span_end_offsets;
   std::vector<std::string> span_type;
   std::vector<int64_t> row_splits;
+  row_splits.reserve(input_token_begin_row_splits_vec.Dim(0));
 
   row_splits.push_back(0);
 
@@ -574,13 +636,18 @@ absl::Status BoiseTagsToOffsetsOp<Rt>::Invoke(InvokeContext* context) {
   std::vector<int32_t> input_token_begin_offsets_vec_i;
   std::vector<int32_t> input_token_end_offsets_vec_i;
   std::vector<std::string> input_boise_tags_vec_i;
-  for (int i = 0; i < input_token_begin_row_splits_vec.Dim(0) - 1; ++i) {
-    int token_start_index = input_token_begin_row_splits_vec(i);
-    int token_end_index = input_token_begin_row_splits_vec(i + 1);
+  for (int i = 0; i < num_rows; ++i) {
+    const int64_t token_start_index = input_token_begin_row_splits_vec(i);
+    const int64_t token_end_index = input_token_begin_row_splits_vec(i + 1);
 
     input_token_begin_offsets_vec_i.clear();
     input_token_end_offsets_vec_i.clear();
     input_boise_tags_vec_i.clear();
+
+    const int64_t num_tokens_i = token_end_index - token_start_index;
+    input_token_begin_offsets_vec_i.reserve(num_tokens_i);
+    input_token_end_offsets_vec_i.reserve(num_tokens_i);
+    input_boise_tags_vec_i.reserve(num_tokens_i);
 
     for (int j = token_start_index; j < token_end_index; ++j) {
       input_token_begin_offsets_vec_i.push_back(
@@ -589,11 +656,12 @@ absl::Status BoiseTagsToOffsetsOp<Rt>::Invoke(InvokeContext* context) {
       input_boise_tags_vec_i.push_back(input_boise_tags_vec(j));
     }
 
-    auto [span_begin_offsets_i, span_end_offsets_i, span_type_i] =
-        BoiseTagsToOffsets(input_token_begin_offsets_vec_i,
-                           input_token_end_offsets_vec_i,
-                           input_boise_tags_vec_i)
-            .value();
+    SH_ASSIGN_OR_RETURN(auto span_info_i,
+                        BoiseTagsToOffsets(input_token_begin_offsets_vec_i,
+                                           input_token_end_offsets_vec_i,
+                                           input_boise_tags_vec_i));
+    const auto& [span_begin_offsets_i, span_end_offsets_i, span_type_i] =
+        span_info_i;
 
     const int num_span_i = span_type_i.size();
     row_splits.push_back(row_splits.back() + num_span_i);

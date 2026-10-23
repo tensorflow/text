@@ -16,11 +16,12 @@
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_H_
 
 #include <algorithm>
+#include <cstddef>
 #include <functional>
 #include <utility>
 #include <vector>
-#include "tensorflow_text/core/kernels/trimmer.h"
 
+#include "tensorflow_text/core/kernels/trimmer.h"
 
 namespace tensorflow {
 namespace text {
@@ -153,7 +154,9 @@ std::vector<Mask> RoundRobinTrimmer<T, Tsplits>::GenerateMasksInternal(
   std::vector<Mask> masks(end - begin);
   auto m = masks.begin();
   for (auto it = begin; it != end; ++it, ++m) {
-    m->reserve(it->back());
+    if (!it->empty() && it->back() > 0) {
+      m->reserve(it->back());
+    }
   }
   // Process all batches, updating the masks a batch at a time.
   ProcessSplitsByBatch(begin, end, [&masks](std::vector<Row>* rows) {
@@ -161,7 +164,8 @@ std::vector<Mask> RoundRobinTrimmer<T, Tsplits>::GenerateMasksInternal(
       const Row& row = (*rows)[s];
       masks[s].reserve(row.size);
       masks[s].insert(masks[s].end(), row.used, true);
-      masks[s].insert(masks[s].end(), row.size - row.used, false);
+      masks[s].insert(masks[s].end(), std::max<Tsplits>(0, row.size - row.used),
+                      false);
     }
   });
   return masks;
@@ -220,9 +224,20 @@ RoundRobinTrimmer<T, Tsplits>::TrimInternal(
     for (int s = 0; s < values_row->size(); ++s, ++values_it, ++splits_it) {
       Values_* vals = &trimmed.first[s];
       RowSplits_* splits = &trimmed.second[s];
-      auto start = values_it->begin() + (*splits_it)[splits->size()-1];
-      vals->insert(vals->end(), start, start + (*values_row)[s].used);
-      splits->insert(splits->end(), splits->back() + (*values_row)[s].used);
+      const size_t split_idx = splits->size() - 1;
+      int used = (*values_row)[s].used;
+      if (split_idx < splits_it->size() && (*splits_it)[split_idx] >= 0 &&
+          used >= 0 &&
+          static_cast<size_t>((*splits_it)[split_idx]) +
+                  static_cast<size_t>(used) <=
+              values_it->size()) {
+        Tsplits split_offset = (*splits_it)[split_idx];
+        auto start = values_it->begin() + split_offset;
+        vals->insert(vals->end(), start, start + used);
+        splits->insert(splits->end(), splits->back() + used);
+      } else {
+        splits->insert(splits->end(), splits->back());
+      }
     }
   });
   return trimmed;
@@ -296,6 +311,9 @@ template <typename Iterator>
 void RoundRobinTrimmer<T, Tsplits>::ProcessSplitsByBatch(
     Iterator begin, Iterator end,
     std::function<void(std::vector<Row>*)> callback) const {
+  if (begin == end || begin->empty()) {
+    return;
+  }
   int num_in_batch = begin->size() - 1;
   int num_values = end - begin;
   // Process one batch at a time.
@@ -305,7 +323,12 @@ void RoundRobinTrimmer<T, Tsplits>::ProcessSplitsByBatch(
     int idx = 0;
     for (auto i = begin; i < end; ++i, ++idx) {
       value_row_sizes[idx].idx = idx;
-      value_row_sizes[idx].size = (*i)[batch_idx + 1] - (*i)[batch_idx];
+      Tsplits row_size = 0;
+      if (batch_idx + 1 < i->size() && (*i)[batch_idx] >= 0 &&
+          (*i)[batch_idx + 1] >= (*i)[batch_idx]) {
+        row_size = (*i)[batch_idx + 1] - (*i)[batch_idx];
+      }
+      value_row_sizes[idx].size = row_size;
     }
     // Perform the main processing of the batch
     ProcessBatch(&value_row_sizes, callback);
