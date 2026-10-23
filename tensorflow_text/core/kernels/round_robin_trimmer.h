@@ -16,11 +16,12 @@
 #define THIRD_PARTY_TENSORFLOW_TEXT_CORE_KERNELS_ROUND_ROBIN_TRIMMER_H_
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <utility>
 #include <vector>
-#include "tensorflow_text/core/kernels/trimmer.h"
 
+#include "tensorflow_text/core/kernels/trimmer.h"
 
 namespace tensorflow {
 namespace text {
@@ -153,7 +154,7 @@ std::vector<Mask> RoundRobinTrimmer<T, Tsplits>::GenerateMasksInternal(
   std::vector<Mask> masks(end - begin);
   auto m = masks.begin();
   for (auto it = begin; it != end; ++it, ++m) {
-    m->reserve(it->back());
+    m->reserve(std::max(static_cast<Tsplits>(0), it->empty() ? 0 : it->back()));
   }
   // Process all batches, updating the masks a batch at a time.
   ProcessSplitsByBatch(begin, end, [&masks](std::vector<Row>* rows) {
@@ -305,7 +306,8 @@ void RoundRobinTrimmer<T, Tsplits>::ProcessSplitsByBatch(
     int idx = 0;
     for (auto i = begin; i < end; ++i, ++idx) {
       value_row_sizes[idx].idx = idx;
-      value_row_sizes[idx].size = (*i)[batch_idx + 1] - (*i)[batch_idx];
+      Tsplits row_size = (*i)[batch_idx + 1] - (*i)[batch_idx];
+      value_row_sizes[idx].size = row_size < 0 ? 0 : row_size;
     }
     // Perform the main processing of the batch
     ProcessBatch(&value_row_sizes, callback);
