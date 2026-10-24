@@ -9,6 +9,31 @@ load(
     _pywrap_library = "pywrap_library",
 )
 
+def _local_tf_op_shim():
+    """Returns a package-local `tf_op_shim` built against the TF wheel headers.
+
+    Only the three shim sources are compiled here. They are linked dynamically
+    against libtensorflow_framework.so (like any TF custom op), instead of
+    depending on @org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim, which
+    statically pulls TensorFlow implementation targets (protos, protobuf
+    runtime, lib_internal, ...) into every _<op>.so.
+    """
+    name = "tf_op_shim_oss"
+    if not native.existing_rule(name):
+        tf_cc_library(
+            name = name,
+            srcs = [
+                "@org_tensorflow//tensorflow/lite/kernels/shim:shape.cc",
+                "@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim.cc",
+                "@org_tensorflow//tensorflow/lite/kernels/shim:tf_tensor_view.cc",
+            ],
+            deps = [
+                "@com_google_absl//absl/algorithm:container",
+                "@com_google_absl//absl/types:span",
+            ],
+        )
+    return ":" + name
+
 def py_tf_text_library(
         name,
         srcs = [],
@@ -55,7 +80,7 @@ def py_tf_text_library(
             }),
             alwayslink = 1,
             deps = cc_op_kernels +
-                   ["@org_tensorflow//tensorflow/lite/kernels/shim:tf_op_shim"] +
+                   [_local_tf_op_shim()] +
                    select({
                        "@org_tensorflow//tensorflow:mobile": [
                            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
@@ -157,7 +182,7 @@ def tf_cc_library(
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/time")
     oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/types:variant")
 
-    deps += select({
+    deps = list(deps or []) + select({
         "@org_tensorflow//tensorflow:mobile": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
         ],
@@ -216,7 +241,7 @@ def tflite_cc_library(
         "@com_google_absl//absl/time",
         "@com_google_absl//absl/types:variant",
     ]
-    deps += tflite_deps + select({
+    deps = list(deps or []) + tflite_deps + select({
         "@org_tensorflow//tensorflow:mobile": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
         ],
@@ -236,14 +261,6 @@ def tflite_cc_library(
         alwayslink = alwayslink,
     )
 
-def extra_py_deps():
-    return [
-        "@release_or_nightly//:tensorflow_pkg",
-        "@release_or_nightly//:tf_keras_pkg",
-        "@pypi_tensorflow_datasets//:pkg",
-        "@pypi_tensorflow_metadata//:pkg",
-    ]
-
 def py_library(name, lazy_imports = False, strict_deps = None, **kwargs):
     _ = (lazy_imports, strict_deps)  # buildifier: disable=unused-variable
     _py_library(
@@ -255,13 +272,14 @@ def pybind_extension(name, deps = None, **kwargs):
     deps = deps or []
     deps = deps + ["@pybind11//:pybind11"]
     _pybind_extension(
-        name=name,
-        deps=deps,
-        **kwargs,
+        name = name,
+        deps = deps,
+        **kwargs
     )
-    
+
 def if_pywrap(if_true = None, if_false = None):
     _ = (if_false,)  # buildifier: disable=unused-variable
+
     # Always use pywrap.
     return if_true or []
 

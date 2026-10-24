@@ -72,21 +72,12 @@ http_archive(
     name = "org_tensorflow",
     patch_args = ["-p1"],
     patches = [
-        "//third_party/tensorflow:tensorflow.xla_if_static.bzl.patch",
+        "//third_party/tensorflow:tensorflow.shim_sources.patch",
     ],
     sha256 = "b7fc9646df01c14968e1546ad430a72f6ecc26867c085266f71f43968a6d5f5b",
     strip_prefix = "tensorflow-2.22.0-rc0",
     urls = [
         "https://github.com/tensorflow/tensorflow/archive/refs/tags/v2.22.0-rc0.zip",
-    ],
-)
-
-http_archive(
-    name = "org_tensorflow_datasets",
-    sha256 = "c6ff4e2306387f0ca45d4f616d9a1c5e79e02ef16d0a8958230a8049ea07fc98",
-    strip_prefix = "datasets-3.2.0",
-    urls = [
-        "https://github.com/tensorflow/datasets/archive/v3.2.0.zip",
     ],
 )
 
@@ -140,7 +131,6 @@ py_deps_profile(
     deps_map = {
         "tensorflow": [
             "tf-nightly",
-            "tf_headers",
             "tf_header_lib",
             "libtensorflow_framework",
         ],
@@ -205,17 +195,6 @@ load(
 )
 
 python_wheel_version_suffix_repository(name = "tf_wheel_version_suffix")
-
-# Toolchains for ML projects hermetic builds.
-# Details: https://github.com/google-ml-infra/rules_ml_toolchain
-http_archive(
-    name = "rules_ml_toolchain",
-    sha256 = "54c1a357f71f611efdb4891ebd4bcbe4aeb6dfa7e473f14fd7ecad5062096616",
-    strip_prefix = "rules_ml_toolchain-d8cb9c2c168cd64000eaa6eda0781a9615a26ffe",
-    urls = [
-        "https://github.com/google-ml-infra/rules_ml_toolchain/archive/d8cb9c2c168cd64000eaa6eda0781a9615a26ffe.tar.gz",
-    ],
-)
 
 load(
     "@rules_ml_toolchain//cc/deps:cc_toolchain_deps.bzl",

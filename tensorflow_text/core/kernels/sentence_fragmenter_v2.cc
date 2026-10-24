@@ -21,7 +21,6 @@
 #include "absl/strings/string_view.h"
 #include "icu4c/source/common/unicode/uchar.h"
 #include "icu4c/source/common/unicode/utf8.h"
-#include "tensorflow/core/lib/core/status.h"
 
 namespace tensorflow {
 namespace text {

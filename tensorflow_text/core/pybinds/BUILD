@@ -50,7 +50,7 @@ py_test(
     ],
     deps = [
         ":pywrap_fast_bert_normalizer_model_builder",
-        "@absl_py//absl/flags",
+        "@pypi//absl_py:pkg",  # absl/flags dep
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
     ] + if_pywrap([":pybinds_library"]),
 )

@@ -23,7 +23,7 @@ py_binary(
     name = "tensorflow_build_info",
     srcs = ["tensorflow_build_info.py"],
     deps = [
-        "@absl_py//absl:app",
+        "@pypi//absl_py:pkg",
         "@release_or_nightly//:tensorflow_pkg",
     ],
 )
@@ -40,6 +40,6 @@ py_binary(
         "//tensorflow_text/core/pybinds:pybinds_binaries",
     ],
     deps = [
-        "@pypi_setuptools//:pkg",
+        "@pypi//setuptools:pkg",
     ],
 )
