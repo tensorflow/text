@@ -30,15 +30,17 @@ limitations under the License.
 #include "tensorflow_text/core/kernels/sentencepiece/optimized_decoder.h"
 
 #include <fstream>
+#include <ios>
+#include <iterator>
+#include <string>
+#include <vector>
 
-#include "file/base/path.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "absl/status/status.h"
 #include "absl/strings/str_format.h"
-#include "src/sentencepiece.proto.h"
+#include "src/sentencepiece.pb.h"
 #include "src/sentencepiece_processor.h"
-#include "tensorflow/core/platform/env.h"
-#include "tensorflow/lite/kernels/test_util.h"
 #include "tensorflow_text/core/kernels/sentencepiece/model_converter.h"
 
 namespace tensorflow {
@@ -47,23 +49,19 @@ namespace sentencepiece {
 
 namespace internal {
 
-absl::Status TFReadFileToString(const std::string& filepath,
-                                std::string* data) {
-  return tensorflow::ReadFileToString(tensorflow::Env::Default(), filepath,
-                                      data);
-}
-
 absl::Status StdReadFileToString(const std::string& filepath,
                                  std::string* data) {
-  std::ifstream infile(filepath);
+  std::ifstream infile(filepath, std::ios::in | std::ios::binary);
   if (!infile.is_open()) {
     return absl::NotFoundError(
         absl::StrFormat("Error when opening %s", filepath));
   }
-  std::string contents((std::istreambuf_iterator<char>(infile)),
-                       (std::istreambuf_iterator<char>()));
-  data->append(contents);
-  infile.close();
+  data->assign(std::istreambuf_iterator<char>(infile),
+               std::istreambuf_iterator<char>());
+  if (infile.bad()) {
+    return absl::InternalError(
+        absl::StrFormat("Error when reading %s", filepath));
+  }
   return absl::OkStatus();
 }
 
@@ -71,16 +69,15 @@ absl::Status StdReadFileToString(const std::string& filepath,
 
 namespace {
 
-static char kConfigFilePath[] =
-    "/tensorflow_text/python/ops/test_data/"
+constexpr char kConfigFilePath[] =
+    "tensorflow_text/python/ops/test_data/"
     "fast_sentencepiece.model";
 
 TEST(OptimizedEncoder, ConfigConverter) {
   std::string config;
 
-  auto status = internal::TFReadFileToString(
-      file::JoinPath(::testing::SrcDir(), kConfigFilePath), &config);
-  ASSERT_TRUE(status.ok());
+  auto status = internal::StdReadFileToString(kConfigFilePath, &config);
+  ASSERT_TRUE(status.ok()) << status;
 
   ::sentencepiece::SentencePieceProcessor processor;
   ASSERT_TRUE(processor.LoadFromSerializedProto(config).ok());
