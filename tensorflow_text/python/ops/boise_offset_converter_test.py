@@ -22,8 +22,12 @@ from __future__ import print_function
 import tensorflow as tf
 import tensorflow_text as tf_text
 
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.platform import test
+from tensorflow.python.framework import load_library
+from tensorflow.python.platform import resource_loader
+gen_boise_offset_converter = load_library.load_op_library(resource_loader.get_path_to_datafile('_boise_offset_converter.so'))
 
 
 @test_util.run_all_in_graph_and_eager_modes
@@ -455,6 +459,145 @@ class BoiseTagsToOffsetsTest(tf.test.TestCase):
     with self.assertRaises(ValueError):
       tf_text.boise_tags_to_offsets(token_begin_offsets, token_end_offsets,
                                     boise_tags)
+
+  def test_invalid_row_splits(self):
+    # Non-monotonic row splits in OffsetsToBoiseTags.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'Invalid (token |span )?row splits',
+    ):
+      self.evaluate(
+          gen_boise_offset_converter.tf_text_offsets_to_boise_tags(
+              input_token_begin_offsets=[0, 4, 8],
+              input_token_end_offsets=[3, 7, 11],
+              input_span_begin_offsets=[4],
+              input_span_end_offsets=[11],
+              input_span_type=[b'animal'],
+              input_token_begin_row_splits=[0, 3, 1],
+              input_token_end_row_splits=[0, 3, 1],
+              input_span_begin_row_splits=[0, 1, 1],
+              input_span_end_row_splits=[0, 1, 1],
+              input_span_type_row_splits=[0, 1, 1],
+              input_use_strict_boundary_mode=False,
+          )
+      )
+    # Out-of-bounds row splits in OffsetsToBoiseTags.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'Invalid (token |span )?row splits',
+    ):
+      self.evaluate(
+          gen_boise_offset_converter.tf_text_offsets_to_boise_tags(
+              input_token_begin_offsets=[0, 4, 8],
+              input_token_end_offsets=[3, 7, 11],
+              input_span_begin_offsets=[4],
+              input_span_end_offsets=[11],
+              input_span_type=[b'animal'],
+              input_token_begin_row_splits=[0, 100],
+              input_token_end_row_splits=[0, 100],
+              input_span_begin_row_splits=[0, 1],
+              input_span_end_row_splits=[0, 1],
+              input_span_type_row_splits=[0, 1],
+              input_use_strict_boundary_mode=False,
+          )
+      )
+    # Negative initial row split in OffsetsToBoiseTags.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'Invalid (token |span )?row splits',
+    ):
+      self.evaluate(
+          gen_boise_offset_converter.tf_text_offsets_to_boise_tags(
+              input_token_begin_offsets=[0, 4, 8],
+              input_token_end_offsets=[3, 7, 11],
+              input_span_begin_offsets=[4],
+              input_span_end_offsets=[11],
+              input_span_type=[b'animal'],
+              input_token_begin_row_splits=[-1, 1],
+              input_token_end_row_splits=[-1, 1],
+              input_span_begin_row_splits=[0, 1],
+              input_span_end_row_splits=[0, 1],
+              input_span_type_row_splits=[0, 1],
+              input_use_strict_boundary_mode=False,
+          )
+      )
+    # Empty row splits in OffsetsToBoiseTags.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'Row splits must be non-empty',
+    ):
+      self.evaluate(
+          gen_boise_offset_converter.tf_text_offsets_to_boise_tags(
+              input_token_begin_offsets=[0, 4, 8],
+              input_token_end_offsets=[3, 7, 11],
+              input_span_begin_offsets=[4],
+              input_span_end_offsets=[11],
+              input_span_type=[b'animal'],
+              input_token_begin_row_splits=[],
+              input_token_end_row_splits=[],
+              input_span_begin_row_splits=[],
+              input_span_end_row_splits=[],
+              input_span_type_row_splits=[],
+              input_use_strict_boundary_mode=False,
+          )
+      )
+    # Non-monotonic row splits in BoiseTagsToOffsets.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r'Invalid row splits'
+    ):
+      self.evaluate(
+          gen_boise_offset_converter.tf_text_boise_tags_to_offsets(
+              input_token_begin_offsets=[0, 4, 8],
+              input_token_end_offsets=[3, 7, 11],
+              input_boise_tags=[b'O', b'B-animal', b'E-animal'],
+              input_token_begin_row_splits=[0, 3, 1],
+              input_token_end_row_splits=[0, 3, 1],
+              input_boise_tags_row_splits=[0, 3, 1],
+          )
+      )
+    # Out-of-bounds row splits in BoiseTagsToOffsets.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r'Invalid row splits'
+    ):
+      self.evaluate(
+          gen_boise_offset_converter.tf_text_boise_tags_to_offsets(
+              input_token_begin_offsets=[0, 4, 8],
+              input_token_end_offsets=[3, 7, 11],
+              input_boise_tags=[b'O', b'B-animal', b'E-animal'],
+              input_token_begin_row_splits=[0, 100],
+              input_token_end_row_splits=[0, 100],
+              input_boise_tags_row_splits=[0, 100],
+          )
+      )
+    # Negative initial row split in BoiseTagsToOffsets.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError), r'Invalid row splits'
+    ):
+      self.evaluate(
+          gen_boise_offset_converter.tf_text_boise_tags_to_offsets(
+              input_token_begin_offsets=[0, 4, 8],
+              input_token_end_offsets=[3, 7, 11],
+              input_boise_tags=[b'O', b'B-animal', b'E-animal'],
+              input_token_begin_row_splits=[-1, 1],
+              input_token_end_row_splits=[-1, 1],
+              input_boise_tags_row_splits=[-1, 1],
+          )
+      )
+    # Empty row splits in BoiseTagsToOffsets.
+    with self.assertRaisesRegex(
+        (errors.InvalidArgumentError, ValueError),
+        r'Row splits must be non-empty',
+    ):
+      self.evaluate(
+          gen_boise_offset_converter.tf_text_boise_tags_to_offsets(
+              input_token_begin_offsets=[0, 4, 8],
+              input_token_end_offsets=[3, 7, 11],
+              input_boise_tags=[b'O', b'B-animal', b'E-animal'],
+              input_token_begin_row_splits=[],
+              input_token_end_row_splits=[],
+              input_boise_tags_row_splits=[],
+          )
+      )
 
 
 if __name__ == '__main__':
