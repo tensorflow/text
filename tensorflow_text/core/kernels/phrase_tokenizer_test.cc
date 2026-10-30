@@ -19,6 +19,7 @@
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
 #include "tensorflow/core/platform/env.h"
+#include "tensorflow_text/core/kernels/test_status_macros.h"  // IWYU pragma: keep
 
 namespace tensorflow {
 namespace text {

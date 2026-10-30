@@ -1,3 +1,18 @@
+diff --git a/tensorflow/core/framework/BUILD b/tensorflow/core/framework/BUILD
+--- a/tensorflow/core/framework/BUILD
++++ b/tensorflow/core/framework/BUILD
+@@ -74,6 +74,11 @@ package(
+     default_visibility = default_visibility,
+     licenses = ["notice"],
+ )
++
++exports_files(
++    ["shape_inference_testutil.cc"],
++    visibility = ["//visibility:public"],
++)
+ 
+ # Export all header files for which we do not yet provide a dedicated build
+ # rule. This avoids breaking all the rules in tensorflow/core/BUILD.
 diff --git a/tensorflow/lite/kernels/shim/BUILD b/tensorflow/lite/kernels/shim/BUILD
 --- a/tensorflow/lite/kernels/shim/BUILD
 +++ b/tensorflow/lite/kernels/shim/BUILD

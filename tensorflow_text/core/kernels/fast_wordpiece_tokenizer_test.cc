@@ -17,9 +17,12 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "absl/flags/flag.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_join.h"
 #include "icu4c/source/common/unicode/uchar.h"
 #include "tensorflow/core/platform/env.h"
 #include "tensorflow_text/core/kernels/fast_wordpiece_tokenizer_model_builder.h"
+#include "tensorflow_text/core/kernels/test_status_macros.h"  // IWYU pragma: keep
 
 namespace tensorflow {
 namespace text {

@@ -5,7 +5,7 @@ load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 # Placeholder: load proto_library
-load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tflite_cc_library")
+load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tf_cc_test", "tflite_cc_library", "tflite_cc_test")
 # [internal] load cc_proto_library.bzl
 
 licenses(["notice"])
@@ -158,7 +158,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "constrained_sequence_kernel_input_validation_test",
     srcs = ["constrained_sequence_kernel_input_validation_test.cc"],
     deps = [
@@ -172,7 +172,7 @@ cc_test(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "exp_greedy_constrained_sequence_kernel_test",
     srcs = ["exp_greedy_constrained_sequence_kernel_test.cc"],
     deps = [
@@ -186,7 +186,7 @@ cc_test(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "exp_viterbi_constrained_sequence_kernel_test",
     srcs = ["exp_viterbi_constrained_sequence_kernel_test.cc"],
     deps = [
@@ -251,6 +251,7 @@ cc_test(
     deps = [
         ":fast_bert_normalizer",
         ":fast_bert_normalizer_model_builder",
+        "@com_google_absl//absl/strings",
         "@com_google_absl//absl/types:span",
         "@com_google_googletest//:gtest_main",
     ],
@@ -293,7 +294,7 @@ tflite_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "log_greedy_constrained_sequence_kernel_test",
     srcs = ["log_greedy_constrained_sequence_kernel_test.cc"],
     deps = [
@@ -307,7 +308,7 @@ cc_test(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "log_viterbi_constrained_sequence_kernel_test",
     srcs = ["log_viterbi_constrained_sequence_kernel_test.cc"],
     deps = [
@@ -357,6 +358,9 @@ cc_test(
     deps = [
         ":darts_clone_trie_builder",
         ":darts_clone_trie_wrapper",
+        ":test_status_macros",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:status_matchers",
         "@com_google_absl//absl/types:span",
         "@com_google_googletest//:gtest_main",
     ],
@@ -399,7 +403,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "fast_wordpiece_tokenizer_test",
     srcs = ["fast_wordpiece_tokenizer_test.cc"],
     data = [
@@ -410,8 +414,10 @@ cc_test(
     deps = [
         ":fast_wordpiece_tokenizer",
         ":fast_wordpiece_tokenizer_model_builder",
+        ":test_status_macros",
         "@com_google_googletest//:gtest_main",
         "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/strings",
         "@icu//:headers",
         # tf:lib tensorflow dep,
     ],
@@ -535,6 +541,7 @@ cc_test(
     srcs = ["fast_wordpiece_tokenizer_utils_test.cc"],
     deps = [
         ":fast_wordpiece_tokenizer_utils",
+        ":test_status_macros",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -564,7 +571,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "mst_solver_test",
     size = "small",
     srcs = ["mst_solver_test.cc"],
@@ -576,7 +583,7 @@ cc_test(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "mst_solver_random_comparison_test",
     size = "small",
     timeout = "long",
@@ -635,15 +642,14 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "ngrams_kernel_test",
     srcs = ["ngrams_kernel_test.cc"],
     deps = [
         # tf:framework tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
-        # tf/framework:tensor_testutil tensorflow dep,
+        ":shape_inference_testutil_oss",  # tf/framework:shape_inference_testutil tensorflow dep,
         "//tensorflow_text:ngrams_op_cc",
     ],
 )
@@ -660,7 +666,7 @@ tflite_cc_library(
     ],
 )
 
-cc_test(
+tflite_cc_test(
     name = "ngrams_tflite_test",
     srcs = ["ngrams_tflite_test.cc"],
     deps = [
@@ -703,7 +709,7 @@ tflite_cc_library(
     ],
 )
 
-cc_test(
+tflite_cc_test(
     name = "ragged_tensor_to_tensor_tflite_test",
     srcs = ["ragged_tensor_to_tensor_tflite_test.cc"],
     deps = [
@@ -741,7 +747,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "regex_split_test",
     srcs = ["regex_split_test.cc"],
     deps = [
@@ -762,7 +768,7 @@ cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "round_robin_trimmer_test",
     size = "small",
     srcs = ["round_robin_trimmer_test.cc"],
@@ -835,7 +841,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "rouge_l_kernel_test",
     size = "small",
     srcs = ["rouge_l_kernel_test.cc"],
@@ -844,7 +850,7 @@ cc_test(
         # tf:framework tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
+        ":shape_inference_testutil_oss",  # tf/framework:shape_inference_testutil tensorflow dep,
         "//tensorflow_text:text_similarity_metric_ops_cc",
     ],
 )
@@ -998,7 +1004,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "spanning_tree_iterator_test",
     size = "small",
     srcs = ["spanning_tree_iterator_test.cc"],
@@ -1101,7 +1107,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "unicode_script_tokenize_kernel_test",
     srcs = ["unicode_script_tokenize_kernel_test.cc"],
     deps = [
@@ -1142,7 +1148,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "whitespace_tokenize_kernel_test",
     srcs = ["whitespace_tokenize_kernel_test.cc"],
     deps = [
@@ -1165,7 +1171,7 @@ cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "whitespace_tokenizer_test",
     size = "small",
     srcs = ["whitespace_tokenizer_test.cc"],
@@ -1232,7 +1238,7 @@ cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "whitespace_tokenizer_config_builder_test",
     size = "small",
     srcs = ["whitespace_tokenizer_config_builder_test.cc"],
@@ -1277,7 +1283,7 @@ cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "phrase_tokenizer_test",
     size = "small",
     srcs = ["phrase_tokenizer_test.cc"],
@@ -1286,6 +1292,7 @@ cc_test(
     ],
     deps = [
         ":phrase_tokenizer",
+        ":test_status_macros",
         "@com_google_googletest//:gtest_main",
         "@com_google_absl//absl/flags:flag",
         "@com_google_absl//absl/status",
@@ -1333,7 +1340,7 @@ cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "utf8_binarize_test",
     size = "small",
     srcs = ["utf8_binarize_test.cc"],
@@ -1409,7 +1416,7 @@ tf_cc_library(
     ],
 )
 
-cc_test(
+tf_cc_test(
     name = "wordpiece_kernel_test",
     size = "small",
     srcs = ["wordpiece_kernel_test.cc"],
@@ -1418,7 +1425,17 @@ cc_test(
         # tf:framework tensorflow dep,
         # tf:test tensorflow dep,
         # tf:test_main tensorflow dep,
-        # tf/framework:shape_inference_testutil tensorflow dep,
+        ":shape_inference_testutil_oss",  # tf/framework:shape_inference_testutil tensorflow dep,
         "//tensorflow_text:wordpiece_tokenizer_cc",
+    ],
+)
+
+cc_library(
+    name = "test_status_macros",
+    testonly = 1,
+    hdrs = ["test_status_macros.h"],
+    deps = [
+        "@com_google_absl//absl/status",
+        "@com_google_googletest//:gtest",
     ],
 )

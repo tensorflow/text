@@ -22,6 +22,8 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_join.h"
 #include "absl/types/span.h"
 #include "tensorflow_text/core/kernels/fast_bert_normalizer_model_builder.h"
 
