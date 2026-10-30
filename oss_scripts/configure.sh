@@ -31,6 +31,27 @@ function is_macos() {
   [[ "${osname}" == "darwin" ]]
 }
 
+# Don't install tensorflow locally.
+if (which python3) | grep -q "python3"; then
+  installed_python="python3"
+elif (which python) | grep -q "python"; then
+  installed_python="python"
+fi
+
+if [[ $($installed_python -m pip show tensorflow) == *tensorflow* ]] ||
+   [[ $($installed_python -m pip show tensorflow-macos) == *tensorflow-macos* ]] ||
+   [[ $($installed_python -m pip show tf-nightly) == *tf-nightly* ]] ||
+   [[ $($installed_python -m pip show tf-nightly-macos) == *tf-nightly-macos* ]]; then
+  echo 'Using installed tensorflow.'
+else
+  echo 'Installing tensorflow.'
+  if [[ "$IS_NIGHTLY" == "nightly" ]]; then
+    $installed_python -m pip install --no-deps tf-nightly
+  else
+    $installed_python -m pip install --no-deps tensorflow==2.22.0rc0
+  fi
+fi
+
 # Remove .bazelrc if it already exists
 rm -f .bazelrc
 
