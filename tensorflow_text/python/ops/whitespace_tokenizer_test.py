@@ -276,15 +276,18 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
         super().__init__(**kwargs)
         self.tokenizer = WhitespaceTokenizer()
 
-      def call(self, input_tensor, **kwargs):
-        return self.tokenizer.tokenize(input_tensor).flat_values
+      @tf.function(input_signature=[
+          tf.TensorSpec(shape=[None], dtype=tf.string, name='input')
+      ])
+      def call(self, input_tensor):
+        return {'tokens': self.tokenizer.tokenize(input_tensor).flat_values}
 
     # Test input data.
     input_data = np.array(['Some minds are better kept apart'])
 
     # Define a Keras model.
     model = TokenizerModel()
-    # Do TF.Text inference.
+    # Perform TF.Text inference.
     tf_result = model(tf.constant(input_data))
 
     # Convert to TFLite.
@@ -297,15 +300,17 @@ class WhitespaceTokenizerOpTest(test_util.TensorFlowTestCase):
     interp = interpreter.InterpreterWithCustomOps(
         model_content=tflite_model,
         custom_op_registerers=tf_text.tflite_registrar.SELECT_TFTEXT_OPS)
-    interp.allocate_tensors()
-    input_details = interp.get_input_details()
-    interp.set_tensor(input_details[0]['index'], input_data)
-    interp.invoke()
-    output_details = interp.get_output_details()
-    tflite_result = interp.get_tensor(output_details[0]['index'])
+    print(interp.get_signature_list())
+    tokenize = interp.get_signature_runner('serving_default')
+    output = tokenize(input=input_data)
+    print(output)
+    if tf.executing_eagerly():
+      tflite_result = output['tokens']
+    else:
+      tflite_result = output['output_1']
 
     # Assert the results are identical.
-    self.assertAllEqual(tflite_result, tf_result)
+    self.assertAllEqual(tflite_result, tf_result['tokens'])
 
 
 if __name__ == '__main__':
