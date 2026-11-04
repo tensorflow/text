@@ -20,4 +20,4 @@ if [[ "$IS_NIGHTLY" == "nightly" ]] || [[ -n "$TF_VERSION" ]]; then
   source oss_scripts/prepare_tf_dep.sh
 fi
 
-bazel test --test_output=errors --keep_going --jobs=1 tensorflow_text:all
+bazel test --test_output=errors --keep_going --local_test_jobs=1 tensorflow_text/...

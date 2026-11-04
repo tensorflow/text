@@ -1,6 +1,7 @@
 """
 Build rules for open source tf.text libraries.
 """
+load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@rules_python//python:py_library.bzl", _py_library = "py_library")
 load(
     "@xla//third_party/py/rules_pywrap:pywrap.default.bzl",
@@ -31,6 +32,34 @@ def _local_tf_op_shim():
                 "@com_google_absl//absl/algorithm:container",
                 "@com_google_absl//absl/types:span",
             ],
+        )
+    return ":" + name
+
+def _local_shape_inference_testutil():
+    """Returns a package-local `shape_inference_testutil`.
+
+    It is built against the TF wheel headers.
+    """
+    name = "shape_inference_testutil_oss"
+    if not native.existing_rule(name):
+        hdr_out = (
+            "shape_inference_testutil_include/tensorflow/core/framework/" +
+            "shape_inference_testutil.h"
+        )
+        copy_file(
+            name = name + "_hdr",
+            src = "@org_tensorflow//tensorflow/core/framework:shape_inference_testutil.h",
+            out = hdr_out,
+            testonly = True,
+        )
+        tf_cc_library(
+            name = name,
+            srcs = [
+                "@org_tensorflow//tensorflow/core/framework:shape_inference_testutil.cc",
+            ],
+            hdrs = [hdr_out],
+            includes = ["shape_inference_testutil_include"],
+            testonly = True,
         )
     return ":" + name
 
@@ -126,6 +155,49 @@ def py_tf_text_library(
         deps = deps,
     )
 
+
+_OSS_ABSL_DEPS = [
+    "@com_google_absl//absl/base",
+    "@com_google_absl//absl/container:btree",
+    "@com_google_absl//absl/container:flat_hash_map",
+    "@com_google_absl//absl/container:flat_hash_set",
+    "@com_google_absl//absl/functional:any_invocable",
+    "@com_google_absl//absl/log:absl_check",
+    "@com_google_absl//absl/log:absl_log",
+    "@com_google_absl//absl/log:check",
+    "@com_google_absl//absl/log:log",
+    "@com_google_absl//absl/meta:type_traits",
+    "@com_google_absl//absl/status",
+    "@com_google_absl//absl/status:statusor",
+    "@com_google_absl//absl/status:status_macros",
+    "@com_google_absl//absl/strings",
+    "@com_google_absl//absl/strings:cord",
+    "@com_google_absl//absl/time",
+    "@com_google_absl//absl/types:variant",
+]
+
+_SHARED_TFLITE_DEPS = [
+    "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
+    "@org_tensorflow//tensorflow/lite:framework",
+    "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
+    "@org_tensorflow//tensorflow/lite/c:common",
+    "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
+    "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_wrapper",
+]
+
+_TFLITE_OSS_ABSL_DEPS = [
+    "@com_google_absl//absl/container:flat_hash_map",
+    "@com_google_absl//absl/strings:cord",
+    "@com_google_absl//absl/time",
+    "@com_google_absl//absl/types:variant",
+]
+
+def _dedupe_deps(deps, extra_deps):
+    oss_deps = []
+    for d in extra_deps:
+        oss_deps.extend(_dedupe(deps, d))
+    return oss_deps
+
 def _dedupe(list, item):
     if item not in list:
         return [item]
@@ -139,6 +211,7 @@ def tf_cc_library(
         deps = [],
         tf_deps = [],
         copts = [],
+        includes = [],
         compatible_with = None,
         testonly = 0,
         alwayslink = 0):
@@ -155,6 +228,8 @@ def tf_cc_library(
         deps: All non-TF dependencies
         tf_deps: All TF depenedencies
         copts: C options
+        includes: Include dirs added to the compile line of the target
+            and its dependents
         compatible_with: List of environments target can be built for
         testonly: If library is only for testing
         alwayslink: If symbols should be exported
@@ -163,24 +238,7 @@ def tf_cc_library(
         alwayslink = 1
 
     # These are "random" deps likely needed by each library (http://b/142433427)
-    oss_deps = []
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/base")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:btree")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:flat_hash_map")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/container:flat_hash_set")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/functional:any_invocable")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:absl_check")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:absl_log")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:check")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/log:log")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/meta:type_traits")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/status")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/status:statusor")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/status:status_macros")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/strings")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/strings:cord")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/time")
-    oss_deps = oss_deps + _dedupe(deps, "@com_google_absl//absl/types:variant")
+    oss_deps = _dedupe_deps(deps, _OSS_ABSL_DEPS)
 
     deps = list(deps or []) + select({
         "@org_tensorflow//tensorflow:mobile": [
@@ -197,6 +255,7 @@ def tf_cc_library(
         hdrs = hdrs,
         deps = deps,
         copts = copts,
+        includes = includes,
         compatible_with = compatible_with,
         testonly = testonly,
         alwayslink = alwayslink,
@@ -224,23 +283,8 @@ def tflite_cc_library(
         alwayslink: If symbols should be exported
     """
 
-    # Necessary build deps for tflite ops
-    tflite_deps = [
-        "@org_tensorflow//tensorflow/core/util:ragged_to_dense_util_common",
-        "@org_tensorflow//tensorflow/lite:framework",
-        "@org_tensorflow//tensorflow/lite:mutable_op_resolver",
-        "@org_tensorflow//tensorflow/lite/c:common",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_shim",
-        "@org_tensorflow//tensorflow/lite/kernels/shim:tflite_op_wrapper",
-    ]
-
-    # These are "random" deps likely needed by each library (http://b/142433427)
-    oss_deps = [
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/strings:cord",
-        "@com_google_absl//absl/time",
-        "@com_google_absl//absl/types:variant",
-    ]
+    tflite_deps = _SHARED_TFLITE_DEPS
+    oss_deps = _TFLITE_OSS_ABSL_DEPS
     deps = list(deps or []) + tflite_deps + select({
         "@org_tensorflow//tensorflow:mobile": [
             "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
@@ -259,6 +303,78 @@ def tflite_cc_library(
         compatible_with = compatible_with,
         testonly = testonly,
         alwayslink = alwayslink,
+    )
+
+def tf_cc_test(name, deps = [], **kwargs):
+    """A rule to build a TensorFlow C++ test.
+
+    Args:
+        name: Name of the test target.
+        deps: Test dependencies, including TensorFlow targets (must be a
+            plain list).
+        **kwargs: Additional keyword arguments forwarded to cc_test.
+    """
+    deps = list(deps or [])
+    oss_deps = _dedupe_deps(deps, _OSS_ABSL_DEPS + [
+        "@com_google_absl//absl/status:status_matchers",
+    ])
+    gtest_deps = _dedupe_deps(deps, [
+        "@com_google_googletest//:gtest",
+        "@com_google_googletest//:gtest_main",
+    ])
+
+    # Copybara strips lite/kernels/shim deps, so tests need the
+    # package-local shim.
+    deps = deps + [
+        _local_tf_op_shim(),
+        _local_shape_inference_testutil(),
+    ] + gtest_deps + select({
+        "@org_tensorflow//tensorflow:mobile": [
+            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+        ],
+        "//conditions:default": [
+            "@release_or_nightly//:tensorflow_libtensorflow_framework",
+            "@release_or_nightly//:tensorflow_tf_header_lib",
+        ] + oss_deps,
+    })
+    native.cc_test(
+        name = name,
+        deps = deps,
+        **kwargs
+    )
+
+def tflite_cc_test(name, deps = [], **kwargs):
+    """A rule to build a TensorFlow Lite C++ test.
+
+    Args:
+        name: Name of the test target.
+        deps: Test dependencies, including TensorFlow targets (must be a
+            plain list).
+        **kwargs: Additional keyword arguments forwarded to cc_test.
+    """
+    deps = list(deps or [])
+    tflite_deps = _SHARED_TFLITE_DEPS + [
+        "@org_tensorflow//tensorflow/lite:string_util",
+        "@org_tensorflow//tensorflow/lite/kernels:test_util",
+        "@org_tensorflow//tensorflow/lite/kernels/internal:tensor",
+        "@org_tensorflow//tensorflow/lite/schema:schema_fbs",
+    ]
+    oss_deps = _dedupe_deps(deps, _TFLITE_OSS_ABSL_DEPS)
+    gtest_deps = _dedupe_deps(deps, [
+        "@com_google_googletest//:gtest",
+        "@com_google_googletest//:gtest_main",
+    ])
+
+    deps = deps + tflite_deps + gtest_deps + select({
+        "@org_tensorflow//tensorflow:mobile": [
+            "@org_tensorflow//tensorflow/core:portable_tensorflow_lib_lite",
+        ],
+        "//conditions:default": oss_deps,
+    })
+    native.cc_test(
+        name = name,
+        deps = deps,
+        **kwargs
     )
 
 def py_library(name, lazy_imports = False, strict_deps = None, **kwargs):

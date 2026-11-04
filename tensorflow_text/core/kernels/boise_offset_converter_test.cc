@@ -63,7 +63,7 @@ TEST(OffsetsToBoiseTagsTest, ExtractSingleton) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags, ContainerEq(std::vector<std::string>{
                               "O", "O", "O", "S-animal", "O"}));
 }
@@ -83,7 +83,7 @@ TEST(OffsetsToBoiseTagsTest, ExtractSingletonStrictBoundary) {
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type,
                          use_strict_boundary_mode)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags,
               ContainerEq(std::vector<std::string>{"O", "O", "O", "O", "O"}));
 }
@@ -102,7 +102,7 @@ TEST(OffsetsToBoiseTagsTest, ExtractBEEntity) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags, ContainerEq(std::vector<std::string>{
                               "O", "O", "O", "B-animal", "E-animal", "O"}));
 }
@@ -121,7 +121,7 @@ TEST(OffsetsToBoiseTagsTest, ExtractBIEEntity) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags, ContainerEq(std::vector<std::string>{
                               "O", "O", "O", "B-loc", "I-loc", "E-loc", "O"}));
 }
@@ -139,7 +139,7 @@ TEST(OffsetsToBoiseTagsTest, ExtractMutipleEntities) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags,
               ContainerEq(std::vector<std::string>{"B-org", "E-org", "O", "O",
                                                    "B-loc", "I-loc", "E-loc"}));
@@ -158,7 +158,7 @@ TEST(OffsetsToBoiseTagsTest, LooseBoundary) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags,
               ContainerEq(std::vector<std::string>{"B-org", "E-org", "O", "O",
                                                    "B-loc", "I-loc", "E-loc"}));
@@ -179,7 +179,7 @@ TEST(OffsetsToBoiseTagsTest, StrictBoundary) {
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type,
                          use_strict_boundary_mode)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags, ContainerEq(std::vector<std::string>{
                               "O", "E-org", "O", "O", "B-loc", "I-loc", "O"}));
 }
@@ -197,7 +197,7 @@ TEST(OffsetsToBoiseTagsTest, OneTokenMultiEntitiesLastPrecedes) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags, ContainerEq(std::vector<std::string>{"B-loc"}));
 }
 
@@ -214,7 +214,7 @@ TEST(OffsetsToBoiseTagsTest, OneTokenMultEntitiesPartialOverlapLastPrecedes) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags,
               ContainerEq(std::vector<std::string>{"B-per", "B-loc"}));
 }
@@ -232,7 +232,7 @@ TEST(OffsetsToBoiseTagsTest, MultiTokensOneEntityPartialOverlapLastPrecedes) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags, ContainerEq(std::vector<std::string>{
                               "B-org", "I-org", "B-loc", "I-loc", "E-loc"}));
 }
@@ -247,7 +247,7 @@ TEST(OffsetsToBoiseTagsTest, EmptySpanOffsets) {
   std::vector<std::string> boise_tags =
       OffsetsToBoiseTags(token_begin_offsets, token_end_offsets,
                          entity_begin_offsets, entity_end_offsets, entity_type)
-          .ValueOrDie();
+          .value();
   EXPECT_THAT(boise_tags, ContainerEq(std::vector<std::string>{
                               "O", "O", "O", "O", "O", "O", "O"}));
 }
@@ -276,7 +276,7 @@ TEST(BoiseTagsToOffsetTest, BeginAndEndTagsAreConvertedToOffsets) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"german shepherd"}));
@@ -293,7 +293,7 @@ TEST(BoiseTagsToOffsetTest, SingletonTagsAreExtracted) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"dogs"}));
@@ -311,7 +311,7 @@ TEST(BoiseTagsToOffsetTest, BeginInsideAndEndLabelsAreExtracted) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts,
@@ -330,7 +330,7 @@ TEST(BoiseTagsToOffsetTest, InsideEndLabelsAreExtracted) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"german shepherd"}));
@@ -348,7 +348,7 @@ TEST(BoiseTagsToOffsetTest, BeginInsideLabelsAreExtracted) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"german shepherd"}));
@@ -367,7 +367,7 @@ TEST(BoiseTagsToOffsetTest, InsideOnlyLabelIsExtracted) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"shepherd"}));
@@ -386,7 +386,7 @@ TEST(BoiseTagsToOffsetTest, BeginOnlyLabelIsExtracted) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"shepherd"}));
@@ -405,7 +405,7 @@ TEST(BoiseTagsToOffsetTest, EndOnlyLabelIsExtracted) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"shepherd"}));
@@ -423,7 +423,7 @@ TEST(BoiseTagsToOffsetTest, MultipleEntitiesAreExtracted) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{
@@ -442,7 +442,7 @@ TEST(BoiseTagsToOffsetTest, MultipleBeginLabels) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"german shepherd"}));
@@ -460,7 +460,7 @@ TEST(BoiseTagsToOffsetTest, MultipleInsideLabels) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"german shepherd"}));
@@ -478,7 +478,7 @@ TEST(BoiseTagsToOffsetTest, MultipleEndLabels) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts,
@@ -498,7 +498,7 @@ TEST(BoiseTagsToOffsetTest, MultipleSingleLabels) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts,
@@ -517,7 +517,7 @@ TEST(BoiseTagsToOffsetTest, TrailingBeginLabels) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   auto texts = ExtractTextsFromOffsets(content, begin_offsets, end_offsets);
   EXPECT_THAT(texts, ContainerEq(std::vector<std::string>{"german shepherd"}));
@@ -531,7 +531,7 @@ TEST(BoiseTagsToOffsetTest, NoBoiseLabels) {
 
   auto [begin_offsets, end_offsets, span_types] =
       BoiseTagsToOffsets(token_begin_offsets, token_end_offsets, boise_tags)
-          .ValueOrDie();
+          .value();
 
   EXPECT_TRUE(begin_offsets.empty());
   EXPECT_TRUE(end_offsets.empty());

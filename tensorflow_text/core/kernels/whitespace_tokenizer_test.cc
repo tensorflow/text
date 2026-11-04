@@ -17,7 +17,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "absl/flags/flag.h"
-#include "tensorflow/core/platform/env.h"
 #include "tensorflow_text/core/kernels/whitespace_tokenizer_config_builder.h"
 #include "absl/status/status.h"
 #include "absl/status/statusor.h"
