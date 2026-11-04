@@ -65,7 +65,6 @@ class GreedyConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
 
     # Handle state 0.
     current_scores = scores[0]
-    print(current_scores)
     if use_start_and_end_states:
       for i in range(num_states):
         if use_log_space:
@@ -82,7 +81,6 @@ class GreedyConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         else:
           current_scores[i] *= transition_params[sequence[-1]][i]
       sequence.append(self._last_max(current_scores))
-      print(current_scores)
 
     # Handle the end state if necessary. Since this is greedy, we can
     # simply multiply the final current_scores array by the end index
@@ -213,6 +211,7 @@ class GreedyConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_log_space=use_log_space,
         use_start_and_end_states=use_start_and_end_states)
     single_result = self.evaluate(single_sequence_op)
+    print("out: %s" % sequence)
     self.assertAllEqual(single_result, [sequence])
 
   def test_sequence_in_exp_space_without_start_end_states_multi_batch_item(
