@@ -14,6 +14,7 @@
 
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/shape_inference.h"
+#include "tensorflow_text/core/kernels/constrained_sequence.h"
 
 namespace tensorflow {
 
@@ -29,8 +30,24 @@ REGISTER_OP("ConstrainedSequence")
     .Input("transition_weights: float")
     .Output("states: int32")
     .Output("states_splits: Tsplits")
-
-    // TODO(b/122968457): Implement a shape function.
+    .SetShapeFn([](shape_inference::InferenceContext *c) {
+      const auto *score_tensor = c->input_tensor(0);
+      const auto *lengths_tensor = c->input_tensor(1);
+      if (score_tensor && lengths_tensor) {
+        text::ScoreAccessor scores(*score_tensor, *lengths_tensor);
+        const int batch_size = scores.batch_size();
+        int total_length = 0;
+        for (int i = 0; i < batch_size; ++i) {
+          total_length += scores.GetLength(i);
+        }
+        c->set_output(0, c->MakeShape({total_length}));
+        c->set_output(1, c->MakeShape({batch_size + 1}));
+      } else {
+        c->set_output(0, c->UnknownShapeOfRank(1));
+        c->set_output(1, c->UnknownShapeOfRank(1));
+      }
+      return Status::OK();
+    })
     .Doc(R"doc(
 Constrains a set of predictions based on a set of legal transitions and/or a
 set of transition weights, returning the legal sequence that maximizes the
