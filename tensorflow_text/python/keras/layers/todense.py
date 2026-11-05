@@ -108,4 +108,8 @@ class ToDense(tf.keras.layers.Layer):  # pylint: disable=g-classes-have-attribut
         'shape': self._shape,
     }
     base_config = super(ToDense, self).get_config()
-    return dict(list(base_config.items()) + list(config.items()))
+    # Plain dict-merge instead of building two intermediate lists via
+    # list(...) + list(...) just to re-wrap them with dict(); same result
+    # (config's keys still take precedence on any overlap), no throwaway
+    # list allocations.
+    return {**base_config, **config}
