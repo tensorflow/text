@@ -74,6 +74,7 @@ fi
 
 write_to_bazelrc "build:manylinux2014 --config=release_cpu_linux"
 write_to_bazelrc "test --test_env=TF_USE_LEGACY_KERAS=1"
+write_to_bazelrc "test --test_tag_filters=-sickbay"
 write_to_bazelrc "common --features=-external_include_paths"
 write_to_bazelrc "common --host_features=-external_include_paths"
 

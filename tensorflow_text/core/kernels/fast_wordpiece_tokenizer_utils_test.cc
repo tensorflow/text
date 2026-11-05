@@ -16,6 +16,7 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "tensorflow_text/core/kernels/test_status_macros.h"  // IWYU pragma: keep
 
 namespace tensorflow {
 namespace text {
