@@ -77,6 +77,22 @@ fi
 if [[ -n "$IS_NIGHTLY" ]]; then
   write_to_bazelrc "build --repo_env=IS_NIGHTLY=${IS_NIGHTLY}"
 fi
+# tf-nightly is built for Linux with statically linked libc++ and C++20 since
+# TensorFlow commit cc213229b92c ("Switch Linux builds from libstdc++ (C++17) to
+# statically linked libc++ (C++20)"), so libtensorflow_framework.so.2 exports
+# libc++-mangled symbols. The .bazelrc above comes from the TF release, which
+# still uses libstdc++, so use the same toolchain as TF master for nightly
+# builds. Otherwise the op libraries fail to load with undefined symbols such as
+# tensorflow::OpKernel::TraceString. Apply this to release builds as well once
+# they move to a TF release that uses libc++.
+if [[ "$IS_NIGHTLY" == "nightly" ]]; then
+  write_to_bazelrc "common:linux --repo_env=LLVM_VERSION=22"
+  write_to_bazelrc "common:linux --repo_env=SYSROOT_DIST=linux_glibc_2_27"
+  write_to_bazelrc "common:linux --@rules_ml_toolchain//common:stdlib=libc++"
+  write_to_bazelrc "common:linux --@rules_ml_toolchain//common:static_libcxx=true"
+  write_to_bazelrc "common:linux --cxxopt=-std=c++20"
+  write_to_bazelrc "common:linux --host_cxxopt=-std=c++20"
+fi
 if [[ -n "$TF_VERSION" ]]; then
   write_to_bazelrc "build --repo_env=TF_VERSION=${TF_VERSION}"
 fi
