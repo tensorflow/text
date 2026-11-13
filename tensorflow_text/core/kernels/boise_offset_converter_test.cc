@@ -53,8 +53,6 @@ std::vector<std::string> ExtractTextsFromOffsets(
 TEST(OffsetsToBoiseTagsTest, ExtractSingleton) {
   //                               1         2
   //                     012345678901234567890
-  std::string content = "Who let the dogs out";
-  std::string entity = "dogs";
   std::vector<int> token_begin_offsets = {0, 4, 8, 12, 17};
   std::vector<int> token_end_offsets = {3, 7, 11, 16, 20};
   std::vector<int> entity_begin_offsets = {12};
@@ -71,8 +69,6 @@ TEST(OffsetsToBoiseTagsTest, ExtractSingleton) {
 TEST(OffsetsToBoiseTagsTest, ExtractSingletonStrictBoundary) {
   //                               1
   //                     01234567890123456789
-  std::string content = "Who let the dogs out";
-  std::string entity = "dogs";
   std::vector<int> token_begin_offsets = {0, 4, 8, 12, 17};
   std::vector<int> token_end_offsets = {3, 7, 11, 16, 20};
   std::vector<int> entity_begin_offsets = {13};
@@ -91,8 +87,6 @@ TEST(OffsetsToBoiseTagsTest, ExtractSingletonStrictBoundary) {
 TEST(OffsetsToBoiseTagsTest, ExtractBEEntity) {
   //                               1         2         3
   //                     0123456789012345678901234567890
-  std::string content = "Who let the german shepherd out";
-  std::string entity = "german shepherd";
   std::vector<int> token_begin_offsets = {0, 4, 8, 12, 19, 28};
   std::vector<int> token_end_offsets = {3, 7, 11, 18, 27, 31};
   std::vector<int> entity_begin_offsets = {12};
@@ -110,8 +104,6 @@ TEST(OffsetsToBoiseTagsTest, ExtractBEEntity) {
 TEST(OffsetsToBoiseTagsTest, ExtractBIEEntity) {
   //                               1         2         3
   //                     0123456789012345678901234567890
-  std::string content = "How big is Los Angeles County?";
-  std::string entity = "Los Angeles County";
   std::vector<int> token_begin_offsets = {0, 4, 8, 11, 15, 23, 29};
   std::vector<int> token_end_offsets = {3, 7, 10, 14, 22, 29, 30};
   std::vector<int> entity_begin_offsets = {11};
@@ -129,7 +121,6 @@ TEST(OffsetsToBoiseTagsTest, ExtractBIEEntity) {
 TEST(OffsetsToBoiseTagsTest, ExtractMutipleEntities) {
   //                               1         2         3
   //                     01234567890123456789012345678901234567
-  std::string content = "Getty Center is in Los Angeles County";
   std::vector<int> token_begin_offsets = {0, 6, 13, 16, 19, 23, 31};
   std::vector<int> token_end_offsets = {5, 12, 15, 18, 22, 30, 37};
   std::vector<int> entity_begin_offsets = {0, 19};
@@ -148,7 +139,6 @@ TEST(OffsetsToBoiseTagsTest, ExtractMutipleEntities) {
 TEST(OffsetsToBoiseTagsTest, LooseBoundary) {
   //                               1         2         3
   //                     01234567890123456789012345678901234567
-  std::string content = "Getty Center is in Los Angeles County";
   std::vector<int> token_begin_offsets = {0, 6, 13, 16, 19, 23, 31};
   std::vector<int> token_end_offsets = {5, 12, 15, 18, 22, 30, 37};
   std::vector<int> entity_begin_offsets = {3, 19};
@@ -167,7 +157,6 @@ TEST(OffsetsToBoiseTagsTest, LooseBoundary) {
 TEST(OffsetsToBoiseTagsTest, StrictBoundary) {
   //                               1         2         3
   //                     01234567890123456789012345678901234567
-  std::string content = "Getty Center is in Los Angeles County";
   std::vector<int> token_begin_offsets = {0, 6, 13, 16, 19, 23, 31};
   std::vector<int> token_end_offsets = {5, 12, 15, 18, 22, 30, 37};
   std::vector<int> entity_begin_offsets = {3, 19};
@@ -187,7 +176,6 @@ TEST(OffsetsToBoiseTagsTest, StrictBoundary) {
 TEST(OffsetsToBoiseTagsTest, OneTokenMultiEntitiesLastPrecedes) {
   //                               1
   //                     0123456789012
-  std::string content = "Getty Center";
   std::vector<int> token_begin_offsets = {0};
   std::vector<int> token_end_offsets = {12};
   std::vector<int> entity_begin_offsets = {0, 6};
@@ -204,7 +192,6 @@ TEST(OffsetsToBoiseTagsTest, OneTokenMultiEntitiesLastPrecedes) {
 TEST(OffsetsToBoiseTagsTest, OneTokenMultEntitiesPartialOverlapLastPrecedes) {
   //                               1
   //                     0123456789012
-  std::string content = "Getty Center";
   std::vector<int> token_begin_offsets = {0, 6};
   std::vector<int> token_end_offsets = {5, 12};
   std::vector<int> entity_begin_offsets = {0, 9};
@@ -222,7 +209,6 @@ TEST(OffsetsToBoiseTagsTest, OneTokenMultEntitiesPartialOverlapLastPrecedes) {
 TEST(OffsetsToBoiseTagsTest, MultiTokensOneEntityPartialOverlapLastPrecedes) {
   //                               1         2         3
   //                     01234567890123456789012345678901234
-  std::string content = "Getty Center, Los Angeles County";
   std::vector<int> token_begin_offsets = {0, 6, 14, 18, 26};
   std::vector<int> token_end_offsets = {5, 12, 17, 25, 32};
   std::vector<int> entity_begin_offsets = {0, 15};
