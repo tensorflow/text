@@ -40,7 +40,7 @@ classes for building SOTA NLP models including `nlp.layers`, `nlp.losses`,
 You can install the package with `pip`:
 
 ```
-$ pip install tensorflow-models-official  # For the latest release
+$ pip install tf-models-official  # For the latest release
 $ #or
 $ pip install tf-models-nightly # For the nightly build
 ```
