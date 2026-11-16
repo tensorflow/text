@@ -43,3 +43,6 @@ sed -E -i $ext "s/strip_prefix = \"tensorflow-.+\",/strip_prefix = \"tensorflow-
 sed -E -i $ext "s|\"https://github.com/tensorflow/tensorflow/archive/.+\.zip\"|\"https://github.com/tensorflow/tensorflow/archive/${commit_slug}.zip\"|" WORKSPACE
 prev_shasum=$(grep -B 1 -e "strip_prefix.*tensorflow-" WORKSPACE | grep "sha256" | cut -d'"' -f2)
 sed -i $ext "s/sha256 = \"${prev_shasum}\",//" WORKSPACE
+if [[ "$IS_NIGHTLY" == "nightly" ]]; then
+  sed -i $ext '/^diff --git a\/tensorflow\/lite\/kernels\/shim/,$d' third_party/tensorflow/tensorflow.shim_sources.patch
+fi

@@ -14,8 +14,6 @@
 
 #include <pybind11/stl.h>
 
-#include <stdexcept>
-
 #include "include/pybind11/pybind11.h"
 #include "tensorflow_text/core/kernels/phrase_tokenizer_model_builder.h"
 
@@ -32,8 +30,15 @@ PYBIND11_MODULE(pywrap_phrase_tokenizer_model_builder, m) {
               vocab, unk_token, support_detokenization, prob,
               split_end_punctuation);
           if (!result.status().ok()) {
-            // Propagate the error to the Python code.
-            throw std::runtime_error(std::string(result.status().message()));
+            // Propagate the error to the Python code. Raise the Python
+            // exception directly instead of throwing a C++ exception for
+            // pybind11 to translate: pybind11's exception translators are
+            // shared across extension modules, and with a statically linked C++
+            // runtime they may not recognize exception types thrown from this
+            // module.
+            PyErr_SetString(PyExc_RuntimeError,
+                            std::string(result.status().message()).c_str());
+            throw py::error_already_set();
           }
           return py::bytes(*result);
         });
