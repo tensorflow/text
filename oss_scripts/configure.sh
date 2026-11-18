@@ -126,6 +126,20 @@ fi
 # --pre is not needed.
 if [[ "$IS_NIGHTLY" == "nightly" ]]; then
   bazel run //oss_scripts/pip_package:requirements.update -- --upgrade
+  # TODO: Remove the pin once the tf-nightly wheel headers are fixed.
+  # Pin tf-nightly to at most the last nightly that TF.Text can compile against.
+  # Since TensorFlow switched to Bzlmod (commit 08e1bca27b8a,
+  # 2.23.0.dev20261112), the headers in the tf-nightly wheel moved to Bzlmod
+  # repository paths, and TF.Text fails to compile with errors such as
+  # 'ml_dtypes/include/float8.h' file not found. An upper bound instead of an
+  # exact version keeps platforms without a wheel for that nightly working. Set
+  # TF_NIGHTLY_MAX_VERSION to override the bound, or to an empty string to use
+  # the latest tf-nightly.
+  TF_NIGHTLY_MAX_VERSION="${TF_NIGHTLY_MAX_VERSION-2.23.0.dev20261111}"
+  if [[ -n "$TF_NIGHTLY_MAX_VERSION" ]]; then
+    bazel run //oss_scripts/pip_package:requirements.update -- \
+      --upgrade-package "tf-nightly<=${TF_NIGHTLY_MAX_VERSION}"
+  fi
 elif [[ -n "$TF_VERSION" ]]; then
   requirements_lock="oss_scripts/pip_package/requirements_lock_${HERMETIC_PYTHON_VERSION//./_}.txt"
   if awk -v dep="tensorflow==${TF_VERSION//-/}" '$1 == dep {found = 1} END {exit !found}' "$requirements_lock"; then
