@@ -68,6 +68,7 @@ _allowed_symbols = [
     "find_source_offsets",
     "gather_with_default",
     "greedy_constrained_sequence",
+    "item_selector_ops",
     "keras",
     "mask_language_model",
     "max_spanning_tree",
