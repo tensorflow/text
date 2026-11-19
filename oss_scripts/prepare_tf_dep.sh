@@ -37,12 +37,13 @@ else
   commit_slug=$(curl -s "https://api.github.com/repos/tensorflow/tensorflow/commits/$short_commit_sha" | grep "sha" | head -n 1 | cut -d '"' -f 4)
 fi
 
-# Update TF dependency to installed tensorflow.
-echo "Updating WORKSPACE file to use TensorFlow commit $commit_slug"
-sed -E -i $ext "s/strip_prefix = \"tensorflow-.+\",/strip_prefix = \"tensorflow-${commit_slug}\",/" WORKSPACE
-sed -E -i $ext "s|\"https://github.com/tensorflow/tensorflow/archive/.+\.zip\"|\"https://github.com/tensorflow/tensorflow/archive/${commit_slug}.zip\"|" WORKSPACE
-prev_shasum=$(grep -B 1 -e "strip_prefix.*tensorflow-" WORKSPACE | grep "sha256" | cut -d'"' -f2)
-sed -i $ext "s/sha256 = \"${prev_shasum}\",//" WORKSPACE
-if [[ "$IS_NIGHTLY" == "nightly" ]]; then
-  sed -i $ext '/^diff --git a\/tensorflow\/lite\/kernels\/shim/,$d' third_party/tensorflow/tensorflow.shim_sources.patch
+# Update the TensorFlow and XLA modules in MODULE.bazel to the installed
+# tensorflow. Both modules come from the same TensorFlow archive.
+echo "Updating MODULE.bazel to use TensorFlow commit $commit_slug"
+tf_integrity=$(awk '/module_name = "tensorflow"/ {found = 1} found && /integrity = / {print; exit}' MODULE.bazel | cut -d'"' -f2)
+sed -E -i $ext "s|strip_prefix = \"tensorflow-[^\"/]+(/third_party/xla)?\",|strip_prefix = \"tensorflow-${commit_slug}\\1\",|" MODULE.bazel
+sed -E -i $ext "s|\"https://github.com/tensorflow/tensorflow/archive/[^\"]+\.tar\.gz\"|\"https://github.com/tensorflow/tensorflow/archive/${commit_slug}.tar.gz\"|" MODULE.bazel
+# The integrity of the previous archive does not match the new archive.
+if [[ -n "$tf_integrity" ]]; then
+  sed -i $ext "\\|integrity = \"${tf_integrity}\",|d" MODULE.bazel
 fi

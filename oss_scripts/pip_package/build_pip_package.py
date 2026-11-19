@@ -88,7 +88,8 @@ def main():
         "bazel-bin/oss_scripts/pip_package/build_pip_package.runfiles"
     )
 
-  source_root = runfiles_base / "org_tensorflow_text"
+  # With Bzlmod, the runfiles directory of the main repository is "_main".
+  source_root = runfiles_base / "_main"
 
   # Create temp directory
   with tempfile.TemporaryDirectory() as temp_dir:
