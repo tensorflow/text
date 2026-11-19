@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <utility>
+
 #include "absl/base/attributes.h"
 #include "absl/base/optimization.h"
 #include "absl/base/thread_annotations.h"
@@ -21,16 +23,18 @@
 #include "absl/strings/string_view.h"
 #include "absl/synchronization/mutex.h"
 #include "absl/types/span.h"
-#include "src/sentencepiece_model.pb.h"
 #include "src/sentencepiece.pb.h"
+#include "src/sentencepiece_model.pb.h"
 #include "src/sentencepiece_processor.h"
 #include "tensorflow/core/framework/bounds_check.h"
 #include "tensorflow/core/framework/dataset_stateful_op_allowlist.h"
 #include "tensorflow/core/framework/device_base.h"
 #include "tensorflow/core/framework/node_def_util.h"
 #include "tensorflow/core/framework/op_kernel.h"
+#include "tensorflow/core/framework/resource_handle.h"
 #include "tensorflow/core/framework/resource_mgr.h"
 #include "tensorflow/core/framework/tensor.h"
+#include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/framework/types.h"
 #include "tensorflow/core/framework/types.pb.h"
@@ -168,68 +172,60 @@ tensorflow::Status HandleExtraOptions(OpKernelContext* ctx,
   return absl::OkStatus();
 }
 
+absl::Status LookupSentencepieceResource(
+    OpKernelContext* ctx, core::RefCountPtr<SentencepieceResource>* sp) {
+  const Tensor& resource_tensor = ctx->input(0);
+  return LookupResource(ctx, resource_tensor.scalar<ResourceHandle>()(), sp);
+}
+
 }  // namespace
 
 class SentencepieceOp : public OpKernel {
  public:
   explicit SentencepieceOp(OpKernelConstruction* ctx)
-      : OpKernel(ctx), sp_set_(false) {
-    OP_REQUIRES_OK(ctx, ctx->allocate_temp(tensorflow::DT_STRING,
-                                           tensorflow::TensorShape({2}), &sp_));
+      : OpKernel(ctx), cinfo_initialized_(false) {
     OP_REQUIRES_OK(
         ctx, ctx->GetAttr("use_node_name_sharing", &use_node_name_sharing_));
-  }
-
-  ~SentencepieceOp() override {
-    // If the table object was not shared, delete it.
-    if (sp_set_ && cinfo_.resource_is_private_to_kernel()) {
-      if (!cinfo_.resource_manager()
-               ->template Delete<SentencepieceResource>(cinfo_.container(),
-                                                        cinfo_.name())
-               .ok()) {
-        // Do nothing; the resource may have been deleted by session resets.
-      }
-    }
   }
 
   void Compute(OpKernelContext* ctx) override {
     absl::MutexLock lock(mu_);
 
-    if (!sp_set_) {
+    if (!cinfo_initialized_) {
       OP_REQUIRES_OK(ctx, cinfo_.Init(ctx->resource_manager(), def(),
                                       use_node_name_sharing_));
+      cinfo_initialized_ = true;
     }
 
-    auto creator =
-        [ctx, this](SentencepieceResource** resource)
-            ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_) {
-              SentencepieceResource* sp = new SentencepieceResource();
+    if (cinfo_.resource_is_private_to_kernel()) {
+      if (!private_handle_set_) {
+        core::RefCountPtr<SentencepieceResource> sp;
+        OP_REQUIRES_OK(ctx, CreateResource(ctx, &sp));
+        SentencepieceResource* raw_sp = sp.release();
+        ResourceHandle resource_handle = ResourceHandle::MakeRefCountingHandle(
+            raw_sp, ctx->device()->name(), /*dtypes_and_shapes=*/{},
+            ctx->stack_trace());
+        OP_REQUIRES_OK(ctx, ctx->resource_manager()->CreateUnowned(
+                                resource_handle.container(),
+                                resource_handle.name(), raw_sp));
+        Tensor handle;
+        OP_REQUIRES_OK(
+            ctx, ctx->allocate_temp(DT_RESOURCE, TensorShape({}), &handle));
+        handle.scalar<ResourceHandle>()() = resource_handle;
+        private_handle_ = std::move(handle);
+        private_handle_set_ = true;
+      }
+      ctx->set_output(0, private_handle_);
+      return;
+    }
 
-              string model_proto_attr;
-              TF_RETURN_IF_ERROR(
-                  GetNodeAttr(this->def(), "model", &model_proto_attr));
-
-              if (TF_PREDICT_FALSE(model_proto_attr.empty())) {
-                return Status(tensorflow::errors::InvalidArgument(
-                    "Model argument must be specified."));
-              }
-              // Loads serialized sentencepiece model proto to enable embedding
-              // the relatively small sentencepiece model proto into the
-              // tensorflow graph such that the tensorflow graph is
-              // self-contained.
-              TF_RETURN_IF_ERROR(ToTFStatus(
-                  sp->processor.LoadFromSerializedProto(model_proto_attr)));
-              // TODO(broken): Determine a better computation of what the memory
-              // requirements for the processor are.
-              sp->memory_used = model_proto_attr.size();
-
-              if (ctx->track_allocations()) {
-                ctx->record_persistent_memory_allocation(sp->MemoryUsed());
-              }
-
-              *resource = sp;
-              return absl::OkStatus();
-            };
+    auto creator = [ctx, this](SentencepieceResource** resource)
+                       ABSL_EXCLUSIVE_LOCKS_REQUIRED(mu_) {
+                         core::RefCountPtr<SentencepieceResource> sp;
+                         TF_RETURN_IF_ERROR(CreateResource(ctx, &sp));
+                         *resource = sp.release();
+                         return absl::OkStatus();
+                       };
 
     // Register the ResourceType alias.
     SentencepieceResource* resource = nullptr;
@@ -246,13 +242,42 @@ class SentencepieceOp : public OpKernel {
     handle->scalar<ResourceHandle>()() =
         MakeResourceHandle<SentencepieceResource>(ctx, cinfo_.container(),
                                                   cinfo_.name());
-    sp_set_ = true;
   }
 
  private:
+  absl::Status CreateResource(
+      OpKernelContext* ctx,
+      core::RefCountPtr<SentencepieceResource>* out) const {
+    core::RefCountPtr<SentencepieceResource> sp(new SentencepieceResource());
+
+    string model_proto_attr;
+    TF_RETURN_IF_ERROR(GetNodeAttr(this->def(), "model", &model_proto_attr));
+
+    if (ABSL_PREDICT_FALSE(model_proto_attr.empty())) {
+      return absl::InvalidArgumentError("Model argument must be specified.");
+    }
+    // Loads serialized sentencepiece model proto to enable embedding
+    // the relatively small sentencepiece model proto into the
+    // tensorflow graph such that the tensorflow graph is
+    // self-contained.
+    TF_RETURN_IF_ERROR(
+        ToTFStatus(sp->processor.LoadFromSerializedProto(model_proto_attr)));
+    // TODO(broken): Determine a better computation of what the memory
+    // requirements for the processor are.
+    sp->memory_used = model_proto_attr.size();
+
+    if (ctx->track_allocations()) {
+      ctx->record_persistent_memory_allocation(sp->MemoryUsed());
+    }
+
+    *out = std::move(sp);
+    return absl::OkStatus();
+  }
+
   absl::Mutex mu_;
-  Tensor sp_ ABSL_GUARDED_BY(mu_);
-  bool sp_set_ ABSL_GUARDED_BY(mu_);
+  Tensor private_handle_ ABSL_GUARDED_BY(mu_);
+  bool private_handle_set_ ABSL_GUARDED_BY(mu_) = false;
+  bool cinfo_initialized_ ABSL_GUARDED_BY(mu_);
   ContainerInfo cinfo_;
   bool use_node_name_sharing_;
   TF_DISALLOW_COPY_AND_ASSIGN(SentencepieceOp);
@@ -270,13 +295,9 @@ class SentencepieceTokenizeOp : public OpKernel {
   }
 
   void Compute(OpKernelContext* ctx) override {
-    SentencepieceResource* sp;
-    const Tensor& resource_tensor = ctx->input(0);
-    ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
-    OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
-                 resource_handle.container(), resource_handle.name(), &sp));
-    core::ScopedUnref unref_me(sp);
+    core::RefCountPtr<SentencepieceResource> sp_ref;
+    OP_REQUIRES_OK(ctx, LookupSentencepieceResource(ctx, &sp_ref));
+    SentencepieceResource* sp = sp_ref.get();
 
     const Tensor& input_values_tensor = ctx->input(1);
     const auto input_values_flat =
@@ -413,13 +434,9 @@ class SentencepieceTokenizeWithOffsetsOp : public OpKernel {
   }
 
   void Compute(OpKernelContext* ctx) override {
-    SentencepieceResource* sp;
-    const Tensor& resource_tensor = ctx->input(0);
-    ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
-    OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
-                 resource_handle.container(), resource_handle.name(), &sp));
-    core::ScopedUnref unref_me(sp);
+    core::RefCountPtr<SentencepieceResource> sp_ref;
+    OP_REQUIRES_OK(ctx, LookupSentencepieceResource(ctx, &sp_ref));
+    SentencepieceResource* sp = sp_ref.get();
 
     const Tensor& input_values_tensor = ctx->input(1);
     const auto input_values_flat =
@@ -564,13 +581,9 @@ class SentencepieceDetokenizeOp : public OpKernel {
       : OpKernel(ctx) {}
 
   void Compute(OpKernelContext* ctx) override {
-    SentencepieceResource* sp;
-    const Tensor& resource_tensor = ctx->input(0);
-    ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
-    OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
-                 resource_handle.container(), resource_handle.name(), &sp));
-    core::ScopedUnref unref_me(sp);
+    core::RefCountPtr<SentencepieceResource> sp_ref;
+    OP_REQUIRES_OK(ctx, LookupSentencepieceResource(ctx, &sp_ref));
+    SentencepieceResource* sp = sp_ref.get();
 
     const Tensor& input_values_tensor = ctx->input(1);
     const auto input_values_flat = input_values_tensor.flat<T>();
@@ -653,13 +666,9 @@ class SentencepieceVocabSizeOp : public OpKernel {
       : OpKernel(ctx) {}
 
   void Compute(OpKernelContext* ctx) override {
-    SentencepieceResource* sp;
-    const Tensor& resource_tensor = ctx->input(0);
-    ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
-    OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
-                 resource_handle.container(), resource_handle.name(), &sp));
-    core::ScopedUnref unref_me(sp);
+    core::RefCountPtr<SentencepieceResource> sp_ref;
+    OP_REQUIRES_OK(ctx, LookupSentencepieceResource(ctx, &sp_ref));
+    SentencepieceResource* sp = sp_ref.get();
 
     Tensor* output_tensor;
     OP_REQUIRES_OK(ctx, ctx->allocate_output(0, {}, &output_tensor));
@@ -677,13 +686,9 @@ class SentencepieceIdToStringOp : public OpKernel {
       : OpKernel(ctx) {}
 
   void Compute(OpKernelContext* ctx) override {
-    SentencepieceResource* sp;
-    const Tensor& resource_tensor = ctx->input(0);
-    ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
-    OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
-                 resource_handle.container(), resource_handle.name(), &sp));
-    core::ScopedUnref unref_me(sp);
+    core::RefCountPtr<SentencepieceResource> sp_ref;
+    OP_REQUIRES_OK(ctx, LookupSentencepieceResource(ctx, &sp_ref));
+    SentencepieceResource* sp = sp_ref.get();
 
     const Tensor& input_tensor = ctx->input(1);
     const auto input_tensor_flat = input_tensor.flat<int32>();
@@ -709,13 +714,9 @@ class SentencepieceStringToIdOp : public OpKernel {
       : OpKernel(ctx) {}
 
   void Compute(OpKernelContext* ctx) override {
-    SentencepieceResource* sp;
-    const Tensor& resource_tensor = ctx->input(0);
-    ResourceHandle resource_handle(resource_tensor.scalar<ResourceHandle>()());
-    OP_REQUIRES_OK(
-        ctx, ctx->resource_manager()->Lookup<SentencepieceResource>(
-                 resource_handle.container(), resource_handle.name(), &sp));
-    core::ScopedUnref unref_me(sp);
+    core::RefCountPtr<SentencepieceResource> sp_ref;
+    OP_REQUIRES_OK(ctx, LookupSentencepieceResource(ctx, &sp_ref));
+    SentencepieceResource* sp = sp_ref.get();
 
     const Tensor& input_tensor = ctx->input(1);
     const auto input_tensor_flat = input_tensor.flat<tensorflow::tstring>();
