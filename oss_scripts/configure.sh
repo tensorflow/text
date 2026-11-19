@@ -34,19 +34,29 @@ function is_macos() {
 # Remove .bazelrc if it already exists
 rm -f .bazelrc
 
-# Copy the current bazelversion of TF.
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.22.0-rc0/.bazelversion -o .bazelversion
+# The TensorFlow commit or release that MODULE.bazel depends on, for example
+# "bb79e82d57d161bb311890d380eb0096668c320a" or "2.23.0" (tag v2.23.0).
+tf_ref=$(sed -nE 's/^ *strip_prefix = "tensorflow-([^"/]+)",$/\1/p' MODULE.bazel | head -n 1)
+if [[ -z "$tf_ref" ]]; then
+  echo "Cannot find the TensorFlow version in MODULE.bazel." >&2
+  exit 1
+fi
+if [[ "$tf_ref" =~ ^[0-9]+\.[0-9]+ ]]; then
+  tf_ref="v${tf_ref}"
+fi
 
-# Copy the building configuration of TF.
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.22.0-rc0/.bazelrc -o .bazelrc
-curl https://raw.githubusercontent.com/tensorflow/tensorflow/v2.22.0-rc0/bazel_downloader.cfg -o bazel_downloader.cfg
+# Copy the building configuration of TF. The Bazel version is in .bazelversion
+# and can be newer than the Bazel version of TF.
+curl -fsSL "https://raw.githubusercontent.com/tensorflow/tensorflow/${tf_ref}/.bazelrc" -o .bazelrc
+curl -fsSL "https://raw.githubusercontent.com/tensorflow/tensorflow/${tf_ref}/bazel_downloader.cfg" -o bazel_downloader.cfg
 # This line breaks Windows builds, so we remove it.
 sed -i -e 's/build --noincompatible_remove_legacy_whole_archive//' .bazelrc
 
 # With --fetch_bazel_config_only, stop after downloading the TF Bazel config.
 # The rest of this script runs `bazel run`, so scripts that have to install
-# Bazel first (oss_scripts/install_bazel.sh reads .bazelversion) call this
-# script once with the flag, then install Bazel, then run it again.
+# Bazel first (oss_scripts/install_bazel.sh reads the checked-in .bazelversion)
+# can call this script once with the flag, then install Bazel, then run it
+# again.
 if [[ "${1:-}" == "--fetch_bazel_config_only" ]]; then
   exit 0
 fi
@@ -56,6 +66,20 @@ write_to_bazelrc "test --test_env=TF_USE_LEGACY_KERAS=1"
 write_to_bazelrc "test --test_tag_filters=-sickbay"
 write_to_bazelrc "common --features=-external_include_paths"
 write_to_bazelrc "common --host_features=-external_include_paths"
+# Bazel 9 no longer loads the native rules (cc_library, py_library, ...)
+# automatically, but the BUILD files of TensorFlow still use them without a
+# load() statement. Load them from their rule repositories instead. The main
+# repository keeps the Bazel 9 behavior (--incompatible_disable_autoloads_in_main_repo).
+write_to_bazelrc "common --incompatible_autoload_externally=+@rules_cc,+@rules_python,+@rules_java,+@rules_shell,+@protobuf,+@rules_android"
+# The TensorFlow sources contain stale copies of generated FlatBuffers headers,
+# for example tensorflow/compiler/mlir/lite/schema/schema_generated.h. The TF
+# .bazelrc runs actions without a sandbox, so the compiler includes these copies
+# instead of the generated headers and Bazel fails the build with "undeclared
+# inclusion(s)". Compile C++ in a sandbox, which only contains the declared
+# inputs. Windows has no sandbox.
+if [[ "${osname}" == "linux" ]] || is_macos; then
+  write_to_bazelrc "common --strategy=CppCompile=sandboxed"
+fi
 
 if [ -z "$HERMETIC_PYTHON_VERSION" ]; then
   if [ -n "$PY_VERSION" ]; then
@@ -71,30 +95,16 @@ if [ -z "$HERMETIC_PYTHON_VERSION" ]; then
 fi
 export HERMETIC_PYTHON_VERSION
 
+# Use "common" instead of "build" for repository environment variables, so that
+# all commands (build, run, query, mod, ...) see the same external repositories.
 if [[ -n "$HERMETIC_PYTHON_VERSION" ]]; then
-  write_to_bazelrc "build --repo_env=HERMETIC_PYTHON_VERSION=${HERMETIC_PYTHON_VERSION}"
+  write_to_bazelrc "common --repo_env=HERMETIC_PYTHON_VERSION=${HERMETIC_PYTHON_VERSION}"
 fi
 if [[ -n "$IS_NIGHTLY" ]]; then
-  write_to_bazelrc "build --repo_env=IS_NIGHTLY=${IS_NIGHTLY}"
-fi
-# tf-nightly is built for Linux with statically linked libc++ and C++20 since
-# TensorFlow commit cc213229b92c ("Switch Linux builds from libstdc++ (C++17) to
-# statically linked libc++ (C++20)"), so libtensorflow_framework.so.2 exports
-# libc++-mangled symbols. The .bazelrc above comes from the TF release, which
-# still uses libstdc++, so use the same toolchain as TF master for nightly
-# builds. Otherwise the op libraries fail to load with undefined symbols such as
-# tensorflow::OpKernel::TraceString. Apply this to release builds as well once
-# they move to a TF release that uses libc++.
-if [[ "$IS_NIGHTLY" == "nightly" ]]; then
-  write_to_bazelrc "common:linux --repo_env=LLVM_VERSION=22"
-  write_to_bazelrc "common:linux --repo_env=SYSROOT_DIST=linux_glibc_2_27"
-  write_to_bazelrc "common:linux --@rules_ml_toolchain//common:stdlib=libc++"
-  write_to_bazelrc "common:linux --@rules_ml_toolchain//common:static_libcxx=true"
-  write_to_bazelrc "common:linux --cxxopt=-std=c++20"
-  write_to_bazelrc "common:linux --host_cxxopt=-std=c++20"
+  write_to_bazelrc "common --repo_env=IS_NIGHTLY=${IS_NIGHTLY}"
 fi
 if [[ -n "$TF_VERSION" ]]; then
-  write_to_bazelrc "build --repo_env=TF_VERSION=${TF_VERSION}"
+  write_to_bazelrc "common --repo_env=TF_VERSION=${TF_VERSION}"
 fi
 
 # Re-lock the requirements for nightly builds, or when TF_VERSION is not in the
@@ -105,16 +115,9 @@ fi
 # --pre is not needed.
 if [[ "$IS_NIGHTLY" == "nightly" ]]; then
   bazel run //oss_scripts/pip_package:requirements.update -- --upgrade
-  # TODO: Remove the pin once the tf-nightly wheel headers are fixed.
-  # Pin tf-nightly to at most the last nightly that TF.Text can compile against.
-  # Since TensorFlow switched to Bzlmod (commit 08e1bca27b8a,
-  # 2.23.0.dev20261112), the headers in the tf-nightly wheel moved to Bzlmod
-  # repository paths, and TF.Text fails to compile with errors such as
-  # 'ml_dtypes/include/float8.h' file not found. An upper bound instead of an
-  # exact version keeps platforms without a wheel for that nightly working. Set
-  # TF_NIGHTLY_MAX_VERSION to override the bound, or to an empty string to use
-  # the latest tf-nightly.
-  TF_NIGHTLY_MAX_VERSION="${TF_NIGHTLY_MAX_VERSION-2.23.0.dev20261111}"
+  # Set TF_NIGHTLY_MAX_VERSION to pin tf-nightly to at most that version, for
+  # example to the last nightly that TF.Text can compile against.
+  TF_NIGHTLY_MAX_VERSION="${TF_NIGHTLY_MAX_VERSION-}"
   if [[ -n "$TF_NIGHTLY_MAX_VERSION" ]]; then
     bazel run //oss_scripts/pip_package:requirements.update -- \
       --upgrade-package "tf-nightly<=${TF_NIGHTLY_MAX_VERSION}"

@@ -1,0 +1,12 @@
+diff --git a/MODULE.bazel b/MODULE.bazel
+--- a/MODULE.bazel
++++ b/MODULE.bazel
+@@ -367,7 +367,7 @@
+ rbe_config = use_extension("@xla//third_party/extensions:rbe_config.bzl", "rbe_config_ext")
+ use_repo(rbe_config, "ml_build_config_platform")
+ 
+-register_execution_platforms("@local_config_platform//:host")
++register_execution_platforms("@platforms//host")
+ 
+ remote_execution_configure = use_extension("@xla//third_party/extensions:remote_execution_configure.bzl", "remote_execution_configure_ext")
+ use_repo(remote_execution_configure, "local_config_remote_execution")

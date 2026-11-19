@@ -1,6 +1,7 @@
 """
 Build rules for open source tf.text libraries.
 """
+
 load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@rules_python//python:py_library.bzl", _py_library = "py_library")
 load(
@@ -9,6 +10,9 @@ load(
     _pywrap_binaries = "pywrap_binaries",
     _pywrap_library = "pywrap_library",
 )
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
 
 def _local_tf_op_shim():
     """Returns a package-local `tf_op_shim` built against the TF wheel headers.
@@ -99,7 +103,7 @@ def py_tf_text_library(
     if cc_op_defs:
         binary_name = binary_path + "/_" + name + ".so"
         library_name = name + "_cc"
-        native.cc_library(
+        cc_library(
             name = library_name,
             srcs = cc_op_defs,
             copts = select({
@@ -118,7 +122,7 @@ def py_tf_text_library(
                    }),
         )
 
-        native.cc_binary(
+        cc_binary(
             name = binary_name,
             copts = select({
                 "@org_tensorflow//tensorflow:mobile": [],
@@ -154,7 +158,6 @@ def py_tf_text_library(
         data = [":" + binary_name],
         deps = deps,
     )
-
 
 _OSS_ABSL_DEPS = [
     "@com_google_absl//absl/base",
@@ -249,7 +252,7 @@ def tf_cc_library(
             "@release_or_nightly//:tensorflow_tf_header_lib",
         ] + tf_deps + oss_deps,
     })
-    native.cc_library(
+    cc_library(
         name = name,
         srcs = srcs,
         hdrs = hdrs,
@@ -294,7 +297,7 @@ def tflite_cc_library(
             "@release_or_nightly//:tensorflow_tf_header_lib",
         ] + oss_deps,
     })
-    native.cc_library(
+    cc_library(
         name = name,
         srcs = srcs,
         hdrs = hdrs,
@@ -337,7 +340,7 @@ def tf_cc_test(name, deps = [], **kwargs):
             "@release_or_nightly//:tensorflow_tf_header_lib",
         ] + oss_deps,
     })
-    native.cc_test(
+    cc_test(
         name = name,
         deps = deps,
         **kwargs
@@ -371,7 +374,7 @@ def tflite_cc_test(name, deps = [], **kwargs):
         ],
         "//conditions:default": oss_deps,
     })
-    native.cc_test(
+    cc_test(
         name = name,
         deps = deps,
         **kwargs

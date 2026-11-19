@@ -349,7 +349,9 @@ to do with Homebrew.
    git clone https://github.com/tensorflow/text.git
    cd text
    ```
-1. Run the build script to create a pip package:
+1. Run the build script to create a pip package. The build uses the Bazel
+   version in `.bazelversion` and declares its external dependencies in
+   `MODULE.bazel` (Bzlmod):
    ```Shell
    ./oss_scripts/run_build.sh
    ```
