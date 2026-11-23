@@ -1,12 +1,11 @@
 """Kernels for tf.text ops."""
 
+load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
 load("@flatbuffers//:build_defs.bzl", "flatbuffer_cc_library")
 load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc:cc_test.bzl", "cc_test")
-
-# Placeholder: load proto_library
 load("//tensorflow_text:tftext.bzl", "tf_cc_library", "tf_cc_test", "tflite_cc_library", "tflite_cc_test")
-# [internal] load cc_proto_library.bzl
 
 licenses(["notice"])
 

@@ -1,0 +1,289 @@
+"""Bzlmod module definition for TensorFlow Text."""
+
+module(
+    name = "tensorflow_text",
+    repo_name = "org_tensorflow_text",
+)
+
+##############################################################
+# Bazel module dependencies
+#
+# Keep the versions in sync with the MODULE.bazel file of the TensorFlow commit
+# below. Bazel uses the highest version requested by any module, so a lower
+# version here has no effect.
+##############################################################
+
+bazel_dep(name = "abseil-cpp", version = "20260526.0", repo_name = "com_google_absl")
+bazel_dep(name = "apple_support", version = "2.8.0", repo_name = "build_bazel_apple_support")
+bazel_dep(name = "bazel_skylib", version = "1.9.2")
+bazel_dep(name = "googletest", version = "1.18.0", repo_name = "com_google_googletest")
+bazel_dep(name = "platforms", version = "1.1.0")
+bazel_dep(name = "protobuf", version = "33.6", repo_name = "com_google_protobuf")
+bazel_dep(name = "re2", version = "2025-11-05.bcr.1", repo_name = "com_googlesource_code_re2")
+bazel_dep(name = "rules_cc", version = "0.2.25")
+bazel_dep(name = "rules_license", version = "1.0.0")
+bazel_dep(name = "rules_python", version = "2.4.5")
+bazel_dep(name = "rules_shell", version = "0.8.0")
+
+# Bazel 9 compatibility: TensorFlow requests versions of these modules that
+# use symbols removed in Bazel 9 (for example the global CcInfo). Request newer
+# versions to make Bazel select them.
+bazel_dep(name = "rules_android", version = "0.7.1", repo_name = None)
+
+##############################################################
+# TensorFlow, XLA and rules_ml_toolchain
+#
+# These modules are not in the Bazel Central Registry. TensorFlow builds XLA
+# from its third_party/xla directory, so both modules come from the same
+# TensorFlow archive. oss_scripts/prepare_tf_dep.sh replaces the commit with
+# the commit of the installed TensorFlow wheel.
+#
+# Overrides only take effect in the root module, so the overrides from the
+# MODULE.bazel file of TensorFlow must be repeated here.
+##############################################################
+
+bazel_dep(name = "tensorflow", repo_name = "org_tensorflow")
+archive_override(
+    module_name = "tensorflow",
+    integrity = "sha256-kWhJNXUWnKTtcny9j9XszYpNxbdNx+fQNRCvvMCOyLE=",
+    patch_strip = 1,
+    patches = [
+        # Bazel 9 removed @local_config_platform.
+        "//third_party/tensorflow:tensorflow.bazel9.patch",
+        "//third_party/tensorflow:tensorflow.shim_sources.patch",
+    ],
+    strip_prefix = "tensorflow-bb79e82d57d161bb311890d380eb0096668c320a",
+    urls = ["https://github.com/tensorflow/tensorflow/archive/bb79e82d57d161bb311890d380eb0096668c320a.tar.gz"],
+)
+
+bazel_dep(name = "xla")
+archive_override(
+    module_name = "xla",
+    integrity = "sha256-kWhJNXUWnKTtcny9j9XszYpNxbdNx+fQNRCvvMCOyLE=",
+    strip_prefix = "tensorflow-bb79e82d57d161bb311890d380eb0096668c320a/third_party/xla",
+    urls = ["https://github.com/tensorflow/tensorflow/archive/bb79e82d57d161bb311890d380eb0096668c320a.tar.gz"],
+)
+
+bazel_dep(name = "rules_ml_toolchain")
+archive_override(
+    module_name = "rules_ml_toolchain",
+    integrity = "sha256-7eqXGrr59MzfuhUzAwznbG/NDe51oyNMSlxRQZgSQ64=",
+    strip_prefix = "rules_ml_toolchain-9114bb1c3abf4f1a5889ef8fd7ae5a72b1351db3",
+    urls = ["https://github.com/google-ml-infra/rules_ml_toolchain/archive/9114bb1c3abf4f1a5889ef8fd7ae5a72b1351db3.tar.gz"],
+)
+
+##############################################################
+# Hermetic C++ toolchains
+##############################################################
+
+register_toolchains("@rules_ml_toolchain//cc:linux_x86_64_linux_x86_64")
+
+register_toolchains("@rules_ml_toolchain//cc:linux_aarch64_linux_aarch64")
+
+##############################################################
+# Repositories from TensorFlow module extensions
+##############################################################
+
+tf_third_party = use_extension("@org_tensorflow//third_party/extensions:third_party.bzl", "third_party_ext")
+
+# Use the FlatBuffers version of TensorFlow Lite.
+use_repo(tf_third_party, "flatbuffers")
+
+##############################################################
+# Other C++ dependencies
+##############################################################
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+custom_http_archive = use_repo_rule("//third_party/bazel:http.bzl", "custom_http_archive")
+
+custom_http_archive(
+    name = "icu",
+    exclude = [
+        # Build file does not contain all required targets.
+        "icu4c/source/common/BUILD.bazel",
+        "icu4c/source/stubdata/BUILD.bazel",
+        "icu4c/source/i18n/BUILD.bazel",
+    ],
+    files = {
+        "BUILD.bazel": "//third_party/icu:BUILD.bzl",
+    },
+    sha256 = "e424ba5282d95ad38b52639a08fb82164f0b0cbd7f17b53ae16bf14f8541855f",
+    strip_prefix = "icu-release-77-1",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/unicode-org/icu/archive/release-77-1.zip",
+        "https://github.com/unicode-org/icu/archive/release-77-1.zip",
+    ],
+)
+
+http_archive(
+    name = "com_google_sentencepiece",
+    build_file = "//third_party/sentencepiece:BUILD",
+    patch_args = ["-p1"],
+    patches = ["//third_party/sentencepiece:sp.patch"],
+    sha256 = "8409b0126ebd62b256c685d5757150cf7fcb2b92a2f2b98efb3f38fc36719754",
+    strip_prefix = "sentencepiece-0.1.96",
+    urls = [
+        "https://github.com/google/sentencepiece/archive/refs/tags/v0.1.96.zip",
+    ],
+)
+
+http_archive(
+    name = "cppitertools",
+    sha256 = "e56741b108d6baced98c4ccd83fd0d5a545937f2845978799c28d0312c0dee3d",
+    strip_prefix = "cppitertools-2.0",
+    urls = ["https://github.com/ryanhaining/cppitertools/archive/refs/tags/v2.0.zip"],
+)
+
+http_archive(
+    name = "darts_clone",
+    build_file = "//third_party/darts_clone:BUILD.bzl",
+    sha256 = "c97f55d05c98da6fcaf7f9ecc6a6dc6bc5b18b8564465f77abff8879d446491c",
+    strip_prefix = "darts-clone-e40ce4627526985a7767444b6ed6893ab6ff8983",
+    urls = [
+        "https://github.com/s-yata/darts-clone/archive/e40ce4627526985a7767444b6ed6893ab6ff8983.zip",
+    ],
+)
+
+http_archive(
+    name = "pybind11",
+    build_file = "//third_party/pybind11:BUILD.bzl",
+    sha256 = "efc901aa0aab439a3fea6efeaf930b5a349fb06394bf845c64ce15a9cf8f0240",
+    strip_prefix = "pybind11-2.13.4",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11/archive/v2.13.4.tar.gz",
+        "https://github.com/pybind/pybind11/archive/v2.13.4.tar.gz",
+    ],
+)
+
+##############################################################
+# Hermetic Python and pip dependencies
+##############################################################
+
+PYTHON_VERSIONS = [
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13",
+]
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.defaults(
+    # The HERMETIC_PYTHON_VERSION environment variable takes precedence if set.
+    python_version = "3.11",
+    python_version_env = "HERMETIC_PYTHON_VERSION",
+)
+
+[python.toolchain(python_version = version) for version in PYTHON_VERSIONS]
+
+python_version_repo = use_repo_rule("//third_party/bazel:python_version.bzl", "python_version_repo")
+
+python_version_repo(
+    name = "python_version_repo",
+    requirements = {
+        version: "//oss_scripts/pip_package:requirements_lock_{}.txt".format(version.replace(".", "_"))
+        for version in PYTHON_VERSIONS
+    },
+)
+
+# Additional targets for the TensorFlow wheel, used to build the custom ops
+# against the headers and the framework library of the installed TensorFlow.
+# See http://github.com/tensorflow/custom-op.
+TF_WHEEL_BUILD_CONTENT = """
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "tf_header_lib",
+    hdrs = glob(["site-packages/tensorflow/include/**/*"]),
+    includes = [
+        # TensorFlow wheels built with Bzlmod keep some third-party headers in
+        # directories named after the canonical names of their repositories.
+        "site-packages/tensorflow/include/external/protobuf+/third_party/utf8_range",
+        "site-packages/tensorflow/include/external/xla++third_party_ext+ml_dtypes_py",
+    ],
+    strip_include_prefix = "site-packages/tensorflow/include/",
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "libtensorflow_framework",
+    srcs = select({
+        "@platforms//os:macos": ["site-packages/tensorflow/libtensorflow_framework.2.dylib"],
+        "//conditions:default": ["site-packages/tensorflow/libtensorflow_framework.so.2"],
+    }),
+    visibility = ["//visibility:public"],
+)
+"""
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.whl_mods(
+    additive_build_content = """
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "numpy_headers",
+    hdrs = glob(["site-packages/numpy/_core/include/**/*.h"]) + glob(["site-packages/numpy/core/include/**/*.h"]),
+    includes = ["site-packages/numpy/_core/include", "site-packages/numpy/core/include"],
+)
+""",
+    hub_name = "tf_text_pypi_mods",
+    whl_name = "numpy",
+)
+pip.whl_mods(
+    additive_build_content = TF_WHEEL_BUILD_CONTENT,
+    hub_name = "tf_text_pypi_mods",
+    whl_name = "tensorflow",
+)
+pip.whl_mods(
+    additive_build_content = TF_WHEEL_BUILD_CONTENT,
+    hub_name = "tf_text_pypi_mods",
+    whl_name = "tf_nightly",
+)
+
+[
+    pip.parse(
+        extra_hub_aliases = {
+            "numpy": ["numpy_headers"],
+            "tensorflow": [
+                "libtensorflow_framework",
+                "tf_header_lib",
+            ],
+            "tf_nightly": [
+                "libtensorflow_framework",
+                "tf_header_lib",
+            ],
+        },
+        hub_name = "tf_text_pypi",
+        python_version = version,
+        requirements_lock = "//oss_scripts/pip_package:requirements_lock_{}.txt".format(version.replace(".", "_")),
+        whl_modifications = {
+            "@tf_text_pypi_mods//:numpy.json": "numpy",
+            "@tf_text_pypi_mods//:tensorflow.json": "tensorflow",
+            "@tf_text_pypi_mods//:tf_nightly.json": "tf_nightly",
+        },
+    )
+    for version in PYTHON_VERSIONS
+]
+
+use_repo(pip, "tf_text_pypi_mods", pypi = "tf_text_pypi")
+
+# Aliases for TensorFlow and tf-keras that point to the nightly packages when
+# IS_NIGHTLY=nightly.
+py_deps_profile = use_repo_rule("//third_party/bazel:py_deps_profile.bzl", "py_deps_profile")
+
+py_deps_profile(
+    name = "release_or_nightly",
+    deps_map = {
+        "tensorflow": [
+            "tf-nightly",
+            "tf_header_lib",
+            "libtensorflow_framework",
+        ],
+        "tf-keras": ["tf-keras-nightly"],
+    },
+    pip_repo_name = "pypi",
+    requirements_in = "//oss_scripts/pip_package:requirements.in",
+    switch = {
+        "IS_NIGHTLY": "nightly",
+    },
+)
