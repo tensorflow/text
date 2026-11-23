@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdint>
 #include <limits>
 #include <memory>
 #include <string>
@@ -26,18 +27,17 @@
 #include "tensorflow/core/lib/core/threadpool.h"
 #include "tensorflow/core/lib/io/path.h"
 #include "tensorflow/core/platform/logging.h"
+#include "tensorflow/core/platform/strcat.h"
 #include "tensorflow_text/core/kernels/constrained_sequence.h"
 
 namespace tensorflow {
 
-using ::tensorflow::DataType;
 using ::tensorflow::DEVICE_CPU;
 using ::tensorflow::DT_BOOL;
 using ::tensorflow::DT_FLOAT;
 using ::tensorflow::OpKernel;
 using ::tensorflow::OpKernelConstruction;
 using ::tensorflow::OpKernelContext;
-using ::tensorflow::Status;
 using ::tensorflow::Tensor;
 using ::tensorflow::TensorShape;
 using ::tensorflow::errors::InvalidArgument;
@@ -45,27 +45,19 @@ using ::tensorflow::text::GreedyAnalysis;
 using ::tensorflow::text::ScoreAccessor;
 using ::tensorflow::text::ViterbiAnalysis;
 
-// State index to use if the sequence in question requires an impossible
-// transition.
-constexpr int kErrorState = -1;
-
-// State index to use when outputting a padded tensor and the sequence in
-// question does not have a token for a given step.
-constexpr int kPaddingState = -2;
-
 namespace {
 
 // Validate that a given constraint tensor is the proper shape (dimension
 // 2, with shape [num_states + 1, num_states + 1].
 absl::Status ValidateConstraintTensor(const Tensor &tensor,
-                                      const int num_states,
+                                      const int64_t num_states,
                                       const bool use_start_end_states,
-                                      const string &name) {
+                                      const std::string &name) {
   if (tensor.shape().dims() != 2) {
     return InvalidArgument(
         tensorflow::strings::StrCat(name, " must be of rank 2"));
   }
-  int expected_size = use_start_end_states ? num_states + 1 : num_states;
+  int64_t expected_size = use_start_end_states ? num_states + 1 : num_states;
   if (tensor.shape().dim_size(0) != expected_size) {
     return InvalidArgument(tensorflow::strings::StrCat(
         name, " must have a zeroth dimension of size ", expected_size,
@@ -105,9 +97,15 @@ class ConstrainedSequence : public OpKernel {
     ScoreAccessor scores(score_tensor, lengths_tensor);
 
     // The scores tensor should be [batch, step, scores].
-    const int batch_size = scores.batch_size();
-    const int num_steps = scores.num_steps();
-    const int num_scores = scores.num_scores();
+    const int64_t batch_size = scores.batch_size();
+    const int64_t num_steps = scores.num_steps();
+    const int64_t num_scores = scores.num_scores();
+
+    OP_REQUIRES(context, num_scores < std::numeric_limits<int32_t>::max(),
+                InvalidArgument(tensorflow::strings::StrCat(
+                    "The number of states (", num_scores,
+                    ") must be less than ",
+                    std::numeric_limits<int32_t>::max(), ".")));
 
     OP_REQUIRES(context, lengths_tensor.NumElements() == batch_size,
                 InvalidArgument(tensorflow::strings::StrCat(
@@ -120,21 +118,30 @@ class ConstrainedSequence : public OpKernel {
     VLOG(2) << "steps: " << num_steps;
     VLOG(2) << "score: " << num_scores;
 
-    // Make sure there's enough data to advance every sequence.
-    int max_length = 0;
-    int total_length = 0;
-    for (int i = 0; i < batch_size; ++i) {
-      int64 length = scores.GetLength(i);
+    // Make sure there's enough data to advance every sequence, every length is
+    // non-negative, and the total length does not overflow the output splits
+    // type.
+    constexpr int64_t kMaxTotalLength = std::numeric_limits<Tsplits>::max();
+    int64_t total_length = 0;
+    for (int64_t i = 0; i < batch_size; ++i) {
+      const int64_t length = scores.GetLength(i);
+      OP_REQUIRES(context, length >= 0,
+                  InvalidArgument(tensorflow::strings::StrCat(
+                      "Sequence lengths must be non-negative, got ", length,
+                      " at batch index ", i, ".")));
+      OP_REQUIRES(
+          context, length <= num_steps,
+          InvalidArgument(
+              "The scores tensor is too short for the longest sequence "
+              "length."));
+      OP_REQUIRES(
+          context, length <= kMaxTotalLength - total_length,
+          InvalidArgument(tensorflow::strings::StrCat(
+              "Total sequence length exceeds the maximum value supported by "
+              "the output splits type (",
+              kMaxTotalLength, ").")));
       total_length += length;
-      if (length > max_length) {
-        max_length = length;
-      }
     }
-
-    OP_REQUIRES(
-        context, num_steps >= max_length,
-        InvalidArgument(
-            "The scores tensor is too short for the longest sequence length."));
 
     // Validate the constraint tensors.
     const auto &allowed_transitions_tensor = context->input(2);
@@ -160,7 +167,7 @@ class ConstrainedSequence : public OpKernel {
       // If we have transition weights in exp-space, all values must be non-
       // negative.
       if (!use_log_space_) {
-        for (int i = 0; i < transition_weights_tensor.NumElements(); ++i) {
+        for (int64_t i = 0; i < transition_weights_tensor.NumElements(); ++i) {
           OP_REQUIRES(context, transition_weights_tensor.flat<float>()(i) >= 0,
                       InvalidArgument("The transition weights tensor must not "
                                       "contain negative values."));
@@ -182,7 +189,7 @@ class ConstrainedSequence : public OpKernel {
     Tensor *output;
     OP_REQUIRES_OK(context, context->allocate_output(
                                 0, TensorShape({total_length}), &output));
-    int32 *output_data = output->flat<int32>().data();
+    int32_t *output_data = output->flat<int32_t>().data();
 
     Tensor *offsets;
     OP_REQUIRES_OK(context, context->allocate_output(
@@ -190,10 +197,13 @@ class ConstrainedSequence : public OpKernel {
     Tsplits *offset_data = offsets->flat<Tsplits>().data();
     offset_data[0] = 0;
 
-    for (int batch = 0; batch < batch_size; ++batch) {
-      int step_offset = offset_data[batch];
-      int64 num_steps = scores.GetLength(batch);
-      offset_data[batch + 1] = step_offset + num_steps;
+    for (int64_t batch = 0; batch < batch_size; ++batch) {
+      const Tsplits step_offset = offset_data[batch];
+      const int64_t seq_length = scores.GetLength(batch);
+      offset_data[batch + 1] = step_offset + static_cast<Tsplits>(seq_length);
+      if (seq_length == 0) {
+        continue;
+      }
       if (use_viterbi_) {
         DoViterbiAnalysis(transition_weights, allowed_transitions, batch,
                           scores, &output_data[step_offset]);
@@ -209,7 +219,7 @@ class ConstrainedSequence : public OpKernel {
   void DoViterbiAnalysis(
       const tensorflow::TTypes<const float>::Matrix &transition_weights,
       const tensorflow::TTypes<const bool>::Matrix &allowed_transitions,
-      const int batch, const ScoreAccessor &scores, int32 *output_data) {
+      const int64_t batch, const ScoreAccessor &scores, int32_t *output_data) {
     ViterbiAnalysis(scores, transition_weights, allowed_transitions, batch,
                     use_log_space_, use_start_end_states_, output_data);
   }
@@ -218,7 +228,7 @@ class ConstrainedSequence : public OpKernel {
   void DoGreedyAnalysis(
       const tensorflow::TTypes<const float>::Matrix &transition_weights,
       const tensorflow::TTypes<const bool>::Matrix &allowed_transitions,
-      int batch, const ScoreAccessor &scores, int32 *output_data) {
+      int64_t batch, const ScoreAccessor &scores, int32_t *output_data) {
     GreedyAnalysis(scores, transition_weights, allowed_transitions, batch,
                    use_log_space_, use_start_end_states_, output_data);
   }
@@ -239,20 +249,20 @@ class ConstrainedSequence : public OpKernel {
   TF_DISALLOW_COPY_AND_ASSIGN(ConstrainedSequence);
 };
 
-#define REGISTER_KERNELS(Tin)                                    \
-  REGISTER_KERNEL_BUILDER(Name("ConstrainedSequence")            \
-                              .Device(DEVICE_CPU)                \
-                              .TypeConstraint<Tin>("Tin")        \
-                              .TypeConstraint<int32>("Tsplits"), \
-                          ConstrainedSequence<Tin, int32>);      \
-  REGISTER_KERNEL_BUILDER(Name("ConstrainedSequence")            \
-                              .Device(DEVICE_CPU)                \
-                              .TypeConstraint<Tin>("Tin")        \
-                              .TypeConstraint<int64>("Tsplits"), \
-                          ConstrainedSequence<Tin, int64>)
+#define REGISTER_KERNELS(Tin)                                      \
+  REGISTER_KERNEL_BUILDER(Name("ConstrainedSequence")              \
+                              .Device(DEVICE_CPU)                  \
+                              .TypeConstraint<Tin>("Tin")          \
+                              .TypeConstraint<int32_t>("Tsplits"), \
+                          ConstrainedSequence<Tin, int32_t>);      \
+  REGISTER_KERNEL_BUILDER(Name("ConstrainedSequence")              \
+                              .Device(DEVICE_CPU)                  \
+                              .TypeConstraint<Tin>("Tin")          \
+                              .TypeConstraint<int64_t>("Tsplits"), \
+                          ConstrainedSequence<Tin, int64_t>)
 
-REGISTER_KERNELS(int32);
-REGISTER_KERNELS(int64);
+REGISTER_KERNELS(int32_t);
+REGISTER_KERNELS(int64_t);
 
 #undef REGISTER_KERNELS
 

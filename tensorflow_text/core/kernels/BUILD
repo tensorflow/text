@@ -142,6 +142,9 @@ tf_cc_library(
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,
     ],
+    deps = [
+        "@com_google_absl//absl/log:check",
+    ],
 )
 
 tf_cc_library(
@@ -165,6 +168,7 @@ tf_cc_test(
         ":kernel_test_base",
         ":text_kernels_test_util",
         "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/status",
         # tf:framework tensorflow dep,
         # tf:lib tensorflow dep,
         # tf:protos_all_cc tensorflow dep,

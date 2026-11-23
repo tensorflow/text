@@ -15,16 +15,17 @@
 #include "tensorflow_text/core/kernels/constrained_sequence.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <iterator>
 #include <limits>
 #include <vector>
 
+#include "absl/log/check.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
 #include "tensorflow/core/framework/tensor_types.h"
 #include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/core/platform/logging.h"
-#include "tensorflow/core/platform/types.h"
 
 namespace tensorflow {
 namespace text {
@@ -38,10 +39,10 @@ ScoreAccessor::ScoreAccessor(const Tensor &score_tensor,
   data_ = score_tensor.flat<float>().data();
   if (lengths_tensor.dtype() == DT_INT64) {
     use_long_lengths_ = true;
-    long_lengths_ = lengths_tensor.flat<int64>().data();
+    long_lengths_ = lengths_tensor.flat<int64_t>().data();
   } else {
     use_long_lengths_ = false;
-    lengths_ = lengths_tensor.flat<int>().data();
+    lengths_ = lengths_tensor.flat<int32_t>().data();
   }
   has_explicit_batch_ = (score_tensor.shape().dims() == 3);
   if (has_explicit_batch_) {
@@ -53,21 +54,23 @@ ScoreAccessor::ScoreAccessor(const Tensor &score_tensor,
     num_steps_ = score_tensor.shape().dim_size(0);
     num_scores_ = score_tensor.shape().dim_size(1);
   }
-  batch_offset_ = num_scores_ * num_steps_;
+  // Avoid multiplying large non-zero dimensions on a 0-batch tensor, which
+  // could overflow int64_t even though the tensor has 0 elements.
+  batch_offset_ = (batch_size_ > 0) ? (num_scores_ * num_steps_) : 0;
   step_offset_ = num_scores_;
 }
 
 // Get a score out of the data tensor.
-float ScoreAccessor::GetScore(int batch_idx, int step_idx,
-                              int score_idx) const {
-  DCHECK_LE(batch_idx, batch_size_);
-  DCHECK_LE(step_idx, num_steps_);
-  DCHECK_LE(score_idx, num_scores_);
+float ScoreAccessor::GetScore(int64_t batch_idx, int64_t step_idx,
+                              int64_t score_idx) const {
+  DCHECK_LT(batch_idx, batch_size_);
+  DCHECK_LT(step_idx, num_steps_);
+  DCHECK_LT(score_idx, num_scores_);
   return data_[batch_offset_ * batch_idx + step_offset_ * step_idx + score_idx];
 }
 
-int64 ScoreAccessor::GetLength(int batch_idx) const {
-  DCHECK_LE(batch_idx, batch_size_);
+int64_t ScoreAccessor::GetLength(int64_t batch_idx) const {
+  DCHECK_LT(batch_idx, batch_size_);
   if (use_long_lengths_) {
     return long_lengths_[batch_idx];
   } else {
@@ -75,9 +78,9 @@ int64 ScoreAccessor::GetLength(int batch_idx) const {
   }
 }
 
-int ScoreAccessor::batch_size() const { return batch_size_; }
-int ScoreAccessor::num_steps() const { return num_steps_; }
-int ScoreAccessor::num_scores() const { return num_scores_; }
+int64_t ScoreAccessor::batch_size() const { return batch_size_; }
+int64_t ScoreAccessor::num_steps() const { return num_steps_; }
+int64_t ScoreAccessor::num_scores() const { return num_scores_; }
 bool ScoreAccessor::has_explicit_batch() const { return has_explicit_batch_; }
 
 // Perform Viterbi analysis on a single batch item.
@@ -85,15 +88,21 @@ void ViterbiAnalysis(
     const ScoreAccessor &scores,
     const tensorflow::TTypes<const float>::Matrix &transition_weights,
     const tensorflow::TTypes<const bool>::Matrix &allowed_transitions,
-    const int batch, bool use_log_space, bool use_start_end_states,
-    int32 *output_data) {
+    const int64_t batch, bool use_log_space, bool use_start_end_states,
+    int32_t *output_data) {
   VLOG(2) << "Analyzing batch " << batch;
   const bool has_transition_weights = transition_weights.size() != 0;
   const bool has_allowed_transitions = allowed_transitions.size() != 0;
-  const int num_states = scores.num_scores();
+  DCHECK_GE(scores.num_scores(), 0);
+  DCHECK_LT(scores.num_scores(), std::numeric_limits<int32_t>::max());
+  const int num_states = static_cast<int>(scores.num_scores());
   const int out_of_bounds_index = num_states;
 
-  int64 num_steps = scores.GetLength(batch);
+  int64_t num_steps = scores.GetLength(batch);
+  if (num_steps <= 0) {
+    // We're done with this batch if there are no steps to analyze.
+    return;
+  }
 
   // Create two vectors to hold scores. These will be bound to referents later
   // so the names here are somewhat irrelevant.
@@ -114,10 +123,6 @@ void ViterbiAnalysis(
 
   const bool vlog3 = VLOG_IS_ON(3);
 
-  if (backpointers.empty()) {
-    // We're done with this batch if there are no steps to analyze.
-    return;
-  }
   for (int curr_state = 0; curr_state < num_states; ++curr_state) {
     std::vector<int> &current_bps = backpointers[0];
     if (use_start_end_states) {
@@ -175,7 +180,7 @@ void ViterbiAnalysis(
   }
 
   // Update the current scores (and normalize if we're not in log space).
-  if (!use_log_space) {
+  if (!use_log_space && !current_scores->empty()) {
     const double max_score =
         *std::max_element(current_scores->begin(), current_scores->end());
     if (max_score > 0) {
@@ -189,7 +194,7 @@ void ViterbiAnalysis(
   current_scores = tmp;
 
   // Handle all steps save for the first and last in this loop.
-  for (int step = 1; step < num_steps; ++step) {
+  for (int64_t step = 1; step < num_steps; ++step) {
     const std::vector<int> &previous_bps = backpointers[step - 1];
     std::vector<int> &current_bps = backpointers[step];
 
@@ -259,7 +264,7 @@ void ViterbiAnalysis(
     }
 
     // Normalize if we're not in log space.
-    if (!use_log_space) {
+    if (!use_log_space && !current_scores->empty()) {
       const double max_score =
           *std::max_element(current_scores->begin(), current_scores->end());
       if (max_score > 0) {
@@ -344,14 +349,13 @@ void ViterbiAnalysis(
   if (best_source_state == kErrorState) {
     // If the best source is an error state, the path is unknowable. Report
     // error states for the whole sequence.
-    for (int64 i = 0; i < scores.GetLength(batch); ++i) {
+    for (int64_t i = 0; i < num_steps; ++i) {
       output_data[i] = kErrorState;
     }
   } else {
     // If the best source is a 'real' state, report the state path.
-    int steps_to_report = scores.GetLength(batch);
     int previous_state = best_source_state;
-    for (int64 i = steps_to_report - 1; i >= 0; --i) {
+    for (int64_t i = num_steps - 1; i >= 0; --i) {
       output_data[i] = previous_state;
       previous_state = backpointers[i][previous_state];
     }
@@ -362,19 +366,20 @@ void GreedyAnalysis(
     const ScoreAccessor &scores,
     const tensorflow::TTypes<const float>::Matrix &transition_weights,
     const tensorflow::TTypes<const bool>::Matrix &allowed_transitions,
-    int batch, bool use_log_space, bool use_start_end_states,
-    int32 *output_data) {
+    int64_t batch, bool use_log_space, bool use_start_end_states,
+    int32_t *output_data) {
   const bool has_transition_weights = transition_weights.size() != 0;
   const bool has_allowed_transitions = allowed_transitions.size() != 0;
-  const int num_states = scores.num_scores();
+  DCHECK_GE(scores.num_scores(), 0);
+  DCHECK_LT(scores.num_scores(), std::numeric_limits<int32_t>::max());
+  const int num_states = static_cast<int>(scores.num_scores());
   const int out_of_bounds_index = num_states;
-  int64 num_steps = scores.GetLength(batch);
+  int64_t num_steps = scores.GetLength(batch);
 
-  for (int step = 0; step < num_steps; ++step) {
+  for (int64_t step = 0; step < num_steps; ++step) {
     // Do final step calculations if this is the final step in the sequence
     // and we are calculating based on implicit start and end states.
-    bool do_final_step =
-        (step == scores.GetLength(batch) - 1) && use_start_end_states;
+    bool do_final_step = (step == num_steps - 1) && use_start_end_states;
     VLOG(2) << "is last step: " << do_final_step;
 
     const int previous_state =

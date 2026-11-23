@@ -21,6 +21,7 @@ from __future__ import print_function
 
 import numpy as np
 
+from tensorflow.python.framework import errors
 from tensorflow.python.framework import test_util
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.platform import test
@@ -641,6 +642,33 @@ class GreedyConstrainedSequenceOpTest(test_util.TensorFlowTestCase):
         use_start_and_end_states=use_start_and_end_states)
     ragged_result = self.evaluate(ragged_op)
     self.assertAllEqual(ragged_result, expected_sequence)
+
+  def test_negative_sequence_length_raises_invalid_argument(self):
+    scores = np.zeros([3, 5, 2], dtype=np.float32)
+    with self.assertRaises(errors.InvalidArgumentError):
+      self.evaluate(
+          greedy_op.greedy_constrained_sequence(
+              scores,
+              np.array([1, -5, 5], dtype=np.int64),
+              use_log_space=True,
+              use_start_and_end_states=False))
+    with self.assertRaises(errors.InvalidArgumentError):
+      self.evaluate(
+          greedy_op.greedy_constrained_sequence(
+              scores,
+              np.array([-1, 1, 1], dtype=np.int32),
+              use_log_space=True,
+              use_start_and_end_states=False))
+
+  def test_sequence_length_32bit_truncation_raises_invalid_argument(self):
+    scores = np.zeros([1, 2, 2], dtype=np.float32)
+    with self.assertRaises(errors.InvalidArgumentError):
+      self.evaluate(
+          greedy_op.greedy_constrained_sequence(
+              scores,
+              np.array([1 << 32], dtype=np.int64),
+              use_log_space=True,
+              use_start_and_end_states=False))
 
 
 if __name__ == "__main__":
