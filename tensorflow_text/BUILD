@@ -563,6 +563,7 @@ py_test(
         ":greedy_constrained_sequence_op",
         "@pypi//numpy:pkg",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
+        # python/framework:errors tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
@@ -1586,6 +1587,7 @@ py_test(
         ":viterbi_decode",
         "@pypi//numpy:pkg",
         "@release_or_nightly//:tensorflow_pkg",  # tensorflow package dep
+        # python/framework:errors tensorflow dep,
         # python/framework:test_lib tensorflow dep,
         # python/ops/ragged:ragged_factory_ops tensorflow dep,
         # python/platform:client_testlib tensorflow dep,
