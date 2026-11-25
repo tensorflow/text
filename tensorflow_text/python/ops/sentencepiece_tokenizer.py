@@ -52,8 +52,6 @@ class _SentencepieceModelResource(resource.TrackableResource):
   def _create_resource(self):
     model, name = self._model, self._name
     with ops.name_scope(name, "SentenceTokenizerInitializer", [model]):
-      # TODO(b/318839908): Switch to using a ref-counted resource instead of
-      # this kernel-owned resource.
       return gen_sentencepiece_tokenizer.sentencepiece_op(model=model)
 
 

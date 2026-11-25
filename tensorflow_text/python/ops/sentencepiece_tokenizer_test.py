@@ -26,11 +26,13 @@ from tensorflow.python.eager import def_function
 from tensorflow.python.framework import constant_op
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import errors
+from tensorflow.python.framework import random_seed
 from tensorflow.python.framework import tensor_spec
 from tensorflow.python.framework import test_util
 from tensorflow.python.lib.io import file_io
 from tensorflow.python.module import module
 from tensorflow.python.ops import gen_experimental_dataset_ops
+from tensorflow.python.ops import string_ops
 from tensorflow.python.ops.ragged import ragged_factory_ops
 from tensorflow.python.ops.ragged import ragged_gather_ops
 from tensorflow.python.platform import gfile
@@ -532,6 +534,49 @@ class SentencepieceTokenizerOpTest(test_util.TensorFlowTestCase,
         result = sp.tokenize('whatever')
         result.eval()
 
+  def testSetSeedAfterInit(self):
+    if not context.executing_eagerly():
+      self.skipTest('testSetSeedAfterInit only applicable in eager mode.')
+
+    sp = SentencepieceTokenizer(self.model)
+    inputs = constant_op.constant(['hello world'])
+    expected_tokens = sp.tokenize(inputs)
+    expected_tokens_with_offsets, expected_starts, expected_ends = (
+        sp.tokenize_with_offsets(inputs)
+    )
+
+    random_seed.set_seed(1234)
+
+    tokens = sp.tokenize(inputs)
+    self.assertAllEqual(expected_tokens, tokens)
+
+    tokens_with_offsets, starts, ends = sp.tokenize_with_offsets(inputs)
+    self.assertAllEqual(expected_tokens_with_offsets, tokens_with_offsets)
+    self.assertAllEqual(expected_starts, starts)
+    self.assertAllEqual(expected_ends, ends)
+
+    self.assertAllEqual([b'hello world'], sp.detokenize(tokens))
+    self.assertAllEqual(1000, sp.vocab_size())
+    self.assertAllEqual('ve', sp.id_to_string(125))
+    self.assertAllEqual(125, sp.string_to_id('ve'))
+
+  def testPrivateResourceHandleReusedInGraphMode(self):
+    if context.executing_eagerly():
+      self.skipTest(
+          'testPrivateResourceHandleReusedInGraphMode only applicable in graph'
+          ' mode.'
+      )
+
+    sp = SentencepieceTokenizer(self.model)
+    handle = sp._model_resource.resource_handle
+    handle_str = string_ops.string_format('{}', [handle])
+    tokens = sp.tokenize(constant_op.constant(['hello world']))
+    with self.cached_session() as sess:
+      h1, t1 = sess.run([handle_str, tokens])
+      h2, t2 = sess.run([handle_str, tokens])
+      self.assertEqual(h1, h2)
+      self.assertAllEqual(t1.values, t2.values)
+
 
 # Test that datasets depending on a sentencepiece tokenizer resources can be
 # serialized without external references.
@@ -551,6 +596,7 @@ class DatasetSerializationTest(test_util.TensorFlowTestCase):
       dataset = dataset_ops.Dataset.from_tensor_slices(strings)
       # Ensure we can map the tokenizer across the dataset.
       dataset = dataset.map(sp.tokenize)
+      random_seed.set_seed(1234)
       graph = dataset._as_serialized_graph()
       element_spec = dataset.element_spec
       dataset_graph_string = graph.numpy()
